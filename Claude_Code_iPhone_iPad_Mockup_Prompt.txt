@@ -1,0 +1,88 @@
+Act as an experienced Apple-platform product designer and SwiftUI engineer. Create a polished, interactive native iPhone and iPad UI prototype for My Petite Style, following the attached master PRD. The purpose is to review the actual screens and interactions with Lily and retain reusable native UI code for the real application.
+
+SOURCE OF TRUTH
+Read My_Petite_Style_PRD_v2.md completely before building. In the original workspace it is /Users/jramirez/Git/closet/My_Petite_Style_PRD_v2.md; elsewhere use the attached copy. Read README.md and PROJECT_HANDOFF.md if available. The v2 master overrides historical drafts. Prioritize sections 3, 5–10, 11.10–11.11, 12–15 and 24.5. Treat the PRD's open decisions and conditional capabilities as such.
+Preserve the master and original feedback. Do not update requirements, finalize pricing, select production providers or implement production infrastructure. If the master is missing, request it before inventing product requirements. Resolve ordinary layout choices yourself; ask only if an unresolved decision would materially change the product.
+
+DELIVERABLE AND ENVIRONMENT
+Build a universal SwiftUI prototype in an isolated folder named prototypes/LilyStyleMockup, unless an existing prototype location is already established. This is frontend prototype work with fictional fixtures and injected mock services, not the completed app.
+First inspect the available macOS/Xcode SDKs, simulator runtimes, Claude Code tools and configured Xcode MCP integration. Prefer actual SwiftUI views with #Preview and a runnable simulator app. In Claude Code Desktop, use the built-in iOS Simulator pane if available. If Xcode MCP is already configured, use its native preview/build capabilities where helpful.
+Do not install tools, enable integrations, change global Xcode settings or require API credentials. If native execution is unavailable, still deliver the SwiftUI source and clear setup instructions; label native rendering checks Not run. An optional local HTML storyboard may illustrate the design but cannot substitute for the native deliverable or count as native verification. Do not claim automatic SwiftUI export from Claude Design. Do not publish or share hosted artifacts without my explicit request.
+
+DESIGN DIRECTION
+Use the PRD's warm editorial personal-styling-notebook theme: calm, polished, approachable and garment-led, with familiar Apple interactions. My Petite Style is a working title.
+Implement semantic color assets with these Light / Dark values:
+Background #FAF7F2 / #1C191B
+Surface #FFFFFF / #292529
+Primary text #29242A / #FAF7F2
+Secondary text #6E626A / #C5B8C0
+Primary action #633B55 / #D9AFCB
+On primary action #FFFFFF / #1C191B
+Accent surface #F0E0E5 / #432F3D
+Success #42634E / #AFCEB6
+Success surface #E7EFE8 / #273B2D
+Divider #DED5DA / #51464F
+Error #A12D39 / #FFB3B8
+
+Use SwiftUI system typography and Dynamic Type; reserve the system serif design for the title and occasional editorial headings. Use SF Symbols, an 8-point spacing rhythm, generally 16-point margins/card padding/radii and capsule occasion choices. Keep garment colors accurate. Avoid a busy dashboard, ornamental chrome, shopping-first layouts and excessive gradients. Validate contrast rather than assuming these colors work in every combination.
+
+ADAPTIVE LAYOUT
+Compact navigation: Style Me, Closet, Saved Looks. Profile, Settings and Feedback remain easy-to-find secondary destinations.
+Wide iPad: sidebar with Style Me, Closet, Saved Looks and Feedback; adaptive closet grid/detail and contextual editing inspector. Compare up to three outfit directions only when each stays readable. Intermediate widths use two panes or a collapsed stack; narrow iPad windows retain a complete compact experience.
+Base adaptation on available window space, safe areas and Dynamic Type, not device-name or orientation checks alone. Preserve request, draft, selected garment, result and useful scroll position across resizing, rotation, keyboard appearance and navigation. These changes must never dispatch another mock AI/image job.
+Support at least 44-point hit targets, readable large text, labeled status, VoiceOver semantics, Reduce Motion, hardware keyboards, visible focus and pointer interaction. On iPad, support dragging an owned garment into the starting-piece control and dropping a demo image/product link into item review. Validate and preview the change before explicit save/ownership confirmation; provide tap/Photos/paste equivalents.
+
+SCREENS AND FLOWS
+Implement all these destinations in one coherent visual system. Keep advanced options secondary rather than placing every control on the home screen.
+
+1. Skippable onboarding: petite proportion-focused value, optional measurements/preferences, transparent free-core versus metered AI explanation and privacy. No required app login, complete closet upload or body photo.
+2. Style Me: visible Main Closet/named Suitcase selector, occasion, editable weather/season, optional starting item, today-only Close/Comfortable/Relaxed preference, required/preferred color and scope, appropriate owned-only/Suggestions mode, one clear Style Me button, separately enabled On Me state. New-piece exploration is off by default and needs an independent explicit choice; strict suitcase styling stays within its owned source.
+3. Results: three distinct owned directions when valid—Safe/Simple and two Elevated looks—with garment imagery, concise rationale, selectable pieces, swap/save and image status. Only an explicitly enabled Main Closet new-piece scenario may replace the third direction with a clearly labeled unowned piece. Show honest one-/two-look partial results or an insufficient-wardrobe state rather than inventing clothes.
+4. Outfit editor/swap: real alternative garments, one-piece replacement preserving the others, filters, undo, draft/save feedback, secondary Find One. An earlier preview stays labeled Earlier; Update Preview is deliberate.
+5. Closet: visual adaptive grid, source selector, search, Add Item, ownership/history views, Dirty/status badges and import states.
+6. Add/edit garment: Camera, selected Photos/screenshots, explicit Paste Image/Link and text-only entry; optional name, Other names, Add details, category/color/brand/notes, editable unknowns, original/processed image review. Image-analysis proposals use Accept/Edit/Skip.
+7. Suitcases: create/name, add existing canonical garments from Main Closet, remove membership, archive/delete container and set/remember selected view. Demonstrate a garment shared by multiple suitcases without duplicate records/photos.
+8. Search: mixed garment/outfit/preview results with recognizable type labels, useful filters, close-match clarification and explicit Remember this name. Support phrases such as “cute pink shirt,” “lacy white shirt with ruffles” and “baggy jeans with the pocket.”
+9. Saved Looks: saved outfits, separate Favorites, private collections and automatically retained delivered-preview history. Earlier, unfavorited and disliked previews remain revisitable; current missing/Dirty badges do not rewrite old images.
+10. Laundry: individual Mark clean, selected-load review and clearly scoped confirmed-all actions showing the affected count and Entire closet/This suitcase scope.
+11. Profile: optional confirmed measurements, fit references, preferred rise/length/ease, style/color/budget/retailers and separate processing permissions. Include a separately labeled simulated On Me reference-photo scenario with replace/delete review.
+12. Find One: fit-first simulated retailer leads; editable Amazon/TikTok Shop/Target/Walmart/H&M preferences with other permitted sources. Show evidence, relevant dimensions, unknowns, Supported sizing guidance versus Needs fit confirmation, closet compatibility and source links. Do not invent fit guarantees.
+13. Store handoff/bought-item review: show the intended retailer-page handoff and return context with a local mock destination; I ordered/I bought requires actual purchased variant and independent arrival confirmation. Photo later and optional completion reminders are supported; adding to an outfit/suitcase is deliberate.
+14. Ask another stylist: numbered garment/look collage, locally assembled editable prompt, personal fields off by default, explicit Copy/Save/Share and manual destination instructions.
+15. Settings/Privacy & Data: default source, named processor permissions, sync status, export/import review, deletion scopes, support/legal/help/release notes and subscription controls.
+16. Styling access/allowance: configurable sample terms, trial eligibility, usage/reset, restore/redeem/manage and expired/exhausted states. Free core remains accessible. Clearly label price and purchase actions as sample simulations.
+17. Feedback/support: approved ideas, status, private issue form and optional feedback-only sign-in flow; no required account for the closet or social wardrobe feed.
+
+PRODUCT RULES TO DEMONSTRATE
+- Lily-first: prioritize proportions, pants length, rise, color coordination and her chic/elegant preferences. Height 4'11" is confirmed; inseam and other unsupplied measurements remain Unknown. Never infer size from weight, photos or height. Ask/review missing fit evidence.
+- Closet first. Shopping follows an explicit Find One action; no automatic gap list or shopping feed.
+- Main Closet includes all clothing across memberships. Suitcase styling is strict; insufficient options offer an explicit Main Closet switch. Remember deliberate source selection. A valid empty suitcase remains selected.
+- Dirty and ownership are shared canonical states. Selecting an item does not clean it; Worn does not automatically dirty it. Laundry only changes eligible Dirty items. Deleting a suitcase preserves garments. Archive, no-longer-owned, Trash and permanent deletion have distinct consequences.
+- Styling uses real eligible canonical IDs. Wishlist, not-arrived purchases and deleted items cannot silently become available wardrobe pieces.
+- Every valid permitted delivered preview is retained independently of Favorites. Navigation, scrolling, saving, changing names and rotating do not generate images. Exact permitted reuse incurs no new mock units; similar history is a reviewed candidate and current eligibility is rechecked.
+- On Me outputs are labeled simulated assets, with no claim of exact appearance or physical fit. Swaps preserve earlier previews. Declining body-photo/image processing leaves outfit boards usable.
+- Optional photo understanding, text styling, web search and image rendering have distinct permission/dispatch states. Separate mock stylist and image services; no live provider choice in the screen code.
+- Optional ChatGPT-plan connection is unvalidated exploration in PRD 24.5. Do not include a working connection toggle or present it as an accepted launch feature.
+- Browsing, manual edits, local search/history and export flows remain available offline/after AI expiry. Do not suggest the prototype proves production durability, iCloud sync, backups, billing or App Store compliance.
+
+FICTIONAL FIXTURES AND MOCK ARCHITECTURE
+Use a resettable demo store, around 18 canonical garments and several outfits/previews. Include navy trousers, olive trousers, a pink blouse, lacy white top, cardigan, brown jacket and distinguishable shoes; some Dirty/unavailable/text-only/no-longer-owned items and a not-arrived purchase.
+Include Main Closet, Jose's house, Weekend and an Empty suitcase, with shared memberships and deliberately insufficient sources. Use fictional metadata, permitted local garment assets and an adult demo-person asset or an honest placeholder. Never use Lily's real body photo or connect real accounts.
+Use typed models, reusable components/design tokens, feature-local views and injected MockStylist, MockImageProvider, MockWebSearch, MockShoppingRanker plus weather/access/sync substitutes. Follow the PRD's app-facing contracts at the depth needed for the prototype, without implementing a production backend.
+Make key controls work locally. For cloud/export/billing actions outside scope, show a clearly identified simulation/review state instead of fake success. Demo state must be isolated from personal data.
+Provide a development-only scenario picker for normal success, partial/insufficient closet, slow/failed/cancelled image job, stale result after a swap/source change, offline weather/AI, declined permission, exhausted allowance, save failure and sync conflict. Include a mock dispatch counter to demonstrate that passive interactions do not call services.
+
+WORK ORDER AND VALIDATION
+Read the PRD, briefly state your screen map/layout assumptions, then build without stopping for routine confirmations. Establish tokens/navigation, implement the Style Me → results → swap/save journey, add Closet/Suitcases/search/history, then supporting screens and failure states. Finish the whole prototype; do not stop after a plan or a single attractive home screen. Delegate independent component/review work if supported.
+Where tools permit, build and run native screens on an iPhone 12 simulator or a documented similar compact substitute, plus iPad portrait, landscape and narrow/intermediate windows. Capture actual rendered light/dark screens and representative large Dynamic Type, keyboard and pending/error states. Exercise the core flows and resizing. Inspect screenshots, fix material clipping/navigation/contrast issues in a bounded pass, then report the evidence honestly.
+Separate native preview/simulator checks, source-only review and Not run checks. Physical-device performance, real AI/fit quality, StoreKit, iCloud/restore and App Review remain outside mockup evidence.
+
+FINAL HANDOFF
+Deliver:
+- Runnable Xcode project/native SwiftUI source and exact run instructions.
+- Local screenshots with device/OS/appearance/state labels, plus a screen gallery/contact sheet where possible.
+- Reusable component/token documentation.
+- A screen/flow-to-PRD traceability table and explicit mock/conditional/deferred behavior.
+- Build/check results, tools used, unresolved product questions and known limitations.
+
+Keep the summary understandable to the product owner. The result should let Lily navigate the intended experience and tell us what works before production services are connected.
