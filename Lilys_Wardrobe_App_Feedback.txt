@@ -1,0 +1,975 @@
+Lily’s Wardrobe App Feedback
+
+Interview feedback on “MY PETITE STYLE” Product Requirements Document
+
+1. REFERENCE AND COVERAGE
+
+Reference reviewed: - Title: MY PETITE STYLE — Product Requirements
+Document - Subtitle: Petite-first AI personal stylist for iPhone and
+iPad - Version: 0.1 — consolidated master - Original draft: September
+26, 2026 - Updated: October 3, 2026 - Primary design partner: Lily
+
+Coverage and limitation: The PRD was reviewed from beginning through end
+in two file ranges, with targeted follow-up checks of requirements
+directly relevant to Lily’s interview (including FR-01 through FR-20,
+FR-35 through FR-41, Sections 7–10, 13, 15–17, 25–26, and the Generate
+Look workflow). Some portions of the original full-file tool output were
+truncated in display, so this feedback does not claim line-by-line
+verification of every implementation, legal, reliability, billing,
+website, or release requirement. Where this document calls something a
+conflict or missing/unclear need, it is based on the relevant PRD
+requirement/section that was specifically reviewed.
+
+This document records Lily’s desired user experience. It does not
+automatically approve PRD changes or override security, privacy, legal,
+feasibility, platform, retailer, AI-provider, or developer requirements.
+
+2. MY TOP THREE PRIORITIES
+
+Priority 1 — Let me tell the app what I need TODAY
+
+Lily’s words: “It has to let me tell it what I want/need for example
+bloated or not or rainy or not etc.”
+
+Summary: Before styling, Lily wants to provide situational context that
+changes what is appropriate today. This includes: - Occasion. -
+Weather/conditions such as rainy or sunny. - Whether she feels bloated
+or not, so the app can adjust fitted vs. looser suggestions. - A
+preferred or required color, such as blue for a themed event. - A
+starting garment she wants to wear. - Other immediate constraints.
+
+Importance: Essential.
+
+Priority 2 — Styling must be intentional and varied
+
+Lily’s words: “It has to be intentional with the styling. Not always
+give me the same 2-3 colors in different formats.”
+
+Summary: Lily already knows how to make safe outfits with denim, black,
+and same-family colors. The app adds value when it introduces
+combinations she would not immediately choose herself, while keeping
+them coordinated, wearable, chic, elegant, and intentional.
+
+Examples Lily gave: - Blue + light pink: interesting and desirable. -
+Olive green pants + brick-colored shirt: unexpected but coordinated. -
+Strong red + green: likely too oppositional.
+
+Importance: Essential.
+
+Priority 3 — Let me visually edit an outfit piece by piece
+
+Lily’s words: “It has to let me be able to change an item.”
+
+Summary: Lily wants visual outfit options in which she can tap an
+individual garment and change it—especially its color—without losing the
+rest of the outfit. She does not want to regenerate everything simply
+because one piece or color is wrong.
+
+Importance: Essential.
+
+3. MY INTERVIEW ANSWERS
+
+Q1–Q3: Most recent outfit struggle, how the outfit was chosen, and desired help
+
+Question: Tell me about the most recent time you struggled to choose an
+outfit. Where were you going, what clothes were you considering, and
+what specifically made the decision difficult?
+
+Lily’s answer: “For question 1 and 2 the most recent time was for a work
+in person interview. I didn’t have black dress pants which would have
+been the safer option so I wasn’t sure what to do. And I knew leggings
+and jeans weren’t appropriate. I have blue dress pants and a navy
+cardigan so I picked both options. I wanted to wear white under but
+looked weird so I picked beige which softened the look but my first
+option is jeans or black and in this case colors of the same family I
+would have wanted to pick something less matchy if that makes sense.”
+
+Question: When you finally chose something, what made you settle on it?
+
+Lily’s answer: Included above. She chose blue dress pants and a navy
+cardigan because they were appropriate items she already owned; beige
+replaced white because white looked wrong to her and beige softened the
+look.
+
+Question: In that exact situation, what kind of help would have been
+most useful?
+
+Lily’s answer: “I would have wanted an app that tells me lets me tell it
+what I have and it works around that specially because for this
+interview I didn’t have much time to plan and go buy something. So I
+would have wanted to say I have blue dress pants and tell me any
+possibly combinations to go with it.”
+
+Interpretation: The app must be able to solve urgent styling problems
+from available wardrobe inventory instead of assuming shopping is
+possible.
+
+Q4–Q6: Color experimentation and personal style
+
+Question: Can you give an outfit/color combination that feels less
+matchy and more like what you want?
+
+Lily’s answer: “I tend to wear clothes of the same color family because
+it feels safe. That’s why I always wear jeans or black pants and the top
+can be anything because jeans and black go with most clothes. I would
+have wanted like blue and light pink or something like that. Colors that
+I wouldn’t wear but look good together.”
+
+Question: Would an unexpected combination interest you? What feels like
+too much?
+
+Lily’s answer: “No it would interest me. In fact that’s what I want. I
+want the app to give me a safe option and a less safe option to pick
+from. I think if it tells me to wear red and green yeah too opposite but
+for example an olive green pants and a brick color shirt would go
+better. Something like that.”
+
+Question: What makes an outfit feel like you?
+
+Lily’s answer: “I think fitted or lose plays a role since sometimes
+depending on my cycle I might feel more bloated or less. And then how I
+do my hair helps and definitely accessories which I don’t have a problem
+with either of those. I don’t mind feminine or sporty depending on where
+I’m going. I don’t like trendy too much cuz I don’t think it would look
+good on everyone I like more of girl next door or old money type style.
+Chic and elegant and classy.”
+
+Summary: - Safe colors are a habit, not a request for the app to remain
+safe. - Desired style direction: girl-next-door, old-money-inspired,
+chic, elegant, classy. - Feminine vs. sporty depends on occasion. -
+Highly trend-driven styling is not preferred. - Fit comfort changes day
+to day.
+
+Q7–Q9: Petite fit and proportions
+
+Question: Is 4’11” correct, and is 25/26 inches a measured inseam?
+
+Lily’s answer: “Yes I’m 4’ 11’’ and no I have not measured my inseams.”
+
+Later clarification: “I am unsure. I don’t even know what inseams are.”
+
+Confirmed: - Height: 4’11”. - Inseam: Unknown/unconfirmed. - The PRD’s
+25/26-inch figure should not currently be treated as a confirmed body
+measurement or confirmed preferred garment inseam.
+
+Question: What usually goes wrong with pants?
+
+Lily’s answer: “For pants it’s usually too long; there’s not many pants
+for petite women. And also my butt tends to feel tight and my waist not
+or vice versa or my thighs. I have lost weight so it’s better now but
+the main problem is length.”
+
+Question: What recurring problems occur with other clothing?
+
+Lily’s answer: “For those some jackets are too long and since I’m not
+too tall looks big.”
+
+Additional rise preference: Lily does not like low-rise pants. She
+prefers pants around her belly button, with slightly above or below
+acceptable, but not extremely high or low.
+
+Q10–Q12: Three options, editing, and AI visualization
+
+Question: How should three results be presented?
+
+Lily’s answer: “I would like the app to give me three options: safe
+option blue dress pants with matching blue cardigan. Second option blue
+pants and a light pink blouse and third option is blue dress pants with
+another color of cardigan. I want to also be able to click on the
+cardigan and change the color so I can see how it looks based on what I
+have in my closet at that time since it was last min.”
+
+Question: Should one piece be swappable without changing everything
+else?
+
+Lily’s answer: Her answer above confirms yes.
+
+Question: Would an AI image of the outfit on her body be useful?
+
+Lily’s answer: “Yes I would trust it because I know an outfit can look
+good on someone but not necessarily me due to body proportions so yes
+that would be extremely helpful.”
+
+Later clarification: Lily wants the initial outfit picture to be OF HER,
+not primarily a flat outfit board.
+
+Accuracy expectation: The preview does not need to reproduce every
+face/hair/garment detail perfectly, but Lily wants it “as close as
+possible,” especially for closet items without uploaded photos. Obvious
+supplied facts must remain correct; if she says an item is blue and the
+preview makes it green, that would undermine trust.
+
+Q13–Q15: Closet setup and saved outfits
+
+Question: How much work would you do to enter your closet?
+
+Lily’s answer: “I would like to be able to upload pics of my commonly
+worn clothes but also to pick ‘white tank top’ and it knows I don’t need
+to upload a pic. I would add as I go.”
+
+Question: How important is it that the app already knows what she owns
+when she is rushing?
+
+Lily’s answer: “It would be important that it knows since it’s last
+minute and I’m rushing so I need to work with what I already have.”
+
+Question: What should happen to outfits she likes?
+
+Lily’s answer: “I would save it for later under favorites but also it
+would give the app more knowledge on what clothes I have. For example if
+I make my own outfit without the apps help I would take a pic and upload
+it as info on the clothes I currently have.”
+
+Interpretation / possible feature: A user-created outfit photo could be
+used as a closet-learning input, subject to technical feasibility and
+user review of inferred garments. Lily did not specify how automatic
+garment recognition must work.
+
+Q16–Q18: Shopping
+
+Question: Should the app ever suggest a missing item?
+
+Lily’s answer: “Sure actually that would be a good thing. Let’s make the
+first option safe option. Second option would be blue pants and light
+pink top and the third option would be with a combination I don’t have
+and where I can get it and I want it to also tell me how common that
+piece would be for example if it suggests I get a green leather jacket
+that’s not something I would use a lot so I would want to be able to
+click on it. Change the color and then tell me where to find it.”
+
+Question: When should the app help her shop?
+
+Lily’s answer: “When I ask. When none of my clothes work but also I have
+time to shop or wait for it to be delivered and also yes I want it to
+tell me this beige cardigan is a good buy cuz you can make different
+combinations with it.”
+
+Question: What makes a product suggestion useful?
+
+Lily’s answer: “Sizing. Has to be petite. Price some what. If a piece is
+really worth it I don’t mind investing in it but also mainly how many
+combinations can I make to make it worth my money. Brand also if it’s
+cheap it won’t last long but I would also want two options an affordable
+option and a higher end option too so I can compare.”
+
+Additional shopping request: When the app recommends a missing item,
+Lily wants to see ideas for multiple ways to wear it so she can judge
+whether it is worth buying.
+
+Additional shopping state: For recommended products, Lily wants: - Buy
+Now. - Save for Later. - Save for Later must persist so she can revisit
+the decision.
+
+Q19–Q21: Privacy, reusable body photo, and daily context
+
+Question: Are you comfortable letting AI use voluntarily entered
+styling/fit information?
+
+Lily’s answer: “Yes I would be comfortable.”
+
+Question: Would you provide a full-body reference photo?
+
+Lily’s answer: “I would take a picture of me wearing leggings and a tank
+top just so it can clearly see proportions. It can be saved for as
+liking as I use the app and it’s meant for the suggestions to be more
+accurate. And I want to be able to delete it and upload a new one.”
+
+Question: Would you tell the app how you feel in your body that day?
+
+Lily’s answer: “Yes when I wanna use the app I wanna tell it the weather
+(Rainy vs Sunny), bloated or not. Occasion. Any preferred color for
+example if I’m going to a themed event where the color is blue I would
+want to be able to pick that to narrow the options.”
+
+Q22–Q24: Home screen, organization, and long-term use
+
+Question: What should appear when opening the app?
+
+Lily’s answer: “Maybe an affirmation or something first lol and then yes
+style me and then the questions I mentioned above. Yes the app should
+have tabs where I can click on previous outfits and mostly used items.
+And also I want to create my own tabs for example: work tab and gym tab
+and going out tab etc so I can select where to save them and go back to
+to narrow it down.”
+
+Question: Should the app remember exactly when an outfit was worn?
+
+Lily’s answer: “I think that’s unnecessary. I would want it to remember
+where I wear something for example if I only wear my blue dress pants to
+work I want to be able to be able to click on the tab I mentioned in
+question 1. For example if I don’t feel like experimenting and I want to
+use a past used outfit I want to click on the tab and use those
+options.”
+
+Question: What could make you stop using the app?
+
+Lily’s answer: “So right now I’m in the process of refurbishing my
+closet to a different style. A more concrete style and something more
+adult. I think once I have my closet set I would not use the app as
+often since I would have a better idea of what works and what doesn’t
+but I don’t think i would ever delete this app.”
+
+Interpretation: The product should not define success only as permanent
+high-frequency use. It can help Lily learn and establish a wardrobe,
+then remain valuable for occasional styling, special events, shopping,
+and moments when she is stuck.
+
+Q25–Q27: Three lanes, simplicity, and outfit rejection
+
+Question: Do Safe/Simple, Stylish/Elevated, Creative/Risky feel right?
+
+Lily’s answer: “I think it should be safe/simple, stylish elevated with
+current items and stylish elevated with something I don’t have so I have
+the option to buy in case I have time. Not risky option. Risky isn’t
+even my personality lol”
+
+Question: Anything unnecessary or too complicated?
+
+Lily’s answer: “I can’t think of anything but yes the more
+straightforward the better.”
+
+Question: What should happen when she dislikes a suggestion?
+
+Lily’s answer: “Well yes in every option I want the option to click on
+the item and change its color for example if it tells me blue dress
+pants and white top but I don’t have a white top or not feeling it I
+want to be able to click and change color. So I don’t think I would ever
+say absolutely not if I can change the options.”
+
+Q28–Q30: Priorities, missing ideas, and wardrobe goal
+
+Question: What are the three things the app absolutely has to do well?
+
+Lily’s answer: “1) it has to let me tell it what I want/need for example
+bloated or not or rainy or not etc. it has to be intentional with the
+styling. Not always give me the same 2-3 colors in different formats.
+And it has to let me be able to change an item.”
+
+Question: Anything expected that had not been discussed?
+
+Lily’s answer: “Maybe for example if it tells me an item I don’t have
+and should get I want to be able for it to show me ideas on how I can
+wear it so I can be more convinced to buy it. Oh also idk if this was
+clear or not but I want the options to be in pictures not descriptions.
+I’m more visual.”
+
+Question: One thing the developer should not lose sight of?
+
+Lily’s answer: “That I want to upgrade my wardrobe to match my age and
+where I am in life and also so he likes what I wear ☺️ yes cheesy I know
+lol”
+
+Later clarification: Lily does not simply want the app to enforce an age
+rule. She wants intentional pieces and a more centered/cohesive style
+because her current style feels “all over the place.” She is 32 and
+looks younger, and wants the ability to look somewhat more her age when
+appropriate, such as work, work events, and date nights.
+
+Interpretation: Her boyfriend liking what she wears is a personal
+positive outcome, not automatically a rule that his preferences should
+control recommendations.
+
+Q31–Q33: Primary visualization, maturity, inseam clarification
+
+Question: Should the primary result be a flat outfit board, model, or
+Lily?
+
+Lily’s answer: “I want the initial pic to be of me.”
+
+Question: What does looking more appropriate for age/life mean?
+
+Lily’s answer: “So I want to have intentional pieces in my wardrobe. I
+feel like my style is all over the place and I want it more centered and
+also I am 32 but I look younger so I want to look a bit more my age when
+I need to be for example work or a work event or date nights.”
+
+Question: Is 25/26 a known inseam?
+
+Lily’s answer: “I am unsure. I don’t even know what inseams are.”
+
+Status: Unconfirmed. Do not infer or preserve 25/26 as Lily-confirmed
+data.
+
+Q34–Q35: Preview tolerance and shopping saves
+
+Question: How accurate does the on-body preview need to be?
+
+Lily’s answer: “Yes that’s ok just want it as close as possible
+especially for items from my closet that I haven’t uploaded yet. Now if
+I say blue and gives me green yeah no.”
+
+Question: Any additional change/request?
+
+Lily’s answer: “When it gives me items to buy I want to be able to
+select buy now or save for later and I want it to actually save it so I
+can decide later.”
+
+4. WHERE PLAN MATCHES MY NEEDS
+
+Closet first, shopping second
+
+PRD: Product Principles; Section 13; FR-12; FR-35. Match: Lily wants
+urgent styling to work from what she owns. Shopping should be available
+when she asks, when inventory cannot solve the need, or when she has
+time to buy/wait for delivery.
+
+Low-effort closet setup
+
+PRD: FR-01, FR-10, FR-19; Section 9. Match: Lily does not want a
+mandatory full closet upload. She wants to add items as she goes, upload
+photos for important/common garments, and use generic entries such as
+“white tank top” without requiring a photo.
+
+Affirmation on open
+
+PRD: FR-02. Match: Lily independently suggested an affirmation when the
+app opens.
+
+Occasion, weather, and starting-point constraints
+
+PRD: FR-03, FR-04, FR-05. Match: Lily wants occasion, weather, starting
+garments, and special constraints to shape recommendations.
+
+Coordinated color discovery
+
+PRD: FR-07. Match: Lily wants less-obvious but coherent color
+combinations and does not want default same-color-family outfits all the
+time.
+
+Visual recommendations
+
+PRD: FR-08 and Generate Look workflow. Partial match: Both prioritize
+visual support. Lily goes further: she wants the initial three
+recommendations visualized on herself.
+
+One-item editing
+
+PRD: FR-09. Strong match: This is one of Lily’s top three priorities.
+One-item changes should preserve the rest of the outfit.
+
+Wardrobe learning
+
+PRD: FR-11. Match: Lily wants the app to learn what she owns and what
+she saves/uses.
+
+Save outfits
+
+PRD: FR-13. Match: Lily wants favorites and saved looks that can be
+revisited.
+
+Fit-aware petite profile
+
+PRD: FR-01; Section 10. Match with correction: Petite fit is important,
+especially pants and jacket length. However, Lily’s 25/26-inch inseam is
+NOT confirmed.
+
+Honest owned/wishlist states
+
+PRD: FR-37. Match: Lily wants Buy Now vs. Save for Later and wants saved
+products to persist for later decisions. The PRD already distinguishes
+wishlisted from owned/purchased states.
+
+Reusable try-on photo with user control
+
+PRD: Generate Look workflow; Section 15. Match: Lily is comfortable
+maintaining a reusable full-body photo, replacing it, and deleting it.
+
+Straightforward experience
+
+PRD: focused styling flow; low setup; chat secondary. Match: Lily
+explicitly said, “the more straightforward the better.”
+
+5. DISAGREEMENTS WITH PLAN
+
+Disagreement 1 — Replace Creative/Risky as a permanent third lane
+
+PRD section/requirement ID: Section 6, FR-06; FR-07.
+
+Current plan: Every successful generation returns exactly three
+directions: Safe/Simple, Stylish/Elevated, and Creative/Risky.
+
+What I need: Three options with different purposes: 1. Safe/Simple using
+what I own. 2. Stylish/Elevated using what I own. 3. Stylish/Elevated
+incorporating a missing purchasable piece when shopping is appropriate.
+
+Concrete example: For blue dress pants: 1. Blue pants + matching blue
+cardigan (safe). 2. Blue pants + light pink blouse from current closet
+(elevated/current). 3. Blue pants + a complementary missing item,
+clearly marked as not owned, with an option to find/buy/save it.
+
+Importance: Essential.
+
+Status: Conflict.
+
+Clarification or proposed change: Replace the fixed Creative/Risky lane
+for Lily’s experience. Unexpected color combinations can still occur in
+the elevated lane; “not risky” does not mean “only neutral.” Shopping
+should remain optional and should not fabricate ownership. If the user
+has requested strict wardrobe-only mode or does not have time/want to
+shop, the third lane should not silently violate that constraint.
+Developer/product decision is still required on how to reconcile this
+with the PRD’s strict inventory rules.
+
+Disagreement 2 — Primary outfit visualization should be Lily wearing it
+
+PRD section/requirement ID: FR-08; FR-20; Generate Look workflow in the
+try-on/image section.
+
+Current plan: Core results are visual outfit cards/boards. Generate Look
+is optional and separate; a body photo is not required for ordinary
+styling.
+
+What I need: When Lily has chosen to provide a reusable body/reference
+photo and enabled this experience, she wants the initial three outfit
+choices shown on her body, not primarily as flat garment boards.
+
+Concrete example: Instead of seeing separate pictures of blue pants, a
+pink blouse, and shoes, Lily wants to compare three images of herself
+wearing the three proposed looks.
+
+Importance: Essential for Lily’s preferred experience; body-photo
+participation itself remains optional/user-controlled.
+
+Status: Conflict / scope difference.
+
+Clarification or proposed change: Explore an opt-in “visual-first/on-me”
+mode for Lily. Do not remove the privacy-preserving non-photo core for
+users who do not want body-image processing. Technical cost, latency,
+supported garment types, accuracy, provider terms, and consent gates
+remain feasibility/security decisions. The app must not claim the
+preview proves fit.
+
+Disagreement 3 — Exact 25/26-inch inseam is not confirmed
+
+PRD section/requirement ID: FR-01; Section 3.1; Section 26 Lily fit
+details.
+
+Current plan: The PRD records Lily’s “initial inseam preference” as 25
+or 26 inches.
+
+What I need: Treat inseam as unknown unless Lily later measures it or
+identifies a known well-fitting garment with a confirmed inseam.
+
+Concrete example: Lily said she has never measured her inseam and does
+not know what an inseam is. What she can confirm is that pants are
+commonly too long.
+
+Importance: Essential data-quality correction.
+
+Status: Conflict.
+
+Clarification or proposed change: Remove 25/26 from Lily-confirmed data
+or explicitly mark it unverified provenance requiring confirmation. Do
+not use it as a sizing rule.
+
+Disagreement 4 — Automatic wear-history repetition control is not a user priority
+
+PRD section/requirement ID: FR-39.
+
+Current plan: Use recent local outfit history to reduce repeats.
+
+What I need: Lily does not need detailed tracking of exactly when she
+wore an outfit. She prefers organizing saved outfits by where/why she
+wears them and intentionally choosing past looks.
+
+Concrete example: A Work collection containing outfits with her blue
+dress pants is more useful to her than “you wore this Tuesday, so I
+won’t show it again.”
+
+Importance: Preference.
+
+Status: Conflict / simplification opportunity.
+
+Clarification or proposed change: Keep repeat-reduction subtle or
+optional for Lily. Prioritize user-created collections and context
+retrieval over detailed wear chronology in her UI.
+
+6. MISSING NEEDS OR FEATURES
+
+Missing/unclear 1 — Daily comfort/body-feel input
+
+PRD section/requirement ID: FR-05 supports “special constraints”; FR-01
+stores fit preferences.
+
+Current plan: Free-text constraints can technically carry this
+information, but a clear daily comfort input was not identified in the
+reviewed styling flow.
+
+What I need: A quick way to say whether Lily feels bloated/not bloated
+or otherwise wants a less-fitted/more-fitted outfit today.
+
+Concrete example: “I’m bloated today” should steer the current request
+toward silhouettes she feels comfortable wearing without permanently
+changing her body/fit profile.
+
+Importance: Essential.
+
+Status: Unclear / potentially missing as a first-class control.
+
+Clarification or proposed change: Treat this as per-request comfort
+context, not a permanent body judgment or inferred health state. A
+simple optional chip/control or free-text constraint could satisfy the
+need.
+
+Missing/unclear 2 — User-created outfit collections/tabs
+
+PRD section/requirement ID: FR-13 supports saved outfits and optional
+date/occasion tags; FR-39 supports search.
+
+Current plan: Saved looks can be tagged, but Lily specifically wants
+persistent user-created tabs/collections.
+
+What I need: Create and name collections such as Work, Gym, Going Out,
+etc., then choose where a saved outfit belongs and browse those
+collections later.
+
+Concrete example: When Lily does not want to experiment before work, she
+opens Work and chooses from previously successful looks.
+
+Importance: Preference (high-value).
+
+Status: Unclear / missing as explicit UX.
+
+Clarification or proposed change: Consider user-created collections or a
+collection-like saved-outfit filter. Avoid forcing detailed wear
+tracking to achieve this.
+
+Missing/unclear 3 — Visual versatility proof before buying
+
+PRD section/requirement ID: FR-12; Section 13.
+
+Current plan: Find matching real products with
+fit/size/length/price/stock/delivery evidence.
+
+What I need: Show how many useful combinations a proposed purchase can
+make, especially with Lily’s existing closet, and show visual examples
+before she buys.
+
+Concrete example: “This beige cardigan works with these six looks you
+can make from your closet,” accompanied by outfit previews.
+
+Importance: Preference (important for purchase decisions).
+
+Status: Missing / unclear.
+
+Clarification or proposed change: Add a “How I’d wear it” / “Works with
+my closet” action. Any numeric versatility score should be explainable
+and based on known wardrobe inventory rather than pretending the app
+knows items that have not been entered.
+
+Missing/unclear 4 — Affordable vs. higher-end shopping comparison
+
+PRD section/requirement ID: FR-12; Section 13.
+
+Current plan: Product search respects fit preferences,
+price/stock/delivery, and budget.
+
+What I need: When shopping, Lily would like two meaningful price/quality
+directions: an affordable option and a higher-end option.
+
+Concrete example: For a petite beige cardigan, show an affordable
+version and a higher-quality/investment version so Lily can decide
+whether durability/versatility justify the price.
+
+Importance: Preference.
+
+Status: Unclear.
+
+Clarification or proposed change: Offer comparison tiers when credible
+products exist. Do not equate price automatically with quality; use
+available evidence and label uncertainty.
+
+Missing/unclear 5 — Buy Now vs. persistent Save for Later
+
+PRD section/requirement ID: FR-17; FR-37; Section 13.
+
+Current plan: The data model distinguishes wishlisted and
+owned/purchased states and preserves product context.
+
+What I need: A very explicit product action: Buy Now or Save for Later,
+with saved products reliably available later.
+
+Concrete example: Lily likes a cardigan but does not want to decide
+today. She taps Save for Later and can return to it later without
+searching again.
+
+Importance: Preference (high-value).
+
+Status: Unclear as explicit UX; underlying state largely exists.
+
+Clarification or proposed change: Expose the existing wishlist concept
+as a straightforward Save for Later action in the shopping UI.
+
+Missing/unclear 6 — Learn closet/style from Lily-created outfit photos
+
+PRD section/requirement ID: FR-11; FR-19; FR-20; Section 9/9.1.
+
+Current plan: The app learns known items and supports garment
+photos/outfit boards.
+
+What I need: Lily wants to upload a photo of an outfit she assembled
+herself so the app can learn from it and help record the clothes she
+owns.
+
+Concrete example: Lily creates a work outfit without AI, photographs
+herself wearing it, saves it as a favorite, and uses it as
+wardrobe/style information.
+
+Importance: Nice to have / Preference.
+
+Status: Unclear.
+
+Clarification or proposed change: Explore assisted garment recognition
+from an outfit photo, but require Lily to review/correct inferred items.
+Do not infer exact size, brand, fabric, or fit when unknown.
+
+Missing/unclear 7 — Primary visual consistency for generic closet items
+
+PRD section/requirement ID: FR-08; FR-19; FR-37; Generate Look workflow.
+
+Current plan: Generic imagery/placeholders are allowed and must be
+labeled; actual-item try-on requires usable garment imagery for faithful
+rendering.
+
+What I need: Even when Lily has entered only “blue dress pants” rather
+than uploading a photo, she wants the on-body visualization to be as
+close as reasonably possible and at minimum preserve known facts such as
+color.
+
+Concrete example: If the item is recorded as blue, the preview cannot
+silently make it green.
+
+Importance: Essential for trust in the visual experience.
+
+Status: Unclear / needs explicit visual-fidelity requirement.
+
+Clarification or proposed change: Define minimum fidelity for known
+user-supplied attributes (color/category and other confirmed attributes)
+while clearly labeling unknown/representative details. This remains a
+preview, not proof of exact garment appearance or fit.
+
+7. FEATURES I WOULD SIMPLIFY OR REMOVE
+
+Remove/simplify “Creative/Risky” as a fixed Lily lane
+
+For Lily, this label does not match her personality or desired workflow.
+She wants intentional experimentation, not a “risky” identity.
+Unexpected colors should live inside Stylish/Elevated.
+
+Do not make detailed wear-date tracking prominent
+
+Lily does not need the app to remember that she wore an outfit on a
+particular Tuesday. She cares more about whether an outfit belongs in
+Work, Gym, Going Out, etc.
+
+Keep feedback lightweight
+
+The PRD includes feedback such as too dressy/not my style/wrong
+weather/don’t suggest again (FR-39). Lily did not reject those controls,
+but her preferred first response to a bad piece is direct editing: tap
+the garment, change the color/item, keep the rest. Do not make a heavy
+rating flow stand between her and editing.
+
+Keep setup incremental
+
+Do not turn closet creation into a large prerequisite. Lily wants to add
+clothes as she goes.
+
+Keep the interface straightforward
+
+Lily could not identify another feature she wanted removed, but
+explicitly said “the more straightforward the better.” Advanced
+implementation, privacy, reliability, backup, and legal features can
+exist without making the everyday styling flow feel complicated.
+
+8. FIT, STYLE AND PRIVACY PREFERENCES
+
+Confirmed measurements / fit facts
+
+-   Height: 4’11”.
+-   Inseam: UNKNOWN. 25/26 inches is NOT confirmed.
+-   Main pants problem: length; pants are frequently too long.
+-   Pants can also fit inconsistently across waist, butt, and thighs.
+-   Jacket problem: some jackets are too long and look oversized on her
+    petite frame.
+-   Preferred pants rise: around the belly button; slightly above or
+    below is okay; not distinctly low-rise and not extremely high-rise.
+-   No additional exact body measurements were supplied in this
+    interview.
+
+Firm experience requirements
+
+-   Outfit recommendations must use the current request’s context.
+-   Visual styling must be intentional and not repeatedly recycle the
+    same few safe colors.
+-   Individual pieces must be editable/swappable without destroying the
+    rest of the outfit.
+-   Visual recommendations are strongly preferred over descriptions.
+-   Lily wants the initial outfit options visualized on herself when she
+    has opted into the body-photo experience.
+-   Known attributes in previews must not be contradicted (e.g., a blue
+    item should not render as green).
+-   Petite sizing is a major requirement for shopping recommendations.
+
+Flexible preferences
+
+-   Style: girl-next-door, old-money-inspired, chic, elegant, classy.
+-   Feminine or sporty can both work depending on occasion.
+-   Less trend-driven overall.
+-   Fit can be fitted or loose depending on daily comfort/body feel.
+-   Accessories and hair are welcome parts of a look.
+-   Lily is willing to invest more in an item if its
+    quality/usefulness/versatility justify the price.
+-   She wants both affordable and higher-end shopping choices when
+    possible.
+
+Color preferences
+
+-   Lily often defaults to denim, black, and same-family colors because
+    they feel safe/easy.
+-   The app should NOT interpret that habit as a request to only
+    recommend those colors.
+-   Desired discoveries include combinations such as blue + light pink
+    and olive + brick.
+-   Very oppositional/loud combinations such as strong red + green are
+    less appealing.
+-   A themed event may impose a temporary required color.
+
+Wardrobe direction
+
+Lily wants to move from a style that feels “all over the place” toward a
+more centered, intentional wardrobe. She wants the option to look more
+polished/mature when appropriate for her current life, including work,
+work events, and date nights. This is Lily’s own goal, not a universal
+rule about what someone age 32 should wear.
+
+Privacy / AI comfort
+
+Lily is comfortable voluntarily sharing styling-relevant information
+with AI to improve recommendations. She is comfortable providing a
+full-body reference photo wearing fitted basics such as leggings and a
+tank top so proportions are visible. Desired photo behavior: -
+Save/reuse while she uses the app. - Allow replacement with a newer
+photo. - Allow deletion. - Use it to improve visualization, not to claim
+exact body measurements or guaranteed fit.
+
+Security/legal separation: These preferences do not waive the PRD’s
+requirements for informed consent, processor disclosure, deletion, data
+minimization, image-purpose permissions, or other legal/security
+safeguards.
+
+9. THREE REALISTIC TASKS THAT WOULD PROVE APP USEFUL
+
+Task 1 — Last-minute work interview
+
+Situation: Lily has little time and owns blue dress pants. She needs an
+interview-appropriate outfit and cannot shop first.
+
+Input: - Occasion: work interview. - Starting piece: blue dress pants. -
+Weather: current conditions. - Comfort: current fit preference. -
+Shopping: no / current closet only.
+
+Success: - App returns three useful visual options based only on
+eligible owned clothes. - Options are shown on Lily in her preferred
+visual mode. - At least one is safe and at least one is more
+interesting/elevated. - The app does not simply repeat navy/blue
+variations. - Lily can tap the cardigan/top and change the color while
+preserving the rest of the look. - No nonexistent garment is presented
+as owned.
+
+Task 2 — Event with a color requirement and body-comfort constraint
+
+Situation: Lily is going to an event where blue is the theme, it is
+rainy, and she feels bloated.
+
+Input: - Occasion: event. - Required/preferred color: blue. - Weather:
+rainy. - Daily comfort: bloated / prefer less fitted. - Closet: use
+known inventory.
+
+Success: - All three looks honor the event/color/weather/comfort
+constraints. - The outfits remain visually intentional rather than
+merely making everything blue. - Lily can see the options on herself. -
+She can edit one garment/color without resetting the outfit. - The app
+clearly distinguishes permanent preferences from today-only context.
+
+Task 3 — Decide whether a new petite piece is worth buying
+
+Situation: Lily has time to shop and the elevated shopping option
+suggests a beige cardigan (or another missing item).
+
+Input: - Shopping allowed/requested. - Petite fit required. - Current
+closet known enough to assess combinations.
+
+Success: - Missing item is clearly labeled as not owned. - App shows how
+the item could work with multiple known closet pieces. - Lily can see
+several visual outfit ideas using it. - She can compare an affordable
+option with a higher-end option when credible choices exist. -
+Fit/size/length evidence and uncertainty are shown honestly. - She can
+change the proposed item/color before searching. - She can choose Buy
+Now or Save for Later. - Save for Later persists and does not mark the
+item owned. - A purchase is not marked owned until Lily explicitly
+confirms it.
+
+10. REMAINING QUESTIONS
+
+These were not necessary to answer before producing this feedback, but
+they remain open product decisions or future interview questions.
+
+1.  What exact UI should capture “bloated/not bloated” or daily fit
+    comfort: a simple fitted/relaxed control, free text, or another
+    neutral wording?
+2.  Should the third “shopping” lane always appear when shopping is
+    enabled, or only when the app can identify a genuinely useful
+    missing piece?
+3.  When Lily selects “no shopping / use my closet,” should all three
+    lanes become current-closet options? (Likely interpretation, not
+    explicitly confirmed.)
+4.  What should happen to the third lane when Lily’s closet cannot
+    support three distinct current-closet looks?
+5.  Should user-created collections allow one outfit to belong to
+    multiple collections (e.g., Work + Date Night)?
+6.  Should “mostly used items” be manually favorited, automatically
+    inferred from saved/selected looks, or both?
+7.  How should the app represent garments entered without photos in an
+    on-body preview while remaining honest that exact details are
+    unknown?
+8.  What level of AI try-on latency/cost would Lily tolerate if on-body
+    images are the primary result?
+9.  Which garment categories can the selected image pipeline render
+    reliably enough for Lily’s visual-first workflow? This requires
+    technical validation.
+10. Does Lily want hairstyle/accessory suggestions generated as part of
+    each look or simply included when useful? She said hair and
+    accessories matter but did not define the desired app behavior.
+11. Does Lily want the app to learn her boyfriend’s preferences? She
+    said she likes the idea of him liking what she wears, but she did
+    NOT request that his preferences control recommendations.
+12. The PRD’s 25/26-inch inseam needs provenance correction. If Lily
+    later wants fit precision, she can optionally supply a known
+    well-fitting garment measurement; it should not be required now.
+
+------------------------------------------------------------------------
+
+OVERALL INTERVIEW CONCLUSION
+
+The PRD’s fundamental direction—petite-first, closet-first, low setup,
+visual styling, three choices, modular swaps, optional shopping, and
+user-controlled data—matches Lily well.
+
+The biggest product change suggested by the interview is not “more
+features”; it is a sharper definition of what the styling experience is
+for Lily:
+
+She wants a visual, on-her-body stylist that understands what she owns
+and what she needs TODAY, deliberately expands her color/styling choices
+without becoming random or “risky,” lets her directly edit individual
+pieces, and helps her build a more intentional wardrobe over time.
+
+Shopping should support that goal rather than dominate it. When shopping
+is useful, the app should prove why a piece earns a place in her
+wardrobe by showing what she can do with it, respecting petite fit,
+offering meaningful price/quality comparisons, and letting her postpone
+the decision without losing the item.
+
+All proposed PRD changes in this document remain feedback for
+product/developer review, not automatic requirements.

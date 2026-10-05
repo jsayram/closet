@@ -1,0 +1,15 @@
+# Project handoff — consolidated
+
+Updated for PRD v2, October 4, 2026. This file is a navigation pointer, not a separate specification. Maintain requirements in the [master Markdown specification](/Users/jramirez/Git/closet/My_Petite_Style_PRD_v2.md). The v0.1 Markdown is a preserved historical snapshot.
+
+Start with the master’s **Document authority and navigation** table. Current status, naming limits, open decisions, v2 changes and implementation sequence are in **Section 26**. Lily-first fit/expansion protection is in **3.3/10.2**; Dirty badges/confirmed laundry and retained No longer own history in **7.3/7.4**; unified offline search in **7.5/11.9**; personal names/additive details/search correction in **7.6**; required multiple Suitcases/remembered source/strict scoped styling in **7.7** with recovery/laundry in **RV-27**; named-item resolution and optional photo understanding in **8.4**; mock development and revalidated private history/reuse in **11.10/11.11**; billing/sponsorship in **14**; opt-in On Me and retained preview history in **9.2**; recovery/review checks in **25**, including six-month reuse/per-miss image admission in **RV-24**, personal vocabulary in **RV-25** and laundry/ownership in **RV-26**.
+
+Section **26.6** records the October 4 Suitcases integration audit: membership-add search, captured versus current source, partial recovery and fallback, scoped AI/image context/idempotency, laundry races and shopping counts. Existing acceptance/release checks were strengthened; all application tests remain Not run.
+
+Section **26.7** records the accepted web-search shopping revision. **8.5** contains the actual provider-neutral measurement-aware stylist policy; **13** separates public search from private tool-free fit ranking and **13.7** adds optional free local arrival/photo/description reminders. Catalog/fit vendors are later optional adapters. Prove actual web sources/costs and Lily usefulness under **RV-28/29**; all application evidence remains Not run.
+
+The original Word draft is historical and preserved unchanged. This workspace contains planning documents, not an implemented or validated app. No application test, deployment, production billing setup or App Store approval is claimed.
+
+Master **13.8/26.8** makes shopping fit-first and allows editable priorities for Amazon, TikTok Shop, Target, Walmart, H&M and other permitted sources. Product-specific supported fit outranks retailer/style/price; critical unknowns are separate and known conflicts excluded. **FR-72/AC-102/RV-28/29** require real evidence; no retailer integration or guaranteed fit is claimed.
+
+Master **24.5/26.9** records the October 4 optional ChatGPT-plan connection research. OpenAI commercial/native/backend eligibility and Apple payment/review acceptance remain unconfirmed; the preview excludes image generation and ordinary API cap fields. Optional Settings placement is documented, but actual iPhone/iPad authentication, controls, privacy and billing need proof. This is exploration only; it adds no accepted feature, required app login or pricing change and does not replace the current funded service.
