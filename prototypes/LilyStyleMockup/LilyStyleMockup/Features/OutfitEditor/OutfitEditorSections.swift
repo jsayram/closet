@@ -321,16 +321,29 @@ struct OutfitEditorPreviewCard: View {
                     .foregroundStyle(Palette.success)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
-                Label("A picture finished for an earlier version of this board. It's in your preview history.", systemImage: "clock")
-                    .font(.footnote)
-                    .foregroundStyle(Palette.secondaryText)
-                    .fixedSize(horizontal: false, vertical: true)
+                Label {
+                    CollapsibleText("A picture finished for an earlier version of this board. It's in your preview history.",
+                                    summary: "Finished for an earlier version",
+                                    threshold: 1,
+                                    topic: "this picture")
+                } icon: {
+                    Image(systemName: "clock")
+                }
+                .font(.footnote)
+                .foregroundStyle(Palette.secondaryText)
             }
         case .reused? where !editor.previewIsEarlier:
-            Label("Reused a matching picture from your history — no new image work", systemImage: "arrow.uturn.backward.circle")
-                .font(.footnote)
-                .foregroundStyle(Palette.success)
-                .fixedSize(horizontal: false, vertical: true)
+            Label {
+                CollapsibleText("Reused a matching picture from your history — no new image work",
+                                summary: "Reused a match — no new image work",
+                                threshold: 1,
+                                color: Palette.success,
+                                topic: "this reused picture")
+            } icon: {
+                Image(systemName: "arrow.uturn.backward.circle")
+            }
+            .font(.footnote)
+            .foregroundStyle(Palette.success)
         case .reused?:
             EmptyView()
         case .cancelRequested?, .cancelled?:
@@ -416,7 +429,9 @@ struct OutfitEditorBoardCard: View {
                     pieces: editor.outfit.pieces,
                     selectedSlot: editor.selectedSlot,
                     statusFor: { app.outfitEditorBoardBadges(for: $0, editor: editor) },
-                    onTap: { onSelect($0.slot) }
+                    onTap: { onSelect($0.slot) },
+                    scrolls: true,
+                    isExpanded: Binding(get: { app.editorUI.pieceChipsOpen }, set: { app.editorUI.pieceChipsOpen = $0 })
                 )
             }
             if !emptySlots.isEmpty {

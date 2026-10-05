@@ -24,6 +24,7 @@ final class OutfitEditorUIState {
     var overridesOpen = false
     var addSlotsOpen = false
     var colorFiltersOpen = false
+    var pieceChipsOpen = false
 
     init() {}
 
@@ -288,7 +289,7 @@ struct OutfitEditorWorkspace: View {
                     onClose: requestClose
                 )
                 OutfitEditorFootnote(
-                    summary: "Nothing is sent while you edit.",
+                    summary: "Nothing is sent until you tap Update Preview.",
                     text: "Opening this look, tapping pieces, scrolling and color filters don't contact any service. Only Update Preview makes a (simulated) picture, and only when you tap it. This prototype keeps drafts while the app is open; it doesn't restore them after relaunch."
                 )
             }

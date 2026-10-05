@@ -43,8 +43,15 @@ struct StyleMeResultsContent: View {
             EmptyStateView(title: app.styleMeUI.wasCancelled ? "Styling cancelled" : "Your looks will appear here",
                            message: app.styleMeUI.wasCancelled
                                ? "Your request is kept as you left it. Tap Style Me when you're ready."
-                               : "Pick an occasion and tap Style Me. When your clothes allow it you'll see a Safe / Simple look and two Elevated looks, side by side when there's room.",
-                           systemImage: app.styleMeUI.wasCancelled ? "xmark.circle" : "sparkles")
+                               : "Pick an occasion and tap Style Me.",
+                           systemImage: app.styleMeUI.wasCancelled ? "xmark.circle" : "sparkles",
+                           detailsTitle: "What you'll see",
+                           detailsExpanded: app.styleMeUI.disclosure("emptyResultsDetails")) {
+                Text("When your clothes allow it you'll see a Safe / Simple look and two Elevated looks, side by side when there's room.")
+                    .font(.footnote)
+                    .foregroundStyle(Palette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         } else {
             EmptyStateView(title: app.styleMeUI.wasCancelled ? "Styling cancelled" : "No looks yet",
                            message: app.styleMeUI.wasCancelled
@@ -80,7 +87,7 @@ struct StyleMeRequestSummary: View {
             }
             // One row that scrolls sideways; the button at the end opens the full set.
             ChipCarousel(spacing: 6,
-                         isExpanded: app.styleMeUI.disclosure("requestChips"),
+                         isExpanded: app.styleMeUI.disclosure("requestChips-\(request.id)"),
                          itemsLabel: "request details",
                          toggleSize: 28,
                          toggleIdentifier: "requestSummaryToggle") {
@@ -209,7 +216,9 @@ struct StyleMeHistoryOfferView: View {
                 .frame(maxWidth: 380)
                 .frame(maxWidth: .infinity)
             OutfitPieceChips(pieces: outfit.pieces,
-                             statusFor: { StyleMeLayout.badges(for: $0, request: offer.request, store: app.store) })
+                             statusFor: { StyleMeLayout.badges(for: $0, request: offer.request, store: app.store) },
+                             scrolls: true,
+                             isExpanded: ui.disclosure("pieces-\(offer.entry.id)"))
             StyleMeLookNotes(rationale: outfit.rationale,
                              notes: outfit.colorNote.isEmpty ? [] : [.init(text: outfit.colorNote, icon: "paintpalette")],
                              key: "history-\(offer.entry.id)")
@@ -294,6 +303,7 @@ struct StyleMeOutcomeView: View {
                 StyleMeResultsGrid(outfits: outfits, outcome: outcome, width: width)
             case let .insufficientWardrobe(evidence):
                 header(title: "No complete look in \(outcome.request.scopeName) today",
+                       systemImage: "exclamationmark.circle",
                        detail: "Nothing was invented to fill the gap. Here's what was checked and what you can do.",
                        summary: "Nothing was invented to fill the gap.")
                 StyleMeEvidenceList(title: "What was checked", summary: outcome.request.scopeName,
@@ -334,6 +344,7 @@ struct StyleMeOutcomeView: View {
                          isMessageExpanded: app.styleMeUI.disclosure("staleReason-\(outcome.id)")) {
                 restyleButton(disabled: blocked)
             }
+            stylingCostLine
         } else if case .generationNotCompleted = outcome.result {
             EmptyView()
         } else if outcome.request.weather.summary != app.effectiveWeather.summary {
@@ -343,6 +354,7 @@ struct StyleMeOutcomeView: View {
                          isMessageExpanded: app.styleMeUI.disclosure("weatherChanged-\(outcome.id)")) {
                 restyleButton(disabled: blocked)
             }
+            stylingCostLine
         }
     }
 
@@ -361,26 +373,49 @@ struct StyleMeOutcomeView: View {
     }
 
     /// Headline plus one line; a longer detail folds to its summary with More.
-    private func header(title: String, detail: String, summary: String? = nil) -> some View {
+    private func header(title: String, systemImage: String? = nil, detail: String, summary: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: Spacing.xxs) {
-            Text(title)
-                .font(.editorial(.title2))
-                .foregroundStyle(Palette.primaryText)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
+            headline(title, systemImage: systemImage)
             CollapsibleText(detail, summary: summary, threshold: 1, font: .subheadline, topic: title,
                             isExpanded: app.styleMeUI.disclosure("outcomeDetail-\(outcome.id)"))
         }
         .frame(maxWidth: 720, alignment: .leading)
     }
 
-    private var historyHeader: some View {
-        VStack(alignment: .leading, spacing: Spacing.xxs) {
-            StatusBadge(kind: .fromHistory)
-            Text("From your history")
+    /// Results headline. Limited results carry an icon beside the words, so the state
+    /// isn't told by wording alone and the badge text isn't printed twice.
+    private func headline(_ title: String, systemImage: String? = nil) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: Spacing.xs) {
+            if let systemImage {
+                Image(systemName: systemImage)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(Palette.primaryAction)
+                    .accessibilityHidden(true)
+            }
+            Text(title)
                 .font(.editorial(.title2))
                 .foregroundStyle(Palette.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
+        }
+    }
+
+    /// What a fresh styling run uses, shown under Restyle and Retry before she taps.
+    /// Sponsored access has no daily count, so it shows nothing.
+    @ViewBuilder
+    private var stylingCostLine: some View {
+        let access = app.store.access
+        if access.plan != .sponsored, access.plan.hasStylingAccess {
+            Text("Uses 1 of \(access.stylingRemaining) left today")
+                .font(.caption)
+                .foregroundStyle(Palette.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var historyHeader: some View {
+        VStack(alignment: .leading, spacing: Spacing.xxs) {
+            headline("From your history", systemImage: BadgeKind.fromHistory.systemImage)
             StyleMeWhyLine(short: "Rechecked against today's closet.",
                            full: "Earlier look — revalidated against today's closet"
                                + (outcome.historyCapturedAt.map { ". Made \($0.formatted(.relative(presentation: .named)))." } ?? ".")
@@ -396,11 +431,7 @@ struct StyleMeOutcomeView: View {
     private func partialHeader(count: Int) -> some View {
         let ideas = outcome.result.outfits.filter { $0.lane == .hypothetical }.count
         return VStack(alignment: .leading, spacing: Spacing.xxs) {
-            StatusBadge(kind: .partial)
-            Text("Partial result · \(StyleMeFormat.lookCount(count))")
-                .font(.editorial(.title2))
-                .foregroundStyle(Palette.primaryText)
-                .accessibilityAddTraits(.isHeader)
+            headline("Partial result · \(StyleMeFormat.lookCount(count))", systemImage: BadgeKind.partial.systemImage)
             CollapsibleText("Only \(count == 1 ? "one complete look meets" : "\(count) complete looks meet") today's requirements in \(outcome.request.scopeName)."
                             + (ideas == 0 ? " No cards were invented to fill the gap."
                                           : " \(ideas == 1 ? "One is a labelled idea" : "\(ideas) are labelled ideas") with pieces you don't own; ideas that didn't keep your request were left out."),
@@ -437,6 +468,7 @@ struct StyleMeOutcomeView: View {
                 .accessibilityLabel("Build a look yourself")
                 .accessibilityIdentifier("buildYourselfButton")
             }
+            stylingCostLine
             CollapsibleText("This says nothing about what's in your closet. Your request is kept exactly as you left it.",
                             summary: "Your request is kept as you left it.",
                             threshold: 1,
@@ -541,7 +573,7 @@ struct StyleMeNextSteps: View {
                     StyleMeWhyLine(short: "Only \(request.scopeName) was checked.",
                                    full: "Missing pieces are missing in \(request.scopeName), not necessarily from your closet. Switching only changes the source; styling waits until you tap Style Me again.",
                                    topic: "what was checked, and switching to Main Closet",
-                                   isExpanded: app.styleMeUI.disclosure("sourceCaveat"))
+                                   isExpanded: app.styleMeUI.disclosure("sourceCaveat-\(request.id)"))
                 } else {
                     Label("Source is now \(app.workingScopeName). Tap Style Me (or Restyle) when you're ready.", systemImage: "info.circle")
                         .font(.caption)
@@ -621,10 +653,37 @@ struct StyleMeLookNotes: View {
     var notes: [Note]
     /// Key suffix in `StyleMeUIState.openDisclosures`.
     var key: String
+    /// On a wide card there is room to show the reason and notes in full, with nothing to open.
+    var roomy = false
 
     var body: some View {
+        if roomy { open } else { folded }
+    }
+
+    private var open: some View {
+        VStack(alignment: .leading, spacing: Spacing.s) {
+            if !rationale.isEmpty {
+                Text(rationale)
+                    .font(.subheadline)
+                    .foregroundStyle(Palette.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            ForEach(notes) { note in
+                Label {
+                    Text(note.text).fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: note.icon).foregroundStyle(Palette.primaryAction)
+                }
+                .font(.footnote)
+                .foregroundStyle(Palette.secondaryText)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var folded: some View {
         let ui = app.styleMeUI
-        VStack(alignment: .leading, spacing: Spacing.xxs) {
+        return VStack(alignment: .leading, spacing: Spacing.xxs) {
             if !rationale.isEmpty {
                 CollapsibleText(rationale, threshold: 1, font: .subheadline, color: Palette.primaryText,
                                 topic: "why this look works", isExpanded: ui.disclosure("rationale-\(key)"))
@@ -652,12 +711,6 @@ struct StyleMeLookNotes: View {
 // MARK: - Layout helpers
 
 enum StyleMeLayout {
-    /// Board columns from the space a board actually gets.
-    static func boardColumns(for width: CGFloat, accessibility: Bool) -> Int {
-        let minTile: CGFloat = accessibility ? 150 : 96
-        return max(1, min(3, Int((width + Spacing.xs) / (minTile + Spacing.xs))))
-    }
-
     /// Current-status and depiction badges for a delivered piece (resolved from canonical records).
     static func badges(for piece: OutfitPiece, request: StyleRequest, store: DemoStore) -> [BadgeKind] {
         guard let id = piece.garmentID else { return [] }

@@ -17,13 +17,17 @@ struct RootView: View {
                 SplitRootView()
             }
         }
+        .padComfortableText()
         .themedScreenBackground()
         .modifier(EditorReplaceAlert(active: app.sheet == nil))
+        .modifier(PurchaseSheetPresenter(active: app.sheet == nil))
         .sheet(item: $app.sheet, onDismiss: { app.rootSheetDidDismiss(compact: sizeClass == .compact) }) { sheet in
             SheetHost(sheet: sheet)
+                .pageSheetOnPad()
                 .environment(app)
                 .tint(Palette.primaryAction)
                 .modifier(EditorReplaceAlert(active: true))
+                .modifier(PurchaseSheetPresenter(active: true))
                 .overlay(alignment: .bottom) { ToastOverlay() }
                 .overlay(alignment: .bottomLeading) {
                     // Keep the development counter visible (and testable) above root sheets too.
@@ -114,6 +118,20 @@ struct CompactRootView: View {
                             ToolbarItem(placement: .topBarTrailing) { AccountMenuButton() }
                         }
                         .navigationDestination(for: AppRoute.self) { AppRouteDestination(route: $0) }
+                }
+                // Content fades into the background behind the floating tab bar, so its
+                // labels aren't read against garment pictures scrolling underneath.
+                .overlay {
+                    VStack(spacing: 0) {
+                        Spacer(minLength: 0)
+                        LinearGradient(stops: [.init(color: Palette.background.opacity(0), location: 0),
+                                               .init(color: Palette.background, location: 0.3)],
+                                       startPoint: .top, endPoint: .bottom)
+                            .frame(height: 92)
+                    }
+                    .ignoresSafeArea(edges: .bottom)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
                 }
                 .tabItem { Label(section.title, systemImage: section.systemImage) }
                 .tag(section)

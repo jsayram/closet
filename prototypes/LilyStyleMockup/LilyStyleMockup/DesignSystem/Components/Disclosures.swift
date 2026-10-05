@@ -114,15 +114,22 @@ struct DetailsDisclosure<Content: View>: View {
                         Image(systemName: systemImage)
                             .foregroundStyle(Palette.primaryAction)
                     }
-                    Text(title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Palette.primaryText)
-                        .multilineTextAlignment(.leading)
                     if let detail {
-                        Text("· \(detail)")
-                            .font(.subheadline)
-                            .foregroundStyle(Palette.secondaryText)
-                            .lineLimit(1)
+                        // The summary drops under the title when the two don't fit on
+                        // one line, so neither gets cut.
+                        ViewThatFits(in: .horizontal) {
+                            HStack(spacing: Spacing.xs) {
+                                titleText.lineLimit(1)
+                                detailText("· \(detail)").lineLimit(1)
+                            }
+                            VStack(alignment: .leading, spacing: 2) {
+                                titleText
+                                detailText(detail).lineLimit(2)
+                            }
+                        }
+                        .layoutPriority(1)
+                    } else {
+                        titleText
                     }
                     Spacer(minLength: Spacing.xs)
                     Image(systemName: expanded ? "chevron.up" : "chevron.down")
@@ -145,6 +152,20 @@ struct DetailsDisclosure<Content: View>: View {
                     .transition(Motion.cardTransition(reduceMotion: reduceMotion))
             }
         }
+    }
+
+    private var titleText: some View {
+        Text(title)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(Palette.primaryText)
+            .multilineTextAlignment(.leading)
+    }
+
+    private func detailText(_ text: String) -> some View {
+        Text(text)
+            .font(.subheadline)
+            .foregroundStyle(Palette.secondaryText)
+            .multilineTextAlignment(.leading)
     }
 
     private func toggle() {
@@ -259,7 +280,9 @@ private struct InfoPanel<Content: View>: View {
 /// Text that shows in full when it is short, and as one short line with a "More"
 /// control when it runs past `threshold` lines. The control opens the full wording in
 /// place. Without a `summary` the collapsed line is the start of the text, and
-/// VoiceOver still reads the whole text from it.
+/// VoiceOver still reads the whole text from it. A written `summary` is never cut
+/// short: it wraps to a second line, with the control under it, when it doesn't fit
+/// beside the control.
 struct CollapsibleText: View {
     private let text: String
     private let summary: String?
@@ -274,6 +297,7 @@ struct CollapsibleText: View {
     @State private var fullHeight: CGFloat = 0
     @State private var thresholdHeight: CGFloat = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     /// - Parameters:
     ///   - summary: optional shorter line to show while closed, in place of the first line.
@@ -324,11 +348,14 @@ struct CollapsibleText: View {
                     shortText
                     toggle
                 }
+            } else if summary == nil {
+                shortRow
+            } else if dynamicTypeSize.isAccessibilitySize {
+                shortStack
             } else {
-                HStack(alignment: .firstTextBaseline, spacing: Spacing.xs) {
-                    shortText
-                    Spacer(minLength: 0)
-                    toggle
+                ViewThatFits(in: .horizontal) {
+                    shortRow
+                    shortStack
                 }
             }
         }
@@ -344,6 +371,25 @@ struct CollapsibleText: View {
     private var shortText: some View {
         styled(Text(summary ?? text))
             .lineLimit(collapsedLines)
+    }
+
+    private var shortRow: some View {
+        HStack(alignment: .firstTextBaseline, spacing: Spacing.xs) {
+            shortText
+            Spacer(minLength: 0)
+            toggle
+        }
+    }
+
+    /// A written summary that doesn't fit beside the control: it wraps, and the
+    /// control sits under it.
+    private var shortStack: some View {
+        VStack(alignment: .leading, spacing: Spacing.xxs) {
+            styled(Text(summary ?? text))
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : max(collapsedLines, 2))
+                .fixedSize(horizontal: false, vertical: true)
+            toggle
+        }
     }
 
     private func styled(_ text: Text) -> some View {

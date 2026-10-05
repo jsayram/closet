@@ -18,7 +18,7 @@ Checked on Mobbin, 5 October 2026.
    - A **details row** (title, a count or short summary, a chevron) for lists and evidence, such as "What was checked · 4".
    - An **info button** (ⓘ) beside a label for helper text that used to sit under a control.
    - A quiet **"Why?"** or **"Learn more"** link for rationale.
-3. **Chips and badges take one row.** A row of chips or badges scrolls sideways on a single line. When there are more than fit, a control at the end of the row expands it to show them all. At accessibility text sizes the row wraps as before, so nothing has to be scrolled sideways at large type.
+3. **Chips and badges take one row, and none is cut off.** A row shows only the chips that fit whole. When there are more, a "More" pill after the last visible chip opens the full set, and "Less" closes it. Nothing is clipped at the edge of the screen and nothing scrolls sideways. One choice out of many (a type filter, a category, a kind) is a dropdown that always shows the current choice, not a chip row. At accessibility text sizes rows wrap as before.
 4. **Two buttons, then More.** A group of actions shows at most two buttons, side by side, with the most likely action first. Other actions go in a "More" menu. No group of buttons may take more than two rows at the default text size. Destructive actions live in the menu or apart from the rest, and still confirm.
 5. **Short states.** Empty, partial and blocked states show a badge or icon, a headline of about six words, one sentence and one main action. Evidence and the other actions sit behind a details row or the More menu.
 6. **Captions earn their place.** A caption under a control stays only when it reports the current state ("Strict · only the 5 pieces in this suitcase"). Captions that explain how a control works move to an info button.
@@ -29,7 +29,8 @@ Checked on Mobbin, 5 October 2026.
    - Garment status badges such as Dirty and Not arrived.
    - The honest core of a limited result ("Partial result · 1 look").
 8. **Fewer words, same meaning.** Visible text is shortened without changing what it says. The longer version stays, word for word or better, behind the disclosure.
-9. **Disclosures are real controls.** Each one is a button with a 44 pt target that tells VoiceOver whether it's open. Everything behind it is reachable by VoiceOver and keyboard. Opening and closing respects Reduce Motion. State that should survive rotation or the tab/sidebar switch lives in the feature's shared UI state.
+9. **The tab bar stays readable.** On iPhone, content fades into the background behind the floating tab bar, so its labels are never read against pictures scrolling underneath.
+10. **Disclosures are real controls.** Each one is a button with a 44 pt target that tells VoiceOver whether it's open. Everything behind it is reachable by VoiceOver and keyboard. Opening and closing respects Reduce Motion. State that should survive rotation or the tab/sidebar switch lives in the feature's shared UI state.
 
 ## Shared pieces
 
@@ -37,7 +38,8 @@ The rules are built once in the design system and reused:
 
 | Component | What it does |
 | --- | --- |
-| `ChipCarousel` | One scrolling row of chips or badges with an expand control; wraps at accessibility sizes |
+| `ChipCarousel` | One row of whole chips or badges with a "More" pill for the rest; wraps at accessibility sizes |
+| `DropdownChip` | A chip that opens a menu for one choice out of many and shows the current choice |
 | `DetailsDisclosure` | A closed row with a title, a count or summary and a chevron, opening in place |
 | `InfoButton` | A small ⓘ button that shows helper text in a popover or sheet |
 | `ActionGroup` | Up to two visible buttons plus a "More" menu for the rest |

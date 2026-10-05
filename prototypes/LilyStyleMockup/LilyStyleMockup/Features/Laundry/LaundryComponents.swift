@@ -157,8 +157,11 @@ struct LaundryDirtyRow: View {
 /// What laundry does and never does. Shown on the screen and in reviews as a closed
 /// details row; the five rules open in place.
 struct LaundryRulesNote: View {
+    /// Shared open state for the Laundry screen; the review sheet leaves it out and keeps its own.
+    var isExpanded: Binding<Bool>?
+
     var body: some View {
-        DetailsDisclosure("What laundry changes", count: 5, systemImage: "info.circle", identifier: "laundryRulesToggle") {
+        DetailsDisclosure("What laundry changes", count: 5, systemImage: "info.circle", isExpanded: isExpanded, identifier: "laundryRulesToggle") {
             VStack(alignment: .leading, spacing: Spacing.xs) {
                 bullet("Only owned, arrived Dirty items become Available.")
                 bullet("Unavailable, Archived, No longer owned, not-arrived and Trash items are never changed.")
@@ -190,6 +193,8 @@ struct LaundryRulesNote: View {
 
 struct LaundryOutcomeCard: View {
     var outcome: LaundryOutcome
+    /// Shared open state for "What changed".
+    var detailsExpanded: Binding<Bool>?
     var onDismiss: () -> Void
 
     var body: some View {
@@ -209,7 +214,7 @@ struct LaundryOutcomeCard: View {
                 .foregroundStyle(Palette.secondaryText)
             if !outcome.cleanedNames.isEmpty || !outcome.skipped.isEmpty {
                 DetailsDisclosure("What changed", count: outcome.cleanedNames.count + outcome.skipped.count,
-                                  identifier: "laundryOutcomeDetails") {
+                                  isExpanded: detailsExpanded, identifier: "laundryOutcomeDetails") {
                     VStack(alignment: .leading, spacing: Spacing.xs) {
                         if !outcome.cleanedNames.isEmpty {
                             Text("Now Available: \(LaundryText.list(outcome.cleanedNames)).")

@@ -50,6 +50,7 @@ struct StyleMeWhyLine: View {
                 .buttonStyle(.quietLinkInline)
                 .fixedSize()
                 .accessibilityLabel("More about \(topic)")
+                .accessibilityInputLabels([isExpanded ? "Less" : linkTitle, "More about \(topic)"])
                 .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
                 .accessibilityHint(isExpanded ? "Hides the explanation" : "Shows the explanation")
             }

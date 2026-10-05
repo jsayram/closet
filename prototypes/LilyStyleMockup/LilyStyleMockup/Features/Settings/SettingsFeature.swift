@@ -115,7 +115,7 @@ struct SettingsScreen: View {
     var body: some View {
         @Bindable var ui = app.settingsUI
         GeometryReader { geo in
-            let twoColumns = WidthClass(width: geo.size.width) == .wide && !dynamicTypeSize.isAccessibilitySize
+            let twoColumns = geo.size.width >= 720 && !dynamicTypeSize.isAccessibilitySize
             if twoColumns {
                 HStack(alignment: .top, spacing: 0) {
                     SettingsList(horizontalMargin: 0) {

@@ -506,6 +506,12 @@ private struct SettingsDeletionResultView: View {
     var result: SettingsDeletionResult
     var onDone: () -> Void
 
+    /// Lines behind "What else happened": everything after the first line, or every
+    /// line for the developer-only scope, whose first line is the long paragraph.
+    private var details: [String] {
+        result.scope.includesCloset ? Array(result.lines.dropFirst()) : result.lines
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.m) {
             Image(systemName: result.scope.includesCloset ? "checkmark.circle" : "flask")
@@ -519,18 +525,30 @@ private struct SettingsDeletionResultView: View {
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier("deletionResultHeadline")
             VStack(alignment: .leading, spacing: Spacing.xs) {
-                if let first = result.lines.first {
+                // What was only simulated, and that the demo closet came back, stay on
+                // screen in short form. The full sentences are in the details row.
+                if result.scope.includesCloset, let first = result.lines.first {
                     SettingsBullet(first, systemImage: "info.circle")
                 }
-                if result.lines.count > 1 {
+                if result.scope != .closet {
+                    SettingsBullet("Developer-held deletion is simulated. Nothing was sent.", systemImage: "flask")
+                }
+                if result.scope.includesCloset {
+                    SimulationNotice(
+                        text: "Prototype: the fictional demo closet was loaded again so you can keep exploring.",
+                        label: "Prototype",
+                        summary: "The demo closet was loaded again."
+                    )
+                }
+                if !details.isEmpty {
                     DetailsDisclosure(
                         "What else happened",
-                        count: result.lines.count - 1,
+                        count: details.count,
                         isExpanded: app.settingsUI.detailsBinding("deletionResult"),
                         identifier: "deletionResultDetails"
                     ) {
                         VStack(alignment: .leading, spacing: Spacing.xs) {
-                            ForEach(result.lines.dropFirst(), id: \.self) { line in
+                            ForEach(details, id: \.self) { line in
                                 SettingsBullet(line, systemImage: "info.circle")
                             }
                         }

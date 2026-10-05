@@ -63,5 +63,7 @@ final class StylistChatSession {
     /// Answer message ID → the saved copy of its look, so reopening the chat can't save the same look twice.
     var savedLookIDs: [UUID: String] = [:]
     var isResponding = false
+    /// Whether the greeting shows every suggested question or only the first two.
+    var showsMoreSuggestions = false
     @ObservationIgnored var task: Task<Void, Never>?
 }

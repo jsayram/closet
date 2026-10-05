@@ -75,14 +75,15 @@ struct StyleMeResultCard: View {
         VStack(alignment: .leading, spacing: Spacing.s) {
             header
             if horizontal {
-                HStack(alignment: .top, spacing: Spacing.m) {
-                    visuals(width: visualsWidth)
+                // Wide card: the picture on one side; names, the reason and notes open on the other.
+                HStack(alignment: .top, spacing: Spacing.l) {
+                    visuals(width: visualsWidth, showsChips: false)
                         .frame(width: visualsWidth)
-                    details
+                    details(roomy: true)
                 }
             } else {
-                visuals(width: visualsWidth)
-                details
+                visuals(width: visualsWidth, showsChips: true)
+                details(roomy: false)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -117,7 +118,7 @@ struct StyleMeResultCard: View {
 
     // MARK: Visuals
 
-    private func visuals(width: CGFloat) -> some View {
+    private func visuals(width: CGFloat, showsChips: Bool) -> some View {
         VStack(alignment: .leading, spacing: Spacing.s) {
             StyleMeImageStatusView(outfit: outfit, index: index, maxFigureWidth: min(width, 220))
             // Flat-lay hero (pieces placed where they're worn) plus labelled chips that
@@ -128,11 +129,17 @@ struct StyleMeResultCard: View {
                               onTap: { piece in openEditor(slot: piece.slot) })
                 .frame(maxWidth: min(width, 420))
                 .frame(maxWidth: .infinity)
-            OutfitPieceChips(pieces: outfit.pieces,
-                             selectedSlot: editorSelectedSlot,
-                             statusFor: { StyleMeLayout.badges(for: $0, request: outcome.request, store: app.store) },
-                             onTap: { piece in openEditor(slot: piece.slot) })
+            if showsChips { pieceChips(scrolls: true) }
         }
+    }
+
+    private func pieceChips(scrolls: Bool) -> some View {
+        OutfitPieceChips(pieces: outfit.pieces,
+                         selectedSlot: editorSelectedSlot,
+                         statusFor: { StyleMeLayout.badges(for: $0, request: outcome.request, store: app.store) },
+                         onTap: { piece in openEditor(slot: piece.slot) },
+                         scrolls: scrolls,
+                         isExpanded: app.styleMeUI.disclosure("pieces-\(outfit.id)"))
     }
 
     /// The slot being edited for this result, if its editor is open.
@@ -143,9 +150,10 @@ struct StyleMeResultCard: View {
 
     // MARK: Details
 
-    private var details: some View {
-        VStack(alignment: .leading, spacing: Spacing.s) {
-            StyleMeLookNotes(rationale: outfit.rationale, notes: notes, key: outfit.id)
+    private func details(roomy: Bool) -> some View {
+        VStack(alignment: .leading, spacing: roomy ? Spacing.m : Spacing.s) {
+            if roomy { pieceChips(scrolls: false) }
+            StyleMeLookNotes(rationale: outfit.rationale, notes: notes, key: outfit.id, roomy: roomy)
             unownedSection
             actions
         }
@@ -319,7 +327,8 @@ struct StyleMeImageStatusView: View {
             picture(previewID: previewID, reused: true)
         case let .failed(reason)?:
             VStack(alignment: .leading, spacing: Spacing.xs) {
-                statusRow(icon: "xmark.octagon", text: "Picture failed — \(reason). The board below still works.", tint: Palette.error)
+                statusRow(icon: "xmark.octagon", text: "Picture failed. The board still works.",
+                          detail: "Picture failed — \(reason). The board below still works.", tint: Palette.error)
                 retryButton
             }
         case .cancelRequested?:
@@ -331,16 +340,25 @@ struct StyleMeImageStatusView: View {
             }
         case let .notStarted(reason)?:
             VStack(alignment: .leading, spacing: Spacing.xs) {
-                statusRow(icon: "photo", text: "No picture yet — \(reason)")
-                retryButton(title: "Make picture", systemImage: "photo.badge.plus")
+                // The short line keeps the cost or the blocker on screen; the full reason is one tap away.
+                statusRow(icon: "photo", text: notStartedSummary(reason), detail: "No picture yet — \(reason)")
+                retryButton(title: "Make picture", systemImage: "photo.badge.plus", repeatsBlockedReason: false)
             }
         }
     }
 
-    private func statusRow(icon: String, text: String, tint: Color = Palette.primaryAction) -> some View {
-        Label {
-            Text(text)
-                .fixedSize(horizontal: false, vertical: true)
+    /// One short status line. When `detail` is given, the full wording opens in place with More.
+    @ViewBuilder
+    private func statusRow(icon: String, text: String, detail: String? = nil, tint: Color = Palette.primaryAction) -> some View {
+        let row = Label {
+            if let detail {
+                CollapsibleText(detail, summary: text, threshold: 1, color: Palette.primaryText,
+                                topic: "this picture",
+                                isExpanded: app.styleMeUI.disclosure("imageStatus-\(outfit.id)"))
+            } else {
+                Text(text)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         } icon: {
             Image(systemName: icon).foregroundStyle(tint)
         }
@@ -349,7 +367,20 @@ struct StyleMeImageStatusView: View {
         .padding(Spacing.xs)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: Radius.small, style: .continuous).fill(Palette.imageWell))
-        .accessibilityElement(children: .combine)
+        if detail == nil {
+            row.accessibilityElement(children: .combine)
+        } else {
+            row.accessibilityElement(children: .contain)
+        }
+    }
+
+    private func notStartedSummary(_ reason: String) -> String {
+        guard reason == app.imageAdmissionBlockedReason else {
+            return "No picture yet. Making one uses 1 sample image unit."
+        }
+        return app.store.access.plan.hasStylingAccess
+            ? "No picture yet. No picture units left this month."
+            : "No picture yet. Styling access isn't active."
     }
 
     @ViewBuilder
@@ -395,7 +426,8 @@ struct StyleMeImageStatusView: View {
 
     private var retryButton: some View { retryButton(title: "Retry picture", systemImage: "arrow.clockwise") }
 
-    private func retryButton(title: String, systemImage: String) -> some View {
+    /// - Parameter repeatsBlockedReason: false when the status row above already says why a picture can't start.
+    private func retryButton(title: String, systemImage: String, repeatsBlockedReason: Bool = true) -> some View {
         let ready = app.isOnMeReady
         let admitted = app.admittedImageJobs(1) == 1
         return VStack(alignment: .leading, spacing: Spacing.xxs) {
@@ -412,10 +444,25 @@ struct StyleMeImageStatusView: View {
                     .font(.caption)
                     .foregroundStyle(Palette.secondaryText)
             } else if !admitted {
-                Text("A new picture can't start: \(app.imageAdmissionBlockedReason)")
-                    .font(.caption)
-                    .foregroundStyle(Palette.secondaryText)
-                    .fixedSize(horizontal: false, vertical: true)
+                if repeatsBlockedReason {
+                    CollapsibleText("A new picture can't start: \(app.imageAdmissionBlockedReason)",
+                                    summary: app.store.access.plan.hasStylingAccess ? "No picture units left this month." : "Styling access isn't active.",
+                                    threshold: 1,
+                                    font: .caption,
+                                    topic: "why a new picture can't start",
+                                    isExpanded: app.styleMeUI.disclosure("imageBlocked-\(outfit.id)"))
+                } else {
+                    Text(app.store.access.plan.hasStylingAccess ? "No picture units left." : "Styling access isn't active.")
+                        .font(.caption)
+                        .foregroundStyle(Palette.secondaryText)
+                }
+                if app.purchasesDemo {
+                    Button { app.presentPictureOptions() } label: {
+                        Label(app.store.access.plan.hasStylingAccess ? "See options" : "See plans", systemImage: "plus.circle")
+                    }
+                    .buttonStyle(SecondaryButtonStyle())
+                    .accessibilityIdentifier("pictureOptionsButton-\(index)")
+                }
             }
         }
     }

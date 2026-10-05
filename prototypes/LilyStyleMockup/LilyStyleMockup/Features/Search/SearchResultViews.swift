@@ -203,7 +203,8 @@ struct SearchResultsContent: View {
                 message: "\(expansion) Confirmed colors stay as recorded.",
                 actionTitle: "Show related shades",
                 action: { withAnimation(reduceMotion ? nil : .default) { ui.showRelatedShades = true } },
-                summary: "Confirmed colors stay as recorded."
+                summary: "Confirmed colors stay as recorded.",
+                isMessageExpanded: ui.disclosure("relatedShadesNote")
             )
         } else {
             VStack(alignment: .leading, spacing: Spacing.s) {
@@ -268,7 +269,8 @@ struct SearchResultsContent: View {
                 style: .caution,
                 title: "Search used the first part of your text",
                 message: "Up to \(SearchVocabulary.maxTerms) words and \(SearchVocabulary.maxPhrases) quoted phrases are searched, so results stay quick and predictable.",
-                summary: "Only the first \(SearchVocabulary.maxTerms) words are searched."
+                summary: "Only part of your text was searched.",
+                isMessageExpanded: app.searchUI.disclosure("truncatedNote")
             )
         }
         if !output.phrasesNotFound.isEmpty {
@@ -276,7 +278,8 @@ struct SearchResultsContent: View {
                 style: .info,
                 title: "No exact match for \(output.phrasesNotFound.map { "“\($0)”" }.joined(separator: ", "))",
                 message: "No single name, note or keyword contains \(output.phrasesNotFound.map { "“\($0)”" }.joined(separator: ", ")). Quoted phrases match exactly inside one field — words from different pieces are never stitched together. Anything below is a broader, labelled alternative.",
-                summary: "Anything below is a broader, labelled alternative."
+                summary: "Anything below is a broader, labelled alternative.",
+                isMessageExpanded: app.searchUI.disclosure("phraseNotFoundNote")
             )
         }
         if !q.negated.isEmpty || (!q.ignoredStopwords.isEmpty && q.hasContent) {
@@ -309,7 +312,8 @@ struct SearchResultsContent: View {
                 action: {
                     for reason in output.hiddenReasons { ui.filters.widen(reason) }
                 },
-                summary: "Hidden by \(reasons.joined(separator: ", "))."
+                summary: "Hidden by \(reasons.joined(separator: ", ")).",
+                isMessageExpanded: ui.disclosure("hiddenByFilters")
             )
             .accessibilityIdentifier("searchHiddenByFilters")
         }
@@ -321,7 +325,8 @@ struct SearchResultsContent: View {
                 message: "Garment search follows your selected source, \(app.workingScopeName). Switching is your choice and also changes the source Style Me uses.",
                 actionTitle: "Search Main Closet",
                 action: { app.selectScope(.mainCloset) },
-                summary: "Switching also changes the source Style Me uses."
+                summary: "Switching also changes the source Style Me uses.",
+                isMessageExpanded: ui.disclosure("hiddenBySource")
             )
             .accessibilityIdentifier("searchHiddenBySource")
         }

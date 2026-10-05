@@ -9,6 +9,8 @@ final class SuitcasesUIState {
     /// Details rows on the list, closed until she opens them.
     var showsArchived = false
     var showsShared = false
+    /// "Manage suitcase" row on a suitcase's detail.
+    var showsManage = false
 
     /// New suitcase sheet and its typed name, kept until Create or Cancel.
     var isCreatingSuitcase = false
@@ -402,7 +404,8 @@ struct SuitcasesScreen: View {
             .accessibilityAddTraits(selected ? .isSelected : [])
             .accessibilityIdentifier("suitcaseRow-\(suitcase.id)")
 
-            FlowLayout(spacing: Spacing.xs) {
+            // Delete is destructive, so it sits in the More menu. It still asks first.
+            ActionGroup(moreIdentifier: "archivedSuitcaseMore-\(suitcase.id)") {
                 Button {
                     unarchive(suitcase)
                 } label: {
@@ -411,13 +414,10 @@ struct SuitcasesScreen: View {
                 .buttonStyle(SecondaryButtonStyle())
                 .accessibilityLabel("Unarchive \(suitcase.name)")
                 .accessibilityIdentifier("unarchiveSuitcaseButton")
-
-                Button {
+            } more: {
+                Button("Delete suitcase…", systemImage: "trash", role: .destructive) {
                     lifecycle.delete = suitcase
-                } label: {
-                    Label("Delete…", systemImage: "trash")
                 }
-                .buttonStyle(DestructiveButtonStyle())
                 .accessibilityLabel("Delete \(suitcase.name)")
                 .accessibilityHint("Asks first. Garments, saved looks and pictures stay.")
                 .accessibilityIdentifier("deleteSuitcaseButton")

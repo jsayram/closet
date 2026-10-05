@@ -386,15 +386,6 @@ struct ProfileListHeader<Trailing: View>: View {
     }
 }
 
-/// Footer note in secondary text. A long note shows its first line with More.
-struct ProfileFooterNote: View {
-    var text: String
-
-    var body: some View {
-        CollapsibleText(text)
-    }
-}
-
 /// A label with an info button beside it, for helper text that used to sit under
 /// the control.
 struct ProfileInfoLabel: View {

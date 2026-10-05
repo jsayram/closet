@@ -117,8 +117,12 @@ struct ProfileFitReferenceRow: View {
                         .fixedSize(horizontal: false, vertical: true)
                     FlowLayout(spacing: Spacing.xxs) {
                         ProfileToneBadge(text: reference.result.label, systemImage: reference.result.profileSystemImage, tone: reference.result.profileTone)
-                        ForEach(reference.areas) { area in
+                        // Two areas show; the rest are counted here, read out by VoiceOver and listed in the editor.
+                        ForEach(reference.areas.prefix(2)) { area in
                             ProfileToneBadge(text: area.label, systemImage: "scope", tone: .neutral)
+                        }
+                        if reference.areas.count > 2 {
+                            ProfileToneBadge(text: "+\(reference.areas.count - 2)", systemImage: "scope", tone: .neutral)
                         }
                     }
                     if !reference.note.isEmpty {

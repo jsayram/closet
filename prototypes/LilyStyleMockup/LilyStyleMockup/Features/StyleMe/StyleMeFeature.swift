@@ -73,14 +73,15 @@ final class StyleMeUIState {
 
 struct StyleMeScreen: View {
     @Environment(AppModel.self) private var app
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         @Bindable var ui = app.styleMeUI
         GeometryReader { geo in
-            let widthClass = WidthClass(width: geo.size.width)
-            layout(for: widthClass, width: geo.size.width)
-                .onAppear { syncInlineResults(widthClass) }
-                .onChange(of: widthClass) { _, newValue in syncInlineResults(newValue) }
+            let twoPane = usesTwoPanes(width: geo.size.width)
+            layout(twoPane: twoPane, width: geo.size.width)
+                .onAppear { syncInlineResults(twoPane) }
+                .onChange(of: twoPane) { _, newValue in syncInlineResults(newValue) }
         }
         .themedScreenBackground()
         // A gentle success tap when new looks arrive (not for history offers or failures).
@@ -92,6 +93,7 @@ struct StyleMeScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $ui.showStartingPicker) {
             StyleMeStartingPickerSheet()
+                .pageSheetOnPad()
                 .environment(app)
                 .tint(Palette.primaryAction)
         }
@@ -106,11 +108,17 @@ struct StyleMeScreen: View {
         // AppModel push a duplicate results screen. Whichever Style Me screen is visible keeps it in sync.
     }
 
+    /// The request and the looks sit side by side from iPad portrait width up, so the
+    /// screen isn't one stretched phone column. Large accessibility text keeps one column
+    /// until the window is truly wide.
+    private func usesTwoPanes(width: CGFloat) -> Bool {
+        width >= 980 || (width >= 720 && !dynamicTypeSize.isAccessibilitySize)
+    }
+
     @ViewBuilder
-    private func layout(for widthClass: WidthClass, width: CGFloat) -> some View {
-        switch widthClass {
-        case .wide:
-            let formWidth = width >= 1300 ? 380 : min(440, max(380, width * 0.36))
+    private func layout(twoPane: Bool, width: CGFloat) -> some View {
+        if twoPane {
+            let formWidth: CGFloat = width >= 1300 ? 400 : (width >= 980 ? min(440, max(400, width * 0.36)) : 400)
             HStack(spacing: 0) {
                 StyleMeFormColumn(resultsInline: true, maxContentWidth: formWidth)
                     .frame(width: formWidth)
@@ -121,14 +129,13 @@ struct StyleMeScreen: View {
                     .accessibilityHidden(true)
                 StyleMeInlineResultsPane(width: max(0, width - formWidth - 1))
             }
-        case .intermediate, .compact:
+        } else {
             StyleMeFormColumn(resultsInline: false, maxContentWidth: 680)
         }
     }
 
-    /// Results render beside the form only while wide, so AppModel won't push a duplicate.
-    private func syncInlineResults(_ widthClass: WidthClass) {
-        let inline = widthClass == .wide
+    /// Results render beside the form only in the two-pane layout, so AppModel won't push a duplicate.
+    private func syncInlineResults(_ inline: Bool) {
         if app.style.resultsShownInline != inline { app.style.resultsShownInline = inline }
     }
 
@@ -173,7 +180,7 @@ struct StyleMeInlineResultsPane: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.m) {
-                SectionHeader("Your looks", subtitle: "Shown beside your request while there's room", editorial: true)
+                SectionHeader("Your looks", editorial: true)
                 StyleMeResultsContent(embedded: true,
                                       width: max(0, width - 2 * Spacing.m),
                                       onEditRequest: {

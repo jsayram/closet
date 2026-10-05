@@ -105,6 +105,10 @@ Body size as a fit input was built after the screenshots above were captured and
 
 The Style Me form was rearranged after the screenshot pass: the weather card became a one-line summary under the title that opens a details sheet, the occasion chips moved into a collapsible row, the affirmation moved to the end of the form, and Ask stylist became a real button beside Style Me. This was checked by building the app and by code review. The review turned up four things, all fixed: the weather line and the occasion row weren't announced as buttons, the collapsed occasion chip could truncate at the largest standard text sizes, the two bottom buttons could end up different heights, and the pinned bar left almost no room above the keyboard in iPhone landscape. The flow tests were updated to open the occasion row before tapping a chip, and they are re-run separately from this pass. No screenshots were taken, so the Style Me screenshots above still show the old layout.
 
+### Calm-screens pass (less text on screen)
+
+Every feature area was reworked to follow [CalmScreens.md](CalmScreens.md): long explanations fold behind details rows, info buttons and "More" links, chip rows scroll on one line, and button groups show two actions with the rest in a More menu. This was checked by building the app and test targets (no errors or warnings) and by code review against the nine rules, one reviewer per feature area plus one pass that compared old and new wording to confirm nothing was deleted. The review findings were fixed in a follow-up pass. Text widths in those findings were estimated from the code, not measured on a device. The flow tests are re-run separately from this pass, and no screenshots were taken, so the screenshots above still show the earlier, wordier screens.
+
 ## Not run
 
 These are outside what a prototype with mocks can show, and the PRD's acceptance, RV and TO checks all remain **Not run**:
@@ -118,3 +122,12 @@ These are outside what a prototype with mocks can show, and the PRD's acceptance
 - App Review, privacy labels, legal review.
 - VoiceOver walkthroughs and Full Keyboard Access on hardware. Accessibility labels, traits, identifiers and announcements were added and some were exercised through XCUITest, but no screen-reader session was recorded. Hardware keyboard shortcuts weren't pressed on a real keyboard either.
 - Real system multitasking windows on iPad (Split View or Stage Manager resizing). Narrow and intermediate widths were checked through iPad devices of different sizes and orientations and the in-app layout lab, which renders a section inside a constrained frame. That's an in-app simulation, not system multitasking.
+
+## Paywall and purchase screens (5 October 2026)
+
+Added the simulated paywall, picture packs and out-of-pictures screens behind the "Paywall and purchases" demo toggle, which is off by default ([Purchases.md](Purchases.md)). Checked by eye on the iPhone 12 Pro Max simulator: the paywall from Style Me without a plan, picture packs, and out of pictures. Not checked: iPad layouts, dark mode, accessibility text sizes, and the simulated confirmation alerts.
+
+## iPad layout pass (5 October 2026)
+
+Style Me, wide result cards, Settings, sheet sizes and iPad text size were changed (see "iPad layout" in [DesignSystem.md](DesignSystem.md)). Flow tests pass on the iPhone 14 and iPad Pro 11 simulators (7 of 7 each). Checked by eye in portrait on the iPad Pro 11 and 13: Style Me before and after a request, Closet, Saved, Profile, Settings, the paywall, Add Item, Find One, stylist chat and store handoff. Not checked by eye: landscape, Split View and Slide Over widths, dark mode, accessibility text sizes, and the remaining screens (Laundry, Suitcases, Search, Feedback, Help, outfit editor, onboarding).
+

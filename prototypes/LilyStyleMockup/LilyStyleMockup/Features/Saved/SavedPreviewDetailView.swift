@@ -129,11 +129,13 @@ struct PreviewDetailView: View {
         case .approximate:
             InlineBanner(style: .info, title: preview.quality.label,
                          message: "Pieces without your own photo were drawn from representative artwork. The Captured list below is the accurate record.",
-                         summary: "The Captured list below is the accurate record.")
+                         summary: "The Captured list below is the accurate record.",
+                         isMessageExpanded: app.savedUI.disclosure("pictureQuality-\(preview.id)"))
         case .appearanceMismatch:
             InlineBanner(style: .caution, title: preview.quality.label,
                          message: "Some colors or details in this picture don't match the garments' saved details. It's kept for review; the Captured list below is the accurate record.",
-                         summary: "The Captured list below is the accurate record.")
+                         summary: "The Captured list below is the accurate record.",
+                         isMessageExpanded: app.savedUI.disclosure("pictureQuality-\(preview.id)"))
         }
     }
 
@@ -180,7 +182,8 @@ struct PreviewDetailView: View {
                 CollapsibleText(
                     "The look this picture came from isn't in Saved, so there's nothing to open. The picture stays here.",
                     summary: "Its look isn't in Saved anymore.",
-                    topic: "the related look"
+                    topic: "the related look",
+                    isExpanded: app.savedUI.disclosure("pictureRelatedLook-\(preview.id)")
                 )
             }
         }

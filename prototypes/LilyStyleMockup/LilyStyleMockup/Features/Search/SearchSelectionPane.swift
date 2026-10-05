@@ -185,7 +185,9 @@ struct SearchSelectionPane: View {
                     )
                     OutfitPieceChips(
                         pieces: o.pieces,
-                        statusFor: { SearchPresentation.pieceBadges($0, store: store) }
+                        statusFor: { SearchPresentation.pieceBadges($0, store: store) },
+                        scrolls: true,
+                        isExpanded: app.searchUI.disclosure("panePieces")
                     )
                     HStack(spacing: Spacing.xxs) {
                         Text("Badges show today's status")
@@ -355,7 +357,8 @@ struct SearchSelectionPane: View {
             CollapsibleText(
                 "Not in the current results. It's shown here because you selected it earlier.",
                 summary: "Not in the current results.",
-                topic: "why this is shown"
+                topic: "why this is shown",
+                isExpanded: app.searchUI.disclosure("paneNotInResults")
             )
         }
     }
@@ -401,6 +404,15 @@ struct SearchSelectionPane: View {
     }
 
     /// A closed "About this …" row; the label/value rows open in place.
+    /// Short form of the quality label for the closed row; the full label is the Quality row inside.
+    private func previewQualitySummary(_ quality: PreviewQualityLabel) -> String? {
+        switch quality {
+        case .ok: nil
+        case .approximate: "Approximate"
+        case .appearanceMismatch: "Needs review"
+        }
+    }
+
     private func factsCard<Rows: View>(_ title: String, summary: String? = nil, @ViewBuilder rows: @escaping () -> Rows) -> some View {
         DetailsDisclosure(
             title,
@@ -465,7 +477,7 @@ struct SearchSelectionPane: View {
         let reactionText = reaction.isEmpty ? "None" : reaction.joined(separator: ", ")
         let noReaction = reaction.isEmpty
         return VStack(alignment: .leading, spacing: Spacing.xs) {
-            factsCard("About this preview", summary: p.quality.label) {
+            factsCard("About this preview", summary: previewQualitySummary(p.quality)) {
                 InfoRow(title: "Made", value: p.createdAt.formatted(date: .abbreviated, time: .omitted))
                 InfoRow(title: "Captured from", value: p.capturedScopeName ?? "Unknown source", valueIsUnknown: p.capturedScopeName == nil)
                 InfoRow(title: "Quality", value: p.quality.label)

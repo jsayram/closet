@@ -94,6 +94,7 @@ extension DemoStore {
         access.stylingUsedToday = 0
         access.swapsUsedToday = 0
         access.imageUnitsUsedThisMonth = 0
+        access.purchasedImageCredits = 0
         persist()
     }
 

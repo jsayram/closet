@@ -182,7 +182,7 @@ struct OutfitFlatLayView: View {
     }
 }
 
-/// Compact, wrapping list of an outfit's pieces as labelled chips with status —
+/// Compact list of an outfit's pieces as labelled chips with status —
 /// the accessible companion to the flat-lay (names, colors and badges in text).
 /// Tappable chips always sit under a tappable flat-lay, so VoiceOver reads each
 /// piece once, from the flat-lay; the chips stay for touch and large text.
@@ -194,10 +194,13 @@ struct OutfitPieceChips: View {
     /// Lays the chips out in one sideways-scrolling row that can be expanded,
     /// instead of wrapping.
     var scrolls = false
+    /// Shared open state for the scrolling row, when it has to survive the
+    /// tab/sidebar switch.
+    var isExpanded: Binding<Bool>?
 
     var body: some View {
         if scrolls {
-            ChipCarousel(itemsLabel: "pieces") { chips }
+            ChipCarousel(isExpanded: isExpanded, itemsLabel: "pieces") { chips }
         } else {
             FlowLayout(spacing: Spacing.xs) { chips }
         }

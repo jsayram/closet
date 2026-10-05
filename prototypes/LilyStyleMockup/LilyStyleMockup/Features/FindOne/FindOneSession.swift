@@ -230,6 +230,8 @@ final class FindOneSession {
                 )
                 self?.openWorksWith = []
                 self?.showsExcluded = false
+                // New results open short: only the form's own rows keep their state.
+                self?.openDetails.formIntersection(["stores", "closetFirstEmpty", "searchCaption"])
                 if let rankingError {
                     self?.finish(from: rankingError, rankingNote: "The leads found are shown unranked.")
                 } else {

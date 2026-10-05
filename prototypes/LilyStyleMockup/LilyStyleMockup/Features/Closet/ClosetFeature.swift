@@ -39,6 +39,8 @@ final class ClosetUIState {
     var filtersExpanded = false
     /// "More facts" row in the garment detail's About card.
     var factsExpanded = false
+    /// "Other suitcases" row in the garment detail's Suitcases card.
+    var otherSuitcasesExpanded = false
 
     init() {}
 

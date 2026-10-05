@@ -5,6 +5,9 @@ import SwiftUI
 ///     -resetDemo              start from fresh fixtures
 ///     -skipOnboarding         mark onboarding complete
 ///     -fastMocks              shorten simulated delays
+///     -purchasesDemo          show the paywall and picture-pack screens (off by default)
+///     -purchaseSheet <name>   open paywall, imagePacks or outOfPictures at launch
+///     -plan <AccessPlan>      start on a simulated plan, e.g. trialEligible or subscribed
 ///     -showHUD                show the dispatch counter
 ///     -scenario <name>        DemoScenario raw value (e.g. partialCloset)
 ///     -scope <main|jose|weekend|spring>
@@ -24,6 +27,9 @@ struct LaunchConfiguration {
     var resetDemo = false
     var skipOnboarding = false
     var fastMocks = false
+    var purchasesDemo = false
+    var plan: AccessPlan?
+    var purchaseSheet: String?
     var showHUD = false
     var scenario: DemoScenario?
     var scope: String?
@@ -45,6 +51,9 @@ struct LaunchConfiguration {
         c.resetDemo = args.contains("-resetDemo")
         c.skipOnboarding = args.contains("-skipOnboarding")
         c.fastMocks = args.contains("-fastMocks")
+        c.purchasesDemo = args.contains("-purchasesDemo")
+        c.plan = value("-plan").flatMap(AccessPlan.init(rawValue:))
+        c.purchaseSheet = value("-purchaseSheet")
         c.showHUD = args.contains("-showHUD")
         c.scenario = value("-scenario").flatMap(DemoScenario.init(rawValue:))
         c.scope = value("-scope")
@@ -65,6 +74,16 @@ struct LaunchConfiguration {
     @MainActor
     func apply(to app: AppModel) async {
         app.showDispatchHUD = showHUD
+        app.purchasesDemo = purchasesDemo
+        if let plan { app.store.settingsSimulatePlan(plan) }
+        switch purchaseSheet {
+        case "paywall": app.purchaseSheet = .paywall(.settings)
+        case "imagePacks": app.purchaseSheet = .imagePacks
+        case "outOfPictures":
+            app.store.purchasesUseUpPictures()
+            app.purchaseSheet = .outOfPictures
+        default: break
+        }
         if let scenario { app.scenario = scenario }
         switch scope {
         case "main": app.selectScope(.mainCloset)

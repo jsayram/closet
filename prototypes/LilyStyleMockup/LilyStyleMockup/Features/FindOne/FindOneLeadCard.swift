@@ -28,9 +28,9 @@ struct FindOneLeadCard: View {
         if record.isOverBudget(candidate), let budget = record.intent.budgetMax {
             list.append(.custom("Over your $\(budget) budget", "exclamationmark.circle"))
         }
+        if isUnverifiedLead { list.append(.custom("Unverified lead", "questionmark.diamond")) }
         if purchased != nil { list.append(.custom("In your closet — you confirmed buying it", "checkmark.seal")) }
         if isSaved { list.append(.custom("Saved — not owned", "bookmark.fill")) }
-        if isUnverifiedLead { list.append(.custom("Unverified lead", "questionmark.diamond")) }
         if record.isPreferred(candidate) { list.append(.custom("Preferred store", "star")) }
         if let tier = candidate.priceTier { list.append(.custom(tier.label, "tag")) }
         return list
@@ -145,14 +145,19 @@ struct FindOneLeadCard: View {
                     sizeEstimateNote(estimate)
                 }
                 if let size = candidate.recommendedSize {
-                    Label {
-                        Text("Sourced size guidance: \(size). Not a guarantee — the retailer confirms the final size.")
-                            .font(.subheadline.weight(.semibold))
-                            .fixedSize(horizontal: false, vertical: true)
-                    } icon: {
-                        Image(systemName: "ruler")
+                    // The caveat stays on the line; the full sentence is behind the info button.
+                    HStack(alignment: .top, spacing: Spacing.xxs) {
+                        Label {
+                            Text("Sourced size guidance: \(size) · not a guarantee")
+                                .font(.subheadline.weight(.semibold))
+                                .fixedSize(horizontal: false, vertical: true)
+                        } icon: {
+                            Image(systemName: "ruler")
+                        }
+                        .foregroundStyle(Palette.success)
+                        InfoButton("this size guidance", title: "Sourced size guidance",
+                                   text: "Sourced size guidance: \(size). Not a guarantee — the retailer confirms the final size.")
                     }
-                    .foregroundStyle(Palette.success)
                 }
             } else {
                 CollapsibleText("\(unrankedNote) \(unrankedGuidance)", summary: unrankedNote,
@@ -167,11 +172,11 @@ struct FindOneLeadCard: View {
         .accessibilityElement(children: .contain)
     }
 
-    /// "3 compared · 2 unknown": the counts stay on the closed row so unknowns are never out of sight.
+    /// "2 unknown · 3 compared": the counts stay on the closed row, unknowns first, so they are never out of sight.
     private var evidenceSummary: String {
         var parts: [String] = []
-        if !candidate.comparedDimensions.isEmpty { parts.append("\(candidate.comparedDimensions.count) compared") }
         if !candidate.unknowns.isEmpty { parts.append("\(candidate.unknowns.count) unknown") }
+        if !candidate.comparedDimensions.isEmpty { parts.append("\(candidate.comparedDimensions.count) compared") }
         return parts.joined(separator: " · ")
     }
 
@@ -182,7 +187,7 @@ struct FindOneLeadCard: View {
                 .font(.caption.weight(.bold))
                 .foregroundStyle(Palette.secondaryText)
             CollapsibleText("\(estimate.note) \(estimate.closeness) Add your waist, hip and bust in Profile to compare this size chart instead.",
-                            summary: estimate.closeness, threshold: 1, color: Palette.primaryText,
+                            summary: "Around \(estimate.bandLabel) · not a fit check", threshold: 1, color: Palette.primaryText,
                             topic: "the rough size estimate", isExpanded: openState("estimate"))
         }
         .padding(Spacing.xs)
@@ -216,16 +221,36 @@ struct FindOneLeadCard: View {
 
     // MARK: Stock / shipping evidence
 
+    /// Stock and shipping problems wrap in full so they're never scrolled out of
+    /// sight; the neutral notes share one scrolling row.
     private var evidenceLabels: some View {
-        ChipCarousel(isExpanded: openState("stock"), itemsLabel: "stock and shipping notes", toggleSize: 24) {
-            evidenceLabel(candidate.stock == .unavailable ? "Variant unavailable — not a purchasable match right now" : candidate.stock.label,
-                          icon: candidate.stock == .inStock ? "shippingbox" : "exclamationmark.circle",
-                          caution: candidate.stock != .inStock)
-            evidenceLabel(candidate.shipping.label,
-                          icon: candidate.shipping == .shipsToDestination ? "box.truck" : "questionmark.circle",
-                          caution: candidate.shipping != .shipsToDestination)
-            evidenceLabel("Retrieved \(FindOneFormat.relative(candidate.retrievedAt))", icon: "clock", caution: false)
+        let stockCaution = candidate.stock != .inStock
+        let shippingCaution = candidate.shipping != .shipsToDestination
+        return VStack(alignment: .leading, spacing: Spacing.xxs) {
+            if stockCaution || shippingCaution {
+                FlowLayout(spacing: Spacing.xs) {
+                    if stockCaution { stockLabel }
+                    if shippingCaution { shippingLabel }
+                }
+            }
+            ChipCarousel(isExpanded: openState("stock"), itemsLabel: "stock and shipping notes", toggleSize: 24) {
+                if !stockCaution { stockLabel }
+                if !shippingCaution { shippingLabel }
+                evidenceLabel("Retrieved \(FindOneFormat.relative(candidate.retrievedAt))", icon: "clock", caution: false)
+            }
         }
+    }
+
+    private var stockLabel: some View {
+        evidenceLabel(candidate.stock == .unavailable ? "Variant unavailable — not a purchasable match right now" : candidate.stock.label,
+                      icon: candidate.stock == .inStock ? "shippingbox" : "exclamationmark.circle",
+                      caution: candidate.stock != .inStock)
+    }
+
+    private var shippingLabel: some View {
+        evidenceLabel(candidate.shipping.label,
+                      icon: candidate.shipping == .shipsToDestination ? "box.truck" : "questionmark.circle",
+                      caution: candidate.shipping != .shipsToDestination)
     }
 
     private func evidenceLabel(_ text: String, icon: String, caution: Bool) -> some View {

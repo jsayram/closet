@@ -199,20 +199,19 @@ private struct StoreHandoffPage: View {
 
     private var notes: some View {
         VStack(alignment: .leading, spacing: Spacing.s) {
+            // What she needs before leaving stays on screen; the rest opens in place.
             Label {
-                Text("Checkout happens on the retailer's site. Nothing here is bought, charged or added to your closet.")
-                    .fixedSize(horizontal: false, vertical: true)
+                CollapsibleText("Checkout happens on the retailer's site. Nothing here is bought, charged or added to your closet.\n\nYour look and this product are saved — you'll come back to the same place.",
+                                summary: "Nothing here is bought or charged.",
+                                threshold: 1,
+                                font: .subheadline,
+                                color: Palette.primaryText,
+                                topic: "checkout and what's saved")
             } icon: {
                 Image(systemName: "cart")
                     .foregroundStyle(Palette.primaryAction)
             }
-            Label {
-                Text("Your look and this product are saved — you'll come back to the same place")
-                    .fixedSize(horizontal: false, vertical: true)
-            } icon: {
-                Image(systemName: "bookmark")
-                    .foregroundStyle(Palette.primaryAction)
-            }
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("handoffSavedNote")
         }
         .font(.subheadline)

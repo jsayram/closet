@@ -121,8 +121,8 @@ struct GarmentEditorNoteRow: View {
 
 // MARK: - Chips
 
-/// Single-choice chips (category, kind) on one row that scrolls sideways, with an
-/// expand control when they don't fit. They wrap at accessibility text sizes.
+/// One choice out of many (category, kind, dressiness) as a dropdown that always
+/// shows the current choice.
 struct GarmentEditorChoiceChips<Item: Hashable>: View {
     var items: [Item]
     var selection: Item
@@ -130,18 +130,13 @@ struct GarmentEditorChoiceChips<Item: Hashable>: View {
     var systemImage: (Item) -> String?
     var identifier: (Item) -> String
     var onSelect: (Item) -> Void
-    /// Plural noun for the expand control's VoiceOver label ("Show all categories").
+    /// Plural noun for VoiceOver ("Choose from categories").
     var itemsLabel = "choices"
 
     var body: some View {
-        ChipCarousel(itemsLabel: itemsLabel) {
-            ForEach(items, id: \.self) { item in
-                CapsuleChip(title: title(item), systemImage: systemImage(item), isSelected: item == selection) {
-                    onSelect(item)
-                }
-                .accessibilityIdentifier(identifier(item))
-            }
-        }
+        DropdownChip(items: items, selection: selection, title: title, systemImage: systemImage,
+                     identifier: identifier, accessibilityTitle: "Choose from \(itemsLabel)",
+                     onSelect: onSelect)
     }
 }
 

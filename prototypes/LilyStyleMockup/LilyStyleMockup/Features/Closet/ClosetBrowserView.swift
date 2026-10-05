@@ -296,8 +296,8 @@ struct ClosetLocalFilterField: View {
 
 // MARK: - Quick filter chips
 
-/// Dirty / Available only plus category chips. Active chips always stay visible,
-/// even if the current view has nothing in that category.
+/// Dirty and Available toggles plus a Type dropdown. The dropdown always shows the
+/// type in use, even if the current view has nothing in that category.
 struct ClosetFilterChips: View {
     @Environment(AppModel.self) private var app
     var base: [Garment]
@@ -309,46 +309,33 @@ struct ClosetFilterChips: View {
         }
         let dirtyInView = base.filter { $0.availability == .dirty }.count
 
-        ChipCarousel(isExpanded: Binding(get: { ui.filtersExpanded }, set: { ui.filtersExpanded = $0 }),
-                     itemsLabel: "filters", toggleIdentifier: "closetFiltersExpand") {
-            Group {
-                CapsuleChip(title: dirtyInView > 0 ? "Dirty (\(dirtyInView))" : "Dirty",
-                            systemImage: BadgeKind.dirty.systemImage,
-                            isSelected: ui.dirtyOnly) {
-                    ui.dirtyOnly.toggle()
-                }
-                .accessibilityLabel(dirtyInView > 0 ? "Dirty filter, \(dirtyInView) dirty in this view" : "Dirty filter")
-                .accessibilityValue(ui.dirtyOnly ? "On" : "Off")
-                .accessibilityHint("Shows only items marked Dirty")
-                .accessibilityIdentifier("closetFilter-dirty")
+        FlowLayout(spacing: Spacing.xs) {
+            DropdownChip(items: [GarmentCategory?.none] + present.map { Optional($0) },
+                         selection: ui.category,
+                         title: { $0?.pluralLabel ?? "All types" },
+                         systemImage: { $0?.systemImage },
+                         identifier: { "closetCategory-\($0?.rawValue ?? "all")" },
+                         isActive: ui.category != nil,
+                         accessibilityTitle: "Type",
+                         menuIdentifier: "closetCategoryMenu") { ui.category = $0 }
 
-                CapsuleChip(title: "Available only", systemImage: "checkmark.circle", isSelected: ui.availableOnly) {
-                    ui.availableOnly.toggle()
-                }
-                .accessibilityLabel("Available only filter")
-                .accessibilityValue(ui.availableOnly ? "On" : "Off")
-                .accessibilityHint("Hides Dirty, Unavailable and Archived items until you turn it off")
-                .accessibilityIdentifier("closetFilter-available")
-
-                Rectangle()
-                    .fill(Palette.divider)
-                    .frame(width: 1, height: 28)
-                    .padding(.horizontal, Spacing.xxs)
-                    .accessibilityHidden(true)
-
-                CapsuleChip(title: "All types", isSelected: ui.category == nil) {
-                    ui.category = nil
-                }
-                .accessibilityIdentifier("closetCategory-all")
-
-                ForEach(present) { category in
-                    CapsuleChip(title: category.pluralLabel, systemImage: category.systemImage,
-                                isSelected: ui.category == category) {
-                        ui.category = ui.category == category ? nil : category
-                    }
-                    .accessibilityIdentifier("closetCategory-\(category.rawValue)")
-                }
+            CapsuleChip(title: dirtyInView > 0 ? "Dirty (\(dirtyInView))" : "Dirty",
+                        systemImage: BadgeKind.dirty.systemImage,
+                        isSelected: ui.dirtyOnly) {
+                ui.dirtyOnly.toggle()
             }
+            .accessibilityLabel(dirtyInView > 0 ? "Dirty filter, \(dirtyInView) dirty in this view" : "Dirty filter")
+            .accessibilityValue(ui.dirtyOnly ? "On" : "Off")
+            .accessibilityHint("Shows only items marked Dirty")
+            .accessibilityIdentifier("closetFilter-dirty")
+
+            CapsuleChip(title: "Available", systemImage: "checkmark.circle", isSelected: ui.availableOnly) {
+                ui.availableOnly.toggle()
+            }
+            .accessibilityLabel("Available only filter")
+            .accessibilityValue(ui.availableOnly ? "On" : "Off")
+            .accessibilityHint("Hides Dirty, Unavailable and Archived items until you turn it off")
+            .accessibilityIdentifier("closetFilter-available")
         }
         .padding(.horizontal, Spacing.m)
         .padding(.vertical, 2)
@@ -447,10 +434,12 @@ struct ClosetEmptySuitcaseView: View {
                 action: { app.push(.suitcase(suitcase.id)) },
                 detailsTitle: "What you can do"
             ) {
-                ClosetNote("Add clothes from Main Closet or choose another source; nothing is added automatically.")
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    ClosetNote("Add clothes from Main Closet or choose another source; nothing is added automatically.")
+                    ClosetSourceMenu(title: "Choose another source")
+                }
             }
             .accessibilityIdentifier("closetEmptySuitcase")
-            ClosetSourceMenu(title: "Choose another source")
         }
         .padding(.horizontal, Spacing.m)
     }

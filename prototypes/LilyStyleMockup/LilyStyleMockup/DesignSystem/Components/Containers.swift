@@ -80,6 +80,7 @@ struct SimulationNotice: View {
     /// Optional single line shown after the label in the compact form.
     var summary: String?
     var style: Style = .compact
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         switch style {
@@ -89,18 +90,48 @@ struct SimulationNotice: View {
     }
 
     private var compact: some View {
+        Group {
+            if summary == nil {
+                compactRow(summary: nil)
+            } else if dynamicTypeSize.isAccessibilitySize {
+                compactStack
+            } else {
+                // The label is never cut: when the summary doesn't fit beside it,
+                // the summary drops to its own line.
+                ViewThatFits(in: .horizontal) {
+                    compactRow(summary: summary)
+                    compactStack
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func compactRow(summary: String?) -> some View {
         HStack(spacing: Spacing.xs) {
             ToneBadge(text: label, systemImage: systemImage, tone: .accent, lineLimit: 1)
+                .layoutPriority(1)
             if let summary {
-                Text(summary)
-                    .font(.footnote)
-                    .foregroundStyle(Palette.secondaryText)
-                    .lineLimit(1)
+                summaryText(summary).lineLimit(1)
             }
             InfoButton(label == "Simulated" ? "what's simulated here" : label, title: label, text: text)
             Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var compactStack: some View {
+        VStack(alignment: .leading, spacing: Spacing.xxs) {
+            compactRow(summary: nil)
+            if let summary {
+                summaryText(summary).fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private func summaryText(_ summary: String) -> some View {
+        Text(summary)
+            .font(.footnote)
+            .foregroundStyle(Palette.secondaryText)
     }
 
     private var full: some View {

@@ -35,6 +35,8 @@ The last three are additions, not part of the PRD palette. `imageWell` gives gar
 
 ## Components
 
+The disclosure and action components (`ChipCarousel`, `DetailsDisclosure`, `InfoButton`, `CollapsibleText`, `ActionGroup`) exist to keep screens short. The rules for when to use each one are in [CalmScreens.md](CalmScreens.md).
+
 | Component | File | What it does |
 | --- | --- | --- |
 | `PrimaryButtonStyle` | Components/Buttons.swift | Full-width plum button for the one main action on a screen (Style Me, Save, Confirm). |
@@ -46,19 +48,26 @@ The last three are additions, not part of the PRD palette. `imageWell` gives gar
 | `StatusBadge`, `BadgeRow`, `BadgeKind` | Components/Badges.swift | Icon-plus-text status (Dirty, No longer owned, Not arrived, Representative, Simulated, Earlier, and so on). `BadgeKind.status(for:)` derives badges from a garment's canonical record, so every screen labels status the same way. At accessibility text sizes the text wraps and the capsule becomes a rounded rectangle, so badges never truncate. |
 | `ToneBadge` | Components/Badges.swift | The one badge shape. `StatusBadge` and the Profile and Settings badges all draw through it. |
 | `FlowLayout` | Components/Badges.swift | Wrapping layout for chips and badges that reflows at large text sizes. |
+| `ChipCarousel` | Components/ChipCarousel.swift | One row that shows only the chips or badges that fit whole, with a "More" pill after the last one that opens the full set. Nothing is clipped and nothing scrolls sideways. It wraps at accessibility text sizes. Pass `isExpanded` to keep the open state in shared UI state. |
+| `DropdownChip` | Components/ChipCarousel.swift | A chip that opens a menu for one choice out of many (Closet type filter, garment category, kind, dressiness) and always shows the current choice. |
+| `DetailsDisclosure` | Components/Disclosures.swift | Closed row with a title, a count or short summary and a chevron, opening its content in place. The summary drops under the title when the two don't fit on one line. |
+| `InfoButton` | Components/Disclosures.swift | Small ⓘ button beside a label that shows helper text in a popover (a half-height sheet on iPhone). 24 pt in layout, 44 pt tap area. |
+| `CollapsibleText` | Components/Disclosures.swift | Text that shows in full when short and as one line with "More" when long. A written `summary` is never truncated: it wraps, and "More" moves under it. |
+| `.quietLink`, `.quietLinkInline` | Components/Disclosures.swift | Underlined text-link button styles for "Why?" and "Learn more". |
+| `ActionGroup`, `MoreMenu` | Components/ActionGroup.swift | Up to two visible buttons plus a "More" menu for the rest. When the pair doesn't fit side by side, the second button shares a row with the menu, so a group never takes more than two rows at standard text sizes. Destructive items go in the menu with `role: .destructive` and still confirm. |
 | `.cardStyle()` | Components/Containers.swift | Surface card with 16 pt padding and radius. `highlighted:` outlines the selected card. |
 | `SectionHeader` | Components/Containers.swift | Header with optional subtitle and trailing control, marked as a heading for VoiceOver. |
-| `SimulationNotice` | Components/Containers.swift | Small flask-icon note used wherever something is simulated or out of prototype scope. |
-| `InlineBanner`, `ActionBanner` | Components/Containers.swift | Info, caution, error or success message. `InlineBanner` takes one optional action; `ActionBanner` takes several caller-built buttons (Style Me's blockers and partial results use it). Both share the same icon, tint and border. |
+| `SimulationNotice` | Components/Containers.swift | Compact "Simulated" badge with the full sentence behind an info button, used wherever something is simulated or out of prototype scope. An optional one-line summary sits beside the badge and drops under it when space is tight; the badge itself is never cut. `style: .full` shows the whole sentence where she has to read it before agreeing. |
+| `InlineBanner`, `ActionBanner` | Components/Containers.swift | Info, caution, error or success message. `InlineBanner` takes one optional action; `ActionBanner` takes several caller-built buttons (Style Me's blockers and partial results use it) and lays them out with `ActionGroup`. Both share the same icon, tint and border, and fold a long message to one line with "More"; pass `isMessageExpanded` to keep that state in shared UI state. |
 | `CardSection` | Components/Containers.swift | Card with an icon or step number in its header. Closet, the garment editor and Find One build their sections with it. |
 | `FormSectionHeader` | Components/Containers.swift | Sentence-case header for `Form` sections. Pair it with `.listRowBackground(Palette.surface)` so forms match the themed lists. |
 | `InfoRow` | Components/Containers.swift | Label/value row that stacks vertically when text is large; unknown values are styled as unknown. |
-| `EmptyStateView` | Components/Containers.swift | Calm empty or limited state with one optional action. |
+| `EmptyStateView` | Components/Containers.swift | Calm empty or limited state: an icon, a headline, one sentence and one optional action. Evidence and anything else go in `details`, behind a details row. |
 | `GarmentArtwork` | GarmentArtwork.swift | App-owned vector illustration for each garment kind, drawn in the garment's color on the image well. Demo garments use these as stand-ins for photos. |
 | `GarmentThumbnail` | GarmentArtwork.swift | Shows the user's photo if one exists, otherwise the artwork, plus the first status badge and an optional image-source label. |
 | `PieceThumbnail` | GarmentArtwork.swift | Thumbnail for a piece captured in an outfit snapshot. It uses captured facts, never current metadata, so old looks aren't silently rewritten. |
 | `OutfitFlatLayView` | OutfitFlatLayView.swift | The main way a look is shown: garments placed where they're worn in a two-column flat-lay on the image well (clothes left, bag and shoes right, shoes drawn as a pair). Pieces settle in with a short stagger; a swapped piece cross-fades and scales in with a selection haptic. Each piece is a labeled button when `onTap` is set. `compact` gives square thumbnails for grids and search rows. |
-| `OutfitPieceChips` | OutfitFlatLayView.swift | Wrapping chips under a flat-lay with each piece's name, color swatch and first status icon. They carry in text what the picture doesn't say, for large type and quick scanning, and can open the swap picker. The selected chip shows a checkmark and a 2 pt outline. When the chips are tappable they're hidden from VoiceOver, because each flat-lay piece is already one labeled button; that way VoiceOver reads every piece once. The visible capsule is 36 pt but the tap area is 44 pt. |
+| `OutfitPieceChips` | OutfitFlatLayView.swift | Chips under a flat-lay (one scrolling row with `scrolls: true`, which every screen now uses) with each piece's name, color swatch and first status icon. They carry in text what the picture doesn't say, for large type and quick scanning, and can open the swap picker. The selected chip shows a checkmark and a 2 pt outline. When the chips are tappable they're hidden from VoiceOver, because each flat-lay piece is already one labeled button; that way VoiceOver reads every piece once. The visible capsule is 36 pt but the tap area is 44 pt. |
 | `OnMePreviewFigure` | OutfitViews.swift | Placeholder for a simulated On Me preview: an abstract figure with the garments overlaid, always labeled "Placeholder figure · not a real person · not a fit preview". |
 | `LaneLabel` | OutfitViews.swift | Lane name with icon and subtitle. Lanes are never told apart by color alone. |
 | `SourceSelector` | App/Overlays.swift | Main Closet / named suitcase picker shared by Style Me and Closet. Choosing a source is remembered across launches. |
@@ -92,3 +101,13 @@ Haptics follow Apple's guidance to use them only for their usual meaning: a sele
 ## Keyboard
 
 On iPad with a hardware keyboard, the Styling menu offers Style Me (Shift-Command-Return), Search (Command-F) and Add Item (Command-N). They're disabled while a sheet is open. Command-Return on its own belongs to the screen's main action: Style Me on the form, Send in the chat, Review in Laundry, Search in Find One and Submit in Feedback. Closet, Saved and Feedback bind Command-F or Command-N to their own buttons, and the global command steps aside there. Command-F returns to an open Search instead of stacking a second one.
+
+## iPad layout
+
+An iPad window is not a stretched iPhone column. From iPad portrait width up, a screen puts the thing she is working on beside the thing it produces.
+
+- **Two panes from 720 pt.** Style Me shows the request on the left (400 pt) and "Your looks" on the right, in portrait and landscape. Closet, Saved, Profile, Laundry, Suitcases, Find One and Add Item already split the same way. Settings uses two columns from 720 pt. Accessibility text sizes keep one column until the window reaches 980 pt.
+- **Wide result cards use both sides.** When a card is at least 560 pt wide, the flat-lay sits on the left, and the piece names, the reason and the notes are shown in full on the right with nothing to open.
+- **One text size up.** `padComfortableText()` in `DesignSystem/PadLayout.swift` raises Dynamic Type one step in regular-width iPad windows, because an iPad is read from further away. Accessibility sizes are left as set. It is applied once at the root and carries into sheets.
+- **Sheets are page-sized.** Root sheets (Add Item, Find One, store handoff, purchase review, stylist chat, onboarding), the starting-piece picker, the paywall and picture packs use `pageSheetOnPad()` so long content isn't squeezed into the small default form sheet. Short sheets (weather, out of pictures, naming) stay small. The paywall puts "What you get" beside the trial timeline when the sheet is wide enough.
+

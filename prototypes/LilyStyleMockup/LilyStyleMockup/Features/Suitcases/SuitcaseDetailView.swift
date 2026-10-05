@@ -235,7 +235,8 @@ struct SuitcaseDetailView: View {
                             font: .subheadline, centered: true, topic: "this empty suitcase")
 
             if !suitcase.isArchived {
-                FlowLayout(spacing: Spacing.xs) {
+                // One main action; the other sources are in the menu beside it.
+                ActionGroup(moreIdentifier: "chooseAnotherSourceMenu", showsMore: isCurrent) {
                     Button {
                         openPicker(suitcase)
                     } label: {
@@ -245,27 +246,20 @@ struct SuitcaseDetailView: View {
                     .keyboardShortcut("a", modifiers: [.command, .shift])
                     .accessibilityHint("Opens Add from Main Closet. Your styling source won't change.")
                     .accessibilityIdentifier("addGarmentsButton")
-
-                    if isCurrent {
-                        Menu {
-                            Button {
-                                app.suitcasesUseAsSource(.mainCloset)
-                            } label: {
-                                Label("Main Closet", systemImage: "cabinet")
-                            }
-                            ForEach(others) { other in
-                                Button {
-                                    app.suitcasesUseAsSource(.suitcase(other.id))
-                                } label: {
-                                    Label("\(other.name) · \(app.store.memberIDs(of: other.id).count)", systemImage: "suitcase")
-                                }
-                            }
+                } more: {
+                    Section("Choose another source") {
+                        Button {
+                            app.suitcasesUseAsSource(.mainCloset)
                         } label: {
-                            Label("Choose another source", systemImage: "arrow.left.arrow.right")
-                                .modifier(SuitcasesOutlinedLabel(minHeight: 50))
+                            Label("Main Closet", systemImage: "cabinet")
                         }
-                        .accessibilityHint("Pick Main Closet or another suitcase")
-                        .accessibilityIdentifier("chooseAnotherSourceMenu")
+                        ForEach(others) { other in
+                            Button {
+                                app.suitcasesUseAsSource(.suitcase(other.id))
+                            } label: {
+                                Label("\(other.name) · \(app.store.memberIDs(of: other.id).count)", systemImage: "suitcase")
+                            }
+                        }
                     }
                 }
                 .padding(.top, Spacing.xs)
@@ -282,7 +276,9 @@ struct SuitcaseDetailView: View {
     /// More menu and still asks first.
     private func manageCard(_ suitcase: Suitcase) -> some View {
         DetailsDisclosure("Manage suitcase", summary: suitcase.isArchived ? "rename or delete" : "rename, archive or delete",
-                          systemImage: "slider.horizontal.3", identifier: "manageSuitcaseToggle") {
+                          systemImage: "slider.horizontal.3",
+                          isExpanded: Binding(get: { app.suitcasesUI.showsManage }, set: { app.suitcasesUI.showsManage = $0 }),
+                          identifier: "manageSuitcaseToggle") {
             VStack(alignment: .leading, spacing: Spacing.s) {
                 ActionGroup(moreIdentifier: "manageSuitcaseMore") {
                     Button {
@@ -309,6 +305,8 @@ struct SuitcaseDetailView: View {
                     Button("Delete suitcase…", systemImage: "trash", role: .destructive) {
                         lifecycle.delete = suitcase
                     }
+                    .accessibilityLabel("Delete \(suitcase.name)")
+                    .accessibilityHint("Asks first. Garments, saved looks and pictures stay.")
                     .accessibilityIdentifier("deleteSuitcaseButton")
                 }
                 Text(suitcase.isArchived ? "Archived suitcases keep their links." : "Archiving hides it from source choices and keeps its links.")

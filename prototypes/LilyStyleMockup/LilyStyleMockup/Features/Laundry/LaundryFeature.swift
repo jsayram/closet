@@ -13,8 +13,14 @@ final class LaundryUIState {
     var loadSelection: Set<String> = []
     /// Reviewed targets captured when a review opens.
     var pendingReview: LaundryReviewDraft?
-    var lastOutcome: LaundryOutcome?
+    var lastOutcome: LaundryOutcome? {
+        didSet { showsOutcomeDetails = false }
+    }
     var showsMarkDirtyPicker = false
+    /// Details rows, kept here so rotation and the one/two-pane switch don't close them.
+    var showsLeftAlone = false
+    var showsRules = false
+    var showsOutcomeDetails = false
 
     init() {}
 
@@ -57,7 +63,7 @@ struct LaundryScreen: View {
                         dirtySection(minimumColumn: 280, available: min(geo.size.width, 720) - Spacing.m * 2)
                         leftAloneSection
                         markDirtyCard
-                        LaundryRulesNote()
+                        LaundryRulesNote(isExpanded: $ui.showsRules)
                     }
                     .padding(Spacing.m)
                     .readableWidth()
@@ -79,7 +85,7 @@ struct LaundryScreen: View {
                         VStack(alignment: .leading, spacing: Spacing.l) {
                             controls
                             markDirtyCard
-                            LaundryRulesNote()
+                            LaundryRulesNote(isExpanded: $ui.showsRules)
                         }
                         .padding(Spacing.m)
                     }
@@ -173,7 +179,8 @@ struct LaundryScreen: View {
         VStack(alignment: .leading, spacing: Spacing.m) {
             scopeCard
             if let outcome = app.laundryUI.lastOutcome {
-                LaundryOutcomeCard(outcome: outcome) {
+                LaundryOutcomeCard(outcome: outcome,
+                                   detailsExpanded: Binding(get: { app.laundryUI.showsOutcomeDetails }, set: { app.laundryUI.showsOutcomeDetails = $0 })) {
                     app.laundryUI.lastOutcome = nil
                 }
             }
@@ -390,7 +397,7 @@ struct LaundryScreen: View {
 
             if needsSuitcase {
                 EmptyStateView(title: "Choose a suitcase",
-                               message: unresolvedNote ?? "Pick which suitcase to look at, or switch to Entire closet.",
+                               message: "Pick a suitcase above, or switch to Entire closet.",
                                systemImage: "suitcase")
                     .cardStyle()
             } else if items.isEmpty {
@@ -431,7 +438,9 @@ struct LaundryScreen: View {
             app.store.isInScope($0, wardrobeScope) && $0.availability == .dirty && !$0.isCurrentlyOwned
         }
         if !items.isEmpty {
-            DetailsDisclosure("Dirty but left alone", count: items.count, identifier: "laundryLeftAloneToggle") {
+            DetailsDisclosure("Dirty but left alone", count: items.count,
+                              isExpanded: Binding(get: { app.laundryUI.showsLeftAlone }, set: { app.laundryUI.showsLeftAlone = $0 }),
+                              identifier: "laundryLeftAloneToggle") {
                 VStack(alignment: .leading, spacing: Spacing.s) {
                     Text("Marked Dirty but left alone. Laundry never changes these.")
                         .font(.footnote)

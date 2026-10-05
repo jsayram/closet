@@ -333,6 +333,15 @@ private struct SettingsAccessUsageCard: View {
                                 total: access.terms.dailySwapAllowance, counted: counted)
             SettingsAccessMeter(title: "On Me picture units this month", used: access.imageUnitsUsedThisMonth,
                                 total: access.terms.monthlyImageAllowance, counted: counted)
+            if app.purchasesDemo, counted {
+                InfoRow(title: "Bought pictures", value: "\(access.imageWallet) left · don't expire")
+                    .accessibilityIdentifier("usageImageWallet")
+                Button { app.purchaseSheet = .imagePacks } label: {
+                    Label("Get more pictures", systemImage: "plus.circle")
+                }
+                .buttonStyle(SecondaryButtonStyle())
+                .accessibilityIdentifier("getMorePicturesButton")
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .cardStyle()
@@ -386,8 +395,20 @@ private struct SettingsAccessActionsCard: View {
                 info: "Each opens a simulated App Store review. No purchase, no charge.\n\nDeleting your data or the app doesn't cancel billing. Use Manage subscription to stop renewals."
                     + (plan.hasStylingAccess ? "\n\nYou already have styling access, so there's nothing to buy." : "")
             )
-            // One likely action stays out; the rest sit in the menu, each opening the same review.
-            if plan.hasStylingAccess {
+            // The likely actions stay out; the rest sit in the menu, each opening the same review.
+            if plan == .complimentary || plan == .sponsored {
+                // No recurring billing on these plans, so there's no subscription to manage first.
+                ActionGroup(moreTitle: "More options", moreIdentifier: "manageAccessMore") {
+                    storeKitButton(.restore)
+                        .buttonStyle(SecondaryButtonStyle())
+                    storeKitButton(.redeem)
+                        .buttonStyle(SecondaryButtonStyle())
+                } more: {
+                    storeKitButton(.manage)
+                    storeKitButton(.startTrial)
+                        .accessibilityHint("You already have styling access, so the review explains there's nothing to buy")
+                }
+            } else if plan.hasStylingAccess {
                 ActionGroup(moreTitle: "More options", moreIdentifier: "manageAccessMore") {
                     storeKitButton(.manage)
                         .buttonStyle(SecondaryButtonStyle(fullWidth: true))
@@ -400,7 +421,7 @@ private struct SettingsAccessActionsCard: View {
             } else {
                 ActionGroup(moreTitle: "More options", moreIdentifier: "manageAccessMore") {
                     Button {
-                        ui.openStoreKit(.startTrial)
+                        if app.purchasesDemo { app.purchaseSheet = .paywall(.settings) } else { ui.openStoreKit(.startTrial) }
                     } label: {
                         Label(plan == .expired ? "Subscribe again (sample)" : "Start free trial", systemImage: "gift")
                     }

@@ -71,6 +71,11 @@ final class AppModel {
     @ObservationIgnored private var routeTrails: [AppSection: [AppRoute]] = [:]
     var toast: ToastMessage?
     var showDispatchHUD = false
+    /// Demo control, off by default: shows the paywall, picture packs and the
+    /// out-of-pictures screen where a blocked action would otherwise only explain itself.
+    var purchasesDemo = false
+    /// The purchase screen on show, presented above whatever else is open.
+    var purchaseSheet: PurchaseSheet?
     /// True while a constrained-frame layout preview is shown (Demo Controls).
     var layoutLabWidth: CGFloat?
 
@@ -470,9 +475,10 @@ final class AppModel {
     func admittedImageJobs(_ misses: Int) -> Int {
         let access = store.access
         if access.plan == .sponsored { return misses }
-        guard access.plan.hasStylingAccess else { return 0 }
         let inFlight = style.imageJobs.values.filter { !$0.isTerminal }.count + ((editor?.previewJob).map { $0.isTerminal ? 0 : 1 } ?? 0)
-        return max(0, min(misses, access.imageUnitsRemaining - inFlight))
+        // Purchased pictures keep working without an active plan (PRD §14); included ones need it.
+        let available = (access.plan.hasStylingAccess ? access.imageUnitsRemaining : 0) + access.imageWallet
+        return max(0, min(misses, available - inFlight))
     }
 
     /// Why a new picture can't start. Shown instead of charging anything.
@@ -1064,5 +1070,30 @@ final class AppModel {
             $0.onMeReference = .simulatedReference(version: ($0.onMeReference.version ?? 0) + 1, addedAt: .now)
             $0.permissions[.onMeImages] = .allowed
         }
+    }
+}
+
+// MARK: - Purchase screens (simulated, Demo Controls)
+
+extension AppModel {
+    /// Opens the screen that fits a blocked picture: the paywall without a plan,
+    /// the out-of-pictures choices with one.
+    func presentPictureOptions() {
+        purchaseSheet = store.access.plan.hasStylingAccess ? .outOfPictures : .paywall(.picture)
+    }
+
+    /// Simulated App Store confirmation of the free month. Nothing is charged.
+    func purchasesStartTrial() {
+        let wasExpired = store.access.plan == .expired
+        store.settingsSimulatePlan(wasExpired ? .subscribed : .trialActive)
+        purchaseSheet = nil
+        showToast(wasExpired ? "Simulated: subscribed again. Nothing was charged." : "Simulated: free month started. Nothing was charged.", style: .info)
+    }
+
+    /// Simulated pack purchase. Nothing is charged.
+    func purchasesBuy(_ pack: SampleImagePack) {
+        store.purchasesAddImageCredits(pack.pictures)
+        purchaseSheet = nil
+        showToast("Simulated: \(pack.pictures) pictures added. Nothing was charged.", style: .info)
     }
 }

@@ -124,7 +124,9 @@ struct SavedOutfitDetailView: View {
                     .frame(maxWidth: 420)
                     .frame(maxWidth: .infinity)
                 OutfitPieceChips(pieces: outfit.pieces,
-                                 statusFor: { SavedLookStatus.badges(for: $0, in: store) })
+                                 statusFor: { SavedLookStatus.badges(for: $0, in: store) },
+                                 scrolls: true,
+                                 isExpanded: app.savedUI.disclosure("lookPieces-\(outfit.id)"))
             }
             HStack(spacing: Spacing.xxs) {
                 Text("Badges show today's status")
@@ -141,7 +143,8 @@ struct SavedOutfitDetailView: View {
                     message: "The look keeps a placeholder in its place. Nothing was swapped in — replace it yourself in the editor if you like.",
                     actionTitle: "Replace in editor",
                     action: { app.openEditor(forSaved: outfit.id, in: nil) },
-                    summary: "A placeholder holds its place. Nothing was swapped in."
+                    summary: "A placeholder holds its place. Nothing was swapped in.",
+                    isMessageExpanded: app.savedUI.disclosure("lookMissingBanner-\(outfit.id)")
                 )
             }
         }
@@ -254,7 +257,8 @@ struct SavedOutfitDetailView: View {
                     "There aren't enough saved garment details to suggest an occasion. Tag one yourself below.",
                     summary: "Not enough saved details to suggest one.",
                     font: .subheadline,
-                    topic: "why there's no suggestion"
+                    topic: "why there's no suggestion",
+                    isExpanded: app.savedUI.disclosure("lookNoSuggestion-\(outfit.id)")
                 )
             } else {
                 ChipCarousel(isExpanded: app.savedUI.disclosure("wearChips-\(outfit.id)"), itemsLabel: "occasions") {

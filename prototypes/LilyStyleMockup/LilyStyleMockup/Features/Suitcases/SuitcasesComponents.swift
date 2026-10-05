@@ -252,24 +252,6 @@ struct SuitcasesSourceControl: View {
     }
 }
 
-/// Outlined label that matches SecondaryButtonStyle, for Menu labels.
-struct SuitcasesOutlinedLabel: ViewModifier {
-    var minHeight: CGFloat = HitTarget.minimum
-
-    func body(content: Content) -> some View {
-        content
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(Palette.primaryAction)
-            .padding(.horizontal, Spacing.m)
-            .padding(.vertical, Spacing.xs)
-            .frame(minHeight: minHeight)
-            .background(RoundedRectangle(cornerRadius: Radius.tile, style: .continuous).fill(Palette.surface))
-            .overlay(RoundedRectangle(cornerRadius: Radius.tile, style: .continuous).strokeBorder(Palette.controlBorder, lineWidth: 1))
-            .contentShape(RoundedRectangle(cornerRadius: Radius.tile, style: .continuous))
-            .hoverEffect(.highlight)
-    }
-}
-
 /// Applies a navigation title only when the view is shown on its own (not embedded).
 struct SuitcasesTitleModifier: ViewModifier {
     var title: String
@@ -526,16 +508,15 @@ struct SuitcasesNameSheet: View {
                         .onSubmit(save)
                         .accessibilityIdentifier("suitcaseNameField")
                 } header: {
-                    FormSectionHeader("Name")
+                    FormSectionHeader("Name", info: SuitcasesText.organizationNote)
                 } footer: {
+                    // Only errors show under the field; the how-it-works note is behind the info button.
                     if let duplicate {
                         Text("You already have a suitcase called “\(duplicate.name)”\(duplicate.isArchived ? " (archived)" : ""). Try another name.")
                             .foregroundStyle(Palette.error)
                     } else if isTooLong {
                         Text("Keep it to 40 characters or fewer.")
                             .foregroundStyle(Palette.error)
-                    } else {
-                        Text(SuitcasesText.organizationNote)
                     }
                 }
                 .listRowBackground(Palette.surface)

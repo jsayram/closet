@@ -628,7 +628,10 @@ struct ProfileMeasurementEditor: View {
                             .foregroundStyle(Palette.secondaryText)
                     }
                 } header: {
-                    ProfileFormHeader("Value", info: draft.dimension.help)
+                    Text("Value")
+                } footer: {
+                    // How to measure is what she needs to fill the field in, so it stays under it.
+                    CollapsibleText(draft.dimension.help, topic: "how to measure")
                 }
                 .listRowBackground(Palette.surface)
 

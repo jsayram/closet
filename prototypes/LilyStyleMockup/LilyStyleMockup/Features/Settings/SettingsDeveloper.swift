@@ -334,6 +334,29 @@ private struct SettingsDemoAccessSection: View {
             .pickerStyle(.menu)
             .accessibilityIdentifier("accessPlanPicker")
 
+            Toggle(isOn: Binding(get: { app.purchasesDemo }, set: { app.purchasesDemo = $0 })) {
+                SettingsRowLabel(title: "Paywall and purchases", subtitle: "Shows the paywall, picture packs and out-of-pictures screens. Off while testing.", systemImage: "cart")
+            }
+            .frame(minHeight: HitTarget.minimum)
+            .accessibilityIdentifier("purchasesDemoToggle")
+            if app.purchasesDemo {
+                Button { app.purchaseSheet = .paywall(.settings) } label: { Label("Preview paywall", systemImage: "sparkles") }
+                    .buttonStyle(SecondaryButtonStyle())
+                    .accessibilityIdentifier("previewPaywallButton")
+                Button { app.purchaseSheet = .imagePacks } label: { Label("Preview picture packs", systemImage: "plus.circle") }
+                    .buttonStyle(SecondaryButtonStyle())
+                    .accessibilityIdentifier("previewImagePacksButton")
+                Button { app.purchaseSheet = .outOfPictures } label: { Label("Preview out of pictures", systemImage: "photo.badge.exclamationmark") }
+                    .buttonStyle(SecondaryButtonStyle())
+                    .accessibilityIdentifier("previewOutOfPicturesButton")
+                Button {
+                    app.store.purchasesUseUpPictures()
+                    app.showToast("This month's sample pictures are used up.", style: .info)
+                } label: { Label("Use up this month's pictures", systemImage: "photo.stack") }
+                    .buttonStyle(SecondaryButtonStyle())
+                    .disabled(access.plan == .sponsored)
+                    .accessibilityIdentifier("useUpPicturesButton")
+            }
             InfoRow(title: "Style Me today",
                     value: access.plan == .sponsored ? "Not counted (sponsored)" : "\(access.stylingUsedToday) of \(access.terms.dailyStylingAllowance)")
             Button {
@@ -452,7 +475,9 @@ private struct SettingsLayoutLabSection: View {
                     }
                     .pickerStyle(.menu)
                     .accessibilityIdentifier("layoutLabSectionPicker")
-                    ChipCarousel(isExpanded: ui.detailsBinding("layoutLabWidthChips"), itemsLabel: "widths") {
+                    // These five chips wrap instead of scrolling: the screenshot tour taps each
+                    // width by identifier, so every chip has to be on screen.
+                    FlowLayout(spacing: Spacing.xs) {
                         ForEach(SettingsLayoutLabView.widths, id: \.self) { width in
                             CapsuleChip(title: "\(Int(width)) pt", systemImage: "rectangle.portrait",
                                         isSelected: ui.layoutLabWidth == width) {

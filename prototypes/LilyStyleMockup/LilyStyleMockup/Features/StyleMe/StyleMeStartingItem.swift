@@ -33,7 +33,8 @@ struct StyleMeStartingItemSection: View {
             }
 
             if let message = ui.dropMessage {
-                ActionBanner(style: .caution, title: "Couldn't use that item", message: message) {
+                ActionBanner(style: .caution, title: "Couldn't use that item", message: message,
+                             isMessageExpanded: app.styleMeUI.disclosure("dropMessage")) {
                     Button("OK") { ui.dropMessage = nil }
                         .buttonStyle(SecondaryButtonStyle())
                 }

@@ -25,7 +25,10 @@ struct OutfitEditorSwapPicker: View {
     private var pluralLabel: String { slot.category.pluralLabel.lowercased() }
 
     private var scopeNote: String {
-        let only = "Choosing one changes only the \(slot.label.lowercased()); everything else stays."
+        let displaced = displacedPieces
+        let only = displaced.isEmpty
+            ? "Choosing one changes only the \(slot.label.lowercased()); everything else stays."
+            : "Choosing a \(slot.label.lowercased()) replaces the \(displacedNames(displaced)); everything else stays."
         return editor.scope.isSuitcase
             ? "Only pieces in \(scopeName) — swaps stay within it. \(only)"
             : "Pieces you own in Main Closet. \(only)"
@@ -88,7 +91,9 @@ struct OutfitEditorSwapPicker: View {
     /// One short line under the title; the full scope note opens from the info button.
     private var scopeLine: some View {
         HStack(spacing: Spacing.xxs) {
-            Text("Only the \(slot.label.lowercased()) changes")
+            Text(displacedPieces.isEmpty
+                 ? "Only the \(slot.label.lowercased()) changes"
+                 : "Replaces the \(displacedNames(displacedPieces))")
                 .font(.footnote)
                 .foregroundStyle(Palette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
@@ -155,12 +160,9 @@ struct OutfitEditorSwapPicker: View {
             .accessibilityIdentifier("swapCurrentPiece")
         } else {
             let displaced = displacedPieces
-            // What a choice replaces stays on screen; the rest is in the info button.
             HStack(alignment: .top, spacing: Spacing.xxs) {
-                Label(displaced.isEmpty
-                      ? "Nothing in this slot yet"
-                      : "Choosing a \(slot.label.lowercased()) replaces the \(displacedNames(displaced))",
-                      systemImage: "plus.circle")
+                // What a choice replaces is already the line under the title.
+                Label("Nothing in this slot yet", systemImage: "plus.circle")
                     .font(.subheadline)
                     .foregroundStyle(Palette.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
@@ -225,7 +227,8 @@ struct OutfitEditorSwapPicker: View {
         }
         @Bindable var ui = app.editorUI
         VStack(alignment: .leading, spacing: Spacing.xs) {
-            Text("Color")
+            // The active filter is named here, since its chip can be scrolled out of sight.
+            Text(editor.colorFilter.map { "Color · \($0.label)" } ?? "Color")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(Palette.secondaryText)
                 .accessibilityAddTraits(.isHeader)
@@ -384,35 +387,44 @@ struct OutfitEditorSwapPicker: View {
                                + (editor.scope.isSuitcase ? " A new piece wouldn't be part of \(scopeName) unless you add it later." : ""))
                 }
             }
-            // Everything else you can do with this slot, in one group. Remove sits last, apart from the rest.
-            FlowLayout(spacing: Spacing.xs) {
-                if let target = switchTarget {
-                    Button { switchSlot(to: target) } label: {
-                        Label(target == .dress ? "Use a dress instead" : "Switch to a top and bottom",
-                              systemImage: "arrow.triangle.swap")
+            // Everything else you can do with this slot. Remove is destructive, so it
+            // sits in the More menu, or on its own row when nothing else is offered.
+            let removable = piece.flatMap { canRemove($0) ? $0 : nil }
+            if switchTarget != nil || showsFindOne {
+                ActionGroup(moreIdentifier: "swapMoreButton", showsMore: removable != nil) {
+                    if let target = switchTarget {
+                        Button { switchSlot(to: target) } label: {
+                            Label(target == .dress ? "Use a dress instead" : "Switch to a top and bottom",
+                                  systemImage: "arrow.triangle.swap")
+                        }
+                        .buttonStyle(SecondaryButtonStyle())
+                        .accessibilityHint(target == .dress
+                                           ? "Shows dresses. Choosing one replaces the top and bottom."
+                                           : "Shows tops. Choosing one replaces the dress.")
+                        .accessibilityIdentifier("swapSwitchSlotButton")
                     }
-                    .buttonStyle(SecondaryButtonStyle())
-                    .accessibilityHint(target == .dress
-                                       ? "Shows dresses. Choosing one replaces the top and bottom."
-                                       : "Shows tops. Choosing one replaces the dress.")
-                    .accessibilityIdentifier("swapSwitchSlotButton")
-                }
-                if showsFindOne {
-                    Button { openRootSheet(.findOne(findOneContext())) } label: {
-                        Label("Find One", systemImage: "magnifyingglass")
+                    if showsFindOne {
+                        Button { openRootSheet(.findOne(findOneContext())) } label: {
+                            Label("Find One", systemImage: "magnifyingglass")
+                        }
+                        .buttonStyle(SecondaryButtonStyle())
+                        .accessibilityHint("Opens Find One for this slot. Nothing is searched until you ask there.")
+                        .accessibilityIdentifier("findOneButton")
                     }
-                    .buttonStyle(SecondaryButtonStyle())
-                    .accessibilityHint("Opens Find One for this slot. Nothing is searched until you ask there.")
-                    .accessibilityIdentifier("findOneButton")
-                }
-                if let piece, canRemove(piece) {
-                    Button(role: .destructive) { remove(piece) } label: {
-                        Label("Remove from look", systemImage: "minus.circle")
+                } more: {
+                    if let removable {
+                        Button("Remove from look", systemImage: "minus.circle", role: .destructive) { remove(removable) }
+                            .accessibilityHint("Takes this piece off the look. Everything else stays. You can undo.")
+                            .accessibilityIdentifier("removePieceButton")
                     }
-                    .buttonStyle(DestructiveButtonStyle())
-                    .accessibilityHint("Takes this piece off the look. Everything else stays. You can undo.")
-                    .accessibilityIdentifier("removePieceButton")
                 }
+            } else if let removable {
+                Button(role: .destructive) { remove(removable) } label: {
+                    Label("Remove from look", systemImage: "minus.circle")
+                }
+                .buttonStyle(DestructiveButtonStyle())
+                .accessibilityHint("Takes this piece off the look. Everything else stays. You can undo.")
+                .accessibilityIdentifier("removePieceButton")
             }
         }
     }

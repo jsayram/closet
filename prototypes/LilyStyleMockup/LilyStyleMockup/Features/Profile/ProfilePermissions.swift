@@ -206,7 +206,7 @@ struct ProfileAnalyticsSection: View {
 
             DetailsDisclosure(
                 "What it covers",
-                summary: "Coarse app events, never what you type",
+                summary: "Never what you type",
                 isExpanded: app.profileUI.detailsBinding("analytics"),
                 identifier: "profileAnalyticsDetails"
             ) {

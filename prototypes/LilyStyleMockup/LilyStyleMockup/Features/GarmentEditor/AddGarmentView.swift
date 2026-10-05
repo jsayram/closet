@@ -288,6 +288,7 @@ struct GarmentEditorAddPhotoCard: View {
     @State private var importing = false
     @State private var notice: Notice?
     @State private var isDropTargeted = false
+    @State private var showRemovePhotoDialog = false
 
     enum Notice: Equatable {
         case error(String)
@@ -427,14 +428,24 @@ struct GarmentEditorAddPhotoCard: View {
             .accessibilityIdentifier("pasteButton")
         } more: {
             Button("Camera", systemImage: "camera", action: cameraTapped)
+                .accessibilityHint("Take a photo of one garment.")
                 .accessibilityIdentifier("cameraButton")
             if draft.photo == nil {
                 Button("Text only", systemImage: "text.alignleft", action: textOnlyTapped)
+                    .accessibilityHint("Skip the photo and describe it in words.")
                     .accessibilityIdentifier("textOnlyButton")
             } else {
-                Button("Remove photo", systemImage: "trash", role: .destructive, action: removePhoto)
+                // Asks first, and the dialog says what goes.
+                Button("Remove photo…", systemImage: "trash", role: .destructive) { showRemovePhotoDialog = true }
+                    .accessibilityHint("Removes the unsaved photo copy. The rest of the form stays.")
                     .accessibilityIdentifier("removeDraftPhotoButton")
             }
+        }
+        .confirmationDialog("Remove this photo?", isPresented: $showRemovePhotoDialog, titleVisibility: .visible) {
+            Button("Remove photo", role: .destructive, action: removePhoto)
+            Button("Keep photo", role: .cancel) {}
+        } message: {
+            Text("Removes the unsaved photo copy. The rest of the form stays.")
         }
     }
 

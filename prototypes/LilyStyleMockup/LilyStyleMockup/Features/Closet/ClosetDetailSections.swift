@@ -315,7 +315,7 @@ struct ClosetStatusCard: View {
 
         case .unavailable:
             ClosetStatusLine(badge: .unavailable, text: unavailableText, summary: unavailableSummary)
-            ClosetActionRow(topic: "Mark available", info: "Ownership and laundry status don't change.") {
+            ClosetActionRow(topic: "Mark available", info: "Sets it to Available. Ownership and arrival don't change.") {
                 Button {
                     app.closetMarkAvailable(garment.id)
                 } label: {
@@ -436,7 +436,7 @@ struct ClosetStylingCard: View {
         CardSection("Style with it", subtitle: "Source: \(app.workingScopeName)", systemImage: "sparkles") {
             if isCurrent {
                 currentStartingPiece
-            } else {
+            } else if eligibility.isEligible {
                 HStack(spacing: Spacing.s) {
                     Button {
                         app.closetUseAsStartingPiece(garment.id, forThisRequestOnly: false)
@@ -444,38 +444,27 @@ struct ClosetStylingCard: View {
                         Label("Use as starting piece", systemImage: "sparkles")
                     }
                     .buttonStyle(PrimaryButtonStyle())
-                    .disabled(!eligibility.isEligible)
-                    .accessibilityHint(eligibility.isEligible ? "Sets it in Style Me. Nothing is styled until you tap Style Me" : "Not available right now")
+                    .accessibilityHint("Sets it in Style Me. Nothing is styled until you tap Style Me")
                     .accessibilityIdentifier("useAsStartingPieceButton")
-                    if eligibility.isEligible {
-                        InfoButton("Use as starting piece", text: "Sets it in Style Me. Nothing is styled until you tap Style Me.")
-                    }
+                    InfoButton("Use as starting piece", text: "Sets it in Style Me. Nothing is styled until you tap Style Me.")
                 }
-                if !eligibility.isEligible {
-                    // The blocker stays on screen in short form; the rest opens in place.
-                    CollapsibleText(app.closetIneligibilityExplanation(garment, issues: eligibility.issues), collapsedLines: 2, topic: "why it can't start a look")
-                    if eligibility.canOverride {
+                askRow(fullWidth: true) { EmptyView() }
+            } else {
+                // The blocker stays on screen in short form; the rest opens in place.
+                CollapsibleText(app.closetIneligibilityExplanation(garment, issues: eligibility.issues), collapsedLines: 2, topic: "why it can't start a look")
+                if eligibility.canOverride {
+                    askRow(fullWidth: false) {
                         Button {
                             pending = .useForThisRequest(garment.id)
                         } label: {
                             Label("Use for this request only…", systemImage: "checkmark.circle.badge.questionmark")
                         }
-                        .buttonStyle(SecondaryButtonStyle(fullWidth: true))
+                        .buttonStyle(SecondaryButtonStyle())
                         .accessibilityIdentifier("useForThisRequestButton")
                     }
+                } else {
+                    askRow(fullWidth: true) { EmptyView() }
                 }
-            }
-
-            ClosetActionRow(topic: "Ask another stylist",
-                            info: "Builds a picture and an editable prompt you can copy or share yourself. Nothing is sent.") {
-                Button {
-                    app.present(.askStylist(.garments([garment.id])))
-                } label: {
-                    Label("Ask another stylist", systemImage: "person.2")
-                }
-                .buttonStyle(SecondaryButtonStyle(fullWidth: true))
-                .accessibilityHint("Nothing is sent")
-                .accessibilityIdentifier("askStylistGarmentButton")
             }
         }
     }
@@ -487,26 +476,50 @@ struct ClosetStylingCard: View {
         if app.style.draft.overrideIDs.contains(garment.id) {
             ClosetNote("Using it for this request only. Its status hasn't changed.")
         }
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: Spacing.s) { currentButtons }
-            VStack(spacing: Spacing.xs) { currentButtons }
+        askRow(fullWidth: false) {
+            Button {
+                app.select(.styleMe)
+            } label: {
+                Label("Open Style Me", systemImage: "sparkles")
+            }
+            .buttonStyle(SecondaryButtonStyle())
+        } more: {
+            Button("Remove as starting piece", systemImage: "xmark.circle") {
+                app.style.draft.startingItemID = nil
+                app.style.draft.overrideIDs.remove(garment.id)
+            }
         }
     }
 
-    @ViewBuilder private var currentButtons: some View {
-        Button {
-            app.select(.styleMe)
-        } label: {
-            Label("Open Style Me", systemImage: "sparkles")
+    /// At most two buttons side by side, with Ask another stylist as the second one and
+    /// its note behind the info button. Anything else goes in the More menu.
+    private func askRow<Leading: View, MoreItems: View>(
+        fullWidth: Bool,
+        @ViewBuilder leading: () -> Leading,
+        @ViewBuilder more: () -> MoreItems
+    ) -> some View {
+        HStack(alignment: .top, spacing: Spacing.s) {
+            ActionGroup(moreIdentifier: "stylingMoreButton") {
+                leading()
+                Button {
+                    app.present(.askStylist(.garments([garment.id])))
+                } label: {
+                    Label("Ask another stylist", systemImage: "person.2")
+                }
+                .buttonStyle(SecondaryButtonStyle(fullWidth: fullWidth))
+                .accessibilityHint("Nothing is sent")
+                .accessibilityIdentifier("askStylistGarmentButton")
+            } more: {
+                more()
+            }
+            InfoButton("Ask another stylist",
+                       text: "Builds a picture and an editable prompt you can copy or share yourself. Nothing is sent.")
+                .frame(minHeight: HitTarget.minimum)
         }
-        .buttonStyle(SecondaryButtonStyle(fullWidth: true))
-        Button {
-            app.style.draft.startingItemID = nil
-            app.style.draft.overrideIDs.remove(garment.id)
-        } label: {
-            Label("Remove as starting piece", systemImage: "xmark.circle")
-        }
-        .buttonStyle(SecondaryButtonStyle(fullWidth: true))
+    }
+
+    private func askRow<Leading: View>(fullWidth: Bool, @ViewBuilder leading: () -> Leading) -> some View {
+        askRow(fullWidth: fullWidth, leading: leading, more: { EmptyView() })
     }
 }
 
@@ -611,11 +624,30 @@ struct ClosetSuitcaseMembershipCard: View {
                 }
                 .buttonStyle(SecondaryButtonStyle(fullWidth: true))
             }
-            ForEach(active) { suitcase in
+            // Suitcases it's already in come first; the rest of a long list sits behind a details row.
+            let linked = active.filter { app.store.membership(garmentID: garment.id, suitcaseID: $0.id) != nil }
+            let unlinked = active.filter { app.store.membership(garmentID: garment.id, suitcaseID: $0.id) == nil }
+            let shownUnlinked = unlinked.prefix(max(0, Self.visibleRows - linked.count - archivedLinks.count))
+            let hidden = unlinked.dropFirst(shownUnlinked.count)
+            ForEach(linked) { suitcase in
                 row(suitcase, archived: false, canAdd: canAdd)
             }
             ForEach(archivedLinks) { suitcase in
                 row(suitcase, archived: true, canAdd: false)
+            }
+            ForEach(shownUnlinked) { suitcase in
+                row(suitcase, archived: false, canAdd: canAdd)
+            }
+            if !hidden.isEmpty {
+                DetailsDisclosure("Other suitcases", count: hidden.count,
+                                  isExpanded: Binding(get: { app.closetUI.otherSuitcasesExpanded }, set: { app.closetUI.otherSuitcasesExpanded = $0 }),
+                                  identifier: "garmentMoreSuitcases") {
+                    VStack(alignment: .leading, spacing: Spacing.s) {
+                        ForEach(hidden) { suitcase in
+                            row(suitcase, archived: false, canAdd: canAdd)
+                        }
+                    }
+                }
             }
             if !canAdd, !active.isEmpty {
                 ClosetNote(garment.isTrashed
@@ -626,6 +658,9 @@ struct ClosetSuitcaseMembershipCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("garmentSuitcasesSection")
     }
+
+    /// Rows shown before the rest fold behind "Other suitcases".
+    private static let visibleRows = 3
 
     private func row(_ suitcase: Suitcase, archived: Bool, canAdd: Bool) -> some View {
         let isMember = app.store.membership(garmentID: garment.id, suitcaseID: suitcase.id) != nil

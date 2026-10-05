@@ -936,8 +936,24 @@ final class DemoStore {
 
     func consumeImageUnits(_ n: Int) {
         guard access.plan != .sponsored else { return }
-        // Admission happens before dispatch; this only keeps the meter from showing more than the allowance.
-        access.imageUnitsUsedThisMonth = min(access.imageUnitsUsedThisMonth + n, access.terms.monthlyImageAllowance)
+        // Admission happens before dispatch. Monthly pictures are used first, then purchased ones.
+        let fromMonthly = access.plan.hasStylingAccess ? min(n, access.imageUnitsRemaining) : 0
+        access.imageUnitsUsedThisMonth += fromMonthly
+        let fromWallet = min(n - fromMonthly, access.imageWallet)
+        if fromWallet > 0 { access.purchasedImageCredits = access.imageWallet - fromWallet }
+        commit(inventoryChanged: false)
+    }
+
+    /// Simulated pack purchase: adds pictures to the wallet. Nothing is charged.
+    func purchasesAddImageCredits(_ n: Int) {
+        access.purchasedImageCredits = access.imageWallet + n
+        commit(inventoryChanged: false)
+    }
+
+    /// Demo control: uses up this month's included pictures and empties the wallet.
+    func purchasesUseUpPictures() {
+        access.imageUnitsUsedThisMonth = access.terms.monthlyImageAllowance
+        access.purchasedImageCredits = 0
         commit(inventoryChanged: false)
     }
 }

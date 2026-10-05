@@ -814,12 +814,10 @@ struct ProfileOnboardingAccess: View {
                     .foregroundStyle(Palette.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityAddTraits(.isHeader)
-                CollapsibleText(
-                    "Here's what's always free and what uses styling access, before you set anything up.",
-                    threshold: 1,
-                    font: .subheadline,
-                    topic: "what's free"
-                )
+                Text("What's always free, and what uses styling access.")
+                    .font(.subheadline)
+                    .foregroundStyle(Palette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             VStack(alignment: .leading, spacing: Spacing.xs) {
@@ -936,7 +934,11 @@ struct ProfileOnboardingPrivacy: View {
                 }
                 .accessibilityElement(children: .combine)
                 InfoRow(title: "Retention and training", value: "Not set: no real provider is chosen in this prototype")
-                // Asked here, so what is and isn't sent stays on screen; the scope notes open in place.
+                // Asked here, so why it's needed and what is and isn't sent stay on screen; the scope notes open in place.
+                Text("Style Me needs this for text styling. Your closet and saved looks work either way.")
+                    .font(.footnote)
+                    .foregroundStyle(Palette.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
                 CollapsibleText(
                     "Not sent: photos, weight or your whole closet. This permission covers text styling only — photo descriptions, On Me pictures and web search each ask separately.\n\nOn iPhone 12, Style Me uses this cloud stylist (simulated). Your closet, saved looks and manual outfits work either way.",
                     summary: "Not sent: photos, weight or your whole closet.",

@@ -271,9 +271,9 @@ struct GarmentEditorRenameSheet: View {
                         .onSubmit { if !newName.isEmpty, !unchanged { save() } }
                         .accessibilityIdentifier("renameField")
                 } header: {
-                    FormSectionHeader("New name")
+                    FormSectionHeader("New name", info: "Use your own words — no clothing terms needed. Names don't change earlier pictures or start any AI.")
                 } footer: {
-                    Text("Use your own words — no clothing terms needed. Now: “\(oldName)”.")
+                    Text("Now: “\(oldName)”.")
                 }
                 .listRowBackground(Palette.surface)
 
@@ -288,12 +288,6 @@ struct GarmentEditorRenameSheet: View {
                 }
                 .listRowBackground(Palette.surface)
 
-                Section {
-                    Label("Names don't change earlier pictures or start any AI", systemImage: "info.circle")
-                        .font(.footnote)
-                        .foregroundStyle(Palette.secondaryText)
-                }
-                .listRowBackground(Palette.surface)
             }
             .scrollContentBackground(.hidden)
             .themedScreenBackground()

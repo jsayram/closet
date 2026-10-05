@@ -457,19 +457,36 @@ private struct SearchStatusLine: View {
         "Index up to date · \(count(.garment)) garments, \(count(.outfit)) looks, \(count(.preview)) previews, \(count(.product)) products"
     }
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var deviceLabel: some View {
+        Label {
+            Text("On this device only")
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                .fixedSize(horizontal: false, vertical: true)
+        } icon: {
+            Image(systemName: "lock.shield")
+                .foregroundStyle(Palette.success)
+        }
+        .font(.footnote.weight(.semibold))
+        .foregroundStyle(Palette.primaryText)
+    }
+
     var body: some View {
         HStack(spacing: Spacing.xs) {
-            HStack(spacing: Spacing.xs) {
-                Label {
-                    Text("On this device only")
-                        .lineLimit(1)
-                } icon: {
-                    Image(systemName: "lock.shield")
-                        .foregroundStyle(Palette.success)
+            // At accessibility text sizes the label and badge stack so the line wraps instead of truncating.
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: Spacing.xxs) {
+                        deviceLabel
+                        StatusBadge(kind: .custom("Simulated index", "flask"), compact: true)
+                    }
+                } else {
+                    HStack(spacing: Spacing.xs) {
+                        deviceLabel
+                        StatusBadge(kind: .custom("Simulated index", "flask"), compact: true)
+                    }
                 }
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(Palette.primaryText)
-                StatusBadge(kind: .custom("Simulated index", "flask"), compact: true)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Searching your local data — no AI, upload or account. \(indexText). Simulated index")

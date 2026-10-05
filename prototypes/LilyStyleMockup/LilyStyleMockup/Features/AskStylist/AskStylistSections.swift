@@ -431,7 +431,7 @@ struct AskStylistPersonalSection: View {
                     Rectangle().fill(Palette.divider).frame(height: 1).accessibilityHidden(true)
                 }
             }
-            DetailsDisclosure("Never added", summary: "name, location, weight and more", systemImage: "hand.raised",
+            DetailsDisclosure("Never added", summary: "name, location and more", systemImage: "hand.raised",
                               isExpanded: ui.detailsBinding("neverAdded")) {
                 Text("Your name, location, your weight, measurement numbers other than height (including your inseam), product links, and the rest of your closet.")
                     .font(.footnote)
@@ -529,9 +529,9 @@ struct AskStylistLeavesDeviceSection: View {
                 Label("Prompt text", systemImage: "text.alignleft")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Palette.primaryText)
-                // The exact text, folded to a few lines. Personal details she chose are named just below.
+                // The exact text that would leave the device shows in full; only an unusually long prompt folds.
                 CollapsibleText(text.isEmpty ? "No prompt — only the image would be shared." : text,
-                                collapsedLines: 3, threshold: 4, font: text.isEmpty ? .callout.italic() : .callout,
+                                collapsedLines: 8, threshold: 10, font: text.isEmpty ? .callout.italic() : .callout,
                                 color: Palette.primaryText, topic: "the prompt text that will be shared",
                                 isExpanded: ui.detailsBinding("promptPreview"))
                     .textSelection(.enabled)
@@ -557,7 +557,7 @@ struct AskStylistLeavesDeviceSection: View {
                     InfoButton("where it goes", title: "Where it goes",
                                text: "Goes to: the app or place you pick in the share sheet or Files, or your clipboard when you tap Copy.")
                 }
-                DetailsDisclosure("What's not included", summary: "name, location, weight and more", systemImage: "eye.slash",
+                DetailsDisclosure("What's not included", summary: "name, location and more", systemImage: "eye.slash",
                                   isExpanded: ui.detailsBinding("notIncluded"), identifier: "askNotIncluded") {
                     VStack(alignment: .leading, spacing: Spacing.xs) {
                         AskStylistNoteRow(systemImage: "checkmark.shield", text: rightsSummary)
@@ -673,7 +673,7 @@ struct AskStylistActionsSection: View {
                         .font(.footnote)
                         .foregroundStyle(Palette.primaryText)
                         .fixedSize(horizontal: false, vertical: true)
-                    AskStylistStep(number: 1, text: "Save Image (or Copy Image).")
+                    AskStylistStep(number: 1, text: "Tap More, then Save Image to Files (or Copy Image).")
                     AskStylistStep(number: 2, text: "Upload the image in the other app.")
                     AskStylistStep(number: 3, text: "Tap Copy Prompt here, then paste it there.")
                 }
@@ -710,7 +710,7 @@ struct AskStylistNotesSection: View {
     @Environment(AppModel.self) private var app
 
     var body: some View {
-        DetailsDisclosure("Good to know", summary: "shared copies can't be recalled", systemImage: "lightbulb",
+        DetailsDisclosure("Good to know", summary: "can't be recalled", systemImage: "lightbulb",
                           isExpanded: app.askStylistUI.detailsBinding("goodToKnow"), identifier: "askGoodToKnow") {
             VStack(alignment: .leading, spacing: Spacing.s) {
                 AskStylistNoteRow(systemImage: "doc.text.magnifyingglass",

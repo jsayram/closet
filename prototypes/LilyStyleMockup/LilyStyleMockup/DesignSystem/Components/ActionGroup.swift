@@ -44,7 +44,8 @@ struct MoreMenu<Items: View>: View {
 /// Up to two visible buttons side by side, most likely action first, with every other
 /// action in a "More" menu. The buttons keep their own styles and identifiers.
 /// If the row doesn't fit, the menu drops to a second row; if the two buttons still
-/// don't fit side by side, they stack. At accessibility text sizes everything stacks.
+/// don't fit side by side, the second one shares a row with the menu, so the group
+/// never takes more than two rows. At accessibility text sizes everything stacks.
 struct ActionGroup<Buttons: View, MoreItems: View>: View {
     private let moreTitle: String
     private let moreIdentifier: String?
@@ -92,7 +93,7 @@ struct ActionGroup<Buttons: View, MoreItems: View>: View {
                     HStack(spacing: Spacing.xs) { buttons }
                     menu
                 }
-                VStack(alignment: .leading, spacing: Spacing.xs) {
+                ActionFlow(spacing: Spacing.xs) {
                     buttons
                     menu
                 }
@@ -103,6 +104,56 @@ struct ActionGroup<Buttons: View, MoreItems: View>: View {
     @ViewBuilder private var menu: some View {
         if hasMore {
             MoreMenu(moreTitle, identifier: moreIdentifier) { moreItems }
+        }
+    }
+}
+
+/// Wrapping row for ActionGroup's narrow fallback. Unlike FlowLayout it measures each
+/// button at its natural width, so a full-width button style doesn't claim a row of
+/// its own.
+private struct ActionFlow: Layout {
+    var spacing: CGFloat
+
+    private func size(_ view: LayoutSubview, maxWidth: CGFloat) -> CGSize {
+        let natural = view.sizeThatFits(.unspecified)
+        guard natural.width > maxWidth else { return natural }
+        return view.sizeThatFits(ProposedViewSize(width: maxWidth, height: nil))
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let maxWidth = proposal.width ?? .infinity
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var widest: CGFloat = 0
+        for view in subviews {
+            let size = size(view, maxWidth: maxWidth)
+            if x > 0, x + size.width > maxWidth {
+                y += rowHeight + spacing
+                x = 0
+                rowHeight = 0
+            }
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+            widest = max(widest, min(x - spacing, maxWidth))
+        }
+        return CGSize(width: proposal.width ?? widest, height: y + rowHeight)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var x = bounds.minX
+        var y = bounds.minY
+        var rowHeight: CGFloat = 0
+        for view in subviews {
+            let size = size(view, maxWidth: bounds.width)
+            if x > bounds.minX, x + size.width > bounds.maxX {
+                y += rowHeight + spacing
+                x = bounds.minX
+                rowHeight = 0
+            }
+            view.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(width: size.width, height: size.height))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
         }
     }
 }

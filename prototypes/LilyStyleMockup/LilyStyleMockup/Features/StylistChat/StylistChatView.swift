@@ -109,6 +109,8 @@ private struct StylistChatGreeting: View {
         return "\(part), Lily"
     }
 
+    private static let visibleSuggestions = 2
+
     private var suggestions: [String] {
         if app.chat.attachedOutfit != nil {
             return ["Would white sneakers work with this?", "Make it warmer for rain", "Is this too dressy for brunch?"]
@@ -149,8 +151,10 @@ private struct StylistChatGreeting: View {
             }
             .padding(.horizontal, Spacing.l)
 
+            // Two starters show; the rest open in place from "More ideas".
             VStack(spacing: Spacing.xs) {
-                ForEach(Array(suggestions.enumerated()), id: \.offset) { index, text in
+                let shown = app.chat.showsMoreSuggestions ? suggestions : Array(suggestions.prefix(Self.visibleSuggestions))
+                ForEach(Array(shown.enumerated()), id: \.offset) { index, text in
                     Button { onPick(text) } label: {
                         HStack {
                             Text(text)
@@ -174,6 +178,22 @@ private struct StylistChatGreeting: View {
                     .staggeredAppear(index: index)
                     .accessibilityHint("Asks the stylist this question")
                     .accessibilityIdentifier("stylistChatSuggestion-\(index)")
+                }
+                if suggestions.count > Self.visibleSuggestions {
+                    let open = app.chat.showsMoreSuggestions
+                    Button {
+                        Motion.perform(reduceMotion: reduceMotion) { app.chat.showsMoreSuggestions.toggle() }
+                    } label: {
+                        HStack(spacing: 2) {
+                            Text(open ? "Fewer ideas" : "More ideas")
+                            Image(systemName: open ? "chevron.up" : "chevron.down")
+                                .imageScale(.small)
+                        }
+                    }
+                    .buttonStyle(.quietLink)
+                    .accessibilityValue(open ? "Expanded" : "Collapsed")
+                    .accessibilityHint(open ? "Hides the extra questions" : "Shows \(suggestions.count - Self.visibleSuggestions) more questions to ask")
+                    .accessibilityIdentifier("stylistChatMoreSuggestions")
                 }
             }
             .frame(maxWidth: 460)
@@ -337,7 +357,7 @@ private struct StylistChatLookCard: View {
             .accessibilityElement(children: .combine)
             OutfitFlatLayView(pieces: outfit.pieces, statusFor: badges)
                 .frame(maxWidth: 360)
-            OutfitPieceChips(pieces: outfit.pieces, statusFor: badges)
+            OutfitPieceChips(pieces: outfit.pieces, statusFor: badges, scrolls: true)
             FlowLayout(spacing: Spacing.xs) {
                 Button {
                     app.openChatLookInEditor(outfit)

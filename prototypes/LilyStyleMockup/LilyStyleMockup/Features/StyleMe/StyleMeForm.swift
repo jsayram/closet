@@ -123,7 +123,8 @@ struct StyleMeSourceSection: View {
             }
             if let sid = scope.suitcaseID, app.store.suitcase(sid) != nil, app.store.memberIDs(of: sid).isEmpty {
                 ActionBanner(style: .info, title: "\(app.workingScopeName) is empty",
-                             message: "It stays selected. Add garments from Main Closet, or pick another source above.") {
+                             message: "It stays selected. Add garments from Main Closet, or pick another source above.",
+                             isMessageExpanded: app.styleMeUI.disclosure("emptySuitcase")) {
                     Button { app.push(.suitcase(sid)) } label: { Label("Add garments", systemImage: "plus") }
                         .buttonStyle(SecondaryButtonStyle())
                 }
@@ -151,7 +152,8 @@ struct StyleMeSourceSection: View {
                      message: (app.store.scopeFallback?.explanation ?? StyleBlocker.awaitingSourceChoice.message)
                         + " Main Closet is shown for browsing only until you choose.",
                      actionTitle: "Use Main Closet",
-                     action: useMainCloset)
+                     action: useMainCloset,
+                     isMessageExpanded: app.styleMeUI.disclosure("sourceFallback"))
     }
 
     /// A deliberate choice. Fallback alone never authorizes broader styling.
@@ -455,25 +457,39 @@ struct StyleMeBlockersSection: View {
         }
     }
 
+    /// Open state for a blocker's full message, kept in the shared UI state so it
+    /// survives rotation and the tab/sidebar switch.
+    private func blockerDetail(_ blocker: StyleBlocker) -> Binding<Bool> {
+        app.styleMeUI.disclosure("blocker-\(StyleMeBlockerInfo.shortText(blocker))")
+    }
+
     @ViewBuilder
     private func banner(for blocker: StyleBlocker) -> some View {
         let compact = sizeClass == .compact
         switch blocker {
         case .permissionDeclined:
-            ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message) {
+            ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message,
+                         isMessageExpanded: blockerDetail(blocker)) {
                 Button { app.open(.settings, compact: compact) } label: { Label("Review permission", systemImage: "hand.raised") }
                     .buttonStyle(SecondaryButtonStyle())
                 Button { app.open(.profile, compact: compact) } label: { Label("Profile", systemImage: "person.crop.circle") }
                     .buttonStyle(SecondaryButtonStyle())
             }
         case .allowanceExhausted, .noAccess:
-            ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message) {
+            ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message,
+                         isMessageExpanded: blockerDetail(blocker)) {
+                if app.purchasesDemo, case .noAccess = blocker {
+                    Button { app.purchaseSheet = .paywall(.styleMe) } label: { Label("See plans", systemImage: "sparkles") }
+                        .buttonStyle(SecondaryButtonStyle())
+                        .accessibilityIdentifier("blockerSeePlans")
+                }
                 Button { app.open(.access, compact: compact) } label: { Label("Styling Access", systemImage: "creditcard") }
                     .buttonStyle(SecondaryButtonStyle())
             }
         case .awaitingSourceChoice:
             ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker),
-                         message: "Pick Main Closet or a suitcase in the source selector at the top.") {
+                         message: "Pick Main Closet or a suitcase in the source selector at the top.",
+                         isMessageExpanded: blockerDetail(blocker)) {
                 Button {
                     withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) { app.styleMeUI.formAnchor = .source }
                 } label: { Label("Go to source", systemImage: "arrow.up") }
@@ -482,7 +498,8 @@ struct StyleMeBlockersSection: View {
         case .startingItemIneligible:
             startingItemBanner(blocker)
         case .onMeNotReady:
-            ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message) {
+            ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message,
+                         isMessageExpanded: blockerDetail(blocker)) {
                 Button { app.open(.profile, compact: compact) } label: { Label("Set up in Profile", systemImage: "person.crop.circle") }
                     .buttonStyle(SecondaryButtonStyle())
                 Button { app.style.draft.onMe = false } label: { Label("Turn off On Me", systemImage: "eye.slash") }
@@ -498,6 +515,7 @@ struct StyleMeBlockersSection: View {
         if let garment, let eligibility, eligibility.canOverride {
             // Two ways forward stay visible; the others sit in More.
             ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message,
+                         isMessageExpanded: blockerDetail(blocker),
                          moreIdentifier: "startingItemBlockerMore") {
                 Button("Use for this request") { StyleMeStartingActions.choose(garment, withOverride: true, app: app) }
                     .buttonStyle(SecondaryButtonStyle())
@@ -510,7 +528,8 @@ struct StyleMeBlockersSection: View {
                 Button("Remove starting piece", systemImage: "xmark") { StyleMeStartingActions.clear(app: app) }
             }
         } else {
-            ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message) {
+            ActionBanner(style: .caution, title: StyleMeBlockerInfo.shortText(blocker), message: blocker.message,
+                         isMessageExpanded: blockerDetail(blocker)) {
                 Button { app.styleMeUI.showStartingPicker = true } label: { Label("Choose another", systemImage: "hanger") }
                     .buttonStyle(SecondaryButtonStyle())
                 Button { StyleMeStartingActions.clear(app: app) } label: { Label("Remove", systemImage: "xmark") }
@@ -638,14 +657,19 @@ struct StyleMeActionArea: View {
 
     /// In the side-by-side row the label stretches so both buttons end up the same height.
     private func styleMeButton(_ blockers: [StyleBlocker], fillsRowHeight: Bool) -> some View {
-        Button {
-            submit()
+        // With the purchase demo on, a missing plan opens the paywall instead of a dead button.
+        let opensPaywall: Bool = {
+            guard app.purchasesDemo, blockers.count == 1, case .noAccess = blockers[0] else { return false }
+            return true
+        }()
+        return Button {
+            if opensPaywall { app.purchaseSheet = .paywall(.styleMe) } else { submit() }
         } label: {
             Label("Style Me", systemImage: "sparkles")
                 .frame(maxHeight: fillsRowHeight ? .infinity : nil)
         }
         .buttonStyle(PrimaryButtonStyle())
-        .disabled(!blockers.isEmpty)
+        .disabled(!blockers.isEmpty && !opensPaywall)
         .keyboardShortcut(.return, modifiers: .command)
         .accessibilityIdentifier("styleMeButton")
         .accessibilityHint(blockers.first.map { "Unavailable: \(StyleMeBlockerInfo.shortText($0))" }

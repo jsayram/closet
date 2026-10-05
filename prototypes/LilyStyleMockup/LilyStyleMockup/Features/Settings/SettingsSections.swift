@@ -500,7 +500,7 @@ struct SettingsAnalyticsSection: View {
 
             DetailsDisclosure(
                 "What it covers",
-                summary: "Allowlisted events, never what you type",
+                summary: "Never what you type",
                 isExpanded: app.settingsUI.detailsBinding("analytics"),
                 identifier: "analyticsDetails"
             ) {
