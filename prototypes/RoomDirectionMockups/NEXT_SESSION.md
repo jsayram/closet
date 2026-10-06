@@ -94,6 +94,32 @@ Laundry tracking adds upkeep, so it is off by default and turned on with a toggl
   - **When off:** the hamper still stands there, a little faded and empty with no clothes showing at all, with a quiet plate "Laundry · Off". Tapping it opens a short sheet explaining what laundry tracking does, with a "Turn on" button and a link to the Settings toggle. It never nags.
 - Update the prototype's laundry fixtures and flow test (`testLaundryMarkCleanWithUndo`) to switch the toggle on first.
 
+## Discoverability from Home (review, 6 Oct)
+
+**More options moves to the Style Me screen; the desk drawers hold "drawer stuff" (owner decision, final).**
+- **Comfort, Color and Mode** (today in `Features/StyleMe/StyleMeMoreOptions.swift`: today's comfort, colour family and strength, Suggestions or Use only my wardrobe, and "Include one new-piece idea") live on the Style Me screen, since Style Me is what uses them. The Style Me screen is what the desk laptop opens: tapping the laptop no longer styles straight away; it opens a Style Me sheet showing the request (source, occasion and starting piece as summaries from Home) plus Comfort, Color and Mode, each showing its current value, and one primary "Style me" button that sends the request and leads to "Your looks". Keep it one calm screen; the defaults mean she can just tap "Style me".
+- **The three desk drawers on Home** hold the things you'd keep in a drawer: Help and the like. Proposal: top drawer "Help", middle drawer "Send feedback", bottom drawer "Privacy and terms". They are not used for laundry (the hamper covers that) or styling options. The "More options" label goes away. In the large-text layout they become three rows.
+
+**Other discoverability decisions:**
+- **Past results:** "Your looks" (the results screen) gets tabs: the current three looks and an "Earlier" tab with past Style Me results. Shuffle draws from these too. Saved Looks still holds only what she saved.
+- **Add a piece:** stays in Closet only. She won't add pieces often.
+- **Remaining picture allowance:** show a quiet "31 pictures left" near Try it on (proposal; confirm with the owner).
+- **Laundry:** the hamper (above). **Suitcases / source:** the suitcase object (Home navigation cleanup). **Ask stylist and Try it on:** results screen only. **Help, feedback, privacy, demo controls:** Profile, from the top-right icon or the name sign.
+
+## Checklist: new screens these decisions need (none mocked yet)
+
+1. **Home, updated:** wardrobe opens Closet, suitcase in place of the rack (with the Source plates), hamper (on with a subtle clothes bulge, on and all clean, off and faded), desk drawers labelled Help / Send feedback / Privacy and terms, window matching the weather.
+2. **Window variants:** cloudy and snow (rain, sun and night exist).
+3. **Style Me screen** (opened by the laptop): request summary, Comfort, Color, Mode, one "Style me" button. Plus the small sheets each option opens.
+4. **Your looks, updated:** Shuffle, the balanced 2 x 2 buttons, the "Earlier" tab, and the "pictures left" hint near Try it on.
+5. **Saved Looks with search** on both tabs, plus a search-results state and a no-results state.
+6. **Laundry off sheet** (what tracking does, "Turn on") and the **Settings "Track laundry" toggle**.
+7. **Drawer screens:** Help, Send feedback, Privacy and terms.
+8. **Suitcases with more than three:** three favourites plus "See all" list.
+9. **Responsive variants:** iPhone landscape home and iPad portrait home first.
+10. **Soft versions** of the screens built before the soft style was approved (home, garment, suitcases, swap, look, paywall, onboarding, chat, iPad).
+Then the prototype screens listed under "Prototype screens with no room-direction mockup yet".
+
 ## App Store guidelines: what's covered and what to answer (6 Oct)
 
 Approval is never guaranteed; these are the points to keep checking against the current App Review Guidelines.
