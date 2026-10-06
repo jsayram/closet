@@ -83,6 +83,17 @@ The mockups are fixed-size pictures: iPhone portrait at 390 x 844 and iPad lands
 - Rotating or resizing must not re-run a Style Me request or lose state.
 Check each on the simulators and mock the iPhone landscape and iPad portrait home first.
 
+## Laundry becomes opt-in (owner decision, 6 Oct)
+
+Laundry tracking adds upkeep, so it is off by default and turned on with a toggle in Settings ("Track laundry").
+- **Off (default):** no Dirty chip, no Laundry tile in Closet, no laundry badges, and every piece counts as available to Style Me.
+- **On:** today's behaviour (Dirty filter, Laundry screen, Mark clean with Undo, Style Me skips dirty pieces unless she allows one).
+- Known gaps to design when it is on: pieces left "dirty" forever silently shrink Style Me's choices (consider a gentle "Still in the wash?" check or auto-return to clean after a set number of days); whether "Wear today" marks pieces worn; different pieces need washing at different rates (jeans vs blouses); dry cleaning and items away on a trip; turning it off should not lose the dirty marks in case she turns it back on.
+- **A hamper on the home room** makes laundry visible (today it is easy to miss, tucked in Closet). Draw it in the room style, standing on the floor in a clear spot (for example near the wardrobe or bed), reusing or adapting `art/travel-hamper.svg`.
+  - **When on:** the hamper is a real control with a small plate, for example "Laundry · 2 to wash" (or "Laundry · all clean"), and opens the Laundry screen. When something is dirty, a very subtle bulge of clothing rises just above the hamper rim; when everything is clean, the hamper is closed or empty with no clothes showing.
+  - **When off:** the hamper still stands there, a little faded and empty with no clothes showing at all, with a quiet plate "Laundry · Off". Tapping it opens a short sheet explaining what laundry tracking does, with a "Turn on" button and a link to the Settings toggle. It never nags.
+- Update the prototype's laundry fixtures and flow test (`testLaundryMarkCleanWithUndo`) to switch the toggle on first.
+
 ## App Store guidelines: what's covered and what to answer (6 Oct)
 
 Approval is never guaranteed; these are the points to keep checking against the current App Review Guidelines.
