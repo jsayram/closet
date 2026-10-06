@@ -7,7 +7,7 @@ Written 6 October 2026 at the end of a long session, so the next session can con
 Paste this into a new session opened in `/Users/jramirez/Git/closet`:
 
 ```
-Read prototypes/RoomDirectionMockups/NEXT_SESSION.md and prototypes/RoomDirectionMockups/README.md. Start with the "Home navigation cleanup", "Window shows the weather", "Search in Saved Looks" and "Results: shuffle and balanced buttons" sections, then do "The next job": write the PRD amendment proposal for the three behaviour changes as a separate file, then build them into the SwiftUI prototype in prototypes/LilyStyleMockup, update the flow tests, and check on the iPhone and iPad simulators. Follow the standing rules in that file. Don't commit until I ask.
+Read prototypes/RoomDirectionMockups/NEXT_SESSION.md and prototypes/RoomDirectionMockups/README.md. Update the HTML mockups in prototypes/RoomDirectionMockups only: work through "Checklist: new screens these decisions need" (using the sections above it for detail), in the approved soft style, rendering and checking every screen, then refresh snapshots/, index.html and the README. Do NOT change the SwiftUI prototype, write the PRD amendment, or start "The next job" until I review the mockups and say so. Follow the standing rules in that file. Don't commit until I ask.
 ```
 
 ## Where things stand
@@ -17,7 +17,7 @@ Read prototypes/RoomDirectionMockups/NEXT_SESSION.md and prototypes/RoomDirectio
 - None of the room direction is in the SwiftUI app yet.
 - The PRD (`My_Petite_Style_PRD_v2.md`) is never edited. Changes go in separate amendment proposals.
 
-## The next job
+## The next job (only after the owner approves the updated mockups)
 
 Three decisions change prototype behaviour, not just looks:
 
