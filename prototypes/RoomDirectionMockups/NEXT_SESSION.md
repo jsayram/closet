@@ -51,6 +51,14 @@ On the approved results screen (`screens/results-flatlay.html`):
 - **Shuffle.** Add a "Shuffle" control (shuffle icon, soft pill) beside the "Look 1 of 3" dots. It swaps in three different looks drawn from looks already created (earlier Style Me results and saved looks that fit the current source and occasion), with no new AI request and no credits used. The screen always shows three looks. Say so in a short caption the first time, for example "From your earlier looks · no credits used". The prototype already reuses history without dispatching (see the `testHistoryReuseAvoidsDispatch` flow test), so build on that. If too few earlier looks fit, shuffle shows what it can and says so.
 - **Balanced buttons.** Make the four actions a symmetric 2 x 2 grid of equal width and height: Save look (filled plum) and Try it on on the first row, Swap a piece and Ask stylist on the second. Move "Simulated" off the Try it on button so all four are the same height, and keep the single fine-print line "Try-on pictures are simulated" under the grid.
 
+## Open question: where shopping (Find One) fits (design only)
+
+The room mockups have no shopping yet. The proposal to show the owner: shopping appears only where a look has a gap, never as a general shop button.
+- **Results:** when a look needs a piece she doesn't own, the bundle shows a dashed empty sticker slot ("No navy flats in this suitcase") with a "Find one" pill that opens the existing Find One flow.
+- **Swap a piece:** a "Not in your closet? Find one" row at the end of the alternatives.
+- **Saved products:** a third Saved Looks tab, or a row in Profile.
+The Find One functionality stays as it is in the prototype; only its placement in the room design is open, to settle as the build goes. (`Simplified_Direction_On_Hold.md` would defer shopping if adopted.)
+
 After that, the wider visual work (soft no-box style across all screens, Home tab rename, name sign, illustrated rooms, Maya) can follow, in whatever order the owner picks.
 
 ## Standing rules
