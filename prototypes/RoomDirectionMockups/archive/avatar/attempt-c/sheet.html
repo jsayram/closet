@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1500">
+<title>Paper Doll Sheet</title>
+<style>
+  html, body { margin: 0; width: 1500px; height: 1100px; overflow: hidden; background: #FBE5E8;
+    font: 11px/1.3 -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: #2B1B27; }
+  .page { position: relative; width: 1500px; height: 1100px; }
+  h1 { position: absolute; left: 24px; top: 14px; margin: 0; font-size: 15px; font-weight: 600; }
+  h1 small { font-weight: 400; color: #6B5563; margin-left: 10px; font-size: 11px; }
+  .col { position: absolute; top: 46px; }
+  .col.busts { left: 24px; width: 990px; }
+  .col.looks { left: 1046px; width: 432px; }
+  section { margin-bottom: 12px; }
+  h2 { margin: 0 0 2px; font-size: 11px; font-weight: 600; color: #6B5563; text-transform: uppercase; letter-spacing: 0.06em; }
+  .row { display: flex; gap: 12px; align-items: flex-start; }
+  .cell { display: flex; flex-direction: column; align-items: center; }
+  .cap { margin-top: 2px; font-size: 11px; white-space: nowrap; text-align: center; }
+  .cap i { font-style: normal; color: #6B5563; }
+  .bust { width: 124px; height: 134px; }
+  .full { width: 124px; height: 455px; }
+  .looks .row + .row { margin-top: 10px; }
+  .looks .cell { width: 136px; }
+  .looks .cap { white-space: normal; line-height: 1.25; }
+  [data-avatar] svg { display: block; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Avatar, attempt c: paper doll <small>Every option rendered once. Six outfits on the right.</small></h1>
+
+  <div class="col busts">
+    <section>
+      <h2>Skin tones</h2>
+      <div class="row">
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-skin="s1"></div><div class="cap">s1 Porcelain</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-skin="s2"></div><div class="cap">s2 Fair</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-skin="s3"></div><div class="cap">s3 Light <i>(default)</i></div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-skin="s4"></div><div class="cap">s4 Tan</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-skin="s5"></div><div class="cap">s5 Brown</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-skin="s6"></div><div class="cap">s6 Deep</div></div>
+      </div>
+    </section>
+    <section>
+      <h2>Hair styles, default colour</h2>
+      <div class="row">
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="wavy-bob"></div><div class="cap">wavy-bob <i>(default)</i></div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="long-waves"></div><div class="cap">long-waves</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="long-straight"></div><div class="cap">long-straight</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="high-bun"></div><div class="cap">high-bun</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="curly"></div><div class="cap">curly</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="ponytail"></div><div class="cap">ponytail</div></div>
+      </div>
+    </section>
+    <section>
+      <h2>Hair colours, wavy bob</h2>
+      <div class="row">
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="wavy-bob" data-hair-color="black"></div><div class="cap">black</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="wavy-bob" data-hair-color="dark-brown"></div><div class="cap">dark-brown</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="wavy-bob" data-hair-color="chestnut"></div><div class="cap">chestnut <i>(default)</i></div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="wavy-bob" data-hair-color="auburn"></div><div class="cap">auburn</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="wavy-bob" data-hair-color="blonde"></div><div class="cap">blonde</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="wavy-bob" data-hair-color="silver"></div><div class="cap">silver</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-hair-style="wavy-bob" data-hair-color="rose"></div><div class="cap">rose</div></div>
+      </div>
+    </section>
+    <section>
+      <h2>Glasses and earrings</h2>
+      <div class="row">
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-glasses="none" data-earrings="none"></div><div class="cap">glasses none <i>· earrings none</i></div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-glasses="round" data-earrings="none"></div><div class="cap">glasses round</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-glasses="cat-eye" data-earrings="none"></div><div class="cap">glasses cat-eye</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-earrings="hoops"></div><div class="cap">earrings hoops <i>(default)</i></div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-earrings="studs" data-hair-style="high-bun"></div><div class="cap">earrings studs <i>· high-bun</i></div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-earrings="hoops" data-glasses="round" data-hair-style="ponytail"></div><div class="cap">hoops + round <i>· ponytail</i></div></div>
+      </div>
+    </section>
+    <section>
+      <h2>Eyes and lips</h2>
+      <div class="row">
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-eyes="brown"></div><div class="cap">eyes brown <i>(default)</i></div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-eyes="hazel"></div><div class="cap">eyes hazel</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-eyes="green"></div><div class="cap">eyes green</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-eyes="blue"></div><div class="cap">eyes blue</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-lips="rose"></div><div class="cap">lips rose <i>(default)</i></div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-lips="nude"></div><div class="cap">lips nude</div></div>
+        <div class="cell"><div class="bust" data-avatar data-view="bust" data-lips="berry"></div><div class="cap">lips berry</div></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="col looks">
+    <h2>Outfits, full view</h2>
+    <div class="row">
+      <div class="cell">
+        <div class="full" data-avatar data-view="full"></div>
+        <div class="cap">Default: pink blouse, navy trousers, nude flats<br><i>s3 · wavy-bob · chestnut</i></div>
+      </div>
+      <div class="cell">
+        <div class="full" data-avatar data-view="full" data-top="g-cream-sweater" data-bottom="g-wide-jeans" data-shoes="g-white-sneakers"
+             data-skin="s1" data-hair-style="long-waves" data-hair-color="blonde" data-eyes="blue"></div>
+        <div class="cap">Cream sweater, wide jeans, white sneakers<br><i>s1 · long-waves · blonde</i></div>
+      </div>
+      <div class="cell">
+        <div class="full" data-avatar data-view="full" data-top="g-black-tee" data-bottom="g-black-skirt" data-shoes="g-black-heels" data-layer="g-gray-blazer"
+             data-skin="s5" data-hair-style="high-bun" data-hair-color="silver" data-earrings="studs" data-lips="berry"></div>
+        <div class="cap">Black tee, black skirt, heels, gray blazer<br><i>s5 · high-bun · silver</i></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="cell">
+        <div class="full" data-avatar data-view="full" data-top="g-lace-top" data-bottom="g-olive-trousers" data-shoes="g-tan-loafers" data-layer="g-navy-cardigan"
+             data-skin="s4" data-hair-style="curly" data-hair-color="dark-brown" data-glasses="round" data-eyes="hazel"></div>
+        <div class="cap">Lace top, olive trousers, loafers, navy cardigan<br><i>s4 · curly · dark-brown</i></div>
+      </div>
+      <div class="cell">
+        <div class="full" data-avatar data-view="full" data-dress="g-blue-dress" data-shoes="g-nude-flats"
+             data-skin="s2" data-hair-style="ponytail" data-hair-color="auburn" data-eyes="green" data-lips="nude"></div>
+        <div class="cap">Blue floral dress, nude flats<br><i>s2 · ponytail · auburn</i></div>
+      </div>
+      <div class="cell">
+        <div class="full" data-avatar data-view="full" data-top="g-brick-top" data-bottom="g-navy-trousers" data-shoes="g-tan-loafers" data-layer="g-camel-trench"
+             data-skin="s6" data-hair-style="long-straight" data-hair-color="black" data-glasses="cat-eye"></div>
+        <div class="cap">Brick top, navy trousers, loafers, camel trench<br><i>s6 · long-straight · black</i></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="avatar.js"></script>
+</body>
+</html>

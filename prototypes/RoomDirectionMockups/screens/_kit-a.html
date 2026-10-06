@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kit A: wardrobe, rack, windows</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Kit sheet, not a phone screen: 700 x 900, every asset at 1:1. */
+  html, body { width: 700px; height: 900px; }
+  .screen { width: 700px; height: 900px; }
+  .room { --floor-y: 790px; }
+  .cap { position: absolute; font-size: 11px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .cap b { color: var(--ink); }
+  /* garment overlays clipped to the wardrobe opening, so the end pieces tuck behind the frame */
+  .open-clip { position: absolute; overflow: hidden; }
+  .open-clip .g { position: absolute; }
+  /* grey placeholder garment, used only when js/garments.js is missing */
+  .ph { position: absolute; background: #CFC8CD; border: 1.5px solid #ABA0A8; border-radius: 7px 7px 5px 5px; }
+  .ph::before { content: ""; position: absolute; left: 50%; top: -10px; width: 9px; height: 10px; margin-left: -6px;
+    border: 1.5px solid #ABA0A8; border-bottom: 0; border-radius: 6px 6px 0 0; }
+  /* plates sized for the wardrobe label zone (132 wide) */
+  .tag.w-src { width: 132px; min-height: 40px; padding: 4px 8px; gap: 6px; }
+  .tag.w-src i[data-icon] { font-size: 18px; }
+  .tag.w-src .txt { flex: 1; }
+  .tag.w-src .txt .lbl { display: flex; align-items: center; }
+  .tag.w-src .txt .lbl i[data-icon] { font-size: 12px; margin-left: auto; color: var(--plum); }
+  .tag.w-src b { font-size: 13px; }
+  .tag.w-lock { width: 132px; height: 28px; min-height: 28px; gap: 6px; }
+  /* plates for the rack: a little wider than the rack, like the reference */
+  .tag.rack { width: 140px; min-height: 42px; padding: 5px 9px; flex-direction: column; align-items: flex-start; gap: 1px; }
+  .tag.rack .act { display: flex; align-items: center; gap: 5px; width: 100%; font-size: 13px; font-weight: 700; }
+  .tag.rack .act i[data-icon] { font-size: 15px; }
+  .tag.rack .act .chev { margin-left: auto; color: var(--plum); font-size: 14px; display: grid; }
+  .tag.hint { width: 140px; height: 28px; min-height: 28px; padding: 0 6px; justify-content: center; font-size: 12px; font-weight: 500; color: var(--ink-soft); white-space: nowrap; transform: translateX(-50%); }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <div class="cap" style="left:30px;top:22px;font-size:13px"><b>Kit A</b> · wardrobe, rack, windows at 1:1 (700 x 900, floor line at 790)</div>
+
+  <!-- windows -->
+  <img class="abs" src="../art/window-rain.svg" width="96" height="184" style="left:182px;top:60px" alt="">
+  <img class="abs" src="../art/window-sun.svg" width="96" height="184" style="left:302px;top:60px" alt="">
+  <img class="abs" src="../art/window-night.svg" width="96" height="184" style="left:422px;top:60px" alt="">
+  <div class="cap" style="left:182px;top:252px">window-rain</div>
+  <div class="cap" style="left:302px;top:252px">window-sun</div>
+  <div class="cap" style="left:422px;top:252px">window-night</div>
+
+  <!-- wardrobe with its overlays.
+       Label zone x 20-152 / y 26-98. Opening x 24-150 / y 102-208 (floor board top y 199). Rail centre y 112.
+       Five garments 60 x 85, hook loop centred on the rail (garment top y 106.5), hook centres x 35.5, 65, 87, 109, 138.5.
+       The trousers hang in front in the middle and the pieces step back toward each end, so every piece shows its neckline;
+       the overlay box is clipped to the opening so the end pieces tuck behind the frame. -->
+  <img class="abs" src="../art/wardrobe.svg" width="164" height="394" style="left:30px;top:416px" alt="">
+  <div id="rail" class="open-clip" style="left:54px;top:518px;width:126px;height:106px">
+    <span class="g" data-garment="g-camel-trench" data-hanger style="left:-18.5px;top:4.5px;width:60px;height:85px"></span>
+    <span class="g" data-garment="g-blue-dress" data-hanger style="left:84.5px;top:4.5px;width:60px;height:85px"></span>
+    <span class="g" data-garment="g-cream-sweater" data-hanger style="left:11px;top:4.5px;width:60px;height:85px"></span>
+    <span class="g" data-garment="g-pink-blouse" data-hanger style="left:55px;top:4.5px;width:60px;height:85px"></span>
+    <span class="g" data-garment="g-navy-trousers" data-hanger style="left:33px;top:4.5px;width:60px;height:85px"></span>
+  </div>
+  <div class="tag w-src" style="left:50px;top:442px">
+    <i data-icon="suitcase"></i>
+    <div class="txt"><div class="lbl"><small>Source</small><i data-icon="chevron-updown"></i></div><b>Jose's house</b></div>
+  </div>
+  <div class="tag green slim w-lock" style="left:50px;top:486px">
+    <i data-icon="lock" style="font-size:16px"></i>
+    <b style="font-size:12px">Suitcase only</b>
+  </div>
+  <div class="cap" style="left:30px;top:398px">wardrobe, dressed</div>
+
+  <!-- bare wardrobe -->
+  <img class="abs" src="../art/wardrobe.svg" width="164" height="394" style="left:215px;top:416px" alt="">
+  <div class="cap" style="left:215px;top:398px">wardrobe, bare</div>
+
+  <!-- rack with two plates and one garment.
+       Open middle x 20-92 / y 16-148, top bar centre y 10, lower plate zone x 8-104 / y 120-148.
+       Trousers 84 x 119 with the hook loop on the top bar (garment top y 2.3), hem at y 119. -->
+  <img class="abs" src="../art/rack.svg" width="112" height="188" style="left:400px;top:630px" alt="">
+  <div id="rackhang" class="abs" style="left:400px;top:630px;width:112px;height:188px">
+    <span class="g" data-garment="g-navy-trousers" data-hanger style="position:absolute;left:14px;top:2.3px;width:84px;height:119px"></span>
+  </div>
+  <div class="tag pink rack" style="left:386px;top:648px">
+    <small>Starting piece</small>
+    <div class="act"><i data-icon="hanger"></i>Pick a piece<span class="chev"><i data-icon="chevron-right"></i></span></div>
+  </div>
+  <div class="tag pink hint" style="left:456px;top:752px">e.g. navy dress pants</div>
+  <div class="cap" style="left:400px;top:612px">rack + plates + garment</div>
+
+  <!-- bare rack -->
+  <img class="abs" src="../art/rack.svg" width="112" height="188" style="left:555px;top:630px" alt="">
+  <div class="cap" style="left:555px;top:612px">rack, bare</div>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script>
+  // Grey placeholders when js/garments.js is not there yet. Each keeps the hook top at the same spot.
+  (function () {
+    if (window.Garments) return;
+    var nodes = document.querySelectorAll('[data-garment]');
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i], w = n.offsetWidth, h = n.offsetHeight, hook = Math.round(h * 0.16);
+      var p = document.createElement('div');
+      p.className = 'ph';
+      p.style.left = n.style.left; p.style.width = Math.round(w * 0.78) + 'px';
+      p.style.marginLeft = Math.round(w * 0.11) + 'px';
+      p.style.top = (parseFloat(n.style.top) + hook) + 'px'; p.style.height = (h * 0.8 - hook) + 'px';
+      n.parentNode.replaceChild(p, n);
+    }
+  })();
+</script>
+</body>
+</html>

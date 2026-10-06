@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 196" width="80" height="196" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Arched standing mirror. Glass opening: x 9, y 9, 62 x 170, top radius 31, bottom radius 4. Pages clip a reflection to that shape. -->
+  <defs>
+    <!-- glass token: fill #EFE8FA at the top to shade #DCD0F2 at the bottom -->
+    <linearGradient id="mirror-glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EFE8FA"/>
+      <stop offset="1" stop-color="#DCD0F2"/>
+    </linearGradient>
+    <clipPath id="mirror-clip">
+      <path d="M9 40A31 31 0 0 1 71 40V175A4 4 0 0 1 67 179H13A4 4 0 0 1 9 175Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- contact shadow on the floor -->
+  <ellipse cx="40" cy="192.6" rx="38" ry="2.8" fill="#8A5A48" opacity=".13"/>
+
+  <!-- feet -->
+  <path d="M8 184H20.4L21.6 190.6C21.8 191.8 21.1 192.8 19.9 192.8H8.5C7.3 192.8 6.6 191.8 6.8 190.6Z" fill="#C3ABE6"/>
+  <path d="M59.6 184H72L73.2 190.6C73.4 191.8 72.7 192.8 71.5 192.8H60.1C58.9 192.8 58.2 191.8 58.4 190.6Z" fill="#C3ABE6"/>
+  <path d="M9.6 188.8H18.8M61.2 188.8H70.4" stroke="#D8C6F0" stroke-width="1.1"/>
+  <path d="M8 184H20.4L21.6 190.6C21.8 191.8 21.1 192.8 19.9 192.8H8.5C7.3 192.8 6.6 191.8 6.8 190.6Z M59.6 184H72L73.2 190.6C73.4 191.8 72.7 192.8 71.5 192.8H60.1C58.9 192.8 58.2 191.8 58.4 190.6Z" stroke="#A98CD6" stroke-width="1.3"/>
+
+  <!-- frame -->
+  <path d="M2 40A38 38 0 0 1 78 40V181A5 5 0 0 1 73 186H7A5 5 0 0 1 2 181Z" fill="#D8C6F0"/>
+  <!-- shade along the right side and the bottom rail -->
+  <path d="M75.3 40V180.4A3 3 0 0 1 72.3 183.4H7.7A3 3 0 0 1 4.7 180.4" stroke="#C3ABE6" stroke-width="2.6"/>
+  <!-- highlight up the left side and over the arch -->
+  <path d="M4.3 176V40A35.7 35.7 0 0 1 60.5 10.6" stroke="#EDE3FA" stroke-width="1.5"/>
+  <!-- a fine moulding line midway through the frame -->
+  <path d="M5.6 178V40A34.4 34.4 0 0 1 74.4 40V178" stroke="#C3ABE6" stroke-width=".7" opacity=".9"/>
+  <path d="M2 40A38 38 0 0 1 78 40V181A5 5 0 0 1 73 186H7A5 5 0 0 1 2 181Z" stroke="#A98CD6" stroke-width="1.5"/>
+
+  <!-- glass -->
+  <path d="M9 40A31 31 0 0 1 71 40V175A4 4 0 0 1 67 179H13A4 4 0 0 1 9 175Z" fill="url(#mirror-glass)"/>
+  <g clip-path="url(#mirror-clip)">
+    <!-- soft diagonal highlight streaks -->
+    <path d="M9 152L71 84V106L9 174Z" fill="#FFFFFF" opacity=".58"/>
+    <path d="M9 182L71 114V122L9 190Z" fill="#FFFFFF" opacity=".48"/>
+    <!-- a faint deeper band at the very top of the glass -->
+    <path d="M9 40A31 31 0 0 1 71 40V44A31 31 0 0 0 9 44Z" fill="#DCD0F2" opacity=".6"/>
+  </g>
+  <path d="M9 40A31 31 0 0 1 71 40V175A4 4 0 0 1 67 179H13A4 4 0 0 1 9 175Z" stroke="#A98CD6" stroke-width="1.3"/>
+</svg>

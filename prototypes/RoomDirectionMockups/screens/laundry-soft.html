@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Laundry (soft)</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Laundry, a corner by the washer. Same scale as the bedroom (home.html): one SVG unit is one px.
+     Floor line 396. The list, the button and the undo toast sit on the floor below the corner. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .room { --floor-y: 396px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  .nav { z-index: 5; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 10px 0 4px; display: flex; align-items: center; gap: 2px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+
+  /* count plate under the shelf board, centred on it (plate zone x 57..243, y 179..215) */
+  .count { left: 150px; top: 179px; transform: translateX(-50%); height: 34px; min-height: 0; padding: 0 10px 0 8px; gap: 6px; border-radius: 10px; white-space: nowrap; }
+  .count i[data-icon] { font-size: 18px; }
+
+  /* the two pieces in the wash */
+  .list { position: absolute; left: 16px; right: 16px; top: 434px; padding: 0; overflow: hidden; }
+  .item { display: flex; align-items: center; gap: 12px; height: 70px; padding: 0 8px 0 12px; }
+  .item + .item { border-top: 1px solid #F1E6EC; }
+  .tile { position: relative; width: 50px; height: 50px; flex: none; border-radius: 13px; background: #FBF1F4; border: 1px solid #F1E3EA; overflow: hidden; transition: opacity .2s; }
+  .tile .fit { position: absolute; }
+  .item .txt { display: flex; flex-direction: column; min-width: 0; }
+  .item b { font-size: 15px; line-height: 19px; font-weight: 700; }
+  .item small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .mark { margin-left: auto; height: 44px; padding: 0 4px; display: grid; place-items: center; flex: none; }
+  .mark .chip { min-height: 34px; padding: 6px 13px; }
+  .mark .chip i[data-icon] { display: none; }
+  /* a piece marked clean: the tile fades and the name goes soft, but the text stays readable and the green chip stays full strength */
+  .item.clean .tile { opacity: .5; }
+  .item.clean b { color: var(--ink-soft); font-weight: 600; }
+  .item.clean small { color: #8A7584; }
+  .item.clean .chip { background: #E4F3DF; border-color: #BFDDB8; color: #355E3C; cursor: default; }
+  .item.clean .chip i[data-icon] { display: inline-grid; }
+
+  .all { position: absolute; left: 16px; right: 16px; top: 590px; }
+  .all:disabled { background: #D9C3D2; box-shadow: none; cursor: default; }
+
+  /* undo toast, just above the tab bar */
+  .toast { position: absolute; left: 16px; right: 16px; top: 690px; height: 54px; display: flex; align-items: center; gap: 9px; padding: 0 5px 0 14px;
+           background: var(--ink); color: #fff; border-radius: 16px; box-shadow: 0 6px 16px #2B1B2738; }
+  .toast[hidden] { display: none; }
+  .toast .ok { width: 24px; height: 24px; border-radius: 50%; background: #B7D5B1; color: var(--ink); display: grid; place-items: center; flex: none; }
+  .toast .ok i[data-icon] { font-size: 14px; }
+  .toast .ok i[data-icon] svg { stroke-width: 2.6; }
+  .toast .msg { font-size: 14px; line-height: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toast .undo { margin-left: auto; height: 44px; padding: 0 12px; display: flex; align-items: center; gap: 5px; border-radius: 12px;
+                 color: #F8C6D3; font-size: 15px; font-weight: 700; flex: none; }
+  .toast .undo i[data-icon] { font-size: 17px; }
+  .toast .undo:focus-visible { outline-color: #F8C6D3; }
+
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+<link rel="stylesheet" href="../css/soft.css">
+</head>
+<body class="soft-laundry">
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- ============ the laundry corner ============ -->
+  <!-- shelf 1:1, centred over the washer and hamper (x 34..266): board y 170..181, towels, spray and detergent stand on 170;
+       plate zone x 57..243, y 179..215 -->
+  <img class="art" src="../art/travel-laundry-shelf.svg" alt="" style="left:38px;top:120px;width:224px;height:76px">
+  <!-- washer at 1.1 (123.2 x 173.8) so it holds its own next to the bedroom furniture; feet (svg y 153) on 404 -->
+  <img class="art" src="../art/travel-washer.svg" alt="" style="left:34px;top:235.7px;width:123.2px;height:173.8px">
+  <!-- hamper at 1.1 (96.8 x 127.6), a step forward, base (svg y 110) on 408. It shows what is still dirty: the script swaps in
+       travel-hamper.svg (both pieces), -tee.svg, -lace.svg or -empty.svg as pieces are marked clean or put back. -->
+  <img class="art" id="hamper" src="../art/travel-hamper-tee.svg" alt="" style="left:169px;top:287px;width:96.8px;height:127.6px">
+  <!-- the bedroom's floor plant, 1:1, by the hamper -->
+  <img class="art" src="../art/plant-floor.svg" alt="" style="left:286px;top:284px;width:72px;height:124px">
+
+  <div class="tag count" id="count"><i data-icon="washer"></i><b>1 piece in the wash</b></div>
+
+  <!-- ============ list ============ -->
+  <div class="card list" role="list" aria-label="Pieces in the wash">
+    <div class="item clean" role="listitem" data-name="White lace top" data-piece="lace">
+      <span class="tile"><span class="fit" data-garment="g-lace-top" data-detail="high" style="left:5px;top:-6.5px;width:40px"></span></span>
+      <span class="txt"><b>White lace top</b><small>Worn 2 times</small></span>
+      <button class="mark" type="button" disabled><span class="chip"><i data-icon="check"></i><span class="lbl">Clean</span></span></button>
+    </div>
+    <div class="item" role="listitem" data-name="Black tee" data-piece="tee">
+      <span class="tile"><span class="fit" data-garment="g-black-tee" data-detail="high" style="left:5px;top:-6.5px;width:40px"></span></span>
+      <span class="txt"><b>Black tee</b><small>Worn 2 times</small></span>
+      <button class="mark" type="button"><span class="chip"><i data-icon="check"></i><span class="lbl">Mark clean</span></span></button>
+    </div>
+  </div>
+
+  <button class="btn all" type="button" id="all"><i data-icon="check"></i>Mark all clean</button>
+
+  <!-- ============ labels ============ -->
+  <div class="nav">
+    <a class="back" href="closet-soft.html"><i data-icon="chevron-left"></i>Closet</a>
+    <a class="right" href="settings-soft.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+  </div>
+  <h1 class="title-display hdr-title">Laundry</h1>
+
+  <!-- ============ tab bar and the undo toast above it ============ -->
+  <div class="tabfade"></div>
+  <div class="toast" id="toast" role="status">
+    <span class="ok"><i data-icon="check"></i></span>
+    <span class="msg" id="toastMsg">White lace top marked clean</span>
+    <button class="undo" type="button" id="undo"><i data-icon="undo"></i>Undo</button>
+  </div>
+  <nav class="tabbar">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a class="on" href="closet-soft.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* Tile thumbnails: each top is drawn 40 px wide (scale 1/3) and centred in its 50 px tile. Their outlines are set
+   near 1.1 px so they match the card lines, like the Saved Looks cards on home.html. */
+(function () {
+  var TARGET = 1.1, OUTLINE = 1.5;
+  function run() {
+    var l = document.querySelectorAll('.tile .fit');
+    for (var k = 0; k < l.length; k++) {
+      var svg = l[k].querySelector('svg');
+      if (!svg) continue;
+      var f = TARGET / (OUTLINE * l[k].offsetWidth / 120);
+      var list = svg.querySelectorAll('[stroke-width]');
+      for (var i = 0; i < list.length; i++) {
+        var w = parseFloat(list[i].getAttribute('stroke-width'));
+        if (w > 0) list[i].setAttribute('stroke-width', (w * f).toFixed(2));
+      }
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+
+/* Marking clean. Each action can be undone from the toast. The screen opens just after the lace top was marked clean:
+   its row is dimmed with a green "Clean" chip, the plate counts 1, the hamper holds only the tee, and Undo puts the
+   lace top back (count 2, both pieces in the hamper). The markup already shows that state so it reads right before
+   the script runs; the script then sets the same state through setClean so Undo has something to restore. */
+(function () {
+  var items = Array.prototype.slice.call(document.querySelectorAll('.item'));
+  var count = document.querySelector('#count b');
+  var toast = document.getElementById('toast');
+  var msg = document.getElementById('toastMsg');
+  var hamper = document.getElementById('hamper');
+  var last = [];
+  function dirty(key) {
+    return items.some(function (it) { return it.getAttribute('data-piece') === key && !it.classList.contains('clean'); });
+  }
+  function refresh() {
+    var n = items.filter(function (it) { return !it.classList.contains('clean'); }).length;
+    count.textContent = n === 0 ? 'Nothing in the wash' : n === 1 ? '1 piece in the wash' : n + ' pieces in the wash';
+    document.getElementById('all').disabled = n === 0;
+    var lace = dirty('lace'), tee = dirty('tee');
+    hamper.src = '../art/travel-hamper' + (lace && tee ? '' : lace ? '-lace' : tee ? '-tee' : '-empty') + '.svg';
+  }
+  function setClean(it, on) {
+    it.classList.toggle('clean', on);
+    it.querySelector('.lbl').textContent = on ? 'Clean' : 'Mark clean';
+    it.querySelector('.mark').disabled = on;
+  }
+  function show(text, changed) { last = changed; msg.textContent = text; toast.hidden = false; }
+  items.forEach(function (it) {
+    it.querySelector('.mark').addEventListener('click', function () {
+      setClean(it, true); refresh(); show(it.getAttribute('data-name') + ' marked clean', [it]);
+    });
+  });
+  document.getElementById('all').addEventListener('click', function () {
+    var changed = items.filter(function (it) { return !it.classList.contains('clean'); });
+    if (!changed.length) return;
+    changed.forEach(function (it) { setClean(it, true); });
+    refresh();
+    show(changed.length === 1 ? changed[0].getAttribute('data-name') + ' marked clean' : changed.length + ' pieces marked clean', changed);
+  });
+  document.getElementById('undo').addEventListener('click', function () {
+    last.forEach(function (it) { setClean(it, false); });
+    last = []; refresh(); toast.hidden = true;
+  });
+  ['', '-tee', '-lace', '-empty'].forEach(function (v) { new Image().src = '../art/travel-hamper' + v + '.svg'; });
+
+  // opening state: the lace top was just marked clean, and the toast offers to undo that
+  var lace = items.filter(function (it) { return it.getAttribute('data-piece') === 'lace'; })[0];
+  setClean(lace, true); refresh(); last = [lace];
+})();
+</script>
+</body>
+</html>

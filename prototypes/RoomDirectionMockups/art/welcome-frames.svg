@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 92" width="112" height="92" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Two hall pictures, hung on nails with a picture wire. Both are centred on y 52.
+       A: wood frame x 5..57 / y 16..88, cream mat, a little landscape with the pink house and its lilac roof.
+       B: painted lilac frame x 70..106 / y 29..75, a pressed tulip on cream paper.
+       Wood #E7BC6E / #D9A650 / #B98632 / highlight #F6DC9C. Lilac #D8C6F0 / #C3ABE6 / #A98CD6 / highlight #EEE4FA.
+       Cream #FFF7EA / #F3E6D0 / #D9C6A5. No text. Ids are prefixed wf-. -->
+  <defs>
+    <clipPath id="wf-pic"><rect x="15" y="26" width="32" height="48"/></clipPath>
+    <linearGradient id="wf-sky" x1="0" y1="26" x2="0" y2="62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C6DFF5"/><stop offset="1" stop-color="#EAF4FC"/></linearGradient>
+    <linearGradient id="wf-paper" x1="0" y1="33" x2="0" y2="71" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFBF3"/><stop offset="1" stop-color="#FBF0DE"/></linearGradient>
+  </defs>
+
+  <!-- ===== A: wood frame ===== -->
+  <path d="M10.5 18.6 L31 4.6 L51.5 18.6" stroke="#B98632" stroke-width=".9" opacity=".75"/>
+  <circle cx="31" cy="4" r="1.9" fill="#D9A650" stroke="#B98632" stroke-width=".9"/>
+  <circle cx="30.4" cy="3.4" r=".6" fill="#F6DC9C"/>
+
+  <rect x="5" y="16" width="52" height="72" rx="2" fill="#E7BC6E"/>
+  <!-- right and bottom moulding in shade -->
+  <path d="M57 16.6 V86 Q57 88 55 88 H5.6 L10.6 83 H52 V21 Z" fill="#D9A650"/>
+  <!-- mitres -->
+  <path d="M5.8 16.8 L10.4 21.4 M56.2 16.8 L51.6 21.4 M5.8 87.2 L10.4 82.6 M56.2 87.2 L51.6 82.6" stroke="#B98632" stroke-width=".8" opacity=".55"/>
+  <path d="M7.2 85.4 V18.2 H54.6" stroke="#F6DC9C" stroke-width="1.1"/>
+  <rect x="5" y="16" width="52" height="72" rx="2" stroke="#B98632" stroke-width="1.4"/>
+
+  <!-- mat -->
+  <rect x="10.5" y="21.5" width="41" height="61" fill="#FFF7EA"/>
+  <path d="M10.5 21.5 H51.5 V23.3 H12.3 V82.5 H10.5 Z" fill="#F3E6D0"/>
+  <rect x="10.5" y="21.5" width="41" height="61" stroke="#B98632" stroke-width="1.1"/>
+
+  <!-- picture -->
+  <g clip-path="url(#wf-pic)">
+    <rect x="15" y="26" width="32" height="48" fill="url(#wf-sky)"/>
+    <circle cx="38.6" cy="35.4" r="7" fill="#FFF6D8" opacity=".75"/>
+    <circle cx="38.6" cy="35.4" r="4.3" fill="#FBE9A6" stroke="#F3D97C" stroke-width="1"/>
+    <circle cx="37.3" cy="34.1" r="1.2" fill="#FFF4CC"/>
+    <path d="M18.6 42 C18.6 40.2 20.4 39.4 21.6 40.2 C22.4 38.2 25.6 38.2 26.2 40.2 C27.6 39.8 28.6 40.8 28.2 42 Z" fill="#FFFFFF" stroke="#DCE8F4" stroke-width=".8"/>
+    <!-- back hill with the house -->
+    <path d="M15 76 V57.4 C20 52.6 28 51 34 52.4 C39.4 53.6 44 52.6 47 50.6 V76 Z" fill="#ABD0A5" stroke="#86B184" stroke-width=".9"/>
+    <rect x="25.6" y="49.2" width="8.6" height="7.2" fill="#F4B4C2" stroke="#D97F97" stroke-width=".8"/>
+    <rect x="31.4" y="49.8" width="2.4" height="6.2" fill="#EC9DB0"/>
+    <path d="M24.4 49.8 L29.9 44.6 L35.4 49.8 Z" fill="#D8C6F0" stroke="#A98CD6" stroke-width=".8"/>
+    <path d="M26.6 49 L29.9 45.9" stroke="#EEE4FA" stroke-width=".7"/>
+    <rect x="28.9" y="52.4" width="2" height="4" rx=".4" fill="#A9CBEF" stroke="#6C9AD0" stroke-width=".55"/>
+    <rect x="26.6" y="51" width="1.6" height="1.6" fill="#FBE9A6" stroke="#DDBB4E" stroke-width=".45"/>
+    <!-- front hills -->
+    <path d="M15 76 V61.6 C19.6 58.4 25.6 58 30 60.4 C34.4 62.6 41.6 61.4 47 57.6 V76 Z" fill="#8DBE8D" stroke="#6FA275" stroke-width=".9"/>
+    <path d="M15 76 V68.6 C21 65.4 30 65.6 35 67.6 C39.4 69.2 43.6 68.6 47 66.8 V76 Z" fill="#77AE84" stroke="#5C9670" stroke-width=".9"/>
+    <path d="M19 62.4 C21.6 61 24.6 60.8 27 61.4" stroke="#ABD0A5" stroke-width=".8"/>
+  </g>
+  <!-- mat bevel: shadow on the top and left inside edge, light on the bottom and right -->
+  <rect x="15" y="26" width="32" height="48" stroke="#D9C6A5" stroke-width="1"/>
+  <path d="M15.6 74.6 H47.6 V26.6" stroke="#FFFEFB" stroke-width=".8"/>
+
+  <!-- ===== B: painted lilac frame ===== -->
+  <path d="M74 31.4 L88 16.6 L102 31.4" stroke="#B98632" stroke-width=".9" opacity=".75"/>
+  <circle cx="88" cy="16" r="1.9" fill="#D9A650" stroke="#B98632" stroke-width=".9"/>
+  <circle cx="87.4" cy="15.4" r=".6" fill="#F6DC9C"/>
+
+  <rect x="70" y="29" width="36" height="46" rx="2" fill="#D8C6F0"/>
+  <path d="M106 29.6 V73 Q106 75 104 75 H70.6 L74.4 71.2 H102.2 V32.8 Z" fill="#C3ABE6"/>
+  <path d="M70.8 29.8 L74.2 33.2 M105.2 29.8 L101.8 33.2 M70.8 74.2 L74.2 70.8 M105.2 74.2 L101.8 70.8" stroke="#A98CD6" stroke-width=".75" opacity=".55"/>
+  <path d="M72.1 72.6 V31.1 H103.8" stroke="#EEE4FA" stroke-width="1.1"/>
+  <rect x="70" y="29" width="36" height="46" rx="2" stroke="#A98CD6" stroke-width="1.35"/>
+
+  <!-- paper and tulip -->
+  <rect x="74.2" y="33.2" width="27.6" height="37.6" fill="url(#wf-paper)"/>
+  <path d="M74.2 33.2 H101.8 V34.8 H75.8 V70.8 H74.2 Z" fill="#F3E6D0"/>
+  <path d="M88 65.6 C88.4 60 87.6 54 88.2 47.4" stroke="#5C9670" stroke-width="1.2"/>
+  <path d="M87.8 64.6 C83 63.6 79.6 59.6 79.4 54 C83.6 55.2 86.8 58.6 87.8 64.6 Z" fill="#77AE84" stroke="#44795A" stroke-width=".9"/>
+  <path d="M86.6 62.4 C84 60.6 82 58.4 80.8 55.6" stroke="#93C29D" stroke-width=".7"/>
+  <path d="M88.2 62.8 C92.6 62.6 96 59.4 96.8 55 C92.8 55.4 89.4 58.4 88.2 62.8 Z" fill="#77AE84" stroke="#44795A" stroke-width=".9"/>
+  <path d="M83.4 40.8 C83 44.8 84.8 48.4 88.2 48.6 C91.6 48.4 93.4 44.8 93 40.8 L90.8 43 L88.2 39.6 L85.6 43 Z" fill="#F4B4C2" stroke="#D97F97" stroke-width="1"/>
+  <path d="M88.2 39.6 L90.8 43 L93 40.8 C93.4 44.8 91.6 48.4 88.2 48.6 C90 46.4 90.4 43.4 88.2 39.6 Z" fill="#EC9DB0"/>
+  <path d="M85 44 C85.2 45.6 85.8 46.6 86.8 47.2" stroke="#F9CDD5" stroke-width=".9"/>
+  <rect x="74.2" y="33.2" width="27.6" height="37.6" stroke="#A98CD6" stroke-width="1"/>
+</svg>

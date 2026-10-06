@@ -1,0 +1,120 @@
+/* Soft variant: same layout and controls as room.css, without hard edges.
+   Link it after room.css (and after the page's own <style>) in the *-soft.html copies only.
+   Rules:
+   - no outlines or borders on cards, tiles, plates, rows or chips (the selected chip stays a solid plum pill)
+   - items are separated by space, and where needed a soft white tint over the wall plus a shadow that falls only below
+   - no boxes around list rows; groups are split by space or a fading divider that never reaches the edges
+   - larger corner radii, fewer nested containers, same text sizes and 44 px tap targets */
+:root{
+  --soft-tint: rgba(255,255,255,.55);
+  --soft-tint-strong: rgba(255,255,255,.82);
+  --soft-drop: 0 10px 16px -12px rgba(90,42,74,.28);
+  --soft-drop-lg: 0 16px 22px -16px rgba(90,42,74,.34);
+  --soft-divider: linear-gradient(90deg, rgba(169,120,145,0), rgba(169,120,145,.32) 22%, rgba(169,120,145,.32) 78%, rgba(169,120,145,0));
+  --soft-chev: #9A8291;
+}
+
+/* plates that sit on art keep a near-white tint so text stays readable over drawing detail */
+.tag{border:0;border-radius:18px;background:var(--soft-tint-strong);box-shadow:var(--soft-drop)}
+.tag.green{background:#E4F3DFE6}
+.tag.pink{background:#FCE6F2E6}
+.tag.butter{background:#FCF0C4}
+.tag.lilac{background:#EEE4FAE6}
+.tag.slim{border-radius:14px}
+
+.chip{border:0;background:var(--soft-tint);box-shadow:var(--soft-drop)}
+.chip.on{background:var(--plum);box-shadow:0 10px 16px -12px rgba(79,21,65,.6)}
+
+.btn{border-radius:18px;box-shadow:0 14px 20px -14px rgba(79,21,65,.7)}
+.btn.small{border-radius:16px}
+.btn.ghost{border:0;background:var(--soft-tint);box-shadow:var(--soft-drop)}
+
+/* no box around groups of things */
+.card{background:none;border:0;box-shadow:none;border-radius:0}
+.rows > .row{border-bottom:0;background:var(--soft-divider) 14px 100%/calc(100% - 28px) 1px no-repeat}
+.rows > .row:last-child{background:none}
+
+.sim{border:0;background:rgba(255,255,255,.62);border-radius:10px}
+.meter{background:rgba(255,255,255,.75)}
+
+.tabbar{border:0;background:rgba(255,255,255,.9);box-shadow:0 16px 24px -14px rgba(90,42,74,.36)}
+
+/* a fading divider for between groups: put it on any element, it draws a 1 px line that fades out at both ends */
+.soft-div{height:1px;background:var(--soft-divider)}
+
+
+/* ===================== Closet ===================== */
+body.soft-closet .addp .chip{background:var(--soft-tint)}
+/* room tiles: a soft tint, no edge, and the little scene box is gone, so the object stands on the tint itself */
+body.soft-closet .tile{background:var(--soft-tint);border:0;border-radius:24px;box-shadow:var(--soft-drop)}
+body.soft-closet .tile .scene{background:none;border-radius:0;overflow:visible}
+body.soft-closet .tile .scene::after{display:none}
+/* garments sit on the floor like objects on a shelf: no card, a contact shadow under each piece, name below */
+body.soft-closet .grid{gap:16px 8px}
+body.soft-closet .gcard{background:none;border:0;box-shadow:none;border-radius:0}
+body.soft-closet .gcard::before{content:"";position:absolute;left:50%;top:85px;width:72px;height:13px;transform:translateX(-50%);
+  border-radius:50%;background:radial-gradient(closest-side, rgba(140,70,95,.32), rgba(140,70,95,0))}
+body.soft-closet .gart{z-index:1}
+body.soft-closet .gname{margin-top:5px}
+body.soft-closet .dirty{border:0;border-radius:999px;padding:1px 8px 1px 6px;background:#FCEFC2;color:#5E4A0E;z-index:2;
+  box-shadow:0 6px 10px -8px rgba(110,84,16,.5)}
+
+
+/* ===================== Style Me, largest text ===================== */
+/* the banner keeps its scene but loses the frame: no edge, rounder corners, and its bottom fades into the wall */
+body.soft-home-ax .banner{border:0;border-radius:30px;background:none}
+body.soft-home-ax .wxp{border:0;border-radius:18px;background:rgba(255,255,255,.93);box-shadow:var(--soft-drop)}
+body.soft-home-ax .wxp .sim{background:#F6ECF2}
+/* rows become soft tinted pills with a shadow only below */
+body.soft-home-ax .rows-ax{gap:14px}
+body.soft-home-ax .r{border:0;border-radius:28px;background:rgba(255,255,255,.6);box-shadow:var(--soft-drop-lg)}
+body.soft-home-ax .r.butter{background:#FCF0C6}
+body.soft-home-ax .r.pink{background:#FADDEC}
+body.soft-home-ax .pill{border:0;background:#E2F2DD}
+body.soft-home-ax .r .chip{box-shadow:none}
+body.soft-home-ax .go{border-radius:22px}
+body.soft-home-ax .sec{border:0;border-radius:20px;box-shadow:var(--soft-drop-lg)}
+body.soft-home-ax .sec.butter{background:#FCF0C6}
+body.soft-home-ax .wxsheet{border:0;border-radius:28px;box-shadow:0 26px 34px -18px rgba(90,42,74,.42), 0 2px 30px rgba(90,42,74,.08)}
+body.soft-home-ax .tabbar{border:0}
+
+
+/* ===================== Profile ===================== */
+/* rows sit on the floor, no box and no lines between them; the groups are split by a fading divider */
+body.soft-settings .list{overflow:visible}
+body.soft-settings .list + .list::before{content:"";position:absolute;left:36px;right:36px;top:-12px;height:1px;background:var(--soft-divider)}
+body.soft-settings .item + .item::before{display:none}
+body.soft-settings .item{border-radius:22px}
+body.soft-settings .ic{border-radius:50%;width:32px;height:32px}
+body.soft-settings .ic.lilac{background:#EADFF8}
+body.soft-settings .ic.mauve{background:#F0E2EA}
+body.soft-settings .pill{border:0;border-radius:999px;padding:3px 10px;background:#E2F2DD}
+body.soft-settings .chev{color:var(--soft-chev)}
+body.soft-settings .soon .panel{box-shadow:0 -10px 26px -8px rgba(90,42,74,.22)}
+
+
+/* ===================== Styling access ===================== */
+body.soft-access .allow-card{padding:6px 20px}
+body.soft-access .allow + .allow{margin-top:16px;padding-top:16px;border-top:0;background:var(--soft-divider) 0 0/100% 1px no-repeat}
+body.soft-access .list{overflow:visible}
+body.soft-access .list::before{content:"";position:absolute;left:20px;right:20px;top:-10px;height:1px;background:var(--soft-divider)}
+body.soft-access .item + .item::before{display:none}
+body.soft-access .item{padding:0 12px 0 20px}
+body.soft-access .chev{color:var(--soft-chev)}
+body.soft-access .soon .panel{box-shadow:0 -10px 26px -8px rgba(90,42,74,.22)}
+
+
+/* ===================== Laundry ===================== */
+/* the two pieces sit on the floor: no list box, no tile box; each garment stands on its own contact shadow */
+body.soft-laundry .list{overflow:visible}
+body.soft-laundry .item + .item{border-top:0}
+body.soft-laundry .item + .item::before{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:var(--soft-divider)}
+body.soft-laundry .item{position:relative;padding:0 8px 0 10px}
+body.soft-laundry .tile{background:none;border:0;border-radius:0;overflow:visible}
+body.soft-laundry .tile::after{content:"";position:absolute;left:3px;right:3px;bottom:-3px;height:10px;border-radius:50%;
+  background:radial-gradient(closest-side, rgba(150,80,100,.24), rgba(150,80,100,0))}
+body.soft-laundry .tile .fit{z-index:1}
+body.soft-laundry .item.clean .tile{opacity:.7}
+body.soft-laundry .mark .chip{background:rgba(255,255,255,.7)}
+body.soft-laundry .item.clean .chip{background:#E2F2DD;box-shadow:none}
+body.soft-laundry .toast{border-radius:20px;box-shadow:0 16px 22px -14px rgba(43,27,39,.6)}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 358 18" width="358" height="18" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Gold hanging rail for the swap sheet. Rail centre line y 9 from x 9 to 349, so a garment hook (garments.js, rail at
+       unit y 11) sits on it. Round end mounts at x 7 and 351 with a small wall rose behind each. No label zone. -->
+  <!-- wall roses behind the mounts -->
+  <circle cx="7" cy="9" r="6.6" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+  <circle cx="351" cy="9" r="6.6" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+  <!-- the rail: outline, fill, a highlight along the top and a shade along the bottom -->
+  <path d="M9 9 H349" stroke="#B98632" stroke-width="5.6"/>
+  <path d="M9 9 H349" stroke="#E7BC6E" stroke-width="3.1"/>
+  <path d="M12 8.1 H346" stroke="#F6DC9C" stroke-width="1"/>
+  <path d="M12 10.1 H346" stroke="#D9A650" stroke-width=".8"/>
+  <!-- end mounts -->
+  <circle cx="7" cy="9" r="3.9" fill="#E7BC6E" stroke="#B98632" stroke-width="1.1"/>
+  <circle cx="6.1" cy="8" r="1.1" fill="#F6DC9C"/>
+  <circle cx="351" cy="9" r="3.9" fill="#E7BC6E" stroke="#B98632" stroke-width="1.1"/>
+  <circle cx="350.1" cy="8" r="1.1" fill="#F6DC9C"/>
+</svg>

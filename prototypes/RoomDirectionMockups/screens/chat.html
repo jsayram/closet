@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Ask stylist</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Ask stylist, presented as a page sheet over the screen it was opened from. The top of the sheet is a slim strip
+     of the bedroom: the sage desk from Style Me beside the rainy window, with the lamp, the stylist's note card and a
+     cup of tea on its top edge. Art is placed at the same scale as on Style Me (desk 1:1, window 0.85, note stand
+     1.14). The conversation is a pale panel that covers the desk below its top rail. Plates, chips and shadows are
+     the shared ones from room.css, so the bubbles read as the same white plates used around the home.
+
+     Opened as chat.html?back=<page>&look=<id>. The look that was asked about is attached above her message, and
+     Close returns to <page>. From Style Me (back=home, home-ax or ipad-home with no look) there is no look yet, so
+     the sheet opens on a fresh conversation. With no parameters it shows look 1 from the looks screen. */
+  :root { --sheet: #FFF9F8; --tag-shadow: 0 1px 0 #0000000d, 0 3px 8px #5a2a4a1a; }
+  /* behind the sheet: the screen it was opened from, pushed back and dimmed */
+  body { background: #9A878F; }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .screen { background: #9A878F; }
+  .art { position: absolute; display: block; pointer-events: none; }
+  [hidden] { display: none !important; }
+
+  .peek { position: absolute; left: 16px; right: 16px; top: 46px; height: 40px; border-radius: 12px 12px 0 0;
+          background: linear-gradient(#BEACB3, #B8A5AC); box-shadow: inset 0 1px 0 #FFFFFF33; }
+  .sheet { position: absolute; left: 0; right: 0; top: 57px; bottom: 0; border-radius: 12px 12px 0 0; overflow: hidden;
+           background: linear-gradient(var(--wall), var(--wall-2) 200px); }
+  .grabber { position: absolute; left: 177px; top: 62px; width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; }
+
+  /* nav: a plain plum close glyph, like the profile and back buttons around the home */
+  .nav { top: 68px; height: 44px; }
+  .nav .close { position: absolute; left: 8px; top: 0; width: 44px; height: 44px; display: grid; place-items: center;
+                color: var(--plum); font-size: 22px; }
+  .navtitle { position: absolute; left: 100px; right: 100px; top: 72px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .navtitle h1 { font-size: 17px; font-weight: 700; line-height: 21px; }
+  .navtitle .sim { line-height: 14px; }
+
+  /* the note card's live mark */
+  .card-icon { position: absolute; display: grid; place-items: center; color: var(--plum); font-size: 18px; }
+
+  /* conversation: one column in normal flow, so spacing holds whatever the font */
+  .convo { position: absolute; left: 0; right: 0; top: 246px; bottom: 0; padding: 14px 16px 0; display: flex; flex-direction: column;
+           background: var(--sheet); border-radius: 24px 24px 0 0; box-shadow: 0 -1px 0 #F1DCE3, 0 -6px 20px #5a2a4a14; }
+  .day { text-align: center; font-size: 11px; font-weight: 600; line-height: 14px; color: var(--ink-soft); }
+  /* what the stylist can see when it is opened from Style Me: the request as it is set up there */
+  .ctx { align-self: center; margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px;
+         background: var(--plate); border: 1.5px solid var(--plate-line); font-size: 12px; font-weight: 600; line-height: 15px; color: var(--ink-soft); }
+  .ctx i[data-icon] { font-size: 14px; color: var(--plum); }
+
+  .look { align-self: flex-end; margin-top: 10px; width: 272px; background: var(--plate); border: 1.5px solid var(--plate-line); border-radius: 18px;
+          overflow: hidden; box-shadow: var(--tag-shadow); }
+  .look .nook { position: relative; display: block; height: 112px; background: linear-gradient(var(--wall), var(--wall-2)); border-bottom: 1.5px solid var(--plate-line); }
+  .look .nook .g { position: absolute; }
+  /* a strip of room floor under the rail, so the shoes have somewhere to stand (as in the wardrobe on Style Me) */
+  .look .nook .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 16px;
+                       background: linear-gradient(var(--floor-line), var(--floor-line)) 0 0/100% 1.5px no-repeat, linear-gradient(var(--floor), var(--floor-2)); }
+  .look .foot { display: flex; align-items: center; gap: 8px; min-height: 50px; padding: 7px 12px 7px 14px; }
+  .look .foot .txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  /* the look's name in the display serif, as it is titled on the looks screen */
+  /* the longest saved look name ("Pink & black date night") fits on one line; a longer one would wrap, never clip */
+  .look .foot b { font-family: var(--font-display); font-size: 16px; font-weight: 800; line-height: 19px; letter-spacing: -.2px; text-wrap: balance; }
+  .look .foot small { font-size: 12px; line-height: 15px; color: var(--ink-soft); }
+  .look .foot .end { margin-left: auto; color: var(--plum); font-size: 15px; display: grid; }
+
+  .bubble { font-size: 16px; line-height: 21px; padding: 10px 14px; border-radius: 20px; text-wrap: pretty; }
+  /* both bubbles keep their small corner at the bottom, on the speaker's side */
+  .me { align-self: flex-end; margin-top: 8px; background: var(--plum); color: #fff; border-bottom-right-radius: 6px; white-space: nowrap; }
+  .who { margin: 22px 0 4px 46px; font-size: 11px; font-weight: 600; line-height: 14px; color: var(--ink-soft); }
+  .fresh .who { margin-top: 18px; }
+  .reply { display: flex; align-items: flex-end; gap: 8px; }
+  .them { max-width: 306px; background: var(--plate); color: var(--ink); border: 1.5px solid var(--plate-line); border-bottom-left-radius: 6px;
+          box-shadow: var(--tag-shadow); }
+  /* the stylist's mark: a hanger on a lilac disc, the lilac plate colours from room.css */
+  .stylist { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+             background: #EEE4FA; border: 1.5px solid #D2BEEE; color: var(--plum); font-size: 20px; }
+
+  .sugs { display: flex; gap: 8px; margin: 8px 0 0 44px; }
+  /* a fresh conversation offers longer starters, one per line */
+  .sugs.stack { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .sug { height: 44px; padding: 2px 0; display: flex; }
+  .sug .chip { min-height: 40px; color: var(--plum); font-size: 14px; padding: 0 14px; }
+
+  /* input */
+  .inputfade { position: absolute; left: 0; right: 0; bottom: 0; height: 118px; background: linear-gradient(#FFF9F800, var(--sheet) 30%); pointer-events: none; }
+  .field { position: absolute; left: 16px; top: 762px; width: 298px; height: 48px; border-radius: 24px; background: var(--plate);
+           border: 1.5px solid var(--plate-line); box-shadow: var(--tag-shadow); }
+  .field input { width: 100%; height: 100%; border: 0; background: none; padding: 0 18px; font: inherit; font-size: 15px; color: var(--ink);
+                 border-radius: 24px; outline: none; }
+  .field input::placeholder { color: var(--ink-soft); opacity: 1; }
+  /* send waits for text: the field is empty, so it shows its resting state, not the plum action */
+  .send { position: absolute; left: 326px; top: 762px; width: 48px; height: 48px; border-radius: 50%; background: var(--plum-soft); color: #9E6E92;
+          border: 1.5px solid #EDD0E3; display: grid; place-items: center; font-size: 22px; cursor: default; }
+  .send i[data-icon] { transform: translate(-1px, 1px); } /* the paper plane's mass sits up and right; centre it by eye */
+  /* once there is text, send becomes the plum action */
+  .send.ready { background: var(--plum); border-color: var(--plum); color: #fff; box-shadow: 0 2px 0 var(--plum-2); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="peek" aria-hidden="true"></div>
+  <div class="sheet"></div>
+  <div class="grabber" aria-hidden="true"></div>
+
+  <!-- ============ the room strip ============ -->
+  <!-- window at 0.85 like Style Me (81.6 x 156.4): sill lip bottom at 74 + 150 = 224, just above the desk top -->
+  <img class="art" src="../art/window-rain.svg" alt="" style="left:300px;top:74px;width:81.6px;height:156.4px">
+  <!-- desk 1:1 at x 40..236: top surface 228..232 (objects stand at 230), slab front to 237.6, apron rail to 245.6.
+       The conversation panel starts at 246, right where the top drawer begins, so only the desk's top edge shows. -->
+  <img class="art" src="../art/desk.svg" alt="" style="left:40px;top:226px;width:196px;height:134px">
+  <!-- lamp 1:1, base bottom (62.4) on 230 -->
+  <img class="art" src="../art/lamp.svg" alt="" style="left:54px;top:167.6px;width:44px;height:64px">
+  <!-- note stand at 1.14 as on Style Me (48 x 61.7), holder bottom (59.7) on 230. Card face x 8.6..39.3, y 4.6..50.2 -->
+  <img class="art" src="../art/note-stand.svg" alt="" style="left:113px;top:170.3px;width:48px;height:61.7px">
+  <span class="card-icon" aria-hidden="true" style="left:121.6px;top:174.9px;width:30.7px;height:45.6px"><i data-icon="search"></i></span>
+  <!-- teacup 1:1, saucer bottom (37.8) on 230 -->
+  <img class="art" src="../art/chat-teacup.svg" alt="" style="left:176px;top:192.2px;width:40px;height:40px">
+
+  <!-- ============ nav ============ -->
+  <div class="nav"><a class="close" id="close" href="results.html#look-1" aria-label="Close"><i data-icon="close"></i></a></div>
+  <div class="navtitle"><h1>Ask stylist</h1><span class="sim">Simulated</span></div>
+
+  <!-- ============ conversation ============ -->
+  <!-- Drawn as look 1 from the looks screen; the script below redraws it for the look in the URL. -->
+  <main class="convo" id="convo" aria-label="Conversation">
+    <div class="day">Today</div>
+    <div class="ctx" id="ctx" hidden><i data-icon="calendar"></i><span>Office · 58°F · Rain · Jose's house</span></div>
+
+    <!-- the look she asked about, attached above her message -->
+    <a class="look" id="look" href="results.html#look-1" aria-label="Calm office, look 1: Navy cardigan, Cute pink shirt, Navy dress pants, Nude pointed flats">
+      <span class="nook" id="nook" aria-hidden="true">
+        <span class="floor"></span>
+        <!-- rail centre line at y 17 in the nook (rail art centre y 7, placed at top 10), rod centred on the card (x 134.5) -->
+        <img class="art" src="../art/chat-mini-rail.svg" alt="" style="left:36.5px;top:10px;width:196px;height:14px">
+        <!-- W 58: top = 17 - 11*58/120 = 11.68; hooks at x 86.5 / 134.5 / 182.5 -->
+        <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:57.5px;top:11.68px;width:58px;height:82.2px"></span>
+        <span class="g" data-garment="g-pink-blouse" data-hanger style="left:105.5px;top:11.68px;width:58px;height:82.2px"></span>
+        <span class="g" data-garment="g-navy-trousers" data-hanger style="left:153.5px;top:11.68px;width:58px;height:82.2px"></span>
+        <!-- the shoes on the floor strip under the bottom piece, as they would be worn (strip top 96; soles at 104) -->
+        <img class="art" src="../art/chat-flats.svg" alt="" style="left:159.5px;top:92.6px;width:46px;height:13px">
+      </span>
+      <span class="foot">
+        <span class="txt"><b id="look-name">Calm office</b><small id="look-sub">Look 1 · 4 pieces</small></span>
+        <span class="end"><i data-icon="chevron-right"></i></span>
+      </span>
+    </a>
+
+    <div class="bubble me" id="ask">Would white sneakers work with this?</div>
+
+    <div class="who">Stylist</div>
+    <div class="reply">
+      <span class="stylist" aria-hidden="true"><i data-icon="hanger"></i></span>
+      <div class="bubble them" id="answer">For a casual day, yes. For the office, the nude flats look neater with the navy.</div>
+    </div>
+
+    <div class="sugs" id="sugs" role="group" aria-label="Suggestions">
+      <button class="sug" type="button"><span class="chip">Try it with loafers</span></button>
+      <button class="sug" type="button"><span class="chip">Make it warmer</span></button>
+    </div>
+  </main>
+
+  <!-- ============ input ============ -->
+  <div class="inputfade"></div>
+  <label class="field"><input id="input" type="text" placeholder="Ask about this look" aria-label="Ask about this look"></label>
+  <button class="send" type="button" aria-label="Send" aria-disabled="true"><i data-icon="send"></i></button>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* Which conversation to show, and where Close goes.
+   chat.html?back=<page>&look=<id>[&top=<garment id>]
+     back  the screen that opened the sheet: home, home-ax, ipad-home, results, look, saved (".html" and a "#..." are fine)
+     look  1, 2 or 3 for a look from Style Me results (also "look-2"), or a saved look: interview, weekend, lace, blazer, pinkblack
+     top   from results after Swap a piece: the top that look is wearing now
+   From Style Me with no look there is nothing to attach, so it opens on a fresh conversation. With no parameters it is
+   the sheet over the looks screen, about look 1. A suggestion fills the field, and send turns plum while the field has
+   text. Nothing is sent: the stylist is simulated. This runs before DOMContentLoaded, so the shared scripts mount what
+   it writes. */
+(function () {
+  var PAGES = { home: 1, 'home-ax': 1, 'ipad-home': 1, 'ipad-closet': 1, results: 1, look: 1, saved: 1, closet: 1, garment: 1,
+                swap: 1, suitcases: 1, laundry: 1, settings: 1 };
+  var STYLE_ME = { home: 1, 'home-ax': 1, 'ipad-home': 1 };
+  var SNEAKERS = 'Would white sneakers work with this?';
+  /* the three looks from the Style Me request (as on results.html) and the five saved looks (as on look.html) */
+  var LOOKS = {
+    '1': { name: 'Calm office', sub: 'Look 1 · 4 pieces', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+           ask: SNEAKERS, answer: 'For a casual day, yes. For the office, the nude flats look neater with the navy.',
+           sugs: ['Try it with loafers', 'Make it warmer'] },
+    '2': { name: 'Pink and navy', sub: 'Look 2 · 3 pieces', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+           ask: SNEAKERS, answer: 'For a casual day, yes. For the office, the nude flats look neater with the navy.',
+           sugs: ['Try it with loafers', 'Make it warmer'] },
+    '3': { name: 'Lace and navy', sub: 'Look 3 · 4 pieces', layer: 'g-navy-cardigan', top: 'g-lace-top', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+           ask: SNEAKERS, answer: 'For a casual day, yes. For the office, the nude flats look neater with the navy.',
+           sugs: ['Try it with loafers', 'Make it warmer'] },
+    interview: { name: 'Interview navy & pink', sub: 'Saved look · 4 pieces', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+           ask: SNEAKERS, answer: 'For a casual day, yes. For an interview, the nude flats look neater with the navy.',
+           sugs: ['Try it with loafers', 'Make it warmer'] },
+    weekend: { name: 'Weekend olive & brick', sub: 'Saved look · 4 pieces', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+           ask: 'Would loafers work with this?', answer: 'Yes. Tan loafers suit the olive and brick, and look a little smarter than the sneakers.',
+           sugs: ['Try it with jeans', 'Make it dressier'] },
+    lace: { name: 'Lace date night', sub: 'Saved look · 4 pieces', top: 'g-lace-top', bottom: 'g-black-skirt', shoes: 'g-black-heels', bag: 'g-burgundy-bag',
+           ask: SNEAKERS, answer: 'For a relaxed evening, yes. For a date night, the black heels look more dressed up with the skirt.',
+           sugs: ['Make it warmer', 'Try a different top'] },
+    blazer: { name: 'Gray blazer office', sub: 'Saved look · 4 pieces', layer: 'g-gray-blazer', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels',
+           ask: SNEAKERS, answer: 'For a relaxed Friday, yes. For other office days, the black heels suit the blazer better.',
+           sugs: ['Try it with loafers', 'Make it warmer'] },
+    pinkblack: { name: 'Pink & black date night', sub: 'Saved look · 4 pieces', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag',
+           ask: SNEAKERS, answer: 'For a casual dinner, yes. For a date night, the black heels dress up the pink shirt.',
+           sugs: ['Make it warmer', 'Try it with a skirt'] }
+  };
+  var FRESH = { answer: 'Hello. Ask me about what to wear today, or about any piece in your closet.',
+                sugs: ['What suits a rainy office day?', 'What goes with navy dress pants?'], placeholder: 'Ask the stylist' };
+  var TOPS = { 'g-pink-blouse': 1, 'g-lace-top': 1, 'g-cream-sweater': 1, 'g-brick-top': 1, 'g-black-tee': 1 };
+  /* the small standing pairs drawn for this card; y is where the soles rest in the art */
+  var SHOES = { 'g-nude-flats': { src: 'chat-flats.svg', h: 13, y: 11.4 }, 'g-white-sneakers': { src: 'chat-sneakers.svg', h: 13, y: 11.4 },
+                'g-black-heels': { src: 'chat-heels.svg', h: 15, y: 13.4 } };
+
+  function page(s) {
+    s = String(s || '').split(/[?#]/)[0].replace(/^.*\//, '').replace(/\.html$/i, '').toLowerCase();
+    return PAGES[s] ? s : '';
+  }
+  function lookId(s) {
+    s = String(s || '').toLowerCase().replace(/^#/, '').replace(/^look-?(?=\d)/, '').trim();
+    if (LOOKS.hasOwnProperty(s)) return s;
+    for (var k in LOOKS) if (LOOKS[k].name.toLowerCase() === s) return k;
+    return '';
+  }
+
+  var qBack = '', qLook = '', qTop = '';
+  try {
+    var u = new URLSearchParams(location.search);
+    qBack = u.get('back') || ''; qLook = u.get('look') || ''; qTop = u.get('top') || '';
+  } catch (e) { /* no URL API: the sheet stays as drawn, about look 1 */ }
+  var back = page(qBack), hint = qBack.split('#')[1] || '';
+  if (!back && document.referrer) {
+    /* served over http, the page that linked here is known even without ?back= (file pages send no referrer) */
+    try { var ref = new URL(document.referrer); if (ref.origin === location.origin) { back = page(ref.pathname); hint = ref.hash.slice(1); } } catch (e) { /* keep the default */ }
+  }
+  var id = lookId(qLook) || lookId(hint);
+  if (!id && back === 'results') id = '1';        // the looks screen opens on look 1
+  if (!id && back === 'look') id = 'interview';   // look.html opens on the first saved look
+  if (!id && !back) id = '1';
+  var fromResults = /^[123]$/.test(id);
+  var L = id ? LOOKS[id] : null;
+  var top = fromResults && TOPS[qTop] ? qTop : '';
+  if (L && top) L.top = top;
+
+  /* where Close and the card go */
+  var resultsHref = 'results.html' + (top ? '?look=' + id + '&top=' + top : '') + '#look-' + id;
+  var lookHref = L ? (fromResults ? (back === 'ipad-home' ? 'ipad-home.html' : resultsHref) : 'look.html#' + id) : '';
+  var closeHref = back === 'results' && fromResults ? resultsHref
+                : back === 'look' && L && !fromResults ? lookHref
+                : back ? back + '.html'
+                : L ? lookHref : 'home.html';
+  document.getElementById('close').setAttribute('href', closeHref);
+
+  var convo = document.getElementById('convo'), card = document.getElementById('look'), ask = document.getElementById('ask');
+  var input = document.getElementById('input'), sugBox = document.getElementById('sugs');
+
+  if (L) {
+    card.setAttribute('href', lookHref);
+    document.getElementById('look-name').textContent = L.name;
+    document.getElementById('look-sub').textContent = L.sub;
+    document.getElementById('nook').innerHTML = nook(L);
+    card.setAttribute('aria-label', L.name + ', ' + L.sub.split(' · ')[0].toLowerCase() + ': ' + pieces(L).map(name).join(', '));
+    ask.textContent = L.ask;
+    document.getElementById('answer').textContent = L.answer;
+    chips(L.sugs, false);
+  } else {
+    /* fresh conversation: the stylist's hello and two starters, and from Style Me the request as it is set up there */
+    convo.classList.add('fresh');
+    document.getElementById('ctx').hidden = !STYLE_ME[back];
+    card.parentNode.removeChild(card);
+    ask.parentNode.removeChild(ask);
+    document.getElementById('answer').textContent = FRESH.answer;
+    chips(FRESH.sugs, true);
+    input.placeholder = FRESH.placeholder;
+    input.setAttribute('aria-label', FRESH.placeholder);
+  }
+
+  function pieces(L) { return [L.layer, L.top || L.dress, L.bottom, L.shoes, L.bag].filter(Boolean); }
+  function name(gid) {
+    var list = (window.Garments && Garments.LIST) || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === gid) return list[i].name;
+    return gid;
+  }
+  /* The look on the card's little rail. Rail centre line at nook y 17, hooks 48 apart and centred on the card
+     (x 134.5, the middle of the 272 px card inside its border). Each piece is 58 wide: top = 17 - 11 * 58 / 120. The bag hangs by its strap, whose top (garment
+     y 17.5 once centred) rests on the rod's top edge at y 15. The shoes stand on the floor strip (soles at 104)
+     under the bottom piece. */
+  function nook(L) {
+    var MID = 134.5, W = 58, H = (W * 170 / 120).toFixed(1), hang = [L.layer, L.top || L.dress, L.bottom, L.bag].filter(Boolean);
+    var s = '<span class="floor"></span>' +
+            '<img class="art" src="../art/chat-mini-rail.svg" alt="" style="left:' + (MID - 98) + 'px;top:10px;width:196px;height:14px">';
+    var under = MID;
+    hang.forEach(function (gid, i) {
+      var x = MID + (i - (hang.length - 1) / 2) * 48;
+      if (gid === L.bottom || gid === L.dress) under = x;
+      var isBag = gid === L.bag, t = isBag ? 15 - 17.5 * W / 120 : 17 - 11 * W / 120;
+      s += '<span class="g" data-garment="' + gid + '"' + (isBag ? '' : ' data-hanger') + ' style="left:' + (x - W / 2) + 'px;top:' +
+           t.toFixed(2) + 'px;width:' + W + 'px;height:' + H + 'px"></span>';
+    });
+    var sh = SHOES[L.shoes];
+    if (sh) s += '<img class="art" src="../art/' + sh.src + '" alt="" style="left:' + (under - 23) + 'px;top:' + (104 - sh.y).toFixed(1) +
+                 'px;width:46px;height:' + sh.h + 'px">';
+    return s;
+  }
+  function chips(list, stack) {
+    sugBox.classList.toggle('stack', !!stack);
+    sugBox.innerHTML = list.map(function (t) { return '<button class="sug" type="button"><span class="chip">' + t + '</span></button>'; }).join('');
+  }
+
+  var send = document.querySelector('.send');
+  function sync() {
+    var on = input.value.trim().length > 0;
+    send.classList.toggle('ready', on);
+    send.setAttribute('aria-disabled', on ? 'false' : 'true');
+  }
+  input.addEventListener('input', sync);
+  sugBox.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.sug') : null;
+    if (!b) return;
+    input.value = b.textContent.trim(); sync(); input.focus();
+  });
+  if (window.Icons) Icons.mountAll(convo);
+  if (window.Garments) Garments.mountAll(convo);
+
+  /* A wrapped reply keeps the width of its longest line, as chat bubbles do, instead of the full column */
+  function hug(el) {
+    try {
+      var r = document.createRange(); r.selectNodeContents(el);
+      var rects = r.getClientRects(), w = 0;
+      for (var i = 0; i < rects.length; i++) w = Math.max(w, rects[i].width);
+      if (rects.length < 2 || !w) return;
+      var cs = getComputedStyle(el);
+      el.style.width = Math.ceil(w + parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) +
+                                 parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth) + 1) + 'px';
+    } catch (e) { /* keep the column width */ }
+  }
+  hug(document.getElementById('answer'));
+})();
+</script>
+</body>
+</html>

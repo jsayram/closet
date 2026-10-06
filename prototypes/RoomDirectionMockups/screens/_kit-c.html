@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kit C: desk, chair, bed, rug, plant, lights</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Kit sheet, not a phone screen: 800 x 900, every asset at 1:1 */
+  html, body { width: 800px; height: 900px; }
+  .screen { width: 800px; height: 900px; }
+  .cap { position: absolute; font-size: 11px; font-weight: 600; color: var(--ink-soft); background: #ffffffb3;
+         border-radius: 6px; padding: 2px 6px; white-space: nowrap; }
+  .sheet-title { position: absolute; left: 20px; top: 96px; font-size: 13px; color: var(--ink-soft); }
+  .sheet-title b { color: var(--ink); }
+  /* sample label plate on the desk's top drawer: zone x107-187, y20-56 inside desk.svg (80 x 36). The 80 x 36 plate
+     sits exactly on that drawer face, leaving 5 px of pedestal frame showing on each side, as in the reference. */
+  .tag.drawer { flex-direction: column; gap: 1px; padding: 3px 4px; min-height: 0; width: 80px; height: 36px;
+                border-radius: 9px; justify-content: center; }
+  .tag.drawer b { font-size: 11px; }
+  .tag.drawer i[data-icon] { font-size: 12px; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room" style="--floor-y:420px"></div>
+
+  <!-- wall decoration -->
+  <img class="abs" src="../art/string-lights.svg" alt="" style="left:20px; top:16px; width:390px; height:46px">
+  <div class="sheet-title"><b>Kit C</b> &middot; desk 196x134, chair 94x112, bed 118x272, rug 312x152, plant 72x124, lights 390x46</div>
+
+  <!-- floor pieces, back to front -->
+  <img class="abs" src="../art/rug.svg" alt="" style="left:60px; top:520px; width:312px; height:152px">
+  <img class="abs" src="../art/plant-floor.svg" alt="" style="left:214px; top:304px; width:72px; height:124px">
+  <!-- desk at top 294: far-left leg ends at desk y128 = page 422, front feet at desk y132 = page 426 (floor line 420) -->
+  <img class="abs" src="../art/desk.svg" alt="" style="left:320px; top:294px; width:196px; height:134px">
+  <!-- label plate on the top drawer: zone desk (107,20)-(187,56) = page (427,314)-(507,350); plate 80 x 36 -->
+  <div class="tag butter drawer" style="left:427px; top:314px"><b>More options</b><i data-icon="chevron-down"></i></div>
+  <!-- chair tucked into the knee space: far feet at page 425.6 (between the desk's back leg and front feet), near feet at 432.6 -->
+  <img class="abs" src="../art/chair.svg" alt="" style="left:327px; top:327px; width:94px; height:112px">
+  <img class="abs" src="../art/bed.svg" alt="" style="right:0; bottom:0; width:118px; height:272px">
+
+  <!-- captions -->
+  <div class="cap" style="left:20px; top:66px">string-lights.svg</div>
+  <div class="cap" style="left:320px; top:270px">desk.svg (label zone x107-187 y20-56)</div>
+  <div class="cap" style="left:327px; top:446px">chair.svg</div>
+  <div class="cap" style="left:214px; top:470px">plant-floor.svg</div>
+  <div class="cap" style="left:60px; top:676px">rug.svg</div>
+  <div class="cap" style="left:560px; top:860px">bed.svg (bottom-right anchor)</div>
+</div>
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+</body>
+</html>

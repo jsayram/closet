@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+<!-- Three sleepy z shapes rising up and right from Maya, larger and lighter as they rise. Paths, not text. Plum #6A1F58. -->
+<path class="z1" transform="rotate(-10 5.25 33.75)" d="M2.5 31 H8.0 L2.5 36.5 H8.0" fill="none" stroke="#6A1F58" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+<path class="z2" transform="rotate(-10 16.5 22.5)" d="M12.5 18.5 H20.5 L12.5 26.5 H20.5" fill="none" stroke="#6A1F58" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+<path class="z3" transform="rotate(-10 30.5 9.0)" d="M25 3.5 H36 L25 14.5 H36" fill="none" stroke="#6A1F58" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.38"/>
+</svg>

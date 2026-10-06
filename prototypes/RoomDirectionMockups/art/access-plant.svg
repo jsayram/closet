@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 72" width="54" height="72" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Leafy desk plant in a blue pot, at room scale (1:1 with the kit lamp and desk). Drawn on the 81 x 108 grid of the
+       earlier close-up version and scaled by 2/3, with every stroke width raised by 1.5x so outlines stay 1.25 to 1.5.
+       Pot centred at x 27, foot at y 70.6 (stand it there on the desk top).
+       Leaves: fill #77AE84, shade #5C9670, outline #44795A, highlight #92C39C.
+       Pot in the wardrobe blue: fill #A9CBEF, shade #8FB8E6, outline #6C9AD0, highlight #CFE2F7. -->
+  <defs>
+    <g id="apl-leaf-l">
+      <path d="M0 0C14.7 -8.7 11.4 -27 0 -39.6C-11.4 -27 -14.7 -8.7 0 0Z" fill="#77AE84"/>
+      <path d="M0 0C14.7 -8.7 11.4 -27 0 -39.6Z" fill="#5C9670"/>
+      <path d="M0 -3.9V-33.3M0 -14L4.6 -19M0 -22.6L3.6 -26.6M0 -14L-4.4 -18.6M0 -22.6L-3.4 -26.2" stroke="#44795A" stroke-width="1.5"/>
+      <path d="M-5.1 -9.6C-6.6 -16.5 -5.6 -24.4 -2.9 -30.3" stroke="#92C39C" stroke-width="1.95"/>
+      <path d="M0 0C14.7 -8.7 11.4 -27 0 -39.6C-11.4 -27 -14.7 -8.7 0 0Z" stroke="#44795A" stroke-width="2.03"/>
+    </g>
+    <g id="apl-leaf-m">
+      <path d="M0 0C12.2 -6.9 9.5 -21.5 0 -31.5C-9.5 -21.5 -12.2 -6.9 0 0Z" fill="#77AE84"/>
+      <path d="M0 0C12.2 -6.9 9.5 -21.5 0 -31.5Z" fill="#5C9670"/>
+      <path d="M0 -3.3V-26.4M0 -12L3.8 -16M0 -12L-3.6 -15.6" stroke="#44795A" stroke-width="1.5"/>
+      <path d="M-4.2 -7.7C-5.4 -13.2 -4.7 -19.5 -2.3 -24.2" stroke="#92C39C" stroke-width="1.88"/>
+      <path d="M0 0C12.2 -6.9 9.5 -21.5 0 -31.5C-9.5 -21.5 -12.2 -6.9 0 0Z" stroke="#44795A" stroke-width="2.03"/>
+    </g>
+    <g id="apl-leaf-s">
+      <path d="M0 0C10.2 -5.6 8 -17.4 0 -25.5C-8 -17.4 -10.2 -5.6 0 0Z" fill="#77AE84"/>
+      <path d="M0 0C10.2 -5.6 8 -17.4 0 -25.5Z" fill="#5C9670"/>
+      <path d="M0 -3V-21" stroke="#44795A" stroke-width="1.5"/>
+      <path d="M-3.5 -6.3C-4.5 -10.8 -3.9 -15.9 -2 -19.8" stroke="#92C39C" stroke-width="1.8"/>
+      <path d="M0 0C10.2 -5.6 8 -17.4 0 -25.5C-8 -17.4 -10.2 -5.6 0 0Z" stroke="#44795A" stroke-width="2.03"/>
+    </g>
+  </defs>
+  <g transform="scale(0.66667)">
+  
+    <!-- stems -->
+    <path d="M40.5 75C41.1 67.5 42 60 42.9 53.1M39.6 75C36.6 69.6 33 64.5 29.4 60.3M39 75.3C34.8 73.2 30.6 71.1 26.1 69.6M41.4 75C45 69.9 49.2 65.4 53.4 61.8M42 75.3C46.5 73.8 51 72.6 55.5 71.7M40.2 75C38.8 70 37.4 64.4 35.8 58.6M41 75C43.4 70.6 46.2 66.4 48.8 62.8" stroke="#44795A" stroke-width="2.4"/>
+  
+    <!-- back leaves -->
+    <use href="#apl-leaf-m" transform="translate(35.8 58.8) rotate(-14) scale(-1 1)"/>
+    <use href="#apl-leaf-s" transform="translate(48.8 63) rotate(24)"/>
+    <use href="#apl-leaf-l" transform="translate(42.9 53.4) rotate(6)"/>
+    <use href="#apl-leaf-m" transform="translate(29.7 60.6) rotate(-40) scale(-1 1)"/>
+    <use href="#apl-leaf-m" transform="translate(53.1 62.1) rotate(44)"/>
+  
+    <!-- pot body -->
+    <path d="M23.1 80.1H57.9L54.6 101.7C54.3 104.3 52.5 105.9 49.8 105.9H31.2C28.5 105.9 26.7 104.3 26.4 101.7Z" fill="#A9CBEF"/>
+    <path d="M46.5 80.1H57.9L54.6 101.7C54.3 104.3 52.5 105.9 49.8 105.9H44.4Z" fill="#8FB8E6"/>
+    <!-- a painted band round the pot -->
+    <path d="M24.6 90.4H56.4" stroke="#CFE2F7" stroke-width="1.8"/>
+    <path d="M25 93.2H56" stroke="#8FB8E6" stroke-width="1.65"/>
+    <path d="M29.4 83.8L30.9 99.2" stroke="#CFE2F7" stroke-width="2.7"/>
+    <path d="M23.1 80.1H57.9L54.6 101.7C54.3 104.3 52.5 105.9 49.8 105.9H31.2C28.5 105.9 26.7 104.3 26.4 101.7Z" stroke="#6C9AD0" stroke-width="2.1"/>
+    <!-- rim -->
+    <rect x="20.4" y="74.1" width="40.2" height="7.5" rx="2.4" fill="#A9CBEF"/>
+    <path d="M48.6 74.1H58.2A2.4 2.4 0 0 1 60.6 76.5V79.2A2.4 2.4 0 0 1 58.2 81.6H48.6Z" fill="#8FB8E6"/>
+    <path d="M24 76.8H39" stroke="#CFE2F7" stroke-width="1.95"/>
+    <rect x="20.4" y="74.1" width="40.2" height="7.5" rx="2.4" stroke="#6C9AD0" stroke-width="2.1"/>
+  
+    <!-- front leaves, drooping over the rim -->
+    <use href="#apl-leaf-m" transform="translate(26.4 70.4) rotate(-78) scale(-1 1)"/>
+    <use href="#apl-leaf-m" transform="translate(55.2 72) rotate(98)"/>
+    <use href="#apl-leaf-s" transform="translate(36.6 69.6) rotate(-22) scale(-1 1)"/>
+  </g>
+</svg>

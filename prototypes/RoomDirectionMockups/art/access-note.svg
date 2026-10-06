@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 132" width="72" height="132" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- A butter sticky note lying on the close-up desk, coming in from the left screen edge (the rest of the square
+       is out of frame, so it reads at the card's scale). Turned 6 degrees, bottom right corner dog-eared, a gold
+       paper clip over its top edge. Placed at page (0, 140), the same frame as access-desk.svg.
+       Right edge from (44, 16) to (54.9, 120); nothing past x 57, so it stays clear of the card (left edge x 63+).
+       Butter: fill #FBE9A6, shade #F3D97C, outline #DDBB4E, highlight #FFF6CF. No text: the ruled lines are blank. -->
+
+  <!-- contact shadow on the desk -->
+  <path d="M0 23.2L46.2 18.6L57.2 122.6L44 124.2L0 129.2Z" fill="#44795A" opacity=".14"/>
+  <!-- shadow under the lifted corner -->
+  <path d="M55.6 108.4L56.8 121.6L43.4 123.4Z" fill="#44795A" opacity=".12"/>
+
+  <!-- the note, corner folded back -->
+  <path d="M0 20.6L44 16L53.4 106.1L41 121.5L0 125.8Z" fill="#FBE9A6"/>
+  <!-- a little light along the top edge, shade at the bottom -->
+  <path d="M0 23.6L41.6 19.3" stroke="#FFF6CF" stroke-width="1.6"/>
+  <path d="M0 121.6L37.4 117.7" stroke="#F3D97C" stroke-width="2.4"/>
+  <!-- blank ruled lines -->
+  <path d="M39.6 50.6L0 54.8M41.3 66.6L0 70.9M43 82.5L0 87M37.2 99.2L0 103.1" stroke="#F0D478" stroke-width="1.1"/>
+  <path d="M0 20.6L44 16L53.4 106.1L41 121.5L0 125.8" stroke="#DDBB4E" stroke-width="1.35"/>
+
+  <!-- the dog-eared corner, its underside showing -->
+  <path d="M53.4 106.1C48.6 106.4 43.4 106.9 39.5 107.6C40.2 112 40.6 116.8 41 121.5Z" fill="#F3D97C"/>
+  <path d="M51 107.6C47.4 107.9 44.6 108.3 42 108.8" stroke="#FAE7A0" stroke-width="1"/>
+  <path d="M53.4 106.1C48.6 106.4 43.4 106.9 39.5 107.6C40.2 112 40.6 116.8 41 121.5Z" stroke="#DDBB4E" stroke-width="1.25"/>
+
+  <!-- gold paper clip over the top edge -->
+  <g transform="translate(25 18) rotate(-6)">
+    <path d="M1.6 10V-2A1.8 1.8 0 0 0 -2 -2V20A3.25 3.25 0 0 0 4.5 20V-6A4.5 4.5 0 0 0 -4.5 -6V15" stroke="#B98632" stroke-width="2.6"/>
+    <path d="M1.6 10V-2A1.8 1.8 0 0 0 -2 -2V20A3.25 3.25 0 0 0 4.5 20V-6A4.5 4.5 0 0 0 -4.5 -6V15" stroke="#E7BC6E" stroke-width="1.1"/>
+    <path d="M-3.7 -8.4A4 4 0 0 1 -1 -10.1" stroke="#F8E3B0" stroke-width=".8"/>
+  </g>
+</svg>

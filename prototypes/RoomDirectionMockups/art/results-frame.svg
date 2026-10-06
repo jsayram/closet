@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 74" width="52" height="74" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- A small framed print for the dressing-room wall: a wood frame on a picture wire from one nail, a cream mat, and a
+       print of a pink dress on a gold hanger in a lilac arch (it echoes the alcove). No label zone. -->
+  <!-- picture wire and nail -->
+  <path d="M10 18.4 L26 4.6 L42 18.4" stroke="#B98632" stroke-width="1"/>
+  <circle cx="26" cy="4.2" r="1.9" fill="#E7BC6E" stroke="#B98632" stroke-width="1"/>
+  <!-- frame -->
+  <rect x="5" y="16" width="42" height="54" rx="2.4" fill="#E7BC6E"/>
+  <path d="M7 67.4 V18.6 Q7 18 7.6 18 H44.4" stroke="#F6DC9C" stroke-width="1.1"/>
+  <path d="M45 18.6 V67.4 Q45 68 44.4 68 H7.6" stroke="#D9A650" stroke-width="1.3"/>
+  <rect x="5" y="16" width="42" height="54" rx="2.4" stroke="#B98632" stroke-width="1.3"/>
+  <!-- mat -->
+  <rect x="10" y="21" width="32" height="44" rx="1" fill="#FFF7EA" stroke="#C9A35B" stroke-width="1"/>
+  <path d="M11.2 22.4 H40.8" stroke="#F3E6D0" stroke-width="1"/>
+  <!-- print: a lilac arch -->
+  <path d="M16 59.6 V34.6 A10 10 0 0 1 36 34.6 V59.6 Z" fill="#EFE8FA"/>
+  <path d="M16 59.6 V34.6 A10 10 0 0 1 36 34.6 V59.6 Z" stroke="#C3ABE6" stroke-width=".9"/>
+  <!-- a pink dress on a gold hanger -->
+  <path d="M26 30.4 V29.4 A1.4 1.4 0 1 1 27.3 28.1" stroke="#B98632" stroke-width=".9"/>
+  <path d="M21 34.2 L26 31.2 L31 34.2" stroke="#B98632" stroke-width="1.1"/>
+  <path d="M22.6 34.4 L24.6 33.4 Q26 35 27.4 33.4 L29.4 34.4 L30.2 37.6 L28.8 38.2 L28.4 41.2 L31.8 54.6 Q26 56.6 20.2 54.6 L23.6 41.2 L23.2 38.2 L21.8 37.6 Z" fill="#F4B4C2"/>
+  <path d="M23.6 41.2 H28.4" stroke="#D97F97" stroke-width=".8"/>
+  <path d="M24.4 44 L22.6 54.2 M27.8 44 L29.6 54.2" stroke="#EC9DB0" stroke-width=".9"/>
+  <path d="M22.6 34.4 L24.6 33.4 Q26 35 27.4 33.4 L29.4 34.4 L30.2 37.6 L28.8 38.2 L28.4 41.2 L31.8 54.6 Q26 56.6 20.2 54.6 L23.6 41.2 L23.2 38.2 L21.8 37.6 Z" stroke="#D97F97" stroke-width=".9"/>
+</svg>

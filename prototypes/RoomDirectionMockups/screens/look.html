@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Interview navy &amp; pink</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* A saved look, opened. The look's picture hangs in a large frame on the gallery wall beside the rainy window: its
+     try-on picture if it has one (here the simulated placeholder), otherwise its pieces laid out flat on the cream mat.
+     No figure, no mirror (STYLE.md, Revision 2). Under it: occasion, the pieces, the note, actions, fine print.
+     The title is the standard 33 px display title at top 46 and may take two lines (46..115).
+     Frame (art/looks-frame-lg.svg, 236 x 304, 1:1) at left 132, top 120: nail y 127, frame 140..422,
+     picture window x 154..346, y 161..401 (192 x 240). Floor line 440.
+     The details hang from the bottom: the fine print always ends at 753 (as on Your looks), so a taller strip of pieces
+     grows upward, never into the tab bar. Tallest case (three-line names or a Dirty badge): top 461.
+     Which look is shown comes from the hash (#interview, #weekend, #lace, #blazer, #pinkblack); no hash shows Interview. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .room { --floor-y: 440px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* nav */
+  .nav { z-index: 5; }
+  .navbtn { position: absolute; top: 2px; height: 44px; min-width: 44px; display: flex; align-items: center; gap: 2px;
+            font-size: 17px; color: var(--plum); border-radius: 12px; }
+  .navbtn.back { left: 4px; padding: 0 8px 0 2px; font-weight: 500; }
+  .navbtn.back i[data-icon] { font-size: 24px; }
+  .navbtn.edit { right: 8px; padding: 0 8px; min-width: 60px; font-weight: 600; justify-content: center; }
+
+  /* the same display title as every other room (33 px, top 46); a long name wraps to a second line */
+  .hdr-title { position: absolute; left: 20px; top: 46px; max-width: 350px; }
+
+  /* the picture window inside the big frame */
+  .pic { position: absolute; left: 154px; top: 161px; width: 192px; height: 240px; overflow: hidden; }
+  .pic[hidden] { display: none; }
+  /* try-on picture (simulated placeholder): warm grey to blush, a photo icon, a label and Simulated. Never a figure. */
+  .pic.tryon { background: radial-gradient(ellipse 70% 42% at 50% 42%, #FFFFFF73, #FFFFFF00 100%),
+                           linear-gradient(#E9E2DF 0%, #EFDFE0 50%, #F5D2DB 100%);
+               box-shadow: inset 0 0 0 1px #E2D3D3; display: flex; flex-direction: column; align-items: center; justify-content: center;
+               gap: 8px; color: #A8899C; text-align: center; }
+  .pic.tryon i[data-icon] { font-size: 40px; }
+  .pic.tryon .lbl { font-size: 15px; line-height: 19px; font-weight: 700; color: var(--ink-soft); }
+  .pic.tryon .sim { background: #fff; }
+  /* no try-on picture: the pieces laid out flat on the cream mat */
+  .pic.flat { background: linear-gradient(#FFFAF2, #FBF0DF); }
+  .pic.flat .fp { position: absolute; left: 0; top: 0; width: 90px; }
+  .pic.flat .fp[hidden] { display: none; }
+
+  /* details under the frame, one column that ends with the fine print at 753 */
+  .details { position: absolute; left: 16px; right: 16px; bottom: 91px; display: flex; flex-direction: column; gap: 8px; }
+  .fine { margin-top: -2px; text-align: center; font-size: 11px; line-height: 14px; font-weight: 500; color: var(--ink-soft); }
+  .meta { height: 36px; display: flex; align-items: center; gap: 10px; }
+  .meta .chip i[data-icon] { color: var(--plum); }
+  .meta .n { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+
+  .pieces { height: 90px; display: flex; gap: 8px; }
+  .tile { position: relative; flex: 0 0 calc((100% - 24px) / 4); height: 90px; background: #fff; border: 1px solid var(--plate-line);
+          border-radius: 14px; box-shadow: 0 2px 6px #5a2a4a12; overflow: hidden; }
+  .tile .fit { position: absolute; left: var(--nl, 0); top: var(--nt, 0); width: var(--nw, 40px); }
+  /* the name is centred in the space under the drawing. A name that needs three lines gets 11 px if that brings it
+     to two; if not, it keeps 12 px and every tile in the strip grows by 12 px, so no drawing has to shrink */
+  .tile .nm { position: absolute; left: 3px; right: 3px; top: 52px; bottom: 5px; display: flex; align-items: center;
+              justify-content: center; text-align: center; font-size: 12px; font-weight: 600;
+              line-height: 14px; color: var(--ink); letter-spacing: -.1px; }
+  .tile .nm.long { font-size: 11px; line-height: 13px; letter-spacing: -.2px; }
+  .pieces.tall, .pieces.tall .tile { height: 102px; }
+  /* A piece in the wash gets the same butter Dirty badge as the Closet, in the tile's top-left corner. The strip is
+     then always the tall one, and in that tile the drawing and name sit lower so the badge clears them. */
+  .tile .dirty { position: absolute; left: 4px; top: 4px; display: inline-flex; align-items: center; gap: 3px; font-size: 11px;
+                 font-weight: 700; line-height: 14px; padding: 0 6px 0 4px; border-radius: 8px; background: var(--butter);
+                 border: 1px solid var(--butter-line); color: #6B5410; }
+  .tile .dirty i[data-icon] { font-size: 12px; }
+  .tile.is-dirty .nm { top: 55px; }
+  /* while editing, the swap badge takes the top-right corner, so the Dirty badge drops its icon to stay clear of it */
+  .pieces.editing .tile .dirty { padding: 0 6px; }
+  .pieces.editing .tile .dirty i[data-icon] { display: none; }
+  /* edit state: a badge in each tile's top-right corner (the hit area is 44 x 44). The layer and the bag can be
+     removed (plum minus); top, bottom and shoes are needed for the look, so they get a swap badge that opens the
+     Closet. While editing, each drawing moves into a smaller box on the left so the badge never covers it. */
+  .pieces.ready .tile .fit { transition: left .18s ease, top .18s ease, width .18s ease; }
+  .pieces.editing .tile .fit { left: var(--el); top: var(--et); width: var(--ew); }
+  .tile .badge { position: absolute; top: 0; right: 0; width: 44px; height: 44px; border-radius: 0 14px 0 14px; }
+  .tile .badge[hidden] { display: none; }
+  .tile .badge::before { content: ""; position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%;
+                         box-sizing: border-box; box-shadow: 0 0 0 2px #fff, 0 1px 3px #5a2a4a40; }
+  .tile .badge i[data-icon] { position: absolute; top: 7px; right: 7px; font-size: 14px; }
+  .tile .rm::before { background: var(--plum); }
+  .tile .rm i[data-icon] { color: #fff; }
+  .tile .sw::before { background: #fff; border: 1.5px solid var(--plum); }
+  .tile .sw i[data-icon] { color: var(--plum); top: 7px; right: 7px; font-size: 14px; }
+  .tile .badge:focus-visible { outline: none; }
+  .tile .badge:focus-visible::before { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--plum); }
+
+  .note { display: flex; gap: 10px; align-items: flex-start;
+          padding: 10px 14px 10px 12px; background: #FDF3CF; border: 1px solid #EBD38A; border-radius: 14px;
+          box-shadow: 0 2px 6px #5a2a4a10; font-size: 14px; line-height: 19px; color: var(--ink); }
+  .note[hidden] { display: none; }
+  .note i[data-icon] { flex: none; font-size: 18px; color: var(--plum); margin-top: 1px; }
+
+  .actions { display: flex; gap: 10px; }
+  .actions .btn { flex: 1 1 0; min-width: 0; white-space: nowrap; }
+  /* When a piece of the look is in the wash, Wear today gives way to a quiet note that opens Laundry */
+  .actions .btn.laundry { flex: 1.22 1 0; justify-content: flex-start; gap: 8px; padding: 0 8px 0 9px; background: #fff;
+                          color: var(--ink); border: 1.5px solid var(--plate-line); box-shadow: none; white-space: normal; }
+  .laundry .ic { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+                 background: var(--butter); box-shadow: inset 0 0 0 1px var(--butter-line); color: #6B5410; }
+  .laundry .ic i[data-icon] { font-size: 17px; }
+  .laundry .lt { display: flex; flex-direction: column; min-width: 0; text-align: left; font-size: 13px; line-height: 16px; }
+  .laundry .lt b { font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .laundry .lt span { font-weight: 500; color: var(--ink-soft); white-space: nowrap; }
+  .laundry i.go[data-icon] { flex: none; margin-left: auto; font-size: 14px; color: var(--ink-soft); }
+  /* Wear today, once pressed: a soft plum fill with a filled check, and a label that fits one line */
+  #wear[aria-pressed="true"] { background: var(--plum-soft); color: var(--plum); box-shadow: inset 0 0 0 1.5px var(--plum); }
+  #wear[aria-pressed="true"] i[data-icon] { width: 22px; height: 22px; font-size: 14px; border-radius: 50%;
+                                            background: var(--plum); color: #fff; }
+
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- rainy window on the left wall at 0.9 (86.4 x 165.6), its rod 18 px under a two-line title -->
+  <img class="art" src="../art/window-rain.svg" alt="" style="left:20px;top:132px;width:86.4px;height:165.6px">
+
+  <!-- floor plant under the window, 0.85 scale (61.2 x 105.4); pot base (its y 120 → 102 px down) 14 px in front of the
+       baseboard at 440 -->
+  <img class="art" src="../art/plant-floor.svg" alt="" style="left:32.6px;top:352px;width:61.2px;height:105.4px">
+
+  <!-- the look's picture in the large frame -->
+  <img class="art" src="../art/looks-frame-lg.svg" alt="" style="left:132px;top:120px;width:236px;height:304px">
+  <div class="pic tryon" id="tryon" role="img" aria-label="Try-on picture of this look, simulated">
+    <i data-icon="photo"></i><span class="lbl">Try-on picture</span><span class="sim">Simulated</span>
+  </div>
+  <div class="pic flat" id="flat" role="img" aria-label="The pieces of this look laid out flat" hidden></div>
+
+  <!-- nav and title -->
+  <div class="nav">
+    <a class="navbtn back" href="saved.html"><i data-icon="chevron-left"></i>Saved Looks</a>
+    <button class="navbtn edit" type="button" id="edit" aria-pressed="false">Edit</button>
+  </div>
+  <h1 class="title-display hdr-title" id="title">Interview navy &amp; pink</h1>
+
+  <!-- details -->
+  <div class="details">
+    <div class="meta">
+      <span class="chip"><i data-icon="calendar"></i><span id="occasion">Office</span></span>
+      <span class="n" id="count">4 pieces</span>
+    </div>
+
+    <div class="pieces" id="pieces" aria-label="Pieces in this look">
+      <div class="tile"><span class="fit" data-garment="g-navy-cardigan"></span><span class="nm"><span>Navy cardigan</span></span></div>
+      <div class="tile"><span class="fit" data-garment="g-pink-blouse"></span><span class="nm"><span>Cute pink shirt</span></span></div>
+      <div class="tile"><span class="fit" data-garment="g-navy-trousers"></span><span class="nm"><span>Navy dress pants</span></span></div>
+      <div class="tile"><span class="fit" data-garment="g-nude-flats"></span><span class="nm"><span>Nude pointed flats</span></span></div>
+    </div>
+
+    <div class="note" id="note"><i data-icon="sparkles"></i><span>Navy and pink keep it polished. The cardigan adds warmth for a rainy day.</span></div>
+
+    <div class="actions" id="actions">
+      <button class="btn" type="button" id="wear"><i data-icon="check"></i><span>Wear today</span></button>
+      <a class="btn ghost" href="chat.html"><i data-icon="search"></i>Ask stylist</a>
+    </div>
+
+    <p class="fine">Try-on pictures are simulated</p>
+  </div>
+
+  <!-- tab bar -->
+  <div class="tabfade"></div>
+  <nav class="tabbar">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a class="on" href="saved.html" aria-current="page"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* The five saved looks (STYLE.md app facts, in order), each with a short note on why it works.
+   This runs before DOMContentLoaded, so the frame and tiles mount with the chosen look. */
+var LOOKS = {
+  interview: { title: 'Interview navy & pink', occasion: 'Office', tryon: true,
+               outfit: { layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+               pieces: ['g-navy-cardigan', 'g-pink-blouse', 'g-navy-trousers', 'g-nude-flats'],
+               note: [['Navy and pink keep it polished.'], ['The cardigan adds warmth for a rainy day.', 'g-navy-cardigan']] },
+  weekend:   { title: 'Weekend olive & brick', occasion: 'Casual',
+               outfit: { layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers' },
+               pieces: ['g-brown-jacket', 'g-brick-top', 'g-olive-trousers', 'g-white-sneakers'],
+               note: [['Olive and brick are warm and easy.'], ['Sneakers keep it relaxed.']] },
+  lace:      { title: 'Lace date night', occasion: 'Date Night', tryon: true,
+               outfit: { layer: '', top: 'g-lace-top', bottom: 'g-black-skirt', shoes: 'g-black-heels' },
+               pieces: ['g-lace-top', 'g-black-skirt', 'g-black-heels', 'g-burgundy-bag'],
+               note: [['White lace and a black skirt feel dressed up.'], ['The burgundy bag adds a little color.', 'g-burgundy-bag']] },
+  blazer:    { title: 'Gray blazer office', occasion: 'Office',
+               outfit: { layer: 'g-gray-blazer', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels' },
+               pieces: ['g-gray-blazer', 'g-cream-sweater', 'g-navy-trousers', 'g-black-heels'],
+               note: [['Cream and navy are calm together.'], ['The blazer adds shape for work.', 'g-gray-blazer']] },
+  pinkblack: { title: 'Pink & black date night', occasion: 'Date Night',
+               outfit: { layer: '', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-black-heels' },
+               pieces: ['g-pink-blouse', 'g-navy-trousers', 'g-black-heels', 'g-burgundy-bag'],
+               note: [['Black heels dress up the pink shirt for evening.'], ['The burgundy bag finishes it.', 'g-burgundy-bag']] }
+};
+var LOOK = LOOKS[(location.hash || '').slice(1)] || LOOKS.interview;
+/* Pieces in the wash (STYLE.md app facts: Laundry). Same two pieces the Closet marks Dirty. */
+var DIRTY = { 'g-lace-top': 1, 'g-black-tee': 1 };
+var BY_ID = {};
+(window.Garments ? Garments.LIST : []).forEach(function (g) { BY_ID[g.id] = g; });
+function pieceName(id) { return BY_ID[id] ? BY_ID[id].name : id; }
+/* The note, without any sentence about a piece that has been removed in Edit */
+function writeNote(removed) {
+  var el = document.getElementById('note');
+  var text = (LOOK.note || []).filter(function (p) { return !p[1] || removed.indexOf(p[1]) < 0; })
+                              .map(function (p) { return p[0]; }).join(' ');
+  el.querySelector('span').textContent = text;
+  el.hidden = !text;
+}
+var REMOVED = [];
+
+(function () {
+  document.title = LOOK.title;
+  /* If the title needs two lines, keep "&" with the word after it and a short last word with the one before it,
+     so it breaks as "Interview navy / & pink" or "Pink & black / date night", never leaving a word alone */
+  document.getElementById('title').textContent =
+    LOOK.title.replace(/ & /g, ' & ').replace(/ (\S{1,5})$/, ' $1');
+  document.getElementById('occasion').textContent = LOOK.occasion;
+
+  /* the big frame: the try-on picture if the look has one, else its pieces laid out flat */
+  document.getElementById('tryon').hidden = !LOOK.tryon;
+  var flat = document.getElementById('flat');
+  flat.hidden = !!LOOK.tryon;
+  if (!LOOK.tryon) {
+    var o = LOOK.outfit, bag = LOOK.pieces.indexOf('g-burgundy-bag') >= 0;
+    var lay = [['layer', o.layer], ['top', o.top], ['bottom', o.bottom], ['shoes', o.shoes], ['bag', bag ? 'g-burgundy-bag' : '']];
+    flat.setAttribute('data-layout', o.layer ? 'layer' : 'plain');
+    flat.innerHTML = lay.filter(function (x) { return x[1]; }).map(function (x) {
+      return '<span class="fp" data-slot="' + x[0] + '" data-id="' + x[1] + '" data-garment="' + x[1] + '"></span>';
+    }).join('');
+  }
+
+  /* the layer and the bag can come off; top, bottom and shoes can only be swapped (from the Closet) */
+  var strip = document.getElementById('pieces');
+  strip.innerHTML = LOOK.pieces.map(function (id) {
+    var n = pieceName(id), cat = BY_ID[id] ? BY_ID[id].category : '';
+    var badge = (cat === 'layer' || cat === 'accessory')
+      ? '<button class="badge rm" type="button" aria-label="Remove ' + n + '" hidden><i data-icon="minus"></i></button>'
+      : '<a class="badge sw" href="closet.html" aria-label="Swap ' + n + ' from the Closet" hidden><i data-icon="swap"></i></a>';
+    var dirty = DIRTY[id] ? '<span class="dirty"><i data-icon="basket"></i>Dirty</span>' : '';
+    return '<div class="tile' + (DIRTY[id] ? ' is-dirty' : '') + '" data-id="' + id + '"><span class="fit" data-garment="' + id + '"></span>' +
+           '<span class="nm"><span>' + n + '</span></span>' + dirty + badge + '</div>';
+  }).join('');
+  document.getElementById('count').textContent = LOOK.pieces.length + ' pieces';
+
+  /* A look with a piece in the wash can't be worn today: Wear today becomes a note that opens Laundry */
+  var inWash = LOOK.pieces.filter(function (id) { return DIRTY[id]; });
+  if (inWash.length) {
+    var who = inWash.length === 1 ? pieceName(inWash[0]) : inWash.length + ' pieces';
+    var verb = inWash.length === 1 ? 'is in the laundry' : 'are in the laundry';
+    var wear = document.getElementById('wear');
+    var note = document.createElement('a');
+    note.className = 'btn laundry'; note.href = 'laundry.html';
+    note.setAttribute('aria-label', who + ' ' + verb + '. Open Laundry');
+    note.innerHTML = '<span class="ic"><i data-icon="basket"></i></span><span class="lt"><b>' + who + '</b><span>' + verb +
+                     '</span></span><i class="go" data-icon="chevron-right"></i>';
+    wear.parentNode.replaceChild(note, wear);
+  }
+
+  writeNote([]);
+
+  window.addEventListener('hashchange', function () { location.reload(); });
+})();
+
+/* The title keeps the standard 33 px and may use two lines. Only a name that would need a third line shrinks. */
+(function () {
+  function fitTitle() {
+    var h = document.getElementById('title'), fs = 33;
+    h.style.fontSize = '';
+    while (h.offsetHeight > 2 * fs * 1.05 + 2 && fs > 26) { fs -= 0.5; h.style.fontSize = fs + 'px'; }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fitTitle); else fitTitle();
+})();
+
+/* Fit the tile drawings into a box above the name by their drawn bounds, and set their outlines near 1.1 px.
+   Same method as the home screen's saved-look cards. */
+(function () {
+  var TARGET = 1.1, OUTLINE = 3;
+  var BOX = { top: [17, 6, 48, 44], layer: [17, 6, 48, 44], bottom: [17, 8, 48, 42], dress: [17, 6, 48, 44],
+              shoes: [15, 10, 52, 36], accessory: [19, 6, 44, 44] };
+  /* while editing: the same drawings in a box that ends 7 px left of the badge (badge left edge is at tile x 59.5) */
+  var EDIT = { top: [8, 8, 44, 40], layer: [8, 8, 44, 40], bottom: [8, 9, 44, 39], dress: [8, 8, 44, 40],
+               shoes: [6, 13, 46, 33], accessory: [9, 8, 42, 40] };
+  /* a tile with the Dirty badge (always in the 102 px strip): the drawing sits under the badge, the name from y 55 */
+  var DBOX = { top: [16, 20, 50, 35], layer: [16, 20, 50, 35], bottom: [16, 21, 50, 34], dress: [16, 20, 50, 35],
+               shoes: [15, 24, 52, 30], accessory: [19, 20, 44, 35] };
+  var DEDIT = { top: [10, 23, 44, 32], layer: [10, 23, 44, 32], bottom: [10, 24, 44, 31], dress: [10, 23, 44, 32],
+                shoes: [8, 27, 46, 27], accessory: [11, 23, 42, 32] };
+  function place(b, box, cx) {
+    var s = Math.min(box[2] / b.width, box[3] / b.height);
+    return { s: s, w: (120 * s).toFixed(2) + 'px',
+             l: (cx + box[0] + box[2] / 2 - (b.x + b.width / 2) * s).toFixed(2) + 'px',
+             t: (box[1] + box[3] - (b.y + b.height) * s).toFixed(2) + 'px' };
+  }
+  function fit(el) {
+    var svg = el.querySelector('svg');
+    if (!svg || el.getAttribute('data-fitted')) return;
+    var g = BY_ID[el.getAttribute('data-garment')];
+    var cat = (g && BOX[g.category]) ? g.category : 'top';
+    var tile = el.parentNode;
+    var cx = tile.clientWidth / 2 - 41;          /* boxes are drawn for an 82 px wide tile */
+    var b = svg.getBBox();
+    var d = tile.classList.contains('is-dirty');
+    var p = place(b, (d ? DBOX : BOX)[cat], cx), e = place(b, (d ? DEDIT : EDIT)[cat], cx), s = p.s;
+    el.style.setProperty('--nw', p.w); el.style.setProperty('--nl', p.l); el.style.setProperty('--nt', p.t);
+    el.style.setProperty('--ew', e.w); el.style.setProperty('--el', e.l); el.style.setProperty('--et', e.t);
+    var f = TARGET / (OUTLINE * s);
+    var list = svg.querySelectorAll('[stroke-width]');
+    for (var i = 0; i < list.length; i++) {
+      var w = parseFloat(list[i].getAttribute('stroke-width'));
+      if (w > 0) list[i].setAttribute('stroke-width', (w * f).toFixed(2));
+    }
+    el.setAttribute('data-fitted', '1');
+  }
+  function lines(nm) { var t = nm.firstChild; return Math.round(t.offsetHeight / parseFloat(getComputedStyle(t).lineHeight)); }
+  function names() {
+    var l = document.querySelectorAll('.tile .nm'), tall = !!document.querySelector('.tile.is-dirty');
+    for (var i = 0; i < l.length; i++) {
+      if (lines(l[i]) <= 2) continue;
+      l[i].classList.add('long');                                   /* try 11 px first */
+      if (lines(l[i]) > 2) { l[i].classList.remove('long'); tall = true; }   /* still three lines: keep 12 px, grow the strip */
+    }
+    document.getElementById('pieces').classList.toggle('tall', tall);
+  }
+  function run() {
+    names(); var l = document.querySelectorAll('.fit'); for (var i = 0; i < l.length; i++) fit(l[i]);
+    /* animate only later moves (into and out of edit), never the first placement */
+    requestAnimationFrame(function () { requestAnimationFrame(function () { document.getElementById('pieces').classList.add('ready'); }); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+
+/* Edit: shows the badges, moves the drawings clear of them, turns the button into Done and puts a short hint where
+   the count was. Removing the layer or the bag takes it off the strip (and off the flat lay, if shown) at once.
+   Prototype only, nothing is stored. */
+(function () {
+  var btn = document.getElementById('edit'), strip = document.getElementById('pieces'), n = document.getElementById('count');
+  function count() { var k = strip.querySelectorAll('.tile').length; return k + (k === 1 ? ' piece' : ' pieces'); }
+  function setEditing(on) {
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'Done' : 'Edit';
+    strip.classList.toggle('editing', on);
+    var bs = strip.querySelectorAll('.badge');
+    for (var i = 0; i < bs.length; i++) bs[i].hidden = !on;
+    n.textContent = on ? 'Remove or swap a piece' : count();
+  }
+  btn.addEventListener('click', function () { setEditing(btn.getAttribute('aria-pressed') !== 'true'); });
+  strip.addEventListener('click', function (e) {
+    var rm = e.target.closest && e.target.closest('.rm');
+    if (!rm) return;
+    var tile = rm.closest('.tile'), id = tile.getAttribute('data-id');
+    tile.parentNode.removeChild(tile);
+    REMOVED.push(id); writeNote(REMOVED);
+    /* a removed piece also leaves the flat lay in the frame (a try-on picture stays as it was made) */
+    var lying = document.querySelector('#flat .fp[data-id="' + id + '"]');
+    if (lying) lying.hidden = true;
+    var next = strip.querySelector('.badge');
+    if (next) next.focus(); else btn.focus();
+  });
+})();
+
+/* Flat lay in the big frame (looks without a try-on picture): each piece fits its spot [x, y, w, h] in the 192 x 240
+   window by its drawn bounds. Tops (the layer behind, up and to the left) fill the left, the bottom the right column,
+   shoes under the tops, the bag under the bottom. */
+(function () {
+  var SPOTS = {
+    layer: { layer: [8, 12, 86, 104], top: [42, 30, 86, 104], bottom: [130, 14, 54, 148], shoes: [24, 158, 92, 60], bag: [134, 170, 46, 58] },
+    plain: { top: [10, 18, 112, 124], bottom: [130, 14, 54, 148], shoes: [24, 158, 92, 60], bag: [134, 170, 46, 58] }
+  };
+  function run() {
+    var flat = document.getElementById('flat');
+    if (flat.hidden) return;
+    var S = SPOTS[flat.getAttribute('data-layout')] || SPOTS.plain;
+    var l = flat.querySelectorAll('.fp');
+    for (var i = 0; i < l.length; i++) {
+      var el = l[i], svg = el.querySelector('svg'), spot = S[el.getAttribute('data-slot')];
+      if (!svg || !spot) continue;
+      var b = svg.getBBox(), sc = Math.min(spot[2] / b.width, spot[3] / b.height);
+      el.style.width = (120 * sc).toFixed(2) + 'px';
+      el.style.left = (spot[0] + spot[2] / 2 - (b.x + b.width / 2) * sc).toFixed(2) + 'px';
+      el.style.top = (spot[1] + spot[3] / 2 - (b.y + b.height / 2) * sc).toFixed(2) + 'px';
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+
+/* Wear today: marks the look as today's outfit (prototype only, nothing is stored). Pressed, it reads
+   "Wearing today" on a soft fill; tapping again undoes it. Not there when a piece is in the wash. */
+(function () {
+  var b = document.getElementById('wear');
+  if (!b) return;
+  function set(on) {
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.querySelector('span').textContent = on ? 'Wearing today' : 'Wear today';
+  }
+  b.addEventListener('click', function () { set(b.getAttribute('aria-pressed') !== 'true'); });
+})();
+</script>
+</body>
+</html>

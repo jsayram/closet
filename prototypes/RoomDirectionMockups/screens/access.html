@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Styling access</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Styling access: a writing nook in the same home, seen straight on like every other room. A long sage desk stands
+     against the wall (feet just below the floor line at 330), the kit lamp and a small plant on its left end, the pink chair from the bedroom tucked in, and the
+     membership card pinned level on the wall above the drawers. The card is cream with a sage spine and seal: green is
+     how sponsored access is marked everywhere (the green pill on Profile). Plum stays for actions only.
+     Allowances and rows sit below on the floor. Pushed from Profile, so the tab bar keeps the tab Profile came from
+     (Style Me unless the page was opened with ?from=). */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .room { --floor-y: 330px; }
+  .art { position: absolute; display: block; }
+
+  .back { position: absolute; left: 6px; top: 2px; height: 44px; padding: 0 10px 0 2px; display: flex; align-items: center; gap: 1px;
+          color: var(--plum); font-size: 17px; font-weight: 500; }
+  .back i[data-icon] { font-size: 25px; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+
+  /* membership card text (card art 256 x 98 at page 120, 102: label zone x 26..242, y 10..86) */
+  .member { position: absolute; left: 146px; top: 115px; width: 216px; }
+  .member b { display: block; font-size: 17px; font-weight: 700; line-height: 20px; letter-spacing: -.1px; color: var(--ink); }
+  .member p { font-size: 13px; line-height: 17px; color: var(--ink-soft); margin-top: 3px; white-space: nowrap; }
+  .member .sim { margin-top: 10px; }
+
+  /* caption row with the pricing link on the right */
+  .caprow { position: absolute; left: 16px; right: 10px; top: 331px; height: 44px; display: flex; align-items: center; justify-content: space-between; }
+  .caprow .cap { padding-left: 6px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .caprow a { height: 44px; padding: 0 6px 0 12px; display: flex; align-items: center; gap: 2px; font-size: 13px; font-weight: 600; color: var(--plum); }
+  .caprow a i[data-icon] { font-size: 13px; }
+
+  /* allowances */
+  .allow-card { position: absolute; left: 16px; right: 16px; padding: 12px 16px; }
+  .allow + .allow { margin-top: 10px; padding-top: 10px; border-top: 1px solid #F1E6EC; }
+  .allow .top { display: flex; align-items: baseline; justify-content: space-between; }
+  .allow .name { font-size: 15px; font-weight: 600; }
+  .allow .val { font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+  .allow .val b { color: var(--ink); font-weight: 700; }
+  .allow .meter { margin-top: 6px; }
+  .allow .meter.pink > span { background: var(--pink-2); }
+  .allow .reset { display: flex; align-items: center; gap: 4px; margin-top: 5px; font-size: 12px; color: var(--ink-soft); font-weight: 500; }
+  .allow .reset i[data-icon] { font-size: 13px; }
+
+  /* rows */
+  .list { position: absolute; left: 16px; right: 16px; padding: 0; overflow: hidden; }
+  .item { position: relative; display: flex; align-items: center; min-height: 44px; padding: 0 12px 0 16px; width: 100%;
+          font-size: 15px; font-weight: 600; color: var(--ink); }
+  .item + .item::before { content: ""; position: absolute; left: 16px; right: 0; top: 0; height: 1px; background: #F1E6EC; }
+  .item.act { color: var(--plum); }
+  .chev { margin-left: auto; color: #B5A0AD; font-size: 14px; display: grid; }
+
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* placeholder sheet for rows that are not mocked: opens on #soon, closes back to the page */
+  .soon { display: none; position: absolute; inset: 0; z-index: 20; }
+  .soon:target { display: block; }
+  .soon .scrim { position: absolute; inset: 0; background: #2B1B2766; }
+  .soon .panel { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 34px; border-radius: 24px 24px 0 0;
+                 background: linear-gradient(var(--wall), var(--wall-2)); box-shadow: 0 -6px 20px #5a2a4a26; }
+  .soon .grab { width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; margin: 0 auto 14px; }
+  .soon h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.3px; line-height: 1.1; }
+  .soon p { margin-top: 6px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  .soon .sim { margin-top: 10px; }
+  .soon .sim[hidden] { display: none; }
+  .soon .btn { margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- ============ the writing nook ============ -->
+  <!-- desk: top face at page y 214..218, objects stand at 216; feet end at 336.6, 6.6 below the floor line -->
+  <img class="art" src="../art/access-desk.svg" alt="" style="left:16px;top:212px;width:358px;height:128px">
+  <!-- kit lamp (base bottom 62.4) and the small plant (pot foot 70.6), both standing on the left end of the desk -->
+  <img class="art" src="../art/lamp.svg" alt="" style="left:20px;top:153.6px;width:44px;height:64px">
+  <img class="art" src="../art/access-plant.svg" alt="" style="left:60px;top:145.4px;width:54px;height:72px">
+  <!-- the bedroom's pink chair, tucked in at the knee space (feet end at 336.6, level with the desk feet); it stands clear
+       of the drawer pull and of the pedestal -->
+  <img class="art" src="../art/chair.svg" alt="" style="left:150px;top:231px;width:94px;height:112px">
+  <!-- membership card pinned on the wall above the drawers -->
+  <img class="art" src="../art/access-card.svg" alt="" style="left:120px;top:102px;width:256px;height:98px">
+  <div class="member">
+    <b>Sponsored access</b>
+    <p>No charge. Granted to this account.</p>
+    <span class="sim">Simulated</span>
+  </div>
+
+  <!-- ============ labels ============ -->
+  <div class="nav"><a class="back" id="back" href="settings.html" aria-label="Back to Profile"><i data-icon="chevron-left"></i>Profile</a></div>
+  <h1 class="title-display hdr-title">Styling access</h1>
+
+  <div class="caprow">
+    <span class="cap">Allowances</span>
+    <a class="keep-from" href="paywall.html">See sample pricing<i data-icon="chevron-right"></i></a>
+  </div>
+  <div class="card allow-card" style="top:375px">
+    <div class="allow">
+      <div class="top"><span class="name">Styling requests</span><span class="val"><b>188</b> of 200 left</span></div>
+      <div class="meter" role="meter" aria-label="Styling requests left" aria-valuemin="0" aria-valuemax="200" aria-valuenow="188"><span style="width:94%"></span></div>
+      <div class="reset"><i data-icon="clock"></i>Resets 1 Nov</div>
+    </div>
+    <div class="allow">
+      <div class="top"><span class="name">Outfit pictures</span><span class="val"><b>31</b> of 40 left</span></div>
+      <div class="meter pink" role="meter" aria-label="Outfit pictures left" aria-valuemin="0" aria-valuemax="40" aria-valuenow="31"><span style="width:77.5%"></span></div>
+      <div class="reset"><i data-icon="clock"></i>Resets 1 Nov</div>
+    </div>
+  </div>
+
+  <div class="card list" style="top:545px">
+    <a class="item" href="#soon" data-soon="How access works">How access works<span class="chev"><i data-icon="chevron-right"></i></span></a>
+    <a class="item act" href="#soon" data-soon="Restore purchases" data-soon-text="There is nothing to restore on this demo account." data-soon-sim>Restore purchases</a>
+    <a class="item" href="#soon" data-soon="Terms">Terms<span class="chev"><i data-icon="chevron-right"></i></span></a>
+    <a class="item" href="#soon" data-soon="Privacy">Privacy<span class="chev"><i data-icon="chevron-right"></i></span></a>
+  </div>
+
+  <!-- ============ tab bar ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar" id="tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+
+  <!-- ============ placeholder sheet (not shown until a row is tapped) ============ -->
+  <div class="soon" id="soon" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+    <a class="scrim" href="#" aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="soon-title">Not in this prototype</h2>
+      <p id="soon-text">This page is not part of the prototype yet.</p>
+      <span class="sim" id="soon-sim" hidden>Simulated</span>
+      <a class="btn" href="#">OK</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* Placeholder sheet: fill it from the row that opened it. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#soon"]');
+    if (!a) return;
+    document.getElementById('soon-title').textContent = a.getAttribute('data-soon') || 'Not in this prototype';
+    document.getElementById('soon-text').textContent = a.getAttribute('data-soon-text') || 'This page is not part of the prototype yet.';
+    document.getElementById('soon-sim').hidden = !a.hasAttribute('data-soon-sim');
+  });
+  /* Where Profile was opened from (?from=closet, or the referring page): keep that tab active and pass it back to Profile. */
+  (function () {
+    var TAB = { home: 0, results: 0, closet: 1, suitcases: 1, laundry: 1, saved: 2 };
+    var from = '';
+    try { from = new URLSearchParams(location.search).get('from') || ''; } catch (e) {}
+    if (!(from in TAB)) return;
+    document.getElementById('back').href = 'settings.html?from=' + from;
+    document.querySelectorAll('.keep-from').forEach(function (a) { a.href = a.getAttribute('href') + '?from=' + from; });
+    var tabs = document.querySelectorAll('#tabs > a');
+    tabs.forEach(function (t, i) {
+      t.classList.toggle('on', i === TAB[from]);
+      if (i === TAB[from]) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
+    });
+  })();
+</script>
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+</body>
+</html>

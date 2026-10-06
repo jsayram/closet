@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 188" width="112" height="188" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Gold rolling garment rack, seen from slightly above so the base reads as a rectangle in perspective.
+       Top bar centre y 10 between x 15 and 97 (corner radius 9). Uprights centre x 15 and x 97 run straight down,
+       height collars at y 106, into the front corner fittings at y 170, with the front castors right under them.
+       The base: front bar y 170 (x 15-97); back bar (also the lower crossbar) higher and narrower at y 153 (x 24-88)
+       with its two castors under its ends; short side rails join back to front. Castors reach y 183.5.
+       Open middle for overlays: x 20-92, y 16-148. Lower plate zone (optional hint plate): x 8-104, y 120-148. -->
+
+  <!-- contact shadows: back castors, then front castors -->
+  <ellipse cx="56" cy="163.5" rx="39" ry="2.2" fill="#8A5A48" opacity=".11"/>
+  <ellipse cx="56" cy="183.4" rx="51" ry="2.9" fill="#8A5A48" opacity=".13"/>
+
+  <!-- back castors, straight under the back bar ends (smaller: further away) -->
+  <g>
+    <rect x="22.4" y="154.4" width="3.2" height="4.4" rx="1.2" fill="#D9A650" stroke="#B98632" stroke-width="1"/>
+    <circle cx="24" cy="160.3" r="3.1" fill="#E7BC6E" stroke="#B98632" stroke-width="1.1"/>
+    <circle cx="24" cy="160.3" r=".95" fill="#B98632"/>
+    <rect x="86.4" y="154.4" width="3.2" height="4.4" rx="1.2" fill="#D9A650" stroke="#B98632" stroke-width="1"/>
+    <circle cx="88" cy="160.3" r="3.1" fill="#E7BC6E" stroke="#B98632" stroke-width="1.1"/>
+    <circle cx="88" cy="160.3" r=".95" fill="#B98632"/>
+  </g>
+
+  <!-- back bar (the lower crossbar), thinner than the front bar because it sits further back -->
+  <path d="M24 153 H88" stroke="#B98632" stroke-width="5.4"/>
+  <path d="M24 153 H88" stroke="#E7BC6E" stroke-width="2.9"/>
+  <path d="M26.5 152.1 H85.5" stroke="#F6DC9C" stroke-width=".9"/>
+  <!-- back corner knuckles -->
+  <circle cx="24" cy="153" r="3.2" fill="#D9A650" stroke="#B98632" stroke-width="1.1"/>
+  <circle cx="88" cy="153" r="3.2" fill="#D9A650" stroke="#B98632" stroke-width="1.1"/>
+
+  <!-- short side rails from the back corners forward to the front corners -->
+  <path d="M24 153 L15 170 M88 153 L97 170" stroke="#B98632" stroke-width="5.6"/>
+  <path d="M24 153 L15 170 M88 153 L97 170" stroke="#E7BC6E" stroke-width="3"/>
+  <path d="M22.5 155 L16.6 166.2 M87.2 154.4 L93.2 165.8" stroke="#F6DC9C" stroke-width=".9"/>
+
+  <!-- front bar between the front corners -->
+  <path d="M15 170 H97" stroke="#B98632" stroke-width="7"/>
+  <path d="M15 170 H97" stroke="#E7BC6E" stroke-width="4.4"/>
+  <path d="M19 168.9 H93" stroke="#F6DC9C" stroke-width="1.1"/>
+  <path d="M19 171.3 H93" stroke="#D9A650" stroke-width="1.1"/>
+
+  <!-- lower uprights (thicker outer tubes), straight down to the front corners -->
+  <path d="M15 106 V168 M97 106 V168" stroke="#B98632" stroke-width="7"/>
+  <path d="M15 106 V168 M97 106 V168" stroke="#E7BC6E" stroke-width="4.4"/>
+  <path d="M13.9 108 V164 M95.9 108 V164" stroke="#F6DC9C" stroke-width="1.1"/>
+  <path d="M16.3 108 V164 M98.3 108 V164" stroke="#D9A650" stroke-width="1.1"/>
+
+  <!-- upper frame: inner tubes and the bent top bar -->
+  <path d="M15 106 V19 Q15 10 24 10 H88 Q97 10 97 19 V106" stroke="#B98632" stroke-width="6"/>
+  <path d="M15 106 V19 Q15 10 24 10 H88 Q97 10 97 19 V106" stroke="#E7BC6E" stroke-width="3.4"/>
+  <path d="M14.1 104 V20 Q14.1 9.1 24.5 9.1 H87.5 M96.1 104 V21" stroke="#F6DC9C" stroke-width="1"/>
+  <path d="M15.9 104 V21 M97.9 104 V21 M24.5 10.9 H87.5" stroke="#D9A650" stroke-width="1"/>
+
+  <!-- height collars with thumb screws -->
+  <g>
+    <circle cx="8.6" cy="106" r="2" fill="#E7BC6E" stroke="#B98632" stroke-width="1.1"/>
+    <rect x="11" y="102" width="8" height="8" rx="2" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+    <path d="M12.6 103.8 H17.6" stroke="#F6DC9C" stroke-width="1"/>
+    <circle cx="103.4" cy="106" r="2" fill="#E7BC6E" stroke="#B98632" stroke-width="1.1"/>
+    <rect x="93" y="102" width="8" height="8" rx="2" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+    <path d="M94.6 103.8 H99.6" stroke="#F6DC9C" stroke-width="1"/>
+  </g>
+
+  <!-- front corner fittings where each leg meets the front bar -->
+  <g>
+    <rect x="10.5" y="165.5" width="9" height="9" rx="3.2" fill="#D9A650" stroke="#B98632" stroke-width="1.3"/>
+    <path d="M12.5 167.8 Q12.9 167.1 13.9 167.1 H16.2" stroke="#F6DC9C" stroke-width="1"/>
+    <rect x="92.5" y="165.5" width="9" height="9" rx="3.2" fill="#D9A650" stroke="#B98632" stroke-width="1.3"/>
+    <path d="M94.5 167.8 Q94.9 167.1 95.9 167.1 H98.2" stroke="#F6DC9C" stroke-width="1"/>
+  </g>
+
+  <!-- front castors straight under the legs: fork, wheel, hub, highlight -->
+  <g>
+    <rect x="13.2" y="174.4" width="3.6" height="4.6" rx="1.4" fill="#D9A650" stroke="#B98632" stroke-width="1"/>
+    <circle cx="15" cy="179.4" r="4" fill="#E7BC6E" stroke="#B98632" stroke-width="1.3"/>
+    <circle cx="15" cy="179.4" r="1.25" fill="#B98632"/>
+    <path d="M12.9 178.1 A2.6 2.6 0 0 1 15.4 176.7" stroke="#F6DC9C" stroke-width="1"/>
+    <rect x="95.2" y="174.4" width="3.6" height="4.6" rx="1.4" fill="#D9A650" stroke="#B98632" stroke-width="1"/>
+    <circle cx="97" cy="179.4" r="4" fill="#E7BC6E" stroke="#B98632" stroke-width="1.3"/>
+    <circle cx="97" cy="179.4" r="1.25" fill="#B98632"/>
+    <path d="M94.9 178.1 A2.6 2.6 0 0 1 97.4 176.7" stroke="#F6DC9C" stroke-width="1"/>
+  </g>
+</svg>

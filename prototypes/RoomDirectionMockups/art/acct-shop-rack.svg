@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 116" width="80" height="116" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Small wood display rack for the boutique window on the paywall. Placed at glass (24, 82), so its centre x 40 sits on
+       the pink rug (glass x 64). Hanging bar y 9 (x 8..72): the page hangs two pieces from it. Low shelf y 92 carries a
+       folded stack (left) and a pair of block heels (right). Casters touch the rug at y 113. -->
+  <!-- contact shadow on the rug -->
+  <ellipse cx="40" cy="113.5" rx="34" ry="2.6" fill="#B04E6E" fill-opacity=".14" stroke="none"/>
+  <!-- uprights -->
+  <rect x="6" y="7" width="4" height="99" rx="1.6" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <rect x="70" y="7" width="4" height="99" rx="1.6" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <line x1="9" y1="10" x2="9" y2="104" stroke="#D9A650" stroke-width="1"/>
+  <line x1="73" y1="10" x2="73" y2="104" stroke="#D9A650" stroke-width="1"/>
+  <!-- hanging bar with finials -->
+  <rect x="4" y="7.2" width="72" height="3.6" rx="1.8" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <line x1="7" y1="8.4" x2="73" y2="8.4" stroke="#F3D49A" stroke-width=".9"/>
+  <circle cx="4" cy="9" r="3" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <circle cx="76" cy="9" r="3" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <circle cx="3.2" cy="8" r=".9" fill="#F3D49A" stroke="none"/>
+  <circle cx="75.2" cy="8" r=".9" fill="#F3D49A" stroke="none"/>
+
+  <!-- folded stack on the shelf (shelf top y 92): navy, pink, cream from the bottom -->
+  <g stroke-width="1.15">
+    <path d="M10 92 v-5.6 q0 -1.4 1.4 -1.4 h22.2 q1.4 0 1.4 1.4 v5.6 z" fill="#27335F" stroke="#161E3A"/>
+    <path d="M12 87.4 h21" stroke="#3D4A7A" stroke-width="1"/>
+    <path d="M11 85 v-5.4 q0 -1.4 1.4 -1.4 h20.6 q1.4 0 1.4 1.4 v5.4 z" fill="#F4B4C2" stroke="#D97F97"/>
+    <path d="M13 80.6 h19.4" stroke="#F9D2DB" stroke-width="1"/>
+    <path d="M22.7 79 v5.4" stroke="#EC9DB0" stroke-width="1"/>
+    <path d="M12 78.2 v-5 q0 -1.4 1.4 -1.4 h18.6 q1.4 0 1.4 1.4 v5 z" fill="#FFF3E0" stroke="#C9A676"/>
+    <path d="M14 74 h17.4" stroke="#FFFCF6" stroke-width="1"/>
+    <path d="M15.5 76 h3 M20.5 76 h3 M25.5 76 h3" stroke="#DDBE92" stroke-width=".9"/>
+  </g>
+
+  <!-- block heels, a pair seen from the side, toes to the right -->
+  <g stroke="#161015" stroke-width="1.15">
+    <path d="M53.0 81.5 Q54.0 80.5 55.2 81.6 Q57.6 84.6 61.6 85.4 Q66.6 86.2 67.6 90.0 Q67.8 92.0 66.0 92.0 L63.6 92.0 Q60.0 88.8 56.2 88.8 L53.0 88.8 Z" fill="#3A3540"/>
+    <rect x="53.0" y="88.8" width="3.2" height="3.2" rx=".5" fill="#3A3540"/>
+    <path d="M54.6 82.4 Q57.0 85.6 61.4 86.4" stroke="#5A5360" stroke-width=".9"/>
+    <path d="M44.0 81.5 Q45.0 80.5 46.2 81.6 Q48.6 84.6 52.6 85.4 Q57.6 86.2 58.6 90.0 Q58.8 92.0 57.0 92.0 L54.6 92.0 Q51.0 88.8 47.2 88.8 L44.0 88.8 Z" fill="#2E2A30"/>
+    <rect x="44.0" y="88.8" width="3.2" height="3.2" rx=".5" fill="#2E2A30"/>
+    <path d="M45.6 82.4 Q48.0 85.6 52.4 86.4" stroke="#5A5360" stroke-width=".9"/>
+  </g>
+
+  <!-- shelf -->
+  <rect x="5" y="92" width="70" height="4.4" rx="1.4" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <line x1="7" y1="95" x2="73" y2="95" stroke="#D9A650" stroke-width="1"/>
+  <!-- base bar -->
+  <rect x="3" y="102.4" width="74" height="4.2" rx="2" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <line x1="6" y1="105.4" x2="74" y2="105.4" stroke="#D9A650" stroke-width="1"/>
+  <!-- casters -->
+  <circle cx="9" cy="110" r="2.9" fill="#F3E6D0" stroke="#B98632" stroke-width="1.15"/>
+  <circle cx="71" cy="110" r="2.9" fill="#F3E6D0" stroke="#B98632" stroke-width="1.15"/>
+  <circle cx="9" cy="110" r=".8" fill="#B98632" stroke="none"/>
+  <circle cx="71" cy="110" r=".8" fill="#B98632" stroke="none"/>
+</svg>

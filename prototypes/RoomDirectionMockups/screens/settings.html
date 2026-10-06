@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Profile</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Profile and Settings: the hallway wall outside the bedroom. Her name sign hangs on the wall (name-sign.svg at 1.3),
+     a small landscape beside it and the floor plant in the corner. Floor line 292; the grouped rows sit on the floor.
+     Pushed from Style Me by default, so the nav goes back to Style Me and the tab bar keeps Style Me active. Opened with
+     ?from=closet (or saved, suitcases, laundry, results), the back label, its link and the active tab follow that origin.
+     Sponsored access uses the same green pill as on Styling access, and says it is simulated. Rows that are not mocked
+     open a small placeholder sheet instead of going nowhere. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .room { --floor-y: 292px; }
+  .art { position: absolute; display: block; }
+  .hit { position: absolute; display: block; }
+  .hit > .tag { position: absolute; }
+
+  /* nav: back to Style Me */
+  .back { position: absolute; left: 6px; top: 2px; height: 44px; padding: 0 10px 0 2px; display: flex; align-items: center; gap: 1px;
+          color: var(--plum); font-size: 17px; font-weight: 500; }
+  .back i[data-icon] { font-size: 25px; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+
+  /* name sign: name-sign.svg at 1.3 (143 x 83.2). Its flat text area x 17..93, y 27..53 becomes x 22.1..120.9, y 35.1..68.9 */
+  .sign { position: absolute; display: block; }
+  .sign img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .sign .name { position: absolute; display: flex; align-items: center; justify-content: center;
+                font-family: var(--font-display); font-weight: 700; font-style: italic; color: var(--plum); letter-spacing: .2px; }
+  .val { font-size: 15px; color: var(--ink-soft); font-weight: 500; }
+
+  /* grouped rows */
+  .list { position: absolute; left: 16px; right: 16px; padding: 0; overflow: hidden; }
+  .item { position: relative; display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 0 12px 0 12px; width: 100%; }
+  .item + .item::before { content: ""; position: absolute; left: 54px; right: 0; top: 0; height: 1px; background: #F1E6EC; }
+  .item.two { min-height: 58px; }
+  .ic { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; color: var(--plum); }
+  .ic i[data-icon] { font-size: 18px; }
+  .ic.lilac { background: #EEE4FA; } .ic.pink { background: #FCE6F2; } .ic.blue { background: #E2EEFB; }
+  .ic.green { background: #E4F3DF; } .ic.butter { background: #FCF1C8; } .ic.cream { background: #FBEEDD; } .ic.mauve { background: #F1E6EC; }
+  .lbl { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .txt small { font-size: 12px; color: var(--ink-soft); font-weight: 500; }
+  .end { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+  .chev { color: #B5A0AD; font-size: 14px; display: grid; }
+  .pill { font-size: 12px; font-weight: 700; color: #355E3C; background: #E4F3DF; border: 1px solid #BFDDB8; border-radius: 8px; padding: 2px 8px; }
+  .sim { font-size: 11px; }
+
+  /* placeholder sheet for rows that are not mocked: opens on #soon, closes back to the page */
+  .soon { display: none; position: absolute; inset: 0; z-index: 20; }
+  .soon:target { display: block; }
+  .soon .scrim { position: absolute; inset: 0; background: #2B1B2766; }
+  .soon .panel { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 34px; border-radius: 24px 24px 0 0;
+                 background: linear-gradient(var(--wall), var(--wall-2)); box-shadow: 0 -6px 20px #5a2a4a26; }
+  .soon .grab { width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; margin: 0 auto 14px; }
+  .soon h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.3px; line-height: 1.1; }
+  .soon p { margin-top: 6px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  .soon .sim { margin-top: 10px; }
+  .soon .sim[hidden] { display: none; }
+  .soon .btn { margin-top: 18px; }
+
+  /* tab bar items are links */
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- ============ wall ============ -->
+  <!-- landscape on a wire, left of the sign -->
+  <img class="art" src="../art/access-picture.svg" alt="" style="left:30px;top:128px;width:74px;height:96px">
+  <!-- floor plant in the corner: pot foot (y 119.6) just below the floor line -->
+  <img class="art" src="../art/plant-floor.svg" alt="" style="left:304px;top:176px;width:72px;height:124px">
+
+  <!-- her name sign, centred at x 195. Decoration that shows the profile's first name; the row below changes it. -->
+  <a class="sign" href="#soon" data-soon="Name on your sign" data-soon-text="The sign in your room shows this name. Changing it is not part of these mockups." aria-label="Name on your sign: Lily" style="left:123.5px;top:132px;width:143px;height:83.2px">
+    <img src="../art/name-sign.svg" alt="">
+    <span class="name" style="left:22.1px;top:35.1px;width:98.8px;height:33.8px;font-size:30px">Lily</span>
+  </a>
+
+  <!-- ============ labels ============ -->
+  <div class="nav"><a class="back" id="back" href="home.html" aria-label="Back to Home"><i data-icon="chevron-left"></i><span id="back-label">Home</span></a></div>
+  <h1 class="title-display hdr-title">Profile</h1>
+
+  <!-- ============ rows ============ -->
+  <div class="card list" style="top:306px">
+    <a class="item two keep-from" href="access.html">
+      <span class="ic lilac"><i data-icon="sparkles"></i></span>
+      <span class="txt"><span class="lbl">Styling access</span><small>Simulated</small></span>
+      <span class="end"><span class="pill">Sponsored</span><span class="chev"><i data-icon="chevron-right"></i></span></span>
+    </a>
+    <a class="item two" href="#soon" data-soon="Name on your sign" data-soon-text="The sign in your room shows this name. Changing it is not part of these mockups.">
+      <span class="ic pink"><i data-icon="person-circle"></i></span>
+      <span class="txt"><span class="lbl">Name on your sign</span><small>Shown in your room</small></span>
+      <span class="end"><span class="val">Lily</span><span class="chev"><i data-icon="chevron-right"></i></span></span>
+    </a>
+  </div>
+
+  <div class="card list" style="top:436px">
+    <a class="item" href="suitcases.html">
+      <span class="ic blue"><i data-icon="suitcase"></i></span><span class="lbl">Closet and suitcases</span>
+      <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+    </a>
+    <a class="item" href="#soon" data-soon="Privacy and data">
+      <span class="ic green"><i data-icon="lock"></i></span><span class="lbl">Privacy and data</span>
+      <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+    </a>
+  </div>
+
+  <div class="card list" style="top:550px">
+    <a class="item" href="#soon" data-soon="Help">
+      <span class="ic butter"><i data-icon="info"></i></span><span class="lbl">Help</span>
+      <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+    </a>
+    <a class="item" href="#soon" data-soon="Send feedback">
+      <span class="ic cream"><i data-icon="chat"></i></span><span class="lbl">Send feedback</span>
+      <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+    </a>
+    <a class="item" href="#soon" data-soon="Demo controls" data-soon-text="Demo controls are part of the working prototype, not these mockups.">
+      <span class="ic mauve"><i data-icon="sliders"></i></span><span class="lbl">Demo controls</span>
+      <span class="end"><span class="sim">Prototype</span><span class="chev"><i data-icon="chevron-right"></i></span></span>
+    </a>
+  </div>
+
+  <!-- ============ tab bar (pushed from Style Me unless ?from= says otherwise) ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar" id="tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+
+  <!-- ============ placeholder sheet (not shown until a row is tapped) ============ -->
+  <div class="soon" id="soon" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+    <a class="scrim" href="#" aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="soon-title">Not in this prototype</h2>
+      <p id="soon-text">This page is not part of the prototype yet.</p>
+      <span class="sim" id="soon-sim" hidden>Simulated</span>
+      <a class="btn" href="#">OK</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* Placeholder sheet: fill it from the row that opened it. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#soon"]');
+    if (!a) return;
+    document.getElementById('soon-title').textContent = a.getAttribute('data-soon') || 'Not in this prototype';
+    document.getElementById('soon-text').textContent = a.getAttribute('data-soon-text') || 'This page is not part of the prototype yet.';
+    document.getElementById('soon-sim').hidden = !a.hasAttribute('data-soon-sim');
+  });
+  /* Where Profile was opened from: ?from=closet, or the referring page when the browser sends one. Sets the back label,
+     its link and the active tab; the origin is passed on to Styling access so its back link and tab agree. */
+  (function () {
+    var MAP = { home: ['Home', 0], results: ['Your looks', 0], closet: ['Closet', 1], suitcases: ['Suitcases', 1],
+                laundry: ['Laundry', 1], saved: ['Saved Looks', 2] };
+    var from = '';
+    try { from = new URLSearchParams(location.search).get('from') || ''; } catch (e) {}
+    if (!MAP.hasOwnProperty(from)) {
+      try { var m = /\/([a-z-]+)\.html(?:[?#].*)?$/.exec(document.referrer || ''); if (m && MAP.hasOwnProperty(m[1])) from = m[1]; } catch (e) {}
+    }
+    if (!MAP.hasOwnProperty(from) || from === 'home') return;
+    var back = document.getElementById('back');
+    back.href = from + '.html';
+    back.setAttribute('aria-label', 'Back to ' + MAP[from][0]);
+    document.getElementById('back-label').textContent = MAP[from][0];
+    document.querySelectorAll('.keep-from').forEach(function (a) { a.href = a.getAttribute('href') + '?from=' + from; });
+    document.querySelectorAll('#tabs > a').forEach(function (t, i) {
+      t.classList.toggle('on', i === MAP[from][1]);
+      if (i === MAP[from][1]) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
+    });
+  })();
+</script>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+</body>
+</html>

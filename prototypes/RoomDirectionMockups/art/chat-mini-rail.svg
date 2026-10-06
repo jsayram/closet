@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 14" width="196" height="14" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Short wood clothes rail for a look card. Rod centre line at y 7 (x 8..188), round end brackets at x 6 and 190.
+       Wood fill / shade / outline from the palette. -->
+  <!-- rod -->
+  <rect x="7" y="5" width="182" height="4" rx="2" fill="#E7BC6E"/>
+  <rect x="7" y="7.4" width="182" height="1.6" fill="#D9A650"/>
+  <path d="M10 5.9H186" stroke="#F8E3B0" stroke-width=".8"/>
+  <rect x="7" y="5" width="182" height="4" rx="2" stroke="#B98632" stroke-width="1.25"/>
+  <!-- end brackets: a small rounded block holding the rod to the wall -->
+  <rect x="2.6" y="2.2" width="6.6" height="9.6" rx="2.4" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <path d="M4.6 4.4V9.6" stroke="#F8E3B0" stroke-width=".8"/>
+  <rect x="186.8" y="2.2" width="6.6" height="9.6" rx="2.4" fill="#E7BC6E" stroke="#B98632" stroke-width="1.25"/>
+  <path d="M191.4 4.4V9.6" stroke="#D9A650" stroke-width="1"/>
+</svg>

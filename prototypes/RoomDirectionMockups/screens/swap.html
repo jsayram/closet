@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Swap a piece</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Swap a piece: results.html's dressing room with the swap sheet up. The alcove, frame, rack, floor line and valet stand
+     sit at exactly the same place as on results, so opening the sheet only covers the lower room.
+     Alcove (art/results-alcove.svg, 1:1) at left 12, top 76: rod y 84, floor line 474.7, rug centre (120, 510), pile to 529.6.
+     Valet stand (art/looks-valet.svg, 1:1) at left 8, top 220: bar y 234, clear x 26..214, feet to y 506. The look hangs on
+     it as on results, with the top slot showing the piece picked below; a "Top" plate points down at that hanger.
+     Rack (art/rack.svg at 1.15) at left 256, top 307: the top the look had, centred, with its plate under it.
+     The sheet starts at y 540, just under the rug. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; border-radius: 12px; }
+  .room { --floor-y: 474px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  .nav .close { position: absolute; left: 8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 22px; }
+
+  /* the "Top" callout: a white plate with plum text, its notch pointing down at the top's hanger */
+  .callout { position: absolute; min-height: 0; width: 52px; height: 28px; padding: 0; gap: 0; justify-content: center; border-radius: 9px; pointer-events: none; }
+  .callout b { font-size: 13px; color: var(--plum); }
+  .callout::before, .callout::after { content: ""; position: absolute; left: 50%; width: 0; height: 0; border-style: solid; }
+  .callout::before { bottom: -8px; margin-left: -7px; border-width: 8px 7px 0 7px; border-color: var(--plate-line) transparent transparent transparent; }
+  .callout::after { bottom: -5.6px; margin-left: -5.4px; border-width: 6.2px 5.4px 0 5.4px; border-color: #fff transparent transparent transparent; }
+
+  /* the look on the valet stand */
+  .stand { position: absolute; left: 0; top: 0; width: 390px; height: 530px; pointer-events: none; }
+  .stand .p { position: absolute; }
+  .stand .shoesh { position: absolute; left: 92px; top: 501px; width: 56px; height: 6px; border-radius: 50%; background: #8A5A48; opacity: .13; }
+
+  /* what she had on, on the rack */
+  .rk { position: absolute; }
+  .was { min-height: 0; height: 40px; padding: 3px 10px; justify-content: center; text-align: center; border-radius: 11px; }
+  .was .txt { align-items: center; }
+  .was .txt b { font-size: 13px; }
+
+  /* sheet */
+  .sheet { position: absolute; left: 0; right: 0; top: 540px; bottom: 0; background: #fff; border-radius: 26px 26px 0 0;
+           box-shadow: 0 -1px 0 #F1DCE3, 0 -6px 20px #5a2a4a14; }
+  .grab { position: absolute; left: 50%; top: 7px; width: 36px; height: 5px; margin-left: -18px; border-radius: 3px; background: #DCCFD7; }
+  .sheet h2 { position: absolute; left: 20px; top: 16px; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -.2px; }
+  /* where the choices come from: one label over the first slot, one over the other three */
+  .grp { position: absolute; top: 50px; font-size: 11px; line-height: 13px; font-weight: 600; color: var(--ink-soft); text-align: center; white-space: nowrap; }
+  .grp[hidden] { display: none; }
+  .rail { position: absolute; left: 16px; top: 70px; width: 358px; height: 18px; }
+  .pick { position: absolute; top: 60px; width: 86px; height: 132px; display: block; border-radius: 16px; }
+  .pick .tile { position: absolute; left: 4px; top: 20px; width: 78px; height: 78px; border-radius: 22px; background: #FBF4F7; border: 1px solid #F1E3EA; }
+  .pick .g { position: absolute; left: 7px; top: 12.4px; width: 72px; height: 102px; }
+  /* names get 94 px (4 px into each neighbour's tile margin; no two neighbouring names are both that long) and at most two
+     lines; a laundry line follows a one-line name, so every slot fits two lines */
+  .pick .nm { position: absolute; left: -4px; right: -4px; top: 103px; text-align: center; font-size: 12px; line-height: 14px; font-weight: 600; color: var(--ink); }
+  .pick .nm b { display: block; font-weight: inherit; text-wrap: balance; }
+  .pick .dirty { display: block; font-size: 11px; line-height: 14px; font-weight: 600; color: var(--ink-soft); }
+  .pick .dirty[hidden] { display: none; }
+  /* pieces in the laundry are dimmed until picked */
+  .pick.is-dirty .tile, .pick.is-dirty .g { opacity: .55; }
+  .pick.is-dirty .nm b { color: var(--ink-soft); }
+  .pick.is-dirty[aria-checked="true"] .tile, .pick.is-dirty[aria-checked="true"] .g { opacity: 1; }
+  .pick .tick { position: absolute; right: -2px; top: 23px; width: 22px; height: 22px; border-radius: 50%; background: var(--plum); color: #fff;
+                border: 2px solid #fff; display: none; place-items: center; }
+  .pick .tick i[data-icon] { font-size: 12px; }
+  .pick .tick i[data-icon] svg { stroke-width: 3; }
+  .pick[aria-checked="true"] .tile { background: var(--plum-soft); border: 2.5px solid var(--plum); }
+  .pick[aria-checked="true"] .tick { display: grid; }
+  .pick[aria-checked="true"] .nm b { color: var(--ink); font-weight: 700; }
+  .note { position: absolute; left: 114px; width: 258px; top: 198px; text-align: center; font-size: 12px; line-height: 15px; font-weight: 500; color: var(--ink-soft); }
+  .acts { position: absolute; left: 16px; right: 16px; top: 220px; display: flex; gap: 10px; }
+  .acts .btn { min-height: 50px; font-size: 16px; white-space: nowrap; }
+  .acts .btn.ghost { flex: 0 0 132px; padding: 0 12px; }
+  .acts #use { flex: 1; padding: 0 12px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- ============ art, back to front (same places as results.html) ============ -->
+  <img class="art" src="../art/results-alcove.svg" alt="" style="left:12px;top:76px;width:216px;height:456px">
+  <img class="art" src="../art/results-frame.svg" alt="" style="left:294.4px;top:154px;width:52px;height:74px">
+  <!-- rack at 1.15 (128.8 x 216.2): bar centre y 318.5, uprights x 273.3 and 367.6 (clear x 277..363), castors to y 518 -->
+  <img class="art" src="../art/rack.svg" alt="" style="left:256px;top:307px;width:128.8px;height:216.2px">
+  <!-- the top the look had, W 64 on the rack bar, centred (x 320.4): top = 318.5 - 11*64/120 = 312.6 -->
+  <span class="rk" id="rk-top" data-garment="g-pink-blouse" data-hanger aria-hidden="true" style="left:288.4px;top:312.6px;width:64px;height:90.7px"></span>
+
+  <!-- ============ the look on the valet stand, with the top being tried ============ -->
+  <img class="art" src="../art/looks-valet.svg" alt="" style="left:8px;top:220px;width:224px;height:290px">
+  <div class="stand" id="stand" role="img" aria-label="The look on a valet stand with the cream knit sweater">
+    <span class="p" id="p-layer" data-garment="g-navy-cardigan" data-hanger></span>
+    <span class="p" id="p-bottom" data-garment="g-navy-trousers" data-hanger></span>
+    <span class="p" id="p-top" data-garment="g-cream-sweater" data-hanger></span>
+    <span class="shoesh"></span>
+    <span class="p" id="p-shoes" data-garment="g-nude-flats"></span>
+  </div>
+
+  <!-- "Top" plate above the top's hanger, its notch pointing down at the hook (placed by the script) -->
+  <div class="tag callout" id="callout" aria-hidden="true" style="left:82px;top:186px"><b>Top</b></div>
+
+  <!-- plate under the top the look had, centred on the rack (x 320.4), under the hem -->
+  <div class="tag was" style="left:261.9px;top:394px;width:117px">
+    <span class="txt"><small>Current top</small><b id="was-name">Cute pink shirt</b></span>
+  </div>
+
+  <!-- ============ nav ============ -->
+  <div class="nav">Swap a piece<a class="close" id="close" href="results.html?look=1&amp;top=g-pink-blouse" aria-label="Close"><i data-icon="close"></i></a></div>
+
+  <!-- ============ sheet ============ -->
+  <section class="sheet" aria-labelledby="sheet-title">
+    <span class="grab" aria-hidden="true"></span>
+    <h2 id="sheet-title">Swap the top</h2>
+    <p class="grp mine" id="grp-mine" style="left:16px;width:86px">In Jose's house</p>
+    <p class="grp out" id="grp-out" style="left:114px;width:258px">Not in Jose's house · from Weekend</p>
+    <img class="rail" src="../art/results-rail.svg" alt="">
+    <div role="radiogroup" aria-labelledby="sheet-title">
+      <!-- slots 86 wide. Slot 1 (x 16) is the other top packed in Jose's house; a 12 px gap, then slots 2 to 4 (x 114, 200, 286)
+           are packed in Weekend, not in Jose's house. Rail centre at sheet y 79; garments W 72 hang from it (top 72.4).
+           Pieces in the laundry (lace top, black tee) are dimmed and say so. -->
+      <button class="pick is-dirty" type="button" role="radio" aria-checked="false" data-top="g-lace-top" style="left:16px">
+        <span class="tile"></span><span class="g" data-garment="g-lace-top" data-hanger></span><span class="tick"><i data-icon="check"></i></span>
+        <span class="nm"><b>White lace top</b><span class="dirty">In laundry</span></span>
+      </button>
+      <button class="pick" type="button" role="radio" aria-checked="true" data-top="g-cream-sweater" style="left:114px">
+        <span class="tile"></span><span class="g" data-garment="g-cream-sweater" data-hanger></span><span class="tick"><i data-icon="check"></i></span>
+        <span class="nm"><b>Cream knit sweater</b><span class="dirty" hidden>In laundry</span></span>
+      </button>
+      <button class="pick" type="button" role="radio" aria-checked="false" data-top="g-brick-top" style="left:200px">
+        <span class="tile"></span><span class="g" data-garment="g-brick-top" data-hanger></span><span class="tick"><i data-icon="check"></i></span>
+        <span class="nm"><b>Brick knit top</b><span class="dirty" hidden>In laundry</span></span>
+      </button>
+      <button class="pick is-dirty" type="button" role="radio" aria-checked="false" data-top="g-black-tee" style="left:286px">
+        <span class="tile"></span><span class="g" data-garment="g-black-tee" data-hanger></span><span class="tick"><i data-icon="check"></i></span>
+        <span class="nm"><b>Black tee</b><span class="dirty">In laundry</span></span>
+      </button>
+    </div>
+    <p class="note" id="note">Choosing one adds it to Jose's house.</p>
+    <div class="acts">
+      <a class="btn ghost" id="keep" href="results.html?look=1&amp;top=g-pink-blouse">Keep current</a>
+      <a class="btn" id="use" href="results.html?look=1&amp;top=g-cream-sweater">Use this top</a>
+    </div>
+  </section>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* results.html opens this sheet as swap.html?look=N&top=<current top>. The valet stand keeps that look's layer, bottom
+   and shoes, and its top slot shows the top picked below; the top the look had hangs alone on the rack. The request runs on
+   Jose's house, so the first choice is the other top packed there; the other three are packed in Weekend, and picking
+   one adds it to Jose's house. Pieces in the laundry are dimmed and say so. Use this top returns
+   results.html?look=N&top=<picked>; Keep current and Close return the look unchanged. ?pick=<id> preselects a choice. */
+(function () {
+  var LOOKS = {
+    1: { top: 'g-pink-blouse', layer: 'g-navy-cardigan', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+    2: { top: 'g-pink-blouse', layer: '',                bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+    3: { top: 'g-lace-top',    layer: 'g-navy-cardigan', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' }
+  };
+  /* tops in Jose's house first, then the ones packed in Weekend */
+  var TOPS = {
+    'g-pink-blouse':   { name: 'Cute pink shirt',    home: true },
+    'g-lace-top':      { name: 'White lace top',     home: true, dirty: true },
+    'g-cream-sweater': { name: 'Cream knit sweater' },
+    'g-brick-top':     { name: 'Brick knit top' },
+    'g-black-tee':     { name: 'Black tee',          dirty: true }
+  };
+  var ORDER = ['g-pink-blouse', 'g-lace-top', 'g-cream-sweater', 'g-brick-top', 'g-black-tee'];
+
+  var look = 1, cur = null, want = null;
+  try {
+    var q = new URLSearchParams(location.search);
+    if (LOOKS[+q.get('look')]) look = +q.get('look');
+    if (TOPS[q.get('top')]) cur = q.get('top');
+    want = q.get('pick');
+  } catch (e) { /* no URL API: look 1 as drawn */ }
+  var L = LOOKS[look];
+  cur = cur || L.top;
+  var back = 'results.html?look=' + look + '&top=';
+
+  /* the valet stand: same places as results.html (garments W 112 from the bar at y 234, shoes W 62, soles at 505) */
+  var stand = document.getElementById('stand'), callout = document.getElementById('callout');
+  var P = { layer: document.getElementById('p-layer'), top: document.getElementById('p-top'),
+            bottom: document.getElementById('p-bottom'), shoes: document.getElementById('p-shoes') };
+  var SW = 112, STOP = 234 - 11 * SW / 120;
+  function put(el, cx, top, w) {
+    el.style.left = (cx - w / 2).toFixed(1) + 'px'; el.style.top = top.toFixed(1) + 'px'; el.style.width = w + 'px';
+  }
+  var topX = L.layer ? 108 : 86;
+  if (L.layer) P.layer.setAttribute('data-garment', L.layer); else P.layer.style.display = 'none';
+  P.bottom.setAttribute('data-garment', L.bottom);
+  P.shoes.setAttribute('data-garment', L.shoes);
+  put(P.layer, 68, STOP, SW);
+  put(P.top, topX, STOP, SW);
+  put(P.bottom, L.layer ? 182 : 168, STOP, SW);
+  put(P.shoes, 120, 505 - 125 * 62 / 120, 62);
+  callout.style.left = (topX - 26) + 'px';
+
+  /* the rack: the top the look had, alone and centred */
+  document.getElementById('rk-top').setAttribute('data-garment', cur);
+  document.getElementById('was-name').textContent = TOPS[cur].name;
+
+  document.getElementById('close').setAttribute('href', back + cur);
+  document.getElementById('keep').setAttribute('href', back + cur);
+
+  /* the four choices: the other Jose's house top, then the three from Weekend */
+  var alts = ORDER.filter(function (id) { return id !== cur; }).slice(0, 4);
+  var picks = document.querySelectorAll('.pick'), use = document.getElementById('use');
+  alts.forEach(function (id, i) {
+    var b = picks[i], T = TOPS[id];
+    b.setAttribute('data-top', id);
+    b.querySelector('.g').setAttribute('data-garment', id);
+    b.querySelector('b').textContent = T.name;
+    b.querySelector('.dirty').hidden = !T.dirty;
+    b.classList.toggle('is-dirty', !!T.dirty);
+    var where = T.home ? "packed in Jose's house" : "packed in Weekend, not in Jose's house";
+    b.setAttribute('aria-label', T.name + ', ' + where + (T.dirty ? ', in laundry' : ''));
+  });
+  /* the slots split into the two groups: Jose's house pieces first, then a 12 px gap, then the Weekend pieces */
+  var nHome = alts.filter(function (id) { return TOPS[id].home; }).length;
+  var mine = document.getElementById('grp-mine'), out = document.getElementById('grp-out'), note = document.getElementById('note');
+  var x = 16;
+  for (var s = 0; s < picks.length; s++) {
+    if (s === nHome && s > 0) x += 12;
+    picks[s].style.left = x + 'px';
+    x += 86;
+  }
+  var edge = nHome ? 16 + 86 * nHome + 12 : 16, end = x;
+  mine.hidden = nHome === 0; out.hidden = note.hidden = nHome === 4;
+  mine.style.width = (86 * nHome) + 'px';
+  out.style.left = note.style.left = edge + 'px';
+  out.style.width = note.style.width = (end - edge) + 'px';
+  if (nHome > 2) out.textContent = 'From Weekend';
+
+  function pick(btn) {
+    var id = btn.getAttribute('data-top');
+    for (var i = 0; i < picks.length; i++) picks[i].setAttribute('aria-checked', picks[i] === btn ? 'true' : 'false');
+    P.top.setAttribute('data-garment', id);
+    if (window.Garments) Garments.mountAll(stand);
+    stand.setAttribute('aria-label', 'The look on a valet stand with the ' + TOPS[id].name.toLowerCase());
+    use.setAttribute('href', back + id);
+  }
+  for (var i = 0; i < picks.length; i++) picks[i].addEventListener('click', function () { pick(this); });
+
+  /* start on ?pick if it is one of the choices, else the first choice that is not in laundry */
+  var first = null;
+  for (var j = 0; j < picks.length; j++) {
+    var id = picks[j].getAttribute('data-top');
+    if (id === want) { first = picks[j]; break; }
+    if (!first && !TOPS[id].dirty) first = picks[j];
+  }
+  pick(first || picks[0]);
+})();
+</script>
+</body>
+</html>

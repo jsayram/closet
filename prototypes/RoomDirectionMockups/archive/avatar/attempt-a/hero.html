@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=480">
+<title>Avatar attempt a</title>
+<style>
+  html, body { margin: 0; width: 480px; height: 900px; overflow: hidden; background: #FBE5E8; }
+  .pair { position: absolute; left: 0; bottom: 10px; width: 480px; height: 880px; display: flex; }
+  .pair > div { width: 240px; height: 880px; flex: none; }
+  [data-avatar] svg { display: block; }
+</style>
+</head>
+<body>
+<div class="pair">
+  <div data-avatar data-view="full"></div>
+  <div data-avatar data-view="back"></div>
+</div>
+<script src="avatar.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Softer, no boxes</title>
+<style>
+  :root { --bg:#EEE7EA; --ink:#2B1B27; --ink-soft:#6B5563; --plum:#6A1F58; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--ink); font-family:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Helvetica Neue",system-ui,sans-serif;
+         -webkit-font-smoothing:antialiased; padding:48px 32px 80px; }
+  header { max-width:780px; margin:0 auto 40px; }
+  h1 { font-family:"New York",ui-serif,"Iowan Old Style",Georgia,serif; font-weight:800; font-size:40px; letter-spacing:-.6px; }
+  header p { margin-top:12px; font-size:17px; line-height:1.55; color:var(--ink-soft); }
+  section { max-width:780px; margin:0 auto 56px; }
+  h2 { font-size:20px; font-weight:700; }
+  .cap { margin-top:4px; font-size:15px; line-height:1.45; color:var(--ink-soft); }
+  .pair { margin-top:18px; display:flex; gap:40px; justify-content:center; flex-wrap:wrap; }
+  figure { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  figcaption { font-size:14px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--ink-soft); }
+  figcaption.soft { color:var(--plum); }
+  /* phone: 390 x 844 at 0.8 = 312 x 675.2, inside a rounded device frame */
+  .device { width:332px; height:695.2px; padding:10px; border-radius:50px; background:#2B1B27;
+            box-shadow:0 30px 40px -28px rgba(43,27,39,.55); }
+  .device .glass { width:312px; height:675.2px; border-radius:40px; overflow:hidden; position:relative; background:#FBE5E8; }
+  .device iframe { position:absolute; left:0; top:0; width:390px; height:844px; border:0; transform:scale(.8); transform-origin:0 0; }
+  @media (max-width:760px) { body { padding:28px 16px 60px; } .pair { gap:24px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Softer, no boxes</h1>
+  <p>Hard outlines and boxes inside boxes can feel loud. This version keeps every screen, every control and every text size the same, and takes the edges away. Pieces of clothing stand on the floor with a soft shadow under them instead of sitting in cards. Lists sit straight on the wall with room between rows, and groups are split by space or a faint line that fades out at the ends. Where something needs to stand apart, it gets a gentle tint and a shadow that falls only below it.</p>
+</header>
+
+<section>
+  <h2>Closet</h2>
+  <p class="cap">Garment cards are gone: each piece stands on its own shadow, the filter chips and room tiles lose their outlines, and the Dirty badge is a soft pill.</p>
+  <div class="pair">
+    <figure><figcaption>Now</figcaption><div class="device"><div class="glass"><iframe src="screens/closet.html" title="Closet, now" loading="lazy"></iframe></div></div></figure>
+    <figure><figcaption class="soft">Softer</figcaption><div class="device"><div class="glass"><iframe src="screens/closet-soft.html" title="Closet, softer" loading="lazy"></iframe></div></div></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Style Me, largest text</h2>
+  <p class="cap">The big controls become tinted pills with no border, a little more space between them, and the banner loses its frame.</p>
+  <div class="pair">
+    <figure><figcaption>Now</figcaption><div class="device"><div class="glass"><iframe src="screens/home-ax.html" title="Style Me large text, now" loading="lazy"></iframe></div></div></figure>
+    <figure><figcaption class="soft">Softer</figcaption><div class="device"><div class="glass"><iframe src="screens/home-ax-soft.html" title="Style Me large text, softer" loading="lazy"></iframe></div></div></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Profile</h2>
+  <p class="cap">No white boxes and no lines between rows; the three groups are set apart by space and a fading divider, and the icons sit in round tints.</p>
+  <div class="pair">
+    <figure><figcaption>Now</figcaption><div class="device"><div class="glass"><iframe src="screens/settings.html" title="Profile, now" loading="lazy"></iframe></div></div></figure>
+    <figure><figcaption class="soft">Softer</figcaption><div class="device"><div class="glass"><iframe src="screens/settings-soft.html" title="Profile, softer" loading="lazy"></iframe></div></div></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Styling access</h2>
+  <p class="cap">The allowances and links sit on the floor without cards, split by fading lines; the meter tracks turn white so the bars still read.</p>
+  <div class="pair">
+    <figure><figcaption>Now</figcaption><div class="device"><div class="glass"><iframe src="screens/access.html" title="Styling access, now" loading="lazy"></iframe></div></div></figure>
+    <figure><figcaption class="soft">Softer</figcaption><div class="device"><div class="glass"><iframe src="screens/access-soft.html" title="Styling access, softer" loading="lazy"></iframe></div></div></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Laundry</h2>
+  <p class="cap">The list box and the little picture boxes are gone; each piece stands on a soft shadow, and the plate and chips lose their outlines.</p>
+  <div class="pair">
+    <figure><figcaption>Now</figcaption><div class="device"><div class="glass"><iframe src="screens/laundry.html" title="Laundry, now" loading="lazy"></iframe></div></div></figure>
+    <figure><figcaption class="soft">Softer</figcaption><div class="device"><div class="glass"><iframe src="screens/laundry-soft.html" title="Laundry, softer" loading="lazy"></iframe></div></div></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Your looks</h2>
+  <p class="cap">Look shown as a sticker bundle of her own pieces. The dressing room and racks are gone: each piece is a cutout with a white sticker edge and a soft shadow, laid loosely together at natural size. Looks 2 and 3 sit beside the dots as small bundles you can tap.</p>
+  <div class="pair">
+    <figure><figcaption>Now</figcaption><div class="device"><div class="glass"><iframe src="screens/results.html" title="Your looks, now" loading="lazy"></iframe></div></div></figure>
+    <figure><figcaption class="soft">Softer</figcaption><div class="device"><div class="glass"><iframe src="screens/results-flatlay.html" title="Your looks as a sticker bundle" loading="lazy"></iframe></div></div></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Saved Looks</h2>
+  <p class="cap">Looks shows every saved look as a sticker bundle of its pieces, so she gets the whole gallery even without picture credits. Pictures holds only her try-on pictures, each captioned with the look it came from.</p>
+  <div class="pair">
+    <figure><figcaption>Now</figcaption><div class="device"><div class="glass"><iframe src="screens/saved.html" title="Saved Looks, now" loading="lazy"></iframe></div></div></figure>
+    <figure><figcaption class="soft">Softer</figcaption><div class="device"><div class="glass"><iframe src="screens/saved-flatlay.html" title="Saved Looks with sticker bundles" loading="lazy"></iframe></div></div></figure>
+  </div>
+</section>
+</body>
+</html>

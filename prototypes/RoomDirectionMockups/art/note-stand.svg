@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 54" width="42" height="54" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Small white card standing in a dark navy holder (plum is kept for the primary action). Blank card face: x 7.5..34.5, y 4..44. Holder bottom at y 52.4. -->
+
+  <!-- holder, back block (wider than the card so a dark wedge shows either side) -->
+  <path d="M3.4 34.6H38.6L40.6 49.8C40.8 51.2 40 52.4 38.6 52.4H3.4C2 52.4 1.2 51.2 1.4 49.8Z" fill="#1D2749"/>
+  <path d="M5 36.3H37" stroke="#3B4A7A" stroke-width=".9"/>
+  <path d="M3.4 34.6H38.6L40.6 49.8C40.8 51.2 40 52.4 38.6 52.4H3.4C2 52.4 1.2 51.2 1.4 49.8Z" stroke="#161E3A" stroke-width="1.3"/>
+
+  <!-- card -->
+  <path d="M6 50.2V6.6A4.4 4.4 0 0 1 10.4 2.2H31.6A4.4 4.4 0 0 1 36 6.6V50.2Z" fill="#FFFFFF"/>
+  <path d="M33.6 3V50.2H36V6.6A4.4 4.4 0 0 0 33.6 2.7Z" fill="#F6E3F0"/>
+  <path d="M6 45.4H36V50.2H6Z" fill="#F6E3F0"/>
+  <path d="M7.8 8.2A3 3 0 0 1 10.8 4.2H16" stroke="#FFFFFF" stroke-width="1.2"/>
+  <path d="M6 50.2V6.6A4.4 4.4 0 0 1 10.4 2.2H31.6A4.4 4.4 0 0 1 36 6.6V50.2" stroke="#B98BAA" stroke-width="1.3"/>
+
+  <!-- holder, front lip -->
+  <path d="M2.4 45.6H39.6L40.6 49.8C40.8 51.2 40 52.4 38.6 52.4H3.4C2 52.4 1.2 51.2 1.4 49.8Z" fill="#27335F"/>
+  <path d="M4.4 47.2H37.6" stroke="#3B4A7A" stroke-width=".9"/>
+  <path d="M2.4 45.6H39.6L40.6 49.8C40.8 51.2 40 52.4 38.6 52.4H3.4C2 52.4 1.2 51.2 1.4 49.8Z" stroke="#161E3A" stroke-width="1.3"/>
+</svg>

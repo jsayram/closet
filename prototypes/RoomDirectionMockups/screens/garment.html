@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Navy dress pants</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* One piece from the closet. Header like the other child screens: back to Closet and Edit in the nav, the piece's name
+     as the display title at left 20 / top 46. Under it a dressing corner on the wall: the rainy window, a wood shelf with a
+     gold rod where the piece hangs, and a tufted bench below with the nude flats tucked under it. Floor line 440.
+     Below the floor: the details card (the same fields as the iPad detail: category, color, status, suitcases, saved looks)
+     and the two actions. Marking clean shows an undo toast over the bench. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .room { --floor-y: 440px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* nav: back link and Edit, both text buttons, then the large title */
+  .nav { z-index: 5; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 10px 0 4px; display: flex; align-items: center; gap: 2px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .nav .edit { position: absolute; right: 8px; top: 2px; height: 44px; min-width: 44px; padding: 0 8px; display: grid; place-items: center;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; white-space: nowrap; }
+
+  /* the flats under the bench. The pair from garments.js is mounted twice: "rear" shows only the shoe drawn behind and
+     "front" only the shoe in front, so both soles can sit on the floor (the drawing itself stacks them for a deep shelf).
+     --w display width, --x centre of the front shoe, --g page y of the front sole, --dx/--dy rear shoe offset (right, up). */
+  .shoe { position: absolute; --s: calc(var(--w) / 120); width: calc(var(--w) * 1px); --gf: 119.8; --gb: 81.8; }
+  .shoe.front { left: calc((var(--x) - 53 * var(--s)) * 1px); top: calc((var(--g) - var(--gf) * var(--s)) * 1px); }
+  .shoe.rear  { left: calc((var(--x) + var(--dx) - 67 * var(--s)) * 1px); top: calc((var(--g) - var(--dy) - var(--gb) * var(--s)) * 1px); }
+  .shoe.front svg > g > g:nth-of-type(1), .shoe.front svg > g > ellipse:nth-of-type(1),
+  .shoe.rear svg > g > g:nth-of-type(2), .shoe.rear svg > g > ellipse:nth-of-type(2) { display: none; }
+
+  /* details card: one row per fact, label on the left and value on the right, like the iPad detail */
+  .details { position: absolute; left: 16px; right: 16px; top: 462px; padding: 0; overflow: hidden; }
+  .details .row { min-height: 44px; padding: 0 14px; gap: 10px; border-bottom: 1px solid #F1E6EC; }
+  .details .row:last-child { border-bottom: 0; }
+  .details .row > i[data-icon] { font-size: 18px; color: var(--plum); flex: none; }
+  .details .lbl { font-size: 14px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .details .val { margin-left: auto; display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .details .val .chev { font-size: 14px; color: var(--plum); display: grid; margin-left: 1px; }
+  a.row:active { background: #FBF5F8; }
+  .sw { width: 14px; height: 14px; border-radius: 50%; background: var(--navy); border: 1.5px solid #161E3A; flex: none; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #5FA36A; box-shadow: 0 0 0 3px #E4F3DF; flex: none; margin: 0 2px; }
+  .dot.dirty { background: #DDBB4E; box-shadow: 0 0 0 3px #FBF1CC; }
+
+  /* actions */
+  .actions { position: absolute; left: 16px; right: 16px; top: 696px; display: flex; gap: 10px; }
+  .actions .btn { flex: 1.2; padding: 0 12px; white-space: nowrap; font-size: 16px; }
+  .actions .btn.ghost { flex: 1; }
+
+  /* undo toast after marking clean, floating over the bench just above the card (same plate as the Laundry screen) */
+  .toast { position: absolute; z-index: 3; left: 16px; right: 16px; top: 404px; height: 46px; display: flex; align-items: center; gap: 9px; padding: 0 4px 0 14px;
+           background: var(--ink); color: #fff; border-radius: 16px; box-shadow: 0 6px 16px #2B1B2738; }
+  .toast[hidden] { display: none; }
+  .toast .ok { width: 24px; height: 24px; border-radius: 50%; background: #B7D5B1; color: var(--ink); display: grid; place-items: center; flex: none; }
+  .toast .ok i[data-icon] { font-size: 14px; }
+  .toast .ok i[data-icon] svg { stroke-width: 2.6; }
+  .toast .msg { font-size: 14px; line-height: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toast .undo { margin-left: auto; height: 44px; padding: 0 12px; display: flex; align-items: center; gap: 5px; border-radius: 12px;
+                 color: #F8C6D3; font-size: 15px; font-weight: 700; flex: none; }
+  .toast .undo i[data-icon] { font-size: 17px; }
+  .toast .undo:focus-visible { outline-color: #F8C6D3; }
+
+  /* tab bar items are links */
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- ============ the dressing corner ============ -->
+  <!-- window, 1:1 (96 x 184): rod y 142 (lined up with the shelf board's top face), glass y 154..297, sill lip to 312 -->
+  <img class="art" src="../art/window-rain.svg" alt="" style="left:30px;top:136px;width:96px;height:184px">
+  <!-- wall shelf with a hanging rod, 1:1 (210 x 78): things on the board from y 115, board y 142..153, rod centre (250, 168),
+       brackets to 182 -->
+  <img class="art" src="../art/closet-rail.svg" alt="" style="left:145px;top:106px;width:210px;height:78px">
+  <!-- the pants on the rod, W 152 (rail line y 11 on the rod): left = 250 - 76, top = 168 - 11 * 152 / 120; hem near 364 -->
+  <span class="abs" data-garment="g-navy-trousers" data-hanger aria-hidden="true" style="left:174px;top:154.07px;width:152px"></span>
+  <!-- bench, 1:1 (160 x 66), centred under the pants: front legs stand on 446, 6 px in front of the floor line -->
+  <img class="art" src="../art/closet-bench.svg" alt="" style="left:170px;top:385px;width:160px;height:66px">
+  <!-- the nude flats tucked under the bench, W 38: front sole on y 445.5, the rear shoe 11 px right and 4 px back (sole 441.5,
+       still below the floor line) -->
+  <span class="shoe rear"  data-garment="g-nude-flats" aria-hidden="true" style="--w:38;--x:243;--g:445.5;--dx:11;--dy:4"></span>
+  <span class="shoe front" data-garment="g-nude-flats" aria-hidden="true" style="--w:38;--x:243;--g:445.5;--dx:11;--dy:4"></span>
+
+  <!-- ============ nav and title ============ -->
+  <div class="nav">
+    <a class="back" href="closet.html"><i data-icon="chevron-left"></i>Closet</a>
+    <button class="edit" type="button">Edit</button>
+  </div>
+  <h1 class="title-display hdr-title">Navy dress pants</h1>
+
+  <!-- ============ details ============ -->
+  <section class="card details" aria-label="Piece details">
+    <div class="row"><i data-icon="tag"></i><span class="lbl">Category</span><span class="val">Bottoms</span></div>
+    <div class="row"><i data-icon="palette"></i><span class="lbl">Color</span><span class="val"><span class="sw" aria-hidden="true"></span>Navy</span></div>
+    <div class="row"><i data-icon="basket"></i><span class="lbl">Status</span><span class="val"><span class="dot" id="status-dot" aria-hidden="true"></span><span id="status">Clean</span></span></div>
+    <a class="row" href="suitcases.html"><i data-icon="suitcase"></i><span class="lbl">Suitcases</span><span class="val">Jose's house, Weekend<span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+    <a class="row" href="saved.html"><i data-icon="bookmark"></i><span class="lbl">Saved looks</span><span class="val">In 3 looks<span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+  </section>
+
+  <div class="actions">
+    <a class="btn" href="home.html?start=g-navy-trousers"><i data-icon="sparkles"></i>Style with this</a>
+    <button class="btn ghost" type="button" id="mark"><i data-icon="basket"></i><span>Mark as dirty</span></button>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden>
+    <span class="ok"><i data-icon="check"></i></span>
+    <span class="msg">Marked clean</span>
+    <button class="undo" type="button" id="undo"><i data-icon="undo"></i>Undo</button>
+  </div>
+
+  <!-- ============ tab bar ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a class="on" href="closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* Mark as dirty flips the status to Dirty and the button to Mark as clean.
+   Marking clean flips it back and shows the undo toast; Undo restores Dirty.
+   Open with #marked-clean to see the toast state. */
+(function () {
+  var btn = document.getElementById('mark'), st = document.getElementById('status'), dot = document.getElementById('status-dot');
+  var toast = document.getElementById('toast'), undo = document.getElementById('undo');
+  if (!btn || !st || !dot || !toast || !undo) return;
+  function setDirty(dirty) {
+    st.textContent = dirty ? 'Dirty' : 'Clean';
+    dot.classList.toggle('dirty', dirty);
+    btn.querySelector('span').textContent = dirty ? 'Mark as clean' : 'Mark as dirty';
+    var ic = btn.querySelector('i[data-icon]');
+    ic.setAttribute('data-icon', dirty ? 'check' : 'basket');
+    if (window.Icons) Icons.mountAll(btn);
+  }
+  btn.addEventListener('click', function () {
+    var dirty = st.textContent === 'Clean';
+    setDirty(dirty);
+    toast.hidden = dirty;
+  });
+  undo.addEventListener('click', function () {
+    setDirty(true);
+    toast.hidden = true;
+  });
+  if (location.hash === '#marked-clean') toast.hidden = false;
+})();
+</script>
+</body>
+</html>

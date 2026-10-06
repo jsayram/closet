@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Avatar, attempt c (paper doll): front and back</title>
+<style>
+  html, body { margin: 0; width: 480px; height: 900px; overflow: hidden; background: #FBE5E8; }
+  .pair { display: flex; align-items: flex-end; width: 480px; height: 890px; }
+  .pair > div { width: 240px; height: 880px; flex: none; }
+  [data-avatar] svg { display: block; }
+</style>
+</head>
+<body>
+<div class="pair">
+  <div data-avatar data-view="full"></div>
+  <div data-avatar data-view="back"></div>
+</div>
+<script src="avatar.js"></script>
+</body>
+</html>

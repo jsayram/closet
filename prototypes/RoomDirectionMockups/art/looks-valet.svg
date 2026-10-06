@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 290" width="224" height="290" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Gold valet stand for showing one look as a set (results and swap). Drawn at 1:1.
+       Hanging bar centre y 14 from x 7 to 217 (ball ends at x 5 and 219), so a garment hook (garments.js, rail at unit y 11)
+       sits on it: a garment W wide hangs with its top at bar - 11*W/120.
+       Uprights centre x 14 and x 210, collars at y 132, low stretcher bar y 238, arched feet to y 284.
+       Open middle for garments: x 18..206, y 18..232. Shoes stand in front of the stretcher, between the feet.
+       Wood/gold: fill #E7BC6E, shade #D9A650, outline #B98632, highlight #F6DC9C. No text zone. -->
+
+  <!-- contact shadows under the feet -->
+  <ellipse cx="14" cy="285.2" rx="16" ry="2.6" fill="#8A5A48" opacity=".13"/>
+  <ellipse cx="210" cy="285.2" rx="16" ry="2.6" fill="#8A5A48" opacity=".13"/>
+
+  <!-- low stretcher between the uprights -->
+  <path d="M14 238 H210" stroke="#B98632" stroke-width="5.2"/>
+  <path d="M14 238 H210" stroke="#E7BC6E" stroke-width="2.8"/>
+  <path d="M18 237.1 H206" stroke="#F6DC9C" stroke-width=".9"/>
+
+  <!-- uprights -->
+  <path d="M14 14 V272 M210 14 V272" stroke="#B98632" stroke-width="6.4"/>
+  <path d="M14 14 V272 M210 14 V272" stroke="#E7BC6E" stroke-width="3.8"/>
+  <path d="M13 22 V268 M209 22 V268" stroke="#F6DC9C" stroke-width="1"/>
+  <path d="M15.3 22 V268 M211.3 22 V268" stroke="#D9A650" stroke-width="1"/>
+
+  <!-- arched feet with ball toes -->
+  <g>
+    <path d="M3 282 Q5 270.5 14 268.5 Q23 270.5 25 282" stroke="#B98632" stroke-width="6.4"/>
+    <path d="M3 282 Q5 270.5 14 268.5 Q23 270.5 25 282" stroke="#E7BC6E" stroke-width="3.8"/>
+    <path d="M5 277.6 Q7.4 271 13 269.8" stroke="#F6DC9C" stroke-width="1"/>
+    <circle cx="3.4" cy="282.4" r="3.2" fill="#D9A650" stroke="#B98632" stroke-width="1.1"/>
+    <circle cx="24.6" cy="282.4" r="3.2" fill="#D9A650" stroke="#B98632" stroke-width="1.1"/>
+    <path d="M199 282 Q201 270.5 210 268.5 Q219 270.5 221 282" stroke="#B98632" stroke-width="6.4"/>
+    <path d="M199 282 Q201 270.5 210 268.5 Q219 270.5 221 282" stroke="#E7BC6E" stroke-width="3.8"/>
+    <path d="M201 277.6 Q203.4 271 209 269.8" stroke="#F6DC9C" stroke-width="1"/>
+    <circle cx="199.4" cy="282.4" r="3.2" fill="#D9A650" stroke="#B98632" stroke-width="1.1"/>
+    <circle cx="220.6" cy="282.4" r="3.2" fill="#D9A650" stroke="#B98632" stroke-width="1.1"/>
+    <!-- hub where the upright meets the foot -->
+    <rect x="9.5" y="262" width="9" height="9" rx="3" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+    <path d="M11.4 264.2 H16.2" stroke="#F6DC9C" stroke-width="1"/>
+    <rect x="205.5" y="262" width="9" height="9" rx="3" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+    <path d="M207.4 264.2 H212.2" stroke="#F6DC9C" stroke-width="1"/>
+  </g>
+
+  <!-- stretcher knuckles -->
+  <circle cx="14" cy="238" r="3.6" fill="#D9A650" stroke="#B98632" stroke-width="1.1"/>
+  <circle cx="210" cy="238" r="3.6" fill="#D9A650" stroke="#B98632" stroke-width="1.1"/>
+
+  <!-- collars half way up -->
+  <g>
+    <rect x="9.6" y="127" width="8.8" height="10" rx="2.4" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+    <path d="M11.4 129.2 H16.6" stroke="#F6DC9C" stroke-width="1"/>
+    <rect x="205.6" y="127" width="8.8" height="10" rx="2.4" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+    <path d="M207.4 129.2 H212.6" stroke="#F6DC9C" stroke-width="1"/>
+  </g>
+
+  <!-- hanging bar, resting on the tops of the uprights -->
+  <path d="M7 14 H217" stroke="#B98632" stroke-width="6"/>
+  <path d="M7 14 H217" stroke="#E7BC6E" stroke-width="3.4"/>
+  <path d="M10 13.1 H214" stroke="#F6DC9C" stroke-width="1"/>
+  <path d="M10 15.1 H214" stroke="#D9A650" stroke-width=".9"/>
+  <!-- cups where the bar meets the uprights -->
+  <rect x="9" y="10" width="10" height="9" rx="3" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+  <path d="M11 12.2 H16.6" stroke="#F6DC9C" stroke-width="1"/>
+  <rect x="205" y="10" width="10" height="9" rx="3" fill="#D9A650" stroke="#B98632" stroke-width="1.2"/>
+  <path d="M207 12.2 H212.6" stroke="#F6DC9C" stroke-width="1"/>
+  <!-- ball ends -->
+  <circle cx="5" cy="14" r="4.3" fill="#E7BC6E" stroke="#B98632" stroke-width="1.2"/>
+  <circle cx="3.9" cy="12.8" r="1.2" fill="#F6DC9C"/>
+  <circle cx="219" cy="14" r="4.3" fill="#E7BC6E" stroke="#B98632" stroke-width="1.2"/>
+  <circle cx="217.9" cy="12.8" r="1.2" fill="#F6DC9C"/>
+</svg>

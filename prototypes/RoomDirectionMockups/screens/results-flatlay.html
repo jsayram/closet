@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Your looks</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Style Me results, flat-lay version. The open look is a "sticker bundle": each piece is a cutout of her own garment
+     photo with a thick white sticker edge and a very soft shadow, loosely laid out and overlapping (layer and top at the
+     top, bottoms below, shoes at the lower side). In these mockups the drawn garments (no hanger) stand in for the photos.
+     The sticker edge is stacked CSS drop-shadows on each piece's wrapper: four directions, then four diagonals, which
+     add up to an even rounded edge about 6 px wide, then one soft shadow that falls below.
+     Pieces keep natural relative scale (trousers longer than a top). Looks 2 and 3 sit as mini bundles beside the dots.
+     Layout: string lights 66..112, bundle box 300 x 356 centred at x 195 from y 112, title row 488, note 578, actions 638. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; border-radius: 12px; }
+  .room { --floor-y: 2000px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .ask { position: absolute; left: 0; right: 0; top: 47px; text-align: center; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--ink-soft); }
+
+  /* the soft warm patch the bundle lies on: a blush-beige glow that fades into the wall, no edge */
+  .mat { position: absolute; left: 10px; top: 112px; width: 370px; height: 370px; pointer-events: none;
+         background: radial-gradient(closest-side, #FDF0E6 0%, #FCEDE3F2 46%, #FBE8E2A8 70%, #FBE5E800 100%); }
+
+  /* sticker bundle */
+  .bundle { position: absolute; pointer-events: none; }
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  /* mini bundles: the same edge at about half the width, and a smaller shadow */
+  .mini .stk { filter: drop-shadow(1.2px 0 0 #fff) drop-shadow(-1.2px 0 0 #fff) drop-shadow(0 1.2px 0 #fff) drop-shadow(0 -1.2px 0 #fff)
+                       drop-shadow(.85px .85px 0 #fff) drop-shadow(-.85px -.85px 0 #fff) drop-shadow(.85px -.85px 0 #fff) drop-shadow(-.85px .85px 0 #fff)
+                       drop-shadow(0 3px 4px rgba(110,58,82,.16)); }
+
+  /* title row: title and pager on the left, looks 2 and 3 as tappable mini bundles on the right */
+  .look-title { position: absolute; left: 20px; top: 496px; font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 28px;
+                letter-spacing: -.2px; color: var(--ink); white-space: nowrap; }
+  .pager { position: absolute; left: 21px; top: 530px; display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--ink-soft); }
+  .pager .dots { display: flex; gap: 5px; }
+  .pager .dots span { width: 7px; height: 7px; border-radius: 50%; background: #E3C9D6; }
+  .pager .dots span.on { background: var(--plum); width: 18px; border-radius: 4px; }
+  .others { position: absolute; right: 12px; top: 481px; display: flex; gap: 4px; }
+  .thumb { position: relative; display: block; width: 72px; height: 95px; border-radius: 18px; }
+  .thumb .bundle { left: 4.5px; top: 2px; width: 63px; height: 75px; }
+  .thumb .lbl { position: absolute; left: 0; right: 0; top: 79px; text-align: center; font-size: 12px; line-height: 15px; font-weight: 700; color: var(--plum); }
+
+  /* note: up to two lines, centred in a fixed height */
+  .why { position: absolute; left: 16px; right: 16px; top: 578px; height: 52px; padding: 0 12px; border-radius: 16px;
+         display: flex; flex-direction: column; justify-content: center; gap: 0; }
+  .why .ln { white-space: pre-line; display: grid; grid-template-columns: 17px 1fr; column-gap: 9px; align-items: start; font-size: 13px; line-height: 17px; color: var(--ink); }
+  .why .ln i[data-icon] { font-size: 16px; margin-top: .5px; color: var(--plum); }
+
+  .save { position: absolute; left: 16px; width: 214px; top: 638px; min-height: 46px; height: 46px; font-size: 16px; border-radius: 15px; gap: 7px; white-space: nowrap; }
+  .save i[data-icon] { font-size: 19px; }
+  .save .end { display: none; margin-left: 2px; font-size: 16px; }
+  .save.is-saved { background: var(--plum-soft); color: var(--plum); box-shadow: none; }
+  .save.is-saved .end { display: grid; }
+  .tryon { position: absolute; left: 238px; right: 16px; top: 638px; min-height: 46px; height: 46px; padding: 0 10px; border-radius: 15px;
+           gap: 8px; justify-content: center; }
+  .tryon i[data-icon] { font-size: 20px; }
+  .tryon .txt { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; }
+  .tryon .txt b { font-size: 15px; font-weight: 700; line-height: 18px; white-space: nowrap; }
+  .tryon .txt small { font-size: 11px; font-weight: 600; line-height: 13px; color: var(--ink-soft); }
+  .acts { position: absolute; left: 16px; right: 16px; top: 690px; height: 44px; display: flex; gap: 8px; }
+  .acts .btn { flex: 1 1 0; min-width: 0; min-height: 44px; height: 44px; padding: 0 10px; font-size: 15px; border-radius: 14px; gap: 6px; white-space: nowrap; }
+  .acts .btn i[data-icon] { font-size: 18px; }
+  .fine { position: absolute; left: 0; right: 0; top: 740px; text-align: center; font-size: 11px; line-height: 13px; font-weight: 500; color: var(--ink-soft); }
+
+  .tabfade { --tabfade: #F7D6DC; }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* soft.css takes the boxes away; the ghost buttons keep a slightly stronger tint so they read on the wall */
+  .btn.ghost { background: rgba(255,255,255,.7); }
+  .save.is-saved { border: 0; box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- slim strip of the room above the bundle: the string lights from the gallery wall -->
+  <img class="art" src="../art/string-lights.svg" alt="" style="left:0;top:66px;width:390px;height:46px">
+  <div class="mat"></div>
+
+  <!-- ============ the open look as a sticker bundle ============ -->
+  <div class="bundle main" id="bundle" role="img" aria-label="Look 1: navy cardigan, cute pink shirt, navy dress pants, nude pointed flats"
+       style="left:45px;top:112px;width:300px;height:356px"></div>
+
+  <!-- ============ labels ============ -->
+  <div class="nav">Your looks<a class="back" href="home.html"><i data-icon="chevron-left"></i>Home</a><a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
+  <div class="ask">Office · 58°F · Rain · Main closet</div>
+
+  <h1 class="look-title" id="look-name">Calm office</h1>
+  <div class="pager" aria-live="polite"><span class="dots" aria-hidden="true"><span class="on"></span><span></span><span></span></span><span id="look-count">Look 1 of 3</span></div>
+  <div class="others">
+    <a class="thumb" id="slot-a" href="#look-2" data-look="2" aria-label="Look 2: Olive and brick"><span class="bundle mini"></span><span class="lbl">Look 2</span></a>
+    <a class="thumb" id="slot-b" href="#look-3" data-look="3" aria-label="Look 3: Gray blazer office"><span class="bundle mini"></span><span class="lbl">Look 3</span></a>
+  </div>
+
+  <div class="card why">
+    <p class="ln"><i data-icon="sparkles"></i><span id="look-note">Polished navy layers.
+Warm enough for 58°F and rain.</span></p>
+  </div>
+  <a class="btn save" id="save" href="#save" aria-label="Save look">
+    <i data-icon="heart"></i><span id="save-txt">Save look</span><span class="end"><i data-icon="chevron-right"></i></span>
+  </a>
+  <a class="btn ghost tryon" id="tryon" href="saved-flatlay.html#pictures" aria-label="Try it on. Makes a simulated try-on picture of this look">
+    <i data-icon="camera"></i><span class="txt"><b>Try it on</b><small>Simulated</small></span>
+  </a>
+  <div class="acts">
+    <a class="btn ghost" id="swap" href="swap.html?look=1&amp;top=g-pink-blouse"><i data-icon="swap"></i>Swap a piece</a>
+    <a class="btn ghost" href="chat.html"><i data-icon="search"></i>Ask stylist</a>
+  </div>
+  <div class="fine">Try-on pictures are simulated</div>
+
+  <div class="tabfade"></div>
+  <nav class="tabbar">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved-flatlay.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script>
+/* Three looks from the main closet. The open look lies as a sticker bundle; the other two are mini bundles beside the
+   dots, and tapping one opens it here (#look-2, #look-3). Save look saves the open one (simulated). */
+(function () {
+  var LOOKS = {
+    1: { name: 'Calm office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+         note: 'Polished navy layers.\nWarm enough for 58°F and rain.' },
+    2: { name: 'Olive and brick', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+         note: 'Leather over a warm knit for the rain.\nSneakers keep it relaxed.' },
+    3: { name: 'Gray blazer office', layer: 'g-gray-blazer', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels',
+         note: 'A soft cream knit under gray.\nHeels lift the navy pants.' }
+  };
+  /* Where each piece lies in the 300 x 356 bundle box: centre x, centre y, size, 'h' (height) or 'w' (width), rotation.
+     Heights keep natural scale: a top about 150, trousers about 220, a pair of shoes about 96 across. */
+  var SPOTS = {
+    layer:  [98, 88, 156, 'h', -7],
+    top:    [196, 96, 146, 'h', 5],
+    bottom: [140, 252, 214, 'h', -2],
+    shoes:  [234, 312, 94, 'w', -8]
+  };
+  var ORDER = ['bottom', 'layer', 'top', 'shoes'];   // back to front: the top's hem lies over the waistband
+  var BY = {}; Garments.LIST.forEach(function (g) { BY[g.id] = g.name; });
+
+  /* Drawn bounds, leaving out full-box texture fills (the lace pattern rect), which are clipped by the garment shape. */
+  function drawn(svg) {
+    var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+    for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+    b = svg.getBBox();
+    for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+    return b;
+  }
+  /* Lay a look into a bundle element at a scale of the 300 x 356 box. Each piece is fitted by its drawn bounds. */
+  function lay(box, L, k) {
+    box.innerHTML = '';
+    ORDER.forEach(function (slot) {
+      if (!L[slot]) return;
+      var stk = document.createElement('span'); stk.className = 'stk'; stk.setAttribute('data-slot', slot);
+      stk.innerHTML = '<span class="rot"><span data-garment="' + L[slot] + '"></span></span>';
+      stk.style.width = (120 * k * .9) + 'px';            // a first width so the drawing mounts at roughly its final detail
+      box.appendChild(stk);
+    });
+    Garments.mountAll(box);
+    var list = box.querySelectorAll('.stk');
+    for (var i = 0; i < list.length; i++) {
+      var stk = list[i], sp = SPOTS[stk.getAttribute('data-slot')], svg = stk.querySelector('svg');
+      var b = drawn(svg);
+      var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);   // px per garment unit
+      var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+      stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+      stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+      var rot = stk.querySelector('.rot');
+      rot.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+      rot.style.transform = 'rotate(' + sp[4] + 'deg)';
+    }
+  }
+
+  var m = /look-([123])/.exec(location.hash || ''), current = m ? +m[1] : 1;
+  var main = document.getElementById('bundle'), swap = document.getElementById('swap'), saveBtn = document.getElementById('save');
+  var slots = [document.getElementById('slot-a'), document.getElementById('slot-b')];
+
+  function show(n) {
+    var L = LOOKS[n]; if (!L) return;
+    current = n;
+    lay(main, L, 1);
+    main.setAttribute('aria-label', 'Look ' + n + ': ' + ['layer', 'top', 'bottom', 'shoes']
+      .map(function (k) { return (BY[L[k]] || L[k]).toLowerCase(); }).join(', '));
+    swap.setAttribute('href', 'swap.html?look=' + n + '&top=' + L.top);
+    document.getElementById('look-name').textContent = L.name;
+    document.getElementById('look-count').textContent = 'Look ' + n + ' of 3';
+    document.getElementById('look-note').textContent = L.note;
+    var dots = document.querySelectorAll('.pager .dots span');
+    for (var i = 0; i < dots.length; i++) dots[i].className = (i + 1 === n) ? 'on' : '';
+    [1, 2, 3].filter(function (k) { return k !== n; }).forEach(function (k, i) {
+      var slot = slots[i];
+      slot.setAttribute('href', '#look-' + k); slot.setAttribute('data-look', k);
+      slot.setAttribute('aria-label', 'Look ' + k + ': ' + LOOKS[k].name);
+      slot.querySelector('.lbl').textContent = 'Look ' + k;
+      lay(slot.querySelector('.bundle'), LOOKS[k], 0.21);
+    });
+    paintSave();
+  }
+  function paintSave() {
+    var L = LOOKS[current], on = !!L.savedAs;
+    saveBtn.classList.toggle('is-saved', on);
+    saveBtn.setAttribute('href', on ? 'saved-flatlay.html' : '#save');
+    saveBtn.setAttribute('aria-label', on ? 'Saved as ' + L.savedAs + '. Open it in Saved Looks' : 'Save look');
+    saveBtn.querySelector('i[data-icon]').outerHTML = '<i data-icon="' + (on ? 'heart-fill' : 'heart') + '"></i>';
+    document.getElementById('save-txt').textContent = on ? 'Saved' : 'Save look';
+    Icons.mountAll(saveBtn);
+  }
+  slots.forEach(function (slot) {
+    slot.addEventListener('click', function (e) {
+      e.preventDefault();
+      var k = +slot.getAttribute('data-look');
+      try { history.replaceState(null, '', location.pathname + location.search + '#look-' + k); } catch (err) { /* file URLs may refuse */ }
+      show(k);
+    });
+  });
+  saveBtn.addEventListener('click', function (e) {
+    var L = LOOKS[current];
+    if (L.savedAs) return;
+    e.preventDefault();
+    L.savedAs = L.name;
+    paintSave();
+  });
+
+  function start() { show(current); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
+</body>
+</html>

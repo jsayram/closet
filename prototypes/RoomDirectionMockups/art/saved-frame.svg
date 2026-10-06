@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 324" width="136" height="324" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Saved Looks picture frame: a brass nail, a picture wire, a wood frame with a cream mat.
+       Nail head centred at (68, 7). Wire runs from the nail to the back of the frame and hides behind its top edge.
+       Frame: x 1..135, y 20..322 (134 x 302), moulding 9 wide. Mat: x 10..126, y 29..313.
+       Picture window: x 19..117, y 38..304 (98 x 266), flat and plain. Pages lay a tinted backdrop and a full-view
+       avatar 70 px wide inside it; the white bevel just outside the window stays visible.
+       Wood: fill #E7BC6E, shade #D9A650, outline #B98632, highlight #F3D391. Cream: fill #FFF7EA, shade #F3E6D0, outline #D9C6A5. -->
+
+  <!-- picture wire, behind the frame -->
+  <path d="M68 7.4L28 26M68 7.4L108 26" stroke="#B98632" stroke-width="1.05"/>
+
+  <!-- nail head -->
+  <circle cx="68" cy="7" r="3.2" fill="#E7BC6E"/>
+  <path d="M65 8.1A3.2 3.2 0 0 0 71.1 7.8Z" fill="#D9A650"/>
+  <circle cx="67" cy="5.9" r=".95" fill="#F8E3B0"/>
+  <circle cx="68" cy="7" r="3.2" stroke="#B98632" stroke-width="1.2"/>
+
+  <!-- moulding: four mitred sides, lit from the upper left -->
+  <path d="M1 23A3 3 0 0 1 4 20H132A3 3 0 0 1 135 23L126 29H10Z" fill="#E7BC6E"/>
+  <path d="M1 23L10 29V313L1 319Z" fill="#E7BC6E"/>
+  <path d="M135 23V319L126 313V29Z" fill="#D9A650"/>
+  <path d="M1 319L10 313H126L135 319A3 3 0 0 1 132 322H4A3 3 0 0 1 1 319Z" fill="#D9A650"/>
+  <!-- highlight along the outer edge of the lit sides -->
+  <path d="M3.4 22.6H132.6M2.6 23.4V318" stroke="#F3D391" stroke-width="1.6"/>
+  <!-- bead groove around the middle of the moulding -->
+  <path d="M5.6 24.6H130.4V317.4H5.6Z" stroke="#D2A04A" stroke-width=".8"/>
+  <path d="M6.3 25.3H129.7" stroke="#F6DEA6" stroke-width=".7"/>
+  <!-- wood grain -->
+  <path d="M22 27.2h14M50 26.8h7M78 27.3h16M104 26.9h8M3.4 46v12M3.6 98v7M3.3 150v16M3.5 214v8M3.4 262v14" stroke="#D9A650" stroke-width=".8"/>
+  <path d="M132.6 60v10M132.4 128v16M132.6 196v7M132.5 248v14M30 319.6h12M70 319.4h16M104 319.7h7" stroke="#C99540" stroke-width=".8"/>
+  <!-- mitre joints -->
+  <path d="M1.9 21L10 29M134.1 21L126 29M1.9 321L10 313M134.1 321L126 313" stroke="#C4913A" stroke-width=".9"/>
+  <!-- outer outline -->
+  <rect x="1" y="20" width="134" height="302" rx="3" stroke="#B98632" stroke-width="1.4"/>
+
+  <!-- mat -->
+  <rect x="10" y="29" width="116" height="284" fill="#FFF7EA"/>
+  <!-- the moulding's lip throws a little shade on the mat along the top and left -->
+  <path d="M10 29H126V31.4H12.4V313H10Z" fill="#F3E6D0"/>
+  <!-- inner lip of the moulding -->
+  <rect x="10" y="29" width="116" height="284" stroke="#B98632" stroke-width="1.15"/>
+
+  <!-- picture window with a white bevel -->
+  <rect x="19" y="38" width="98" height="266" fill="#F8F1EC"/>
+  <rect x="17.6" y="36.6" width="100.8" height="268.8" stroke="#FFFDF8" stroke-width="2.2"/>
+  <path d="M16.4 35.4H119.6V306.6H16.4Z" stroke="#E6D6BB" stroke-width=".9"/>
+  <path d="M19 304V38H117" stroke="#E9DCC5" stroke-width=".9"/>
+</svg>

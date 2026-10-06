@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Closet</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Closet tab: the inside of her wardrobe. Header like the other tab roots: profile button in the nav, the "Add a piece"
+     chip beside it, then the display title at left 20 / top 46 with the count beside it (same as the iPad closet).
+     The armoire is a fixed, decorative picture (not her real clothes). It is drawn at full size inside .wardrobe
+     (art at left 0, top 89 there, so wrapper y = art y + 13) and the whole wrapper is scaled to 0.535 and set at the
+     right of the title, top 48. Floor line: art y 348 -> page 48 + 272 * 0.535 = 193.5. The real pieces are the grid. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .room { --floor-y: 194px; }
+  .wardrobe { position: absolute; left: 0; top: 0; width: 390px; height: 373px; pointer-events: none;
+              transform-origin: 0 0; transform: translate(169px, 0.4px) scale(.535); }
+
+  /* header */
+  .hdr { position: absolute; left: 20px; top: 46px; display: flex; flex-direction: column; gap: 6px; white-space: nowrap; }
+  .hdr .count { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--ink-soft); }
+
+  /* search */
+  .search { position: absolute; left: 16px; right: 16px; top: 206px; height: 46px; display: flex; align-items: center; gap: 8px;
+            padding: 0 14px; background: #fff; border: 1.5px solid var(--plate-line); border-radius: 15px; box-shadow: 0 3px 10px #5a2a4a0f; cursor: text; }
+  .search i[data-icon] { font-size: 19px; color: var(--ink-soft); flex: none; }
+  .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); -webkit-appearance: none; appearance: none; }
+  .search input::placeholder { color: #8E7A87; }
+  .search:focus-within { border-color: var(--plum); }
+  .addp { position: absolute; right: 54px; top: 2px; height: 44px; display: flex; align-items: center; }
+  .addp .chip { min-height: 34px; padding: 6px 13px 6px 10px; font-size: 14px; color: var(--plum); }
+  .addp .chip i[data-icon] { font-size: 17px; color: var(--plum); }
+  .art { position: absolute; display: block; }
+  .g { position: absolute; }
+
+  /* shoe ledge. Each pair from garments.js is mounted twice: the "rear" span shows only the shoe drawn behind,
+     the "front" span only the shoe drawn in front, so the two can be set closer together than the drawing does.
+     The garment svg is  svg > g(centring) > ellipse(rear shadow), ellipse(front shadow), g(rear shoe), g(front shoe).
+     --w display width, --x centre of the front shoe, --g page y of the front sole, --dx/--dy where the rear shoe sits
+     relative to the front one (right and up, in px). --gf/--gb are each drawing's sole lines in garment units. */
+  .shoe { position: absolute; --s: calc(var(--w) / 120); width: calc(var(--w) * 1px); --dx: 7; --dy: 6; }
+  .shoe.front { left: calc((var(--x) - 53 * var(--s)) * 1px); top: calc((var(--g) - var(--gf) * var(--s)) * 1px); }
+  .shoe.rear  { left: calc((var(--x) + var(--dx) - 67 * var(--s)) * 1px); top: calc((var(--g) - var(--dy) - var(--gb) * var(--s)) * 1px); }
+  .shoe.front svg > g > g:nth-of-type(1), .shoe.front svg > g > ellipse:nth-of-type(1),
+  .shoe.rear svg > g > g:nth-of-type(2), .shoe.rear svg > g > ellipse:nth-of-type(2) { display: none; }
+  .shoe[data-garment="g-black-heels"]     { --gf: 126.4; --gb: 90.4; }
+  .shoe[data-garment="g-white-sneakers"]  { --gf: 124.8; --gb: 84.8; }
+  .shoe[data-garment="g-tan-loafers"]     { --gf: 124.6; --gb: 84.6; }
+  .shoe[data-garment="g-nude-flats"]      { --gf: 119.8; --gb: 81.8; }
+
+  /* filter row */
+  .filters { position: absolute; left: 16px; right: 16px; top: 260px; height: 44px; display: flex; gap: 8px; }
+  .filters > button { height: 44px; display: flex; align-items: center; }
+  .filters .chip i[data-icon] { font-size: 15px; }
+  .filters .chip:not(.on) i[data-icon] { color: var(--plum); }
+
+  /* room-object tiles */
+  .tiles { position: absolute; left: 16px; right: 16px; top: 310px; height: 60px; display: flex; gap: 12px; }
+  .tile { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 5px 8px 5px 5px; background: #fff;
+          border: 1px solid var(--plate-line); border-radius: 16px; box-shadow: 0 3px 10px #5a2a4a14; }
+  .tile .scene { position: relative; width: 50px; height: 50px; border-radius: 11px; flex: none; overflow: hidden;
+          background: linear-gradient(var(--wall), var(--wall-2)) 0 0 / 100% 37px no-repeat, linear-gradient(var(--floor), var(--floor-2)); }
+  .tile .scene::after { content: ""; position: absolute; left: 0; right: 0; top: 36px; height: 1px; background: var(--floor-line); }
+  .tile .scene img { position: absolute; left: 1px; top: 0; width: 48px; height: 44px; z-index: 1; }
+  .tile .txt { display: flex; flex-direction: column; min-width: 0; }
+  .tile b { font-size: 15px; font-weight: 700; line-height: 1.2; }
+  .tile small { font-size: 13px; color: var(--ink-soft); line-height: 1.25; }
+  .tile b, .tile small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tile .end { margin-left: auto; color: var(--plum); font-size: 15px; display: grid; }
+
+  /* garment grid */
+  .grid { position: absolute; left: 16px; right: 16px; top: 380px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 8px; }
+  .gcard { position: relative; display: flex; flex-direction: column; align-items: center; height: 116px; padding: 4px 4px 0;
+           background: #fff; border: 1px solid var(--plate-line); border-radius: 16px; box-shadow: 0 3px 10px #5a2a4a14; }
+  .gart { position: relative; width: 70px; height: 90px; overflow: hidden; flex: none; }
+  .gart > span { position: absolute; left: 0; top: -4.67px; width: 70px; }
+  .gname { margin-top: 3px; font-size: 12px; font-weight: 600; line-height: 15px; letter-spacing: -.3px; color: var(--ink); white-space: nowrap; }
+  .dirty { position: absolute; left: 6px; top: 5px; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700;
+           line-height: 14px; padding: 0 6px 0 4px; border-radius: 8px; background: var(--butter); border: 1px solid var(--butter-line); color: #6B5410; }
+  .dirty i[data-icon] { font-size: 12px; }
+  /* the piece in a dirty card is drawn a little smaller and lower so the badge clears its collar and the hem still fits */
+  .gcard.is-dirty .gart > span { left: 2px; top: 5px; width: 66px; }
+
+  /* the grid scrolls under the fade and the bar */
+  .tabfade { z-index: 4; } .tabbar { z-index: 5; }
+
+  /* tab bar items are links */
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- ============ the armoire: a fixed decorative picture, scaled down beside the title, not tappable ============ -->
+  <div class="wardrobe" aria-hidden="true">
+  <img class="art" src="../art/closet-armoire.svg" alt="" style="left:0;top:89px;width:390px;height:284px">
+
+  <!-- page y = art y + 13. Upper rail, centre y 134. W 60: top = 134 - 5.5. Tops and layers that are clean.
+       The brick knit top, cream knit sweater and gray leggings are folded on the right bay shelf (drawn in the armoire art);
+       the lace top and black tee are in the wash, so they are not shown. -->
+  <div aria-hidden="true">
+    <span class="g" data-garment="g-gray-blazer" data-hanger style="left:56px;top:128.5px;width:60px"></span>
+    <span class="g" data-garment="g-pink-blouse" data-hanger style="left:83px;top:128.5px;width:60px"></span>
+    <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:110px;top:128.5px;width:60px"></span>
+    <span class="g" data-garment="g-cream-crop" data-hanger style="left:137px;top:128.5px;width:60px"></span>
+    <span class="g" data-garment="g-brown-jacket" data-hanger style="left:164px;top:128.5px;width:60px"></span>
+    <!-- lower rail, centre y 204. W 56: top = 204 - 5.13 -->
+    <span class="g" data-garment="g-wide-jeans" data-hanger style="left:62px;top:198.87px;width:56px"></span>
+    <span class="g" data-garment="g-navy-trousers" data-hanger style="left:97px;top:198.87px;width:56px"></span>
+    <span class="g" data-garment="g-olive-trousers" data-hanger style="left:130px;top:198.87px;width:56px"></span>
+    <span class="g" data-garment="g-black-skirt" data-hanger style="left:166px;top:198.87px;width:56px"></span>
+    <!-- right bay, two wall hooks (art contract): the blue dress on its hanger, hook loop centred on the left cup
+         (259.8, 193.5), W 58: left = 259.8 - 29, top = 193.5 - 11 * 58 / 120 -->
+    <span class="g" data-garment="g-blue-dress" data-hanger style="left:230.8px;top:188.18px;width:58px"></span>
+    <!-- the bag by its strap on the right hook (rosette 306, 184), W 54 (0.45): strap top (17.5 units) over the cup -->
+    <span class="g" data-garment="g-burgundy-bag" style="left:279px;top:184.1px;width:54px"></span>
+    <!-- shoe ledge: all four pairs from the closet at W 30 (a shoe about 23 px long, in proportion to the trousers above),
+         front soles on y 336.6, the rear shoe 7 px right and 6 px back. Pairs evenly spaced, centred at x 94, 161, 229, 296
+         (front shoe centre = pair centre - 3.5). -->
+    <span class="shoe rear"  data-garment="g-black-heels"    style="--w:30;--x:90.3;--g:336.6"></span>
+    <span class="shoe front" data-garment="g-black-heels"    style="--w:30;--x:90.3;--g:336.6"></span>
+    <span class="shoe rear"  data-garment="g-nude-flats"     style="--w:30;--x:157.8;--g:336.6"></span>
+    <span class="shoe front" data-garment="g-nude-flats"     style="--w:30;--x:157.8;--g:336.6"></span>
+    <span class="shoe rear"  data-garment="g-white-sneakers" style="--w:30;--x:225.3;--g:336.6"></span>
+    <span class="shoe front" data-garment="g-white-sneakers" style="--w:30;--x:225.3;--g:336.6"></span>
+    <span class="shoe rear"  data-garment="g-tan-loafers"    style="--w:30;--x:292.8;--g:336.6"></span>
+    <span class="shoe front" data-garment="g-tan-loafers"    style="--w:30;--x:292.8;--g:336.6"></span>
+  </div>
+  </div>
+
+  <!-- ============ nav and header ============ -->
+  <div class="nav">
+    <a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+  </div>
+  <button class="addp" type="button"><span class="chip"><i data-icon="plus"></i>Add a piece</span></button>
+  <div class="hdr"><h1 class="title-display">Closet</h1><span class="count">Main closet<br>21 pieces</span></div>
+
+  <!-- ============ search ============ -->
+  <label class="search"><i data-icon="search"></i><input type="search" placeholder="Search your closet" aria-label="Search your closet"></label>
+
+  <!-- ============ filters ============ -->
+  <div class="filters" role="toolbar" aria-label="Filter pieces">
+    <button type="button" aria-haspopup="listbox" aria-label="Show: All pieces"><span class="chip on">All pieces<i data-icon="chevron-down"></i></span></button>
+    <button type="button" aria-pressed="false"><span class="chip"><i data-icon="basket"></i>Dirty (2)</span></button>
+    <button type="button" aria-pressed="false"><span class="chip">Available</span></button>
+  </div>
+
+  <!-- ============ room objects ============ -->
+  <div class="tiles">
+    <a class="tile" href="suitcases.html">
+      <span class="scene" aria-hidden="true"><img src="../art/closet-suitcase.svg" alt=""></span>
+      <span class="txt"><b>Suitcases</b><small>3 suitcases</small></span>
+      <span class="end"><i data-icon="chevron-right"></i></span>
+    </a>
+    <a class="tile" href="laundry.html">
+      <span class="scene" aria-hidden="true"><img src="../art/closet-basket.svg" alt=""></span>
+      <span class="txt"><b>Laundry</b><small>2 to wash</small></span>
+      <span class="end"><i data-icon="chevron-right"></i></span>
+    </a>
+  </div>
+
+  <!-- ============ pieces ============ -->
+  <div class="grid">
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-navy-trousers"></span></span><span class="gname">Navy dress pants</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-pink-blouse"></span></span><span class="gname">Cute pink shirt</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-navy-cardigan"></span></span><span class="gname">Navy cardigan</span></a>
+    <a class="gcard is-dirty" href="garment.html"><span class="gart"><span data-garment="g-lace-top"></span></span><span class="gname">White lace top</span><span class="dirty"><i data-icon="basket"></i>Dirty</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-wide-jeans"></span></span><span class="gname">Wide-leg jeans</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-black-heels"></span></span><span class="gname">Black block heels</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-camel-trench"></span></span><span class="gname">Camel trench coat</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-brick-top"></span></span><span class="gname">Brick knit top</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-burgundy-bag"></span></span><span class="gname">Burgundy bag</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-blue-dress"></span></span><span class="gname">Blue floral dress</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-olive-trousers"></span></span><span class="gname">Olive trousers</span></a>
+    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-white-sneakers"></span></span><span class="gname">White sneakers</span></a>
+  </div>
+
+  <!-- ============ tab bar ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a class="on" href="closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+</body>
+</html>
