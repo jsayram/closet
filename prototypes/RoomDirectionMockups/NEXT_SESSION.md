@@ -59,6 +59,56 @@ The room mockups have no shopping yet. The proposal to show the owner: shopping 
 - **Saved products:** a third Saved Looks tab, or a row in Profile.
 The Find One functionality stays as it is in the prototype; only its placement in the room design is open, to settle as the build goes. (`Simplified_Direction_On_Hold.md` would defer shopping if adopted.)
 
+## Prototype screens with no room-direction mockup yet
+
+Mocked so far: home, large-text home, closet, garment detail, suitcases, laundry, results, swap, Saved Looks, look detail, profile, styling access, paywall, onboarding, Ask stylist chat, iPad home and iPad closet. The prototype also has these, which have no mockup and no design decision yet:
+
+- **Core flows (most important):** add or edit a garment (photo, cutout, name, category), the starting-piece picker, More options sheet, Occasion picker including "Other", the generating/loading state, the outfit editor (manual outfits), and a suitcase's detail screen.
+- **States:** empty closet, empty suitcase, partial results when the source is too small, errors, offline.
+- **Search:** the unified search screen (Closet now has a search field; decide whether they are the same).
+- **Pictures:** the try-on picture detail ("preview"), picture packs and out-of-pictures (behind the purchases demo toggle).
+- **Shopping:** Find One, purchase review, store handoff, saved products (placement is the open question above).
+- **Other:** fit profile and measurements, Ask another stylist, Help, Feedback board, Demo controls, weather detail.
+- **Across the board:** dark mode for the room art, and iPad versions of the remaining screens.
+
+Not all need illustrated rooms: forms, settings and help can be plain screens in the soft style.
+
+## Responsive layout and rotation (not covered yet)
+
+The mockups are fixed-size pictures: iPhone portrait at 390 x 844 and iPad landscape at 1194 x 834 only. They do not cover other phone sizes, rotation, iPad portrait or multitasking. The SwiftUI prototype already handles rotation for its current screens (`testRotationAndNavigationDoNotDispatch`), but the room design has to be made adaptive when it is built:
+- **Small and large phones** (iPhone SE to Pro Max): the room scales as one composed scene and keeps every label legible; on the smallest screens it can drop decoration (bed corner, Maya, plant) before shrinking labels.
+- **iPhone landscape:** the room becomes a short banner or sits beside the controls; never a squashed portrait scene.
+- **iPad portrait, Split View and Slide Over:** use the iPad layout at regular width and the phone layout at compact width.
+- **Large text:** the banner-plus-rows layout (`home-ax.html`) at accessibility sizes.
+- Rotating or resizing must not re-run a Style Me request or lose state.
+Check each on the simulators and mock the iPhone landscape and iPad portrait home first.
+
+## App Store guidelines: what's covered and what to answer (6 Oct)
+
+Approval is never guaranteed; these are the points to keep checking against the current App Review Guidelines.
+
+**Already handled in the prototype:** subscription disclosures on the paywall (3.1.2: price, period, trial end, first charge, renewal, Restore, Terms, Privacy); digital purchases through In-App Purchase and physical goods through the store (3.1.1, 3.1.3); local features free; simulations labelled.
+
+**Needs care in the real build:**
+1. 5.1.2(i): clear notice and explicit permission before sending personal data to a third-party AI. Try-on photo consent stays separate from text-styling consent.
+2. 5.1.1(v): in-app account deletion if accounts exist.
+3. 4.8: if any third-party login is offered, also offer an equivalent privacy-focused option such as Sign in with Apple.
+4. 1.2: a public feedback board needs reporting, blocking and moderation (a reason it may be deferred).
+5. Generated images: try-on only on her own photos, a way to report bad output, and an age rating that reflects generative AI.
+6. Privacy nutrition label and privacy manifest (required-reason APIs, third-party SDKs).
+7. WeatherKit attribution if Apple Weather supplies the weather.
+8. 2.3: the store listing and screenshots must show only real, working features at submission.
+9. 2.4.1: if it ships on iPad, every screen must work well there.
+The room design itself (illustrations, Maya, the name sign) raises no guideline issues.
+
+**Open questions for the owner to answer:**
+- Final pricing and allowances, after measuring real costs.
+- Which AI providers to use for text and for try-on.
+- Whether PRD changes go in a v3 file or a separate amendment.
+- Whether Supabase is the backend (`Simplified_Direction_On_Hold.md`).
+- Who writes the privacy policy and terms.
+- Whether "My Petite Style" is available as an App Store name and a trademark.
+
 After that, the wider visual work (soft no-box style across all screens, Home tab rename, name sign, illustrated rooms, Maya) can follow, in whatever order the owner picks.
 
 ## Standing rules
