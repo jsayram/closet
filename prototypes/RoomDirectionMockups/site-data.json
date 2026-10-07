@@ -2,21 +2,54 @@
   "collections": {
     "notes": {
       "fields": {
-        "screen_id": { "type": "string", "required": true, "maxLength": 64, "trim": true },
-        "variant": { "type": "string", "required": true, "maxLength": 64, "trim": true },
-        "revision": { "type": "string", "required": true, "maxLength": 16, "trim": true },
-        "liked": { "type": "string", "maxLength": 4000, "trim": true },
-        "change": { "type": "string", "maxLength": 4000, "trim": true },
-        "submitted_at": { "type": "datetime", "required": true },
-        "client_ref": { "type": "string", "maxLength": 64 }
+        "screen_id": {
+          "type": "string",
+          "required": true,
+          "maxLength": 64,
+          "trim": true
+        },
+        "variant": {
+          "type": "string",
+          "required": true,
+          "maxLength": 64,
+          "trim": true
+        },
+        "revision": {
+          "type": "string",
+          "required": true,
+          "maxLength": 16,
+          "trim": true
+        },
+        "liked": {
+          "type": "string",
+          "maxLength": 4000,
+          "trim": true
+        },
+        "change": {
+          "type": "string",
+          "maxLength": 4000,
+          "trim": true
+        },
+        "submitted_at": {
+          "type": "datetime",
+          "required": true
+        },
+        "client_ref": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "edited_at": {
+          "type": "datetime"
+        }
       },
       "access": {
         "read": "public",
         "insert": "public",
-        "update": "owner",
-        "delete": "owner"
+        "update": "public",
+        "delete": "public"
       },
-      "rateLimit": "120/hour/ip"
+      "rateLimit": "120/hour/ip",
+      "publicMutation": "open"
     }
   }
 }

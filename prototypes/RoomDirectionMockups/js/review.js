@@ -130,7 +130,8 @@
       liked: typeof d.liked === 'string' ? d.liked : '',
       change: typeof d.change === 'string' ? d.change : '',
       submitted_at: d.submitted_at || (r && r.created_at) || '',
-      client_ref: d.client_ref || ''
+      client_ref: d.client_ref || '',
+      edited_at: d.edited_at || ''
     };
   }
   function newestFirst(a, b) { return (Date.parse(b.submitted_at) || 0) - (Date.parse(a.submitted_at) || 0); }
@@ -173,8 +174,39 @@
           if (!body || !body.record) throw new DataError({ unavailable: true, message: 'The save was not confirmed.' });
           return normalize(body.record);
         });
+    },
+    /* Edit or delete one saved note. The notes collection allows this from the page ("publicMutation": "open"). */
+    update: function (id, fields) {
+      if (Data.previewOnly) return Promise.reject(new DataError({ unavailable: true, message: 'Opened from a file.' }));
+      return fetch(DATA_URL + '/' + encodeURIComponent(id), {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify(fields)
+      })
+        .catch(function () { throw new DataError({ network: true, message: 'Could not reach the notes service.' }); })
+        .then(jsonOrUnavailable)
+        .then(function (body) { return body && body.record ? normalize(body.record) : null; });
+    },
+    remove: function (id) {
+      if (Data.previewOnly) return Promise.reject(new DataError({ unavailable: true, message: 'Opened from a file.' }));
+      return fetch(DATA_URL + '/' + encodeURIComponent(id), { method: 'DELETE', headers: { accept: 'application/json' } })
+        .catch(function () { throw new DataError({ network: true, message: 'Could not reach the notes service.' }); })
+        .then(function (res) {
+          if (res.ok || res.status === 404) return true; // 404: already gone, which is what she asked for
+          return readError(res).then(function (e) { throw e; });
+        });
     }
   };
+
+  /* Messages for a failed edit or delete. */
+  function changeError(e, what) {
+    if (!(e instanceof DataError)) return 'The note wasn’t ' + what + '. Please try again.';
+    if (e.unavailable || e.status === 403 || e.status === 405) return 'Notes can’t be ' + what + ' here. Please open the shared website link.';
+    if (e.network) return 'The note wasn’t ' + what + '. Check your internet connection and try again.';
+    if (e.status === 429) return 'Too many changes from this connection just now. Try again in a few minutes.';
+    if (e.status === 400 || e.status === 413 || e.status === 422) return 'The change was not accepted: ' + (e.message || 'it may be too long') + '.';
+    return 'The note wasn’t ' + what + ' this time. Please try again.';
+  }
 
   function friendlyError(e) {
     if (!(e instanceof DataError)) return 'Your note didn’t save. Please try again.';
@@ -519,7 +551,14 @@
       mine = mine.filter(function (n) { var k = n.id || n.client_ref; if (k && seen[k]) return false; if (k) seen[k] = 1; return true; });
       $('notes-count').textContent = mine.length ? '(' + mine.length + ')' : '';
       listMsg.textContent = mine.length ? '' : 'Your notes will appear here after you save them.';
-      mine.forEach(function (n) { list.appendChild(noteItem(n, screen, n.variant === variant.key)); });
+      mine.forEach(function (n) {
+        list.appendChild(noteItem(n, screen, n.variant === variant.key, { onChange: function (upd) {
+          if (upd) return; // edited in place; the card already shows the new words
+          notes = notes.filter(function (x) { return x !== n; });
+          drawNotes();
+          listMsg.textContent = notes.some(function (x) { return x.screen_id === screen.id; }) ? 'Note deleted.' : 'Note deleted. Your notes will appear here after you save them.';
+        } }));
+      });
     }
     function refreshNotes() {
       return Data.listAll().then(function (all) {
@@ -536,17 +575,102 @@
     else refreshNotes();
   }
 
-  function noteItem(n, screen, thisVariant) {
-    var v = variantOf(screen, n.variant);
-    var meta = el('p', { class: 'note-meta' }, [
-      el('span', { class: 'tag' + (thisVariant ? ' on' : ''), text: v ? v.label : n.variant }),
-      el('span', { class: 'tag' + (n.revision && n.revision !== R.revOf(screen) ? ' old' : ''), text: revLabel(n.revision, screen) }),
-      el('time', { datetime: n.submitted_at, text: fmtDate(n.submitted_at) })
-    ]);
-    var parts = [meta];
-    if (n.liked) parts.push(el('div', { class: 'note-part' }, [el('h4', { text: 'What I like' }), el('p', { class: 'note-text', text: n.liked })]));
-    if (n.change) parts.push(el('div', { class: 'note-part' }, [el('h4', { text: "What I'd change" }), el('p', { class: 'note-text', text: n.change })]));
-    return el('li', { class: 'note' }, parts);
+  /* One saved note. opts.link: a node shown under the text. opts.onChange(updatedNote | null): called after
+     she edits (with the new note) or deletes it (with null), so the page can redraw its list.
+     Edit swaps the text for two boxes in place; Delete asks first, inside the card. */
+  function noteItem(n, screen, thisVariant, opts) {
+    opts = opts || {};
+    var li = el('li', { class: 'note' });
+
+    function view(focusEl) {
+      clear(li);
+      var v = variantOf(screen, n.variant);
+      li.appendChild(el('p', { class: 'note-meta' }, [
+        el('span', { class: 'tag' + (thisVariant ? ' on' : ''), text: v ? v.label : n.variant }),
+        el('span', { class: 'tag' + (n.revision && n.revision !== R.revOf(screen) ? ' old' : ''), text: revLabel(n.revision, screen) }),
+        el('time', { datetime: n.submitted_at, text: fmtDate(n.submitted_at) }),
+        n.edited_at ? el('span', { class: 'edited', text: 'Edited ' + fmtDate(n.edited_at) }) : null
+      ]));
+      if (n.liked) li.appendChild(el('div', { class: 'note-part' }, [el('h4', { text: 'What I like' }), el('p', { class: 'note-text', text: n.liked })]));
+      if (n.change) li.appendChild(el('div', { class: 'note-part' }, [el('h4', { text: "What I'd change" }), el('p', { class: 'note-text', text: n.change })]));
+      if (opts.link) li.appendChild(opts.link);
+      if (!n.id || Data.previewOnly) return;
+      var editBtn = el('button', { class: 'note-act', type: 'button', text: 'Edit', 'aria-label': 'Edit this note', onclick: edit });
+      var delBtn = el('button', { class: 'note-act del', type: 'button', text: 'Delete', 'aria-label': 'Delete this note', onclick: confirmDelete });
+      li.appendChild(el('div', { class: 'note-actions' }, [editBtn, delBtn]));
+      if (focusEl === 'edit') editBtn.focus();
+      else if (focusEl === 'delete') delBtn.focus();
+    }
+
+    function edit() {
+      clear(li);
+      var uid = 'e' + Math.random().toString(36).slice(2, 8);
+      var l = el('textarea', { id: uid + 'l', maxlength: '4000', rows: '3', autocomplete: 'off' });
+      var c = el('textarea', { id: uid + 'c', maxlength: '4000', rows: '3', autocomplete: 'off' });
+      l.value = n.liked; c.value = n.change;
+      var msg = el('p', { class: 'note-msg', role: 'status', 'aria-live': 'polite' });
+      var saveBtn = el('button', { class: 'btn', type: 'submit', text: 'Save changes' });
+      var form = el('form', { class: 'note-edit', novalidate: true }, [
+        el('h4', { class: 'note-edit-h', text: 'Change your note' }),
+        el('div', { class: 'field' }, [el('label', { for: uid + 'l', text: 'What I like' }), l]),
+        el('div', { class: 'field' }, [el('label', { for: uid + 'c', text: "What I'd change" }), c]),
+        msg,
+        el('div', { class: 'note-actions' }, [saveBtn, el('button', { class: 'btn ghost', type: 'button', text: 'Cancel', onclick: function () { view('edit'); } })])
+      ]);
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var lv = l.value.trim(), cv = c.value.trim();
+        if (!lv && !cv) { msg.textContent = 'Write something in one of the boxes, or use Delete to remove the note.'; l.focus(); return; }
+        if (lv === n.liked && cv === n.change) { view('edit'); return; }
+        saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; msg.textContent = '';
+        var fields = { liked: lv, change: cv, edited_at: new Date().toISOString() };
+        Data.update(n.id, fields).then(function (rec) {
+          var upd = rec || {};
+          n.liked = upd.id ? upd.liked : lv; n.change = upd.id ? upd.change : cv; n.edited_at = upd.edited_at || fields.edited_at;
+          view('edit');
+          li.appendChild(el('p', { class: 'note-msg ok', role: 'status', text: 'Your note is updated.' }));
+          if (opts.onChange) opts.onChange(n);
+        }, function (err) {
+          msg.textContent = changeError(err, 'saved') + ' Your text is still here.';
+          saveBtn.disabled = false; saveBtn.textContent = 'Save changes';
+        });
+      });
+      li.appendChild(form);
+      l.focus();
+    }
+
+    function confirmDelete() {
+      var actions = li.querySelector('.note-actions'), done = li.querySelector('.note-msg.ok');
+      if (actions) actions.remove();
+      if (done) done.remove();
+      var keep = el('button', { class: 'btn ghost', type: 'button', text: 'Keep it' });
+      var del = el('button', { class: 'btn danger', type: 'button', text: 'Delete note' });
+      var msg = el('p', { class: 'note-msg', role: 'status', 'aria-live': 'polite' });
+      var uid = 'd' + Math.random().toString(36).slice(2, 8);
+      var box = el('div', { class: 'note-confirm', role: 'alertdialog', 'aria-labelledby': uid + 'q', 'aria-describedby': uid + 'd' }, [
+        el('p', { class: 'note-confirm-q', id: uid + 'q', text: 'Delete this note?' }),
+        el('p', { id: uid + 'd', text: 'It will be gone for good, and Jose won’t see it anymore. This can’t be undone.' }),
+        msg,
+        el('div', { class: 'note-actions' }, [del, keep])
+      ]);
+      keep.addEventListener('click', function () { view('delete'); });
+      box.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); view('delete'); } });
+      del.addEventListener('click', function () {
+        del.disabled = true; keep.disabled = true; del.textContent = 'Deleting…'; msg.textContent = '';
+        Data.remove(n.id).then(function () {
+          if (opts.onChange) opts.onChange(null);
+          else li.remove();
+        }, function (err) {
+          msg.textContent = changeError(err, 'deleted');
+          del.disabled = false; keep.disabled = false; del.textContent = 'Delete note';
+        });
+      });
+      li.appendChild(box);
+      keep.focus();
+    }
+
+    view();
+    return li;
   }
 
   /* =============================================================================================
@@ -563,7 +687,7 @@
         return {
           screen_id: n.screen_id, screen_title: s ? s.title : n.screen_id,
           variant: n.variant, variant_label: v ? v.label : n.variant,
-          revision: n.revision, liked: n.liked, change: n.change, submitted_at: n.submitted_at
+          revision: n.revision, liked: n.liked, change: n.change, submitted_at: n.submitted_at, edited_at: n.edited_at
         };
       });
     }
@@ -577,7 +701,7 @@
       download('mockup-notes-' + stamp + '.json', 'application/json', JSON.stringify(rows(), null, 2));
     });
     $('export-csv').addEventListener('click', function () {
-      var cols = ['screen_id', 'screen_title', 'variant', 'variant_label', 'revision', 'liked', 'change', 'submitted_at'];
+      var cols = ['screen_id', 'screen_title', 'variant', 'variant_label', 'revision', 'liked', 'change', 'submitted_at', 'edited_at'];
       function cell(x) {
         x = x === undefined || x === null ? '' : String(x);
         if (/^[=+\-@\t\r]/.test(x)) x = "'" + x; // keep spreadsheets from treating notes as formulas
@@ -605,10 +729,17 @@
         var first = s.variants && s.variants[0];
         var ul = el('ul', { class: 'notes', role: 'list' });
         list.forEach(function (n) {
-          var li = noteItem(n, screenById[s.id] || s, false);
           var v = variantOf(screenById[s.id], n.variant);
-          if (v) li.appendChild(el('p', { class: 'note-link' }, [el('a', { href: reviewUrl(s, v), text: 'Look at this screen again' })]));
-          ul.appendChild(li);
+          ul.appendChild(noteItem(n, screenById[s.id] || s, false, {
+            link: v ? el('p', { class: 'note-link' }, [el('a', { href: reviewUrl(s, v), text: 'Look at this screen again' })]) : null,
+            onChange: function (upd) {
+              if (upd) return;
+              all = all.filter(function (x) { return x !== n; });
+              setExport(all.length > 0);
+              draw();
+              msg.textContent = all.length ? 'Note deleted.' : 'Note deleted. You have no saved notes now.';
+            }
+          }));
         });
         host.appendChild(el('section', { class: 'sum-screen', 'aria-labelledby': 'sum-' + s.id }, [
           el('div', { class: 'sum-head' }, [
