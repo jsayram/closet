@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Your looks</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Style Me results: the dressing room. swap.html is this same room with the swap sheet up, so the alcove, the rack,
+     the frame, the floor line and the valet stand sit at exactly the same place on both screens.
+     Alcove (art/results-alcove.svg, 1:1) at left 12, top 76: rod y 84, floor line 474.7, rug centre (120, 510), pile to 529.6.
+     The open look hangs as a set on a gold valet stand (art/looks-valet.svg, 1:1) standing on the rug: left 8, top 220,
+     bar y 234, uprights x 22 and 218 (clear x 26..214), feet to y 506. Garments W 112 hang with their tops at 223.7;
+     the shoes stand on the rug between the feet. No figure (STYLE.md, Revision 2).
+     Rack (art/rack.svg at 1.15) at left 256, top 307: bar y 318.5, clear space x 277..363, castors to y 518. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; border-radius: 12px; }
+  .room { --floor-y: 474px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* nav: back to Style Me, title, profile; the request on one line under it */
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .ask { position: absolute; left: 0; right: 0; top: 47px; text-align: center; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--ink-soft); }
+
+  /* the open look on the valet stand */
+  .stand { position: absolute; left: 0; top: 0; width: 390px; height: 530px; pointer-events: none; }
+  .stand .p { position: absolute; }
+  .stand .shoesh { position: absolute; left: 92px; top: 501px; width: 56px; height: 6px; border-radius: 50%; background: #8A5A48; opacity: .13; }
+
+  /* hanging sets on the rack */
+  .set { position: absolute; display: block; border-radius: 12px; }
+  .set .g { position: absolute; }
+  .set .tag { position: absolute; min-height: 0; width: 50px; height: 30px; padding: 0; justify-content: center; border-radius: 10px; }
+  .set .tag b { font-size: 13px; }
+
+  /* title row and the look's details: fixed rows, so moving between looks never shifts a button */
+  .look-row { position: absolute; left: 20px; right: 18px; top: 544px; height: 28px; display: flex; align-items: center; justify-content: space-between; }
+  .look-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 28px; letter-spacing: -.2px; color: var(--ink); }
+  .pager { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .pager .dots { display: flex; gap: 5px; }
+  .pager .dots span { width: 7px; height: 7px; border-radius: 50%; background: #E3C9D6; }
+  .pager .dots span.on { background: var(--plum); width: 18px; border-radius: 4px; }
+  /* note card: up to two lines (why it works, and for look 3 the allowed-dirty line), centred in a fixed height */
+  .why { position: absolute; left: 16px; right: 16px; top: 578px; height: 52px; padding: 0 12px; border-radius: 16px;
+         display: flex; flex-direction: column; justify-content: center; gap: 0; }
+  .why .ln { white-space: pre-line; display: grid; grid-template-columns: 17px 1fr; column-gap: 9px; align-items: start; font-size: 13px; line-height: 17px; color: var(--ink); }
+  .why .ln i[data-icon] { font-size: 16px; margin-top: .5px; color: var(--plum); }
+  .why .ln.ok { color: var(--ink-soft); }
+  .why .ln.ok i[data-icon] { color: #5C9670; }
+  .why .ln[hidden] { display: none; }
+  /* actions: primary across the width, then the two secondary actions side by side (the home-ax pattern) */
+  .save { position: absolute; left: 16px; width: 214px; top: 638px; min-height: 46px; height: 46px; font-size: 16px; border-radius: 15px; gap: 7px; white-space: nowrap; }
+  .save i[data-icon] { font-size: 19px; }
+  .save .end { display: none; margin-left: 2px; font-size: 16px; }
+  .save.is-saved { background: var(--plum-soft); color: var(--plum); border: 1.5px solid #E7C6DC; box-shadow: none; }
+  .save.is-saved .end { display: grid; }
+  /* Try it on: a quiet secondary next to Save that makes a simulated try-on picture */
+  .tryon { position: absolute; left: 238px; right: 16px; top: 638px; min-height: 46px; height: 46px; padding: 0 10px; border-radius: 15px;
+           gap: 8px; justify-content: center; }
+  .tryon i[data-icon] { font-size: 20px; }
+  .tryon .txt { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; }
+  .tryon .txt b { font-size: 15px; font-weight: 700; line-height: 18px; white-space: nowrap; }
+  .tryon .txt small { font-size: 11px; font-weight: 600; line-height: 13px; color: var(--ink-soft); }
+  .acts { position: absolute; left: 16px; right: 16px; top: 690px; height: 44px; display: flex; gap: 8px; }
+  .acts .btn { flex: 1 1 0; min-width: 0; min-height: 44px; height: 44px; padding: 0 10px; font-size: 15px; border-radius: 14px; gap: 6px; white-space: nowrap; }
+  .acts .btn i[data-icon] { font-size: 18px; }
+  .fine { position: absolute; left: 0; right: 0; top: 740px; text-align: center; font-size: 11px; line-height: 13px; font-weight: 500; color: var(--ink-soft); }
+
+  /* tab bar items are links */
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- ============ art, back to front ============ -->
+  <img class="art" src="../art/results-alcove.svg" alt="" style="left:12px;top:76px;width:216px;height:456px">
+  <!-- small framed print on the right wall, centred over the rack (x 320.4) -->
+  <img class="art" src="../art/results-frame.svg" alt="" style="left:294.4px;top:154px;width:52px;height:74px">
+  <!-- rack at 1.15 (128.8 x 216.2): bar centre y 318.5, uprights x 273.3 and 367.6, front castors to y 518 -->
+  <img class="art" src="../art/rack.svg" alt="" style="left:256px;top:307px;width:128.8px;height:216.2px">
+
+  <!-- ============ the open look, hung as a set on the valet stand ============ -->
+  <img class="art" src="../art/looks-valet.svg" alt="" style="left:8px;top:220px;width:224px;height:290px">
+  <!-- placeStand() below hangs the layer behind the top, the bottom to the right, and stands the shoes on the rug -->
+  <div class="stand" id="stand" role="img" aria-label="Look 1 on a valet stand: navy cardigan, cute pink shirt, navy dress pants, nude pointed flats">
+    <span class="p" id="p-layer" data-garment="g-navy-cardigan" data-hanger></span>
+    <span class="p" id="p-bottom" data-garment="g-navy-trousers" data-hanger></span>
+    <span class="p" id="p-top" data-garment="g-pink-blouse" data-hanger></span>
+    <span class="shoesh"></span>
+    <span class="p" id="p-shoes" data-garment="g-nude-flats"></span>
+  </div>
+
+  <!-- ============ looks 2 and 3 on the rack ============ -->
+  <!-- garments W 46 (h 65.2) hang from the bar at y 318.5: top = 318.5 - 11*46/120 = 314.3 (5.3 into the set box).
+       placeSet() below works the hooks out from each piece's drawn half-width so each set's outer edge sits just inside
+       its upright and the back piece peeks outward. Plates 50 wide, 30 tall, 12 px under the trouser hems.
+       Each set box is its tap target; its plate sits inside it. -->
+  <a class="set" id="slot-a" href="#look-2" data-look="2" aria-label="Look 2: Pink and navy" style="left:263px;top:309px;width:56px;height:112px">
+    <span class="g back" data-garment="g-navy-trousers" data-hanger style="left:3.3px;top:5.3px;width:46px;height:65.2px"></span>
+    <span class="g front" data-garment="g-pink-blouse" data-hanger style="left:9.3px;top:5.3px;width:46px;height:65.2px"></span>
+    <span class="tag pink" style="left:2px;top:82px"><b>Look 2</b></span>
+  </a>
+  <a class="set" id="slot-b" href="#look-3" data-look="3" aria-label="Look 3: Lace and navy" style="left:319px;top:309px;width:54px;height:112px">
+    <span class="g back" data-garment="g-navy-cardigan" data-hanger style="left:4px;top:5.3px;width:46px;height:65.2px"></span>
+    <span class="g front" data-garment="g-lace-top" data-hanger style="left:-2px;top:5.3px;width:46px;height:65.2px"></span>
+    <span class="tag pink" style="left:1px;top:82px"><b>Look 3</b></span>
+  </a>
+
+  <!-- ============ labels ============ -->
+  <div class="nav">Your looks<a class="back" href="home.html"><i data-icon="chevron-left"></i>Home</a><a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
+  <div class="ask">Office · 58°F · Rain · Jose's house</div>
+
+  <div class="look-row">
+    <h1 class="look-title" id="look-name">Calm office</h1>
+    <div class="pager" aria-live="polite"><span class="dots" aria-hidden="true"><span class="on"></span><span></span><span></span></span><span id="look-count">Look 1 of 3</span></div>
+  </div>
+  <div class="card why">
+    <p class="ln"><i data-icon="sparkles"></i><span id="look-note">Polished navy layers.
+Warm enough for 58°F and rain.</span></p>
+    <p class="ln ok" id="look-ok" hidden><i data-icon="check"></i><span>You allowed the lace top for this request.</span></p>
+  </div>
+  <!-- A new look is not saved yet: the plum primary saves it. Once saved, the button opens it in Saved Looks. -->
+  <a class="btn save" id="save" href="#save" aria-label="Save look">
+    <i data-icon="heart"></i><span id="save-txt">Save look</span><span class="end"><i data-icon="chevron-right"></i></span>
+  </a>
+  <a class="btn ghost tryon" id="tryon" href="saved.html#pictures" aria-label="Try it on. Makes a simulated try-on picture of this look">
+    <i data-icon="camera"></i><span class="txt"><b>Try it on</b><small>Simulated</small></span>
+  </a>
+  <div class="acts">
+    <a class="btn ghost" id="swap" href="swap.html?look=1&amp;top=g-pink-blouse"><i data-icon="swap"></i>Swap a piece</a>
+    <a class="btn ghost" href="chat.html"><i data-icon="search"></i>Ask stylist</a>
+  </div>
+  <div class="fine">Try-on pictures are simulated</div>
+
+  <!-- ============ tab bar ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* The three looks, all from Jose's house. The copy is the same set the iPad results use. The open look hangs as a set on
+   the valet stand; the rack holds the other two as hanging sets (front piece, back piece). Tapping a set opens that look here (#look-2,
+   #look-3). Swap a piece opens swap.html?look=N&top=<current top>, and swap.html comes back with results.html?look=N&top=<id>,
+   which opens look N with that top. None of the three is saved yet; Save look saves the open one (simulated). */
+(function () {
+  var LOOKS = {
+    1: { name: 'Calm office', fig: { top: 'g-pink-blouse', layer: 'g-navy-cardigan', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+         set: ['g-navy-cardigan', 'g-pink-blouse'], topAt: 1, note: 'Polished navy layers.\nWarm enough for 58°F and rain.' },
+    2: { name: 'Pink and navy', fig: { top: 'g-pink-blouse', layer: '', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+         set: ['g-pink-blouse', 'g-navy-trousers'], topAt: 0, note: 'Light and easy. Bring the cardigan if it runs cool.' },
+    3: { name: 'Lace and navy', fig: { top: 'g-lace-top', layer: 'g-navy-cardigan', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+         set: ['g-lace-top', 'g-navy-cardigan'], topAt: 0, note: 'Soft lace under navy. Warm enough for 58°F.', allowed: 'g-lace-top' }
+  };
+  var TOPS = ['g-pink-blouse', 'g-lace-top', 'g-cream-sweater', 'g-brick-top', 'g-black-tee'];
+  /* drawn half-width of each piece on its hanger, in garment units (hook at 60) */
+  var HALF = { 'g-pink-blouse': 47.2, 'g-lace-top': 42.6, 'g-cream-sweater': 44.4, 'g-brick-top': 44.4, 'g-black-tee': 46.4,
+               'g-navy-cardigan': 44.4, 'g-navy-trousers': 32 };
+  var GW = 46, PEEK = 6, IN_L = 277, IN_R = 363;   // garment width, back piece offset, clear space between the uprights
+
+  /* ?look=N&top=<id> (from swap.html) opens look N with that top; #look-N (a rack tap) picks the look shown */
+  var qLook = 0;
+  try {
+    var q = new URLSearchParams(location.search), t = q.get('top');
+    qLook = LOOKS[+q.get('look')] ? +q.get('look') : 0;
+    var S = LOOKS[qLook || 1];
+    if (t && TOPS.indexOf(t) >= 0 && t !== S.fig.top) {
+      S.fig.top = t; S.set[S.topAt] = t;
+      delete S.savedAs;                                   // a swapped look is a new look
+      if (S.allowed && S.allowed !== t) delete S.allowed; // the allowed piece came off
+      if (t === 'g-lace-top' || t === 'g-black-tee') S.allowed = t;
+    }
+  } catch (e) { /* no URL API: open look 1 as drawn */ }
+  var m = /look-([123])/.exec(location.hash || '');
+  var start = m ? +m[1] : (qLook || 1);
+
+  var NAMES = { 'g-lace-top': 'lace top', 'g-black-tee': 'black tee' };
+  var stand = document.getElementById('stand'), swap = document.getElementById('swap');
+  var P = { layer: document.getElementById('p-layer'), top: document.getElementById('p-top'),
+            bottom: document.getElementById('p-bottom'), shoes: document.getElementById('p-shoes') };
+  var BY = {}; (window.Garments ? Garments.LIST : []).forEach(function (g) { BY[g.id] = g.name; });
+  /* Valet stand: garments W 112 hang from the bar at y 234 (top 223.7). With a layer, it hangs behind the top, peeking
+     out to the left; the bottom hangs on its clip hanger to the right. Shoes (W 62) stand on the rug, soles at 505. */
+  var SW = 112, STOP = 234 - 11 * SW / 120;
+  function put(el, cx, top, w) {
+    el.style.left = (cx - w / 2).toFixed(1) + 'px'; el.style.top = top.toFixed(1) + 'px'; el.style.width = w + 'px';
+  }
+  function placeStand(f) {
+    var hasLayer = !!f.layer;
+    P.layer.style.display = hasLayer ? '' : 'none';
+    if (hasLayer) P.layer.setAttribute('data-garment', f.layer);
+    P.top.setAttribute('data-garment', f.top);
+    P.bottom.setAttribute('data-garment', f.bottom);
+    P.shoes.setAttribute('data-garment', f.shoes);
+    put(P.layer, 68, STOP, SW);
+    put(P.top, hasLayer ? 108 : 86, STOP, SW);
+    put(P.bottom, hasLayer ? 182 : 168, STOP, SW);
+    put(P.shoes, 120, 505 - 125 * 62 / 120, 62);
+    if (window.Garments) Garments.mountAll(stand);
+  }
+  var slots = [document.getElementById('slot-a'), document.getElementById('slot-b')];
+  var saveBtn = document.getElementById('save'), ok = document.getElementById('look-ok');
+  var current = 1;
+
+  function show(n) {
+    var L = LOOKS[n]; if (!L) return;
+    current = n;
+    placeStand(L.fig);
+    stand.setAttribute('aria-label', 'Look ' + n + ' on a valet stand: ' +
+      ['layer', 'top', 'bottom', 'shoes'].filter(function (k) { return L.fig[k]; })
+        .map(function (k) { return (BY[L.fig[k]] || L.fig[k]).toLowerCase(); }).join(', '));
+    swap.setAttribute('href', 'swap.html?look=' + n + '&top=' + L.fig.top);
+    document.getElementById('look-name').textContent = L.name;
+    document.getElementById('look-count').textContent = 'Look ' + n + ' of 3';
+    document.getElementById('look-note').textContent = L.note;   // a \n breaks after the first sentence (white-space: pre-line)
+    ok.hidden = !L.allowed;
+    if (L.allowed) ok.querySelector('span').textContent = 'You allowed the ' + NAMES[L.allowed] + ' for this request.';
+    var dots = document.querySelectorAll('.pager .dots span');
+    for (var i = 0; i < dots.length; i++) dots[i].className = (i + 1 === n) ? 'on' : '';
+    var others = [1, 2, 3].filter(function (k) { return k !== n; });
+    slots.forEach(function (slot, i) {
+      var k = others[i], O = LOOKS[k];
+      slot.setAttribute('href', '#look-' + k);
+      slot.setAttribute('data-look', k);
+      slot.setAttribute('aria-label', 'Look ' + k + ': ' + O.name);
+      slot.querySelector('.tag b').textContent = 'Look ' + k;
+      slot.querySelector('.front').setAttribute('data-garment', O.set[0]);
+      slot.querySelector('.back').setAttribute('data-garment', O.set[1]);
+      placeSet(slot, O.set, i === 0);
+      if (window.Garments) Garments.mountAll(slot);
+    });
+    paintSave();
+  }
+  /* Hang a set so its outer edge meets the inner edge of its upright and the back piece peeks outward. */
+  function placeSet(slot, set, left) {
+    var k = GW / 120, hf = (HALF[set[0]] || 47) * k, hb = (HALF[set[1]] || 47) * k;
+    var reach = Math.max(PEEK + hb, hf);
+    var front = left ? IN_L + reach : IN_R - reach, back = left ? front - PEEK : front + PEEK;
+    var x0 = parseFloat(slot.style.left);
+    slot.querySelector('.front').style.left = (front - GW / 2 - x0).toFixed(1) + 'px';
+    slot.querySelector('.back').style.left = (back - GW / 2 - x0).toFixed(1) + 'px';
+  }
+  /* Saved: soft plum, names the saved look and opens it. Not saved: the plum primary that saves it. */
+  function paintSave() {
+    var L = LOOKS[current], on = !!L.savedAs;
+    saveBtn.classList.toggle('is-saved', on);
+    saveBtn.setAttribute('href', on ? (L.savedHref || 'saved.html') : '#save');
+    saveBtn.setAttribute('aria-label', on ? 'Saved as ' + L.savedAs + '. Open it in Saved Looks' : 'Save look');
+    saveBtn.querySelector('i[data-icon]').outerHTML = '<i data-icon="' + (on ? 'heart-fill' : 'heart') + '"></i>';
+    document.getElementById('save-txt').textContent = on ? 'Saved' : 'Save look';
+    if (window.Icons) Icons.mountAll(saveBtn);
+  }
+  slots.forEach(function (slot) {
+    slot.addEventListener('click', function (e) {
+      e.preventDefault();
+      var k = +slot.getAttribute('data-look');
+      try { history.replaceState(null, '', location.pathname + location.search + '#look-' + k); } catch (err) { /* file URLs may refuse */ }
+      show(k);
+    });
+  });
+  saveBtn.addEventListener('click', function (e) {
+    var L = LOOKS[current];
+    if (L.savedAs) return;               // already saved: the link opens it
+    e.preventDefault();
+    L.savedAs = L.name;                  // simulated: saved under the look's own name
+    paintSave();
+  });
+
+  show(start);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your looks</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* Your looks on iPad (1194 x 834), soft style, R5. Sidebar as on the other iPad screens (Home selected, since Style Me
+     starts from Home). Beside it: the title row with Current / Earlier and Shuffle, then all three looks as sticker bundles
+     side by side. The selected look rests on a soft tint; the four equal actions (2 x 2) and the fine print sit under it and
+     move when another look is picked. Earlier lists past Style Me results; opening one uses no credits.
+     Same fixtures and MockState keys as results.html (saved.looks, saved.lookData, results.index, results.swap). */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 16px; }
+  [hidden] { display: none !important; }
+  .screen { min-height: 100vh; background: linear-gradient(var(--wall), var(--wall-2)); }
+
+  /* ---------- sidebar (as ipad-saved: soft, no edge lines) ---------- */
+  .side { position: fixed; left: 0; top: 0; bottom: 0; width: 260px; z-index: 3;
+          background: linear-gradient(rgba(255,255,255,.62), rgba(255,255,255,.62)), linear-gradient(var(--wall), var(--wall-2)); }
+  .side-name { position: absolute; left: 24px; top: 58px; font-family: var(--font-display); font-weight: 800; font-size: 26px;
+               letter-spacing: -.5px; line-height: 1.1; color: var(--ink); }
+  .side-rows { position: absolute; left: 12px; right: 12px; top: 112px; display: flex; flex-direction: column; gap: 4px; }
+  .srow { display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 16px; border-radius: 24px; font-size: 16px; font-weight: 600; color: var(--ink); }
+  .srow i[data-icon] { font-size: 22px; color: var(--plum); }
+  .srow.on { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .srow.on i[data-icon] { color: #fff; }
+  .srow .badge { margin-left: auto; min-width: 24px; height: 22px; padding: 0 7px; border-radius: 11px; background: #FCEFC2; font-size: 12px; font-weight: 700;
+                 display: grid; place-items: center; color: #5E4A0E; }
+  .side-sep { height: 1px; background: var(--soft-divider); margin: 8px 14px; }
+  .side-me { position: absolute; left: 12px; right: 12px; bottom: 20px; height: 76px; display: flex; align-items: center; gap: 12px; padding: 0 14px 0 10px;
+             border-radius: 22px; background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .side-me .ic { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; flex: none; background: #FCE6F2; color: var(--plum); font-size: 28px; }
+  .side-me .txt { display: flex; flex-direction: column; gap: 2px; }
+  .side-me b { font-size: 15px; } .side-me small { font-size: 12px; color: var(--ink-soft); }
+  .side-me .end { margin-left: auto; color: var(--plum); font-size: 15px; display: grid; }
+
+  /* ---------- content ---------- */
+  .main { position: relative; margin-left: 260px; min-height: 100vh; padding: 18px 32px 24px; }
+  .crumb { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; margin-left: -6px; color: var(--plum); font-size: 16px; font-weight: 600; }
+  .crumb i[data-icon] { font-size: 22px; }
+  .hdr { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .hdr h1 { font-size: 32px; }
+  .hdr .ask { font-size: 14px; line-height: 18px; font-weight: 600; color: var(--ink-soft); }
+  .hdr .sp { flex: 1; }
+  .seg { display: flex; border-radius: 22px; background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .seg button { position: relative; min-width: 108px; height: 44px; padding: 0 18px; font-size: 15px; font-weight: 700; color: var(--plum); text-align: center; }
+  .seg button span { position: relative; }
+  .seg button::before { content: ""; position: absolute; inset: 4px; border-radius: 18px; }
+  .seg button[aria-selected="true"] { color: #fff; }
+  .seg button[aria-selected="true"]::before { background: var(--plum); box-shadow: 0 8px 12px -9px rgba(79,21,65,.6); }
+  .shuffle { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 18px; border-radius: 22px; font-size: 15px; font-weight: 700; color: var(--plum);
+             background: var(--soft-tint-strong); box-shadow: var(--soft-drop); }
+  .shuffle svg { width: 18px; height: 18px; display: block; }
+  .from { margin-top: 10px; display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,.85); box-shadow: var(--soft-drop);
+          font-size: 13px; line-height: 16px; font-weight: 700; color: var(--plum); }
+  .from svg { width: 15px; height: 15px; }
+
+  /* three looks in a row; the selected one rests on a soft tint with the actions under it */
+  .looks { position: relative; margin-top: 12px; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 22px; }
+  .lights { position: absolute; left: -12px; right: -12px; top: -2px; height: 46px; pointer-events: none; background: url(../art/string-lights.svg) repeat-x 0 0 / 390px 46px; }
+  .look { position: relative; display: flex; flex-direction: column; align-items: center; padding: 34px 8px 12px; border-radius: 30px; text-align: center; }
+  .look .stagebox { position: relative; width: 262px; height: 310px; }
+  .look .mat { position: absolute; left: 50%; top: 50%; width: 300px; height: 300px; margin: -150px 0 0 -150px; pointer-events: none;
+               background: radial-gradient(closest-side, #FDF0E6 0%, #FCEDE3F2 46%, #FBE8E2A8 70%, #FBE5E800 100%); }
+  .look .bundle { left: 0; top: 0; width: 262px; height: 310px; }
+  .look .n { margin-top: 8px; font-size: 13px; line-height: 17px; font-weight: 600; color: var(--ink-soft); }
+  .look h2 { font-family: var(--font-display); font-size: 21px; line-height: 27px; font-weight: 800; letter-spacing: -.2px; color: var(--ink); }
+  .look .note { margin-top: 4px; max-width: 250px; font-size: 13px; line-height: 17px; color: var(--ink); white-space: pre-line; }
+  .look[aria-pressed="true"] { background: rgba(255,255,255,.5); box-shadow: 0 22px 30px -24px rgba(90,42,74,.45); }
+  .look[aria-pressed="true"] .n { color: var(--plum); }
+  .look[aria-pressed="false"] .note { color: var(--ink-soft); }
+
+  .bundle { position: absolute; pointer-events: none; }
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.2px 0 0 #fff) drop-shadow(-2.2px 0 0 #fff) drop-shadow(0 2.2px 0 #fff) drop-shadow(0 -2.2px 0 #fff)
+                 drop-shadow(1.6px 1.6px 0 #fff) drop-shadow(-1.6px -1.6px 0 #fff) drop-shadow(1.6px -1.6px 0 #fff) drop-shadow(-1.6px 1.6px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  .mini .stk { filter: drop-shadow(1.2px 0 0 #fff) drop-shadow(-1.2px 0 0 #fff) drop-shadow(0 1.2px 0 #fff) drop-shadow(0 -1.2px 0 #fff)
+                       drop-shadow(.85px .85px 0 #fff) drop-shadow(-.85px -.85px 0 #fff) drop-shadow(.85px -.85px 0 #fff) drop-shadow(-.85px .85px 0 #fff)
+                       drop-shadow(0 3px 4px rgba(110,58,82,.16)); }
+
+  .under { grid-row: 2; margin-top: 12px; }
+  .hint { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; min-height: 18px; align-items: center; }
+  .hint .h { grid-column: 2; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; line-height: 15px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .opt { display: inline-block; padding: 1px 6px; border-radius: 7px; background: #EEE4FA; color: #5B3F86; font-size: 11px; line-height: 14px; font-weight: 700; }
+  .grid4 { margin-top: 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .grid4 .btn { min-height: 48px; height: 48px; padding: 0 8px; font-size: 15px; border-radius: 16px; gap: 7px; white-space: nowrap; min-width: 0; }
+  .grid4 .btn i[data-icon] { font-size: 19px; }
+  .btn.ghost { background: rgba(255,255,255,.7); }
+  .save.is-saved { background: var(--plum-soft); color: var(--plum); box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+  .fine { margin-top: 8px; text-align: center; font-size: 11px; line-height: 13px; font-weight: 500; color: var(--ink-soft); }
+
+  /* Earlier */
+  .earlier { margin-top: 18px; }
+  .earlier .lead { font-size: 14px; line-height: 18px; color: var(--ink-soft); }
+  .egrid { margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 4px; max-width: 760px; }
+  .erow { position: relative; display: flex; align-items: center; gap: 16px; min-height: 112px; padding: 10px 14px 10px 8px; border-radius: 24px; }
+  .erow:hover { background: rgba(255,255,255,.35); }
+  .erow .pics { flex: none; width: 216px; display: flex; gap: 2px; }
+  .erow .pic { position: relative; width: 70px; height: 84px; }
+  .erow .pic .bundle { left: 0; top: 0; width: 70px; height: 84px; }
+  .erow .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .erow .t b { font-size: 16px; line-height: 20px; font-weight: 700; }
+  .erow .t small { font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .erow .t em { font-style: normal; font-size: 13px; line-height: 17px; font-weight: 600; color: var(--plum); }
+  .erow .end { flex: none; color: var(--soft-chev); font-size: 16px; display: grid; }
+  .earlier .foot { margin-top: 14px; font-size: 13px; color: var(--ink-soft); }
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/ipad-landscape.css">
+</head>
+<body class="ipad-wide ipad-results-wide">
+<div class="screen">
+  <nav class="side" aria-label="My Petite Style">
+    <div class="side-name">My Petite Style</div>
+    <div class="side-rows">
+      <a class="srow on" href="ipad-home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+      <a class="srow" href="ipad-closet.html"><i data-icon="hanger"></i>Closet</a>
+      <a class="srow" href="ipad-saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+      <a class="srow" href="suitcases.html"><i data-icon="suitcase"></i>Suitcases</a>
+      <a class="srow" href="laundry.html" aria-label="Laundry, 2 pieces to wash"><i data-icon="washer"></i>Laundry<span class="badge">2</span></a>
+      <div class="side-sep"></div>
+      <a class="srow" href="settings.html"><i data-icon="person-circle"></i>Profile</a>
+    </div>
+    <a class="side-me" href="settings.html" aria-label="Lily. Profile">
+      <span class="ic"><i data-icon="person-circle"></i></span>
+      <span class="txt"><b>Lily</b><small>Profile</small></span>
+      <span class="end"><i data-icon="chevron-right"></i></span>
+    </a>
+  </nav>
+
+  <main class="main">
+    <a class="crumb" href="ipad-home.html"><i data-icon="chevron-left"></i>Home</a>
+    <div class="hdr">
+      <h1 class="title-display">Your looks</h1>
+      <span class="ask" id="ask">Office · 58°F · Rain · Main closet</span>
+      <span class="sp"></span>
+      <div class="seg" role="tablist" aria-label="Which looks">
+        <button type="button" role="tab" id="tab-current" aria-controls="p-current" aria-selected="true"><span>Current</span></button>
+        <button type="button" role="tab" id="tab-earlier" aria-controls="p-earlier" aria-selected="false" tabindex="-1"><span>Earlier</span></button>
+      </div>
+      <button type="button" class="shuffle" id="shuffle" aria-describedby="shuffle-desc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.2c2.2 0 3.5 1 4.6 2.8l2.4 4.4c1.1 1.8 2.4 2.8 4.6 2.8H21"/><path d="M3 17h3.2c1.6 0 2.7-.6 3.7-1.6"/><path d="M14.1 8.6C15.1 7.6 16.2 7 17.8 7H21"/><path d="M18.4 4.4 21 7l-2.6 2.6"/><path d="M18.4 14.4 21 17l-2.6 2.6"/></svg>
+        <span>Shuffle</span></button>
+      <span id="shuffle-desc" hidden>Shows other looks from your earlier results and saved looks that fit this request. No credits are used.</span>
+    </div>
+
+    <section id="p-current" role="tabpanel" aria-labelledby="tab-current">
+      <p class="from" id="from" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.2c2.2 0 3.5 1 4.6 2.8l2.4 4.4c1.1 1.8 2.4 2.8 4.6 2.8H21"/><path d="M3 17h3.2c1.6 0 2.7-.6 3.7-1.6"/><path d="M14.1 8.6C15.1 7.6 16.2 7 17.8 7H21"/><path d="M18.4 4.4 21 7l-2.6 2.6"/><path d="M18.4 14.4 21 17l-2.6 2.6"/></svg>From your earlier looks · no credits used</p>
+      <div class="looks" id="looks">
+        <div class="lights" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="earlier" id="p-earlier" role="tabpanel" aria-labelledby="tab-earlier" hidden>
+      <p class="lead">Your past Style Me results. Opening one uses no credits.</p>
+      <div class="egrid" id="egrid"></div>
+      <p class="foot">Saved Looks keeps only the looks you save.</p>
+    </section>
+  </main>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+var SOURCES = { main: { name: 'Main closet' }, jose: { name: "Jose's house" }, weekend: { name: 'Weekend suitcase' } };
+var CURRENT = [
+  { name: 'Calm office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+    note: 'Polished navy layers.\nWarm enough for 58°F and rain.' },
+  { name: 'Olive and brick', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+    note: 'Leather over a warm knit for the rain.\nSneakers keep it relaxed.' },
+  { name: 'Cream and navy', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag',
+    note: 'A soft cream knit with navy pants.\nThe burgundy bag adds a little color.' }
+];
+var EARLIER = [
+  { id: 'e1', date: '30 Sep', occasion: 'Office', source: 'main', looks: [
+    { name: 'Navy and cream', layer: 'g-navy-cardigan', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-tan-loafers', note: 'Cream under navy, with loafers.\nCalm and warm.' },
+    { name: 'Pink and olive', layer: 'g-brown-jacket', top: 'g-pink-blouse', bottom: 'g-olive-trousers', shoes: 'g-nude-flats', note: 'Soft pink with olive and brown.\nA little unexpected.' },
+    { name: 'Brick and navy', top: 'g-brick-top', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag', note: 'Warm brick against navy.\nHeels and the bag dress it up.' } ] },
+  { id: 'e2', date: '21 Sep', occasion: 'Weekend', source: 'weekend', looks: [
+    { name: 'Denim and brick', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-wide-jeans', shoes: 'g-white-sneakers' },
+    { name: 'Cream and olive', top: 'g-cream-sweater', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers' },
+    { name: 'Black tee and jeans', layer: 'g-brown-jacket', top: 'g-black-tee', bottom: 'g-wide-jeans', shoes: 'g-white-sneakers' } ] },
+  { id: 'e3', date: '14 Sep', occasion: 'Office', source: 'jose', looks: [
+    { name: 'Pink and navy', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+    { name: 'Lace and navy', layer: 'g-navy-cardigan', top: 'g-lace-top', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' } ] },
+  { id: 'e4', date: '7 Apr', occasion: 'Date night', source: 'main', looks: [
+    { name: 'Pink & black date night', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag' } ] }
+];
+var SHUFFLE = EARLIER[0].looks.map(function (l) { return Object.assign({ origin: 'From 30 Sep' }, l); });
+
+var BY = {}; Garments.LIST.forEach(function (g) { BY[g.id] = g; });
+function nm(id) { return BY[id] ? BY[id].name : id; }
+function spots(L) {
+  var s = { bottom: [140, 252, 214, 'h', -2], shoes: [234, 312, 94, 'w', -8], bag: [244, 206, 76, 'w', 8] };
+  if (L.layer) { s.layer = [98, 88, 156, 'h', -7]; s.top = [196, 96, 146, 'h', 5]; }
+  else { s.top = [142, 92, 150, 'h', -3]; }
+  return s;
+}
+var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+function drawn(svg) {
+  var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+  for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+  b = svg.getBBox();
+  for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+  return b;
+}
+function lay(box, L, k) {
+  box.innerHTML = '';
+  var S = spots(L);
+  ORDER.forEach(function (slot) {
+    if (!L[slot]) return;
+    var stk = document.createElement('span'); stk.className = 'stk'; stk.setAttribute('data-slot', slot);
+    stk.innerHTML = '<span class="rot"><span data-garment="' + L[slot] + '"></span></span>';
+    stk.style.width = (120 * k * .9) + 'px';
+    box.appendChild(stk);
+  });
+  Garments.mountAll(box);
+  var list = box.querySelectorAll('.stk');
+  for (var i = 0; i < list.length; i++) {
+    var stk = list[i], sp = S[stk.getAttribute('data-slot')], svg = stk.querySelector('svg');
+    var b = drawn(svg);
+    var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+    var rot = stk.querySelector('.rot');
+    rot.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    rot.style.transform = 'rotate(' + sp[4] + 'deg)';
+  }
+}
+function pieces(L) { return ['layer', 'top', 'bottom', 'shoes', 'bag'].filter(function (k) { return L[k]; }).map(function (k) { return L[k]; }); }
+function slug(s) { return s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+(function () {
+  var P = new URLSearchParams(location.search);
+  var $ = function (id) { return document.getElementById(id); };
+  var shuffled = P.get('shuffle') === '1';
+  var current = Math.max(1, Math.min(3, +P.get('look') || MockState.get('results.index', 1) || 1));
+  var set;
+  function pick() { set = shuffled ? SHUFFLE : CURRENT; }
+
+  var SAVE = '<a class="btn save" id="save" href="#save"></a>';
+  function render() {
+    var box = $('looks');
+    Array.prototype.slice.call(box.querySelectorAll('.look, .under')).forEach(function (el) { el.remove(); });
+    $('from').hidden = !shuffled;
+    set.forEach(function (L, i) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'look';
+      b.setAttribute('aria-pressed', i + 1 === current ? 'true' : 'false');
+      b.setAttribute('aria-label', 'Look ' + (i + 1) + ': ' + L.name + '. ' + pieces(L).map(nm).join(', '));
+      b.innerHTML = '<span class="stagebox"><span class="mat"></span><span class="bundle"></span></span>' +
+        '<span class="n">Look ' + (i + 1) + ' of 3' + (L.origin ? ' · ' + L.origin : '') + '</span><h2>' + L.name + '</h2><span class="note">' + L.note + '</span>';
+      b.addEventListener('click', function () { current = i + 1; MockState.set('results.index', current); render(); var f = $('looks').querySelectorAll('.look')[i]; if (f) f.focus(); });
+      box.appendChild(b);
+      lay(b.querySelector('.bundle'), L, 310 / 356);
+    });
+    var u = document.createElement('div');
+    u.className = 'under'; u.style.gridColumn = String(current);
+    u.innerHTML = '<div class="hint">' + (P.get('hint') === 'off' ? '<span class="h"><span class="opt">Option B · no hint</span></span>'
+                                                               : '<span class="h"><span class="opt">Option A</span>31 pictures left</span>') + '</div>' +
+      '<div class="grid4">' + SAVE +
+      '<a class="btn ghost" id="tryon" href="picture.html" aria-label="Try it on. Makes a simulated try-on picture of this look"><i data-icon="camera"></i>Try it on</a>' +
+      '<a class="btn ghost" href="' + MockTheme.carry('swap.html?look=' + current) + '"><i data-icon="swap"></i>Swap a piece</a>' +
+      '<a class="btn ghost" href="chat.html"><i data-icon="chat"></i>Ask stylist</a></div>' +
+      '<p class="fine">Try-on pictures are simulated</p>';
+    box.appendChild(u);
+    Icons.mountAll(u);
+    var sv = $('save');
+    sv.addEventListener('click', function (e) {
+      e.preventDefault();
+      var v = storeVal(set[current - 1]), id = keyOf(v);
+      MockState.update('saved.looks', function (list) { list = (list || []).slice(); var k = list.map(keyOf).indexOf(id); if (k >= 0) list.splice(k, 1); else list.push(v); return list; });
+      paintSave();
+    });
+    u.querySelector('#tryon').addEventListener('click', function (e) {
+      e.preventDefault();
+      var v = storeVal(set[current - 1]);
+      var list = MockState.update('pictures', function (l) { l = (l || []).slice(); l.push({ look: v }); return l; });
+      location.href = MockTheme.carry('picture.html?id=p-new-' + keyOf(v) + '-' + (list.length - 1));
+    });
+    paintSave();
+  }
+  /* same storage as results.html: 'calm' / 'olive' for the looks Saved Looks knows, else a full look object */
+  function storeVal(L) {
+    if (!L.origin && L.name === 'Calm office') return 'calm';
+    if (!L.origin && L.name === 'Olive and brick') return 'olive';
+    var o = { id: 'r-' + slug(L.name), title: L.name, occasion: 'Office', note: (L.note || '').replace('\n', ' '), saved: 'Today', from: 'Main closet', isNew: true };
+    ['layer', 'top', 'bottom', 'shoes', 'bag'].forEach(function (k) { if (L[k]) o[k] = L[k]; });
+    return o;
+  }
+  function keyOf(v) { return typeof v === 'string' ? v : (v && v.id); }
+  function paintSave() {
+    var L = set[current - 1], on = (MockState.get('saved.looks', []) || []).map(keyOf).indexOf(keyOf(storeVal(L))) >= 0, sv = $('save');
+    sv.classList.toggle('is-saved', on);
+    sv.setAttribute('aria-pressed', on ? 'true' : 'false');
+    sv.innerHTML = '<i data-icon="' + (on ? 'heart-fill' : 'heart') + '"></i><span>' + (on ? 'Saved' : 'Save look') + '</span>';
+    Icons.mountAll(sv);
+  }
+
+  function earlier() {
+    var g = $('egrid'); if (g.childNodes.length) return;
+    EARLIER.forEach(function (E) {
+      var a = document.createElement('a'), n = E.looks.length;
+      a.className = 'erow'; a.href = MockTheme.carry('results.html?from=' + E.id);
+      a.setAttribute('aria-label', E.date + ', ' + E.occasion + ', ' + SOURCES[E.source].name + ', ' + n + (n === 1 ? ' look' : ' looks') + '. Opens it, no credits used');
+      a.innerHTML = '<span class="pics">' + E.looks.map(function () { return '<span class="pic"><span class="bundle mini"></span></span>'; }).join('') + '</span>' +
+        '<span class="t"><b>' + E.occasion + ' · ' + SOURCES[E.source].name + '</b><small>' + E.date + ' · ' + n + (n === 1 ? ' look' : ' looks') + '</small>' +
+        '<em>' + E.looks.map(function (l) { return l.name; }).join(', ') + '</em></span><span class="end"><i data-icon="chevron-right"></i></span>';
+      g.appendChild(a);
+      var bs = a.querySelectorAll('.bundle');
+      E.looks.forEach(function (L, i) { lay(bs[i], L, 84 / 356); });
+    });
+    Icons.mountAll(g);
+  }
+
+  var tabs = [$('tab-current'), $('tab-earlier')];
+  function selectTab(earl, focus) {
+    tabs[0].setAttribute('aria-selected', !earl); tabs[1].setAttribute('aria-selected', earl);
+    tabs[0].tabIndex = earl ? -1 : 0; tabs[1].tabIndex = earl ? 0 : -1;
+    $('p-current').hidden = earl; $('p-earlier').hidden = !earl;
+    $('shuffle').hidden = earl;
+    if (earl) earlier(); else render();
+    if (focus) tabs[earl ? 1 : 0].focus();
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { selectTab(!!i); });
+    t.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); selectTab(!i, true); } });
+  });
+  $('shuffle').addEventListener('click', function () { shuffled = !shuffled; pick(); current = 1; render(); });
+
+  function start() { pick(); selectTab(P.get('tab') === 'earlier'); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="ipad-results"></script>
+</body>
+</html>

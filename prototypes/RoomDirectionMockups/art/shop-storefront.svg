@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- A small fictional shoe shop front for the store handoff (handoff.html), drawn 1:1 at phone size.
+       Cream facade, wood cornice, a blank sign board (live text sits on x 66..174, y 47..69), a pink and cream
+       scalloped awning, two display windows with a few shoes, a sage door, and planters. Ground line at y 172.
+       Palette: cream, wood, pink, sage, glass, navy, leaf, butter from ART_DIRECTION.md. No text in the art. -->
+
+  <!-- contact shadow on the pavement -->
+  <ellipse cx="120" cy="173" rx="116" ry="4.2" fill="#8A5A48" opacity=".12"/>
+
+  <!-- facade -->
+  <path d="M16 38H224V170H16Z" fill="#FFF7EA"/>
+  <path d="M206 38H224V170H206Z" fill="#F3E6D0"/>
+  <path d="M16 38H224V170H16Z" stroke="#D9C6A5" stroke-width="1.5"/>
+  <!-- plinth -->
+  <path d="M14 158H226V171H14Z" fill="#F3E6D0"/>
+  <path d="M14 158H226V171H14Z" stroke="#D9C6A5" stroke-width="1.4"/>
+  <path d="M20 162.5H96M144 162.5H220" stroke="#FFF7EA" stroke-width="1.2"/>
+
+  <!-- cornice -->
+  <path d="M8 26H232V38H8Z" fill="#E7BC6E"/>
+  <path d="M8 34H232V38H8Z" fill="#D9A650"/>
+  <path d="M12 29.5H228" stroke="#F6DB9E" stroke-width="1.3"/>
+  <path d="M8 26H232V38H8Z" stroke="#B98632" stroke-width="1.5"/>
+  <path d="M4 20H236V26H4Z" fill="#E7BC6E"/>
+  <path d="M4 20H236V26H4Z" stroke="#B98632" stroke-width="1.5"/>
+
+  <!-- sign board: wood frame with a flat cream face for the live store name -->
+  <rect x="60" y="42" width="120" height="32" rx="7" fill="#E7BC6E"/>
+  <rect x="60" y="42" width="120" height="32" rx="7" stroke="#B98632" stroke-width="1.5"/>
+  <rect x="65" y="46.5" width="110" height="23" rx="4.5" fill="#FFFDF8"/>
+  <rect x="65" y="46.5" width="110" height="23" rx="4.5" stroke="#D9C6A5" stroke-width="1.1"/>
+
+  <!-- awning: stripes, then scallops -->
+  <g>
+    <path d="M18 80H222V92H18Z" fill="#FFF7EA"/>
+    <path d="M18 80H35V92H18ZM52 80H69V92H52ZM86 80H103V92H86ZM120 80H137V92H120ZM154 80H171V92H154ZM188 80H205V92H188Z" fill="#F4B4C2"/>
+    <path d="M18 92C18 97.5 35 97.5 35 92ZM52 92C52 97.5 69 97.5 69 92ZM86 92C86 97.5 103 97.5 103 92ZM120 92C120 97.5 137 97.5 137 92ZM154 92C154 97.5 171 97.5 171 92ZM188 92C188 97.5 205 97.5 205 92Z" fill="#F4B4C2"/>
+    <path d="M35 92C35 97.5 52 97.5 52 92ZM69 92C69 97.5 86 97.5 86 92ZM103 92C103 97.5 120 97.5 120 92ZM137 92C137 97.5 154 97.5 154 92ZM171 92C171 97.5 188 97.5 188 92ZM205 92C205 97.5 222 97.5 222 92Z" fill="#FFF7EA"/>
+    <path d="M18 80H222" stroke="#EC9DB0" stroke-width="3"/>
+    <path d="M18 80H222V92C222 97.5 205 97.5 205 92C205 97.5 188 97.5 188 92C188 97.5 171 97.5 171 92C171 97.5 154 97.5 154 92C154 97.5 137 97.5 137 92C137 97.5 120 97.5 120 92C120 97.5 103 97.5 103 92C103 97.5 86 97.5 86 92C86 97.5 69 97.5 69 92C69 97.5 52 97.5 52 92C52 97.5 35 97.5 35 92C35 97.5 18 97.5 18 92Z" stroke="#D97F97" stroke-width="1.4"/>
+  </g>
+
+  <!-- left display window -->
+  <rect x="26" y="104" width="64" height="48" rx="4" fill="#E7BC6E"/>
+  <rect x="26" y="104" width="64" height="48" rx="4" stroke="#B98632" stroke-width="1.5"/>
+  <rect x="30.5" y="108.5" width="55" height="39" rx="2" fill="#EFE8FA"/>
+  <path d="M30.5 130H85.5V147.5H30.5Z" fill="#DCD0F2"/>
+  <path d="M35 112L44 112M35 116L40 116" stroke="#FFFFFF" stroke-width="1.6"/>
+  <!-- shelf, with a navy flat and a pink one -->
+  <path d="M31 135.5H85" stroke="#D9A650" stroke-width="2.4"/>
+  <path d="M36 134C36 130.4 41 129.4 46 130.2L54 131.4C57 132 57 134.6 54.4 134.6H37.4C36.6 134.6 36 134.4 36 134Z" fill="#2C3A6B" stroke="#131A35" stroke-width="1.1"/>
+  <path d="M42 131.6C44.5 131.2 47.5 131.4 50 132.2" stroke="#5B6CA3" stroke-width="1"/>
+  <path d="M60 134C60 130.4 65 129.4 70 130.2L78 131.4C81 132 81 134.6 78.4 134.6H61.4C60.6 134.6 60 134.4 60 134Z" fill="#F4B4C2" stroke="#D97F97" stroke-width="1.1"/>
+  <path d="M30.5 108.5H85.5V147.5H30.5Z" stroke="#B98632" stroke-width="1"/>
+  <!-- planter under it -->
+  <path d="M28 152H88L85 158H31Z" fill="#F4B4C2" stroke="#D97F97" stroke-width="1.3"/>
+  <path d="M34 152C33 147 36 145 38 146C39 143 43 143 44 146C46 143 50 144 50 147C52 144 56 145 56 148C58 145 62 146 62 149C64 146 68 147 68 150C70 147 74 148 74 151C76 148 80 149 82 152Z" fill="#77AE84" stroke="#44795A" stroke-width="1.1"/>
+
+  <!-- right display window -->
+  <rect x="150" y="104" width="64" height="48" rx="4" fill="#E7BC6E"/>
+  <rect x="150" y="104" width="64" height="48" rx="4" stroke="#B98632" stroke-width="1.5"/>
+  <rect x="154.5" y="108.5" width="55" height="39" rx="2" fill="#EFE8FA"/>
+  <path d="M154.5 130H209.5V147.5H154.5Z" fill="#DCD0F2"/>
+  <path d="M159 112L168 112M159 116L164 116" stroke="#FFFFFF" stroke-width="1.6"/>
+  <path d="M155 135.5H209" stroke="#D9A650" stroke-width="2.4"/>
+  <!-- a cream flat and a butter box -->
+  <path d="M160 134C160 130.4 165 129.4 170 130.2L178 131.4C181 132 181 134.6 178.4 134.6H161.4C160.6 134.6 160 134.4 160 134Z" fill="#FFF7EA" stroke="#C6AA80" stroke-width="1.1"/>
+  <rect x="186" y="124" width="18" height="10.6" rx="1.5" fill="#FBE9A6" stroke="#DDBB4E" stroke-width="1.1"/>
+  <path d="M186 127.6H204" stroke="#DDBB4E" stroke-width="1"/>
+  <path d="M154.5 108.5H209.5V147.5H154.5Z" stroke="#B98632" stroke-width="1"/>
+  <path d="M152 152H212L209 158H155Z" fill="#F4B4C2" stroke="#D97F97" stroke-width="1.3"/>
+  <path d="M158 152C157 147 160 145 162 146C163 143 167 143 168 146C170 143 174 144 174 147C176 144 180 145 180 148C182 145 186 146 186 149C188 146 192 147 192 150C194 147 198 148 198 151C200 148 204 149 206 152Z" fill="#77AE84" stroke="#44795A" stroke-width="1.1"/>
+
+  <!-- door -->
+  <path d="M100 102H140V170H100Z" fill="#B7D5B1"/>
+  <path d="M132 102H140V170H132Z" fill="#9FC49C"/>
+  <rect x="106" y="108" width="28" height="30" rx="3" fill="#EFE8FA"/>
+  <path d="M106 128H134V138H106Z" fill="#DCD0F2"/>
+  <path d="M110 112L118 112" stroke="#FFFFFF" stroke-width="1.6"/>
+  <rect x="106" y="108" width="28" height="30" rx="3" stroke="#7BA67D" stroke-width="1.3"/>
+  <rect x="106" y="144" width="28" height="20" rx="2.5" stroke="#7BA67D" stroke-width="1.2"/>
+  <circle cx="130" cy="140" r="2.2" fill="#FBE9A6" stroke="#DDBB4E" stroke-width="1"/>
+  <path d="M100 102H140V170H100Z" stroke="#7BA67D" stroke-width="1.5"/>
+  <!-- step -->
+  <path d="M94 170H146V174H94Z" fill="#F3E6D0" stroke="#D9C6A5" stroke-width="1.3"/>
+</svg>

@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Before you buy</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* ---- shared by the stylist and shopping pages (chat, export, findone, purchase, handoff, products) ----
+     Soft style: no outlines on cards, rows or chips; space, soft tints and shadows that fall only below.
+     Pages are in normal flow inside a centred column (max 440 px), so they fill 390 and 507 wide frames
+     and scroll vertically when they are long. The tab bar is fixed at the bottom. */
+  html, body { background: var(--wall); }
+  body { min-height: 100vh; background: linear-gradient(var(--wall), var(--wall-2) 760px) var(--wall-2); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  input, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 12px; }
+  [hidden] { display: none !important; }
+  .art { display: block; pointer-events: none; }
+
+  .col { position: relative; max-width: 440px; margin: 0 auto; padding: 0 16px 140px; }
+  .col.no-tabs { padding-bottom: 40px; }
+
+  /* title row: back chevron to the parent, centred title, profile on the right */
+  .top { position: relative; height: 48px; display: flex; align-items: center; justify-content: center; }
+  .top .t { font-size: 17px; font-weight: 700; line-height: 22px; text-align: center; max-width: 220px; }
+  .top .back { position: absolute; left: -12px; top: 2px; height: 44px; min-width: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; white-space: nowrap; }
+  .top .back i[data-icon] { font-size: 24px; }
+  .top .me { position: absolute; right: -8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 26px; }
+  .top .x { position: absolute; left: -8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 22px; }
+
+  .display { font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1.08; letter-spacing: -.5px; color: var(--ink); text-wrap: balance; }
+  .lede { margin-top: 6px; font-size: 14px; line-height: 19px; color: var(--ink-soft); text-wrap: pretty; }
+  .h2 { margin: 26px 4px 10px; font-size: 17px; line-height: 22px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .h2 .sim { margin-left: auto; }
+  .h2 small { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+  .note { font-size: 13px; line-height: 18px; color: var(--ink-soft); text-wrap: pretty; }
+  .note.c { text-align: center; }
+  .fine { font-size: 11px; line-height: 14px; font-weight: 500; color: var(--ink-soft); text-align: center; }
+
+  /* a soft tinted area with a shadow below; no edge */
+  .soft { position: relative; background: rgba(255,255,255,.62); border-radius: 24px; box-shadow: var(--soft-drop-lg); padding: 14px 16px; }
+  .soft + .soft { margin-top: 14px; }
+  .tint-lilac { background: #EEE4FAE6; }
+  .tint-green { background: #E4F3DFE6; }
+  .tint-butter { background: #FCF0C6; }
+  .tint-pink { background: #FCE6F2E6; }
+
+  /* "Simulated" and "sample" labels */
+  .sim { white-space: nowrap; color: var(--ink-soft); }
+  .sim i[data-icon] { font-size: 12px; }
+
+  /* review options: a lilac strip that names the option and says it is a proposal */
+  .proposal { margin-top: 4px; display: grid; grid-template-columns: 22px 1fr; column-gap: 10px; padding: 11px 14px; border-radius: 20px;
+              background: #EEE4FAE6; box-shadow: var(--soft-drop); font-size: 13px; line-height: 17px; color: var(--ink); }
+  .proposal > i[data-icon] { font-size: 20px; color: var(--plum); margin-top: 1px; }
+  .proposal b { display: block; font-size: 14px; line-height: 18px; color: var(--plum); }
+  .proposal + .proposal { margin-top: 8px; }
+
+  /* buttons: room.css .btn + soft.css; a row of equal buttons */
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .btns.three { grid-template-columns: 1fr 1fr 1fr; }
+  .btns.one { grid-template-columns: 1fr; }
+  .btns .btn { min-width: 0; padding: 0 12px; font-size: 15px; white-space: nowrap; }
+  .btn.ghost { background: rgba(255,255,255,.72); }
+  .btn.quiet { background: var(--plum-soft); color: var(--plum); box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+  .btn[aria-disabled="true"] { background: #E9D9E2; color: #8F7686; box-shadow: none; cursor: default; }
+  .btn .sm { font-size: 11px; font-weight: 600; opacity: .85; }
+
+  /* small pill action, used for "Find one" */
+  .pillbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--plum); color: #fff;
+             font-size: 14px; font-weight: 700; box-shadow: 0 10px 16px -12px rgba(79,21,65,.7); white-space: nowrap; }
+  .pillbtn i[data-icon] { font-size: 17px; }
+  .pillbtn.light { background: rgba(255,255,255,.85); color: var(--plum); box-shadow: var(--soft-drop); }
+
+  /* rows without boxes: a fading divider between them */
+  .rowsx > * + * { background-image: var(--soft-divider); background-repeat: no-repeat; background-size: calc(100% - 24px) 1px; background-position: 12px 0; }
+  .rowx { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 4px; width: 100%; }
+  .rowx .ic { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; color: var(--plum); background: #F0E2EA; }
+  .rowx .ic i[data-icon] { font-size: 18px; }
+  .rowx .tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+  .rowx .tx b { font-size: 15px; font-weight: 600; line-height: 19px; }
+  .rowx .tx small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .rowx .chev { margin-left: auto; color: var(--soft-chev); font-size: 15px; display: grid; }
+
+  /* switch as a real button */
+  .sw { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 4px; text-align: left; }
+  .sw .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .sw .tx b { font-size: 15px; font-weight: 600; line-height: 19px; }
+  .sw .tx small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .sw .toggle { flex: none; }
+  .sw[aria-checked="true"] .toggle { background: var(--plum); }
+  .sw[aria-checked="true"] .toggle::after { left: 22px; }
+
+  /* sticker pieces: a cutout with a thick white edge (stacked drop-shadows) and a soft shadow below */
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .small-stk .stk, .stk.small { filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff)
+                 drop-shadow(1.05px 1.05px 0 #fff) drop-shadow(-1.05px -1.05px 0 #fff) drop-shadow(1.05px -1.05px 0 #fff) drop-shadow(-1.05px 1.05px 0 #fff)
+                 drop-shadow(0 4px 5px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk svg { width: 100%; height: auto; }
+  .bundle { position: relative; display: block; }
+
+  /* a representative product picture: a sticker on a pale warm patch, labelled as not the real product */
+  .rep { position: relative; display: block; flex: none; width: 96px; height: 84px; border-radius: 22px; background: radial-gradient(closest-side, #FFF6EE, #FFF6EE00); }
+  .rep .stk { left: 0; top: 0; }
+
+  /* toast for simulated actions */
+  .toast { position: fixed; left: 50%; bottom: 104px; transform: translateX(-50%); z-index: 50; max-width: calc(100% - 40px);
+           display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 20px; background: #3A2534; color: #fff;
+           font-size: 14px; line-height: 18px; font-weight: 600; box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast i[data-icon] { font-size: 18px; color: #F4C9E2; }
+  .no-tabs ~ .toast, body.no-tabbar .toast { bottom: 28px; }
+
+  /* tab bar, fixed at the bottom of the frame */
+  .tabfade { position: fixed; z-index: 30; --tabfade: #F7D6DC; }
+  .tabbar { position: fixed; z-index: 31; left: 50%; right: auto; transform: translateX(-50%); width: min(362px, calc(100% - 28px)); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* Purchase review: one fictional product, its sample price, what the fit evidence says and what is still unknown,
+     the return policy as listed, then Open store (the simulated handoff). Nothing is bought in the app.
+     purchase.html?id=juniper|atelier|maple|lark|wren (default juniper). */
+  .hero { margin-top: 6px; display: flex; flex-direction: column; align-items: center; }
+  .hero .rep { width: 220px; height: 150px; background: radial-gradient(closest-side, #FFF4EC, #FFF4EC00); }
+  .hero .repcap { font-size: 11px; line-height: 14px; color: var(--ink-soft); font-weight: 600; }
+  .hero h1 { margin-top: 10px; text-align: center; }
+  .hero .store { margin-top: 4px; font-size: 14px; line-height: 18px; color: var(--ink-soft); text-align: center; }
+  .hero .price { margin-top: 8px; display: flex; align-items: baseline; gap: 8px; }
+  .hero .price b { font-size: 24px; font-weight: 800; }
+  .hero .price .sim { font-size: 11px; }
+
+  .fitbadge { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+  .fitbadge i[data-icon] { font-size: 15px; }
+  .fitbadge.supported { background: #DDF0D8; color: #2F5A36; }
+  .fitbadge.unknown { background: #FCF0C4; color: #6A520F; }
+  .fitbadge.conflict { background: #F6E0E4; color: #8A3348; }
+  .ev { display: grid; grid-template-columns: 26px 1fr; gap: 10px; padding: 10px 2px; font-size: 14px; line-height: 19px; }
+  .ev .n { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; color: var(--plum); background: #F0E2EA; }
+  .ev .n i[data-icon] { font-size: 14px; }
+  .ev small { display: block; font-size: 12px; line-height: 16px; color: var(--ink-soft); margin-top: 2px; }
+  .ev.unk .n { background: #FCF0C4; color: #6A520F; }
+
+  .facts .kv { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 10px 2px; font-size: 14px; line-height: 19px; }
+  .facts .kv i[data-icon] { font-size: 18px; color: var(--plum); margin-top: 1px; }
+  .facts .kv small { display: block; font-size: 12px; color: var(--ink-soft); }
+
+  .nobuy { margin-top: 18px; display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 12px 14px; border-radius: 20px; background: #E4F3DFE6;
+           box-shadow: var(--soft-drop); font-size: 13px; line-height: 18px; color: #2F4A33; }
+  .nobuy i[data-icon] { font-size: 19px; color: #3F7A4B; margin-top: 1px; }
+  .nobuy b { display: block; font-size: 14px; color: #2B4A30; }
+  .btn.saved { background: #E4F3DF; color: #2F5A36; box-shadow: none; }
+</style>
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="col">
+  <div class="top">
+    <a class="back" href="findone.html?step=results"><i data-icon="chevron-left"></i>Find one</a>
+    <span class="t">Before you buy</span>
+    <a class="me" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+  </div>
+
+  <div class="hero">
+    <span class="rep" id="rep"></span>
+    <span class="repcap">Illustration, not a product photo</span>
+    <h1 class="display" id="title">Soft pointed flat</h1>
+    <p class="store" id="store">Juniper Shoe Co. · junipershoe.example</p>
+    <p class="price"><b id="price">$48</b><span class="sim">Sample price</span></p>
+  </div>
+
+  <h2 class="h2">Fit <span class="fitbadge supported" id="fitbadge"><i data-icon="check"></i><span>Sizing guidance found</span></span></h2>
+  <div class="soft rowsx" id="evidence"></div>
+
+  <h2 class="h2">Good to know</h2>
+  <div class="soft rowsx facts">
+    <div class="kv"><i data-icon="undo"></i><span><span id="returns"></span><small>Return policy as listed. Check it on the store before you buy.</small></span></div>
+    <div class="kv"><i data-icon="tag"></i><span><span id="stock"></span><small>The store shows the final price, size and stock.</small></span></div>
+    <div class="kv"><i data-icon="suitcase"></i><span id="ship"></span></div>
+  </div>
+
+  <div class="btns">
+    <button class="btn ghost" type="button" id="save"><i data-icon="bookmark"></i>Save</button>
+    <a class="btn" id="open" href="handoff.html?id=juniper">Open store<i data-icon="chevron-right"></i></a>
+  </div>
+  <div class="nobuy"><i data-icon="lock"></i><span><b>Nothing is bought in the app.</b>Open store leaves for the store's own page (simulated here, a fictional store). Checkout and payment happen there.</span></div>
+</div>
+
+<div class="tabfade"></div>
+<nav class="tabbar" aria-label="Tabs">
+  <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+  <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+  <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+</nav>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* Shared helpers for the stylist and shopping pages (copied into each page so every page stands alone).
+   Shop.q(name)            URL parameter
+   Shop.ready(fn)          run after icons.js and garments.js have mounted
+   Shop.piece(id, tone)    garment drawing as an svg string; tone recolours shoes for fictional products
+   Shop.fit(box, svg, w, h, rot, cls)  one sticker fitted by its drawn bounds into a w x h box
+   Shop.lay(box, look, k)  a look as a sticker bundle in a 300 x 356 box scaled by k (as on results.html)
+   Shop.toast(text)        a short message for simulated actions
+   Shop.PRODUCTS           the fictional leads Find One shows (stores use the reserved .example domain) */
+window.Shop = (function () {
+  var params = new URLSearchParams(location.search);
+  function q(k) { return params.get(k); }
+  function ready(fn) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+
+  /* Navy tones for the fictional products. The drawings are the closet's flats and loafers recoloured: a
+     representative picture, never a product photo. */
+  var TONES = {
+    navy:     { f: '#2C3A6B', s: '#222E57', h: '#3F4F88', l: '#131A35', d: '#5B6CA3' },
+    midnight: { f: '#222A4E', s: '#1A2140', h: '#323D6B', l: '#0E1328', d: '#4D5B8E' },
+    ink:      { f: '#2F3757', s: '#252C48', h: '#434C70', l: '#151A2E', d: '#5E6890' },
+    pink:     { f: '#F4B4C2', s: '#EC9DB0', h: '#FBD0D9', l: '#D97F97', d: '#D97F97' }
+  };
+  var FROM = {
+    'g-nude-flats':  { f: '#F1DCC6', s: '#E2C8AC', h: '#F9ECDD', l: '#B48F68', d: '#C4A07A' },
+    'g-tan-loafers': { f: '#B98552', s: '#A2713F', h: '#CB9B6B', l: '#7A532A', d: '#8E6234', i: '#8A5B30' }
+  };
+  function piece(id, tone) {
+    var s = Garments.svg(id, {});
+    var from = FROM[id], to = TONES[tone];
+    if (from && to) {
+      Object.keys(from).forEach(function (k) {
+        var target = to[k] || (k === 'i' ? to.s : null);
+        if (target) s = s.replace(new RegExp(from[k], 'gi'), target);
+      });
+    }
+    return s;
+  }
+
+  /* drawn bounds, leaving out full-box texture fills (the lace pattern), which the garment shape clips */
+  function drawn(svg) {
+    var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+    for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+    b = svg.getBBox();
+    for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+    return b;
+  }
+  /* One sticker, centred in a w x h box and as large as fits */
+  function fit(box, svgStr, w, h, rot, cls) {
+    var stk = document.createElement('span'); stk.className = 'stk' + (cls ? ' ' + cls : '');
+    stk.innerHTML = '<span class="rot">' + svgStr + '</span>';
+    stk.style.width = '120px'; stk.style.height = '170px';
+    box.appendChild(stk);
+    var svg = stk.querySelector('svg'), b = drawn(svg);
+    var s = Math.min(w / b.width, h / b.height);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (w / 2 - ox).toFixed(2) + 'px'; stk.style.top = (h / 2 - oy).toFixed(2) + 'px';
+    var r = stk.querySelector('.rot');
+    r.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    r.style.transform = 'rotate(' + (rot || 0) + 'deg)';
+    return stk;
+  }
+
+  /* A look as a bundle, laid out as on results.html: [centre x, centre y, size, 'h' or 'w', rotation] in a 300 x 356 box */
+  var SPOTS = {
+    layer:  [98, 88, 156, 'h', -7],
+    top:    [196, 96, 146, 'h', 5],
+    bottom: [140, 252, 214, 'h', -2],
+    shoes:  [234, 312, 94, 'w', -8],
+    bag:    [252, 210, 92, 'h', 8]
+  };
+  var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+  function lay(box, look, k, spots) {
+    spots = spots || SPOTS;
+    box.innerHTML = '';
+    ORDER.forEach(function (slot) {
+      var id = look[slot]; if (!id || id === 'gap') return;
+      var sp = spots[slot];
+      var stk = document.createElement('span'); stk.className = 'stk';
+      stk.innerHTML = '<span class="rot">' + piece(id) + '</span>';
+      stk.style.width = '120px'; stk.style.height = '170px';
+      box.appendChild(stk);
+      var b = drawn(stk.querySelector('svg'));
+      var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+      var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+      stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+      stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+      var r = stk.querySelector('.rot');
+      r.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+      r.style.transform = 'rotate(' + sp[4] + 'deg)';
+    });
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    var t = document.getElementById('toast');
+    if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    t.innerHTML = '<i data-icon="check"></i><span></span>';
+    t.querySelector('span').textContent = text;
+    if (window.Icons) Icons.mountAll(t);
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
+  }
+
+  /* Fictional leads for one missing piece: navy flats. fit: supported | unknown | conflict */
+  var PRODUCTS = {
+    juniper: { store: 'Juniper Shoe Co.', domain: 'junipershoe.example', title: 'Soft pointed flat', color: 'Navy', draw: 'g-nude-flats', tone: 'navy',
+               price: 48, fit: 'supported', size: '6',
+               fitLine: 'The store lists a size chart and says this style runs true to size. Your usual size 6 is listed.',
+               unknown: 'Width is not listed, so how it fits across the foot is not known.',
+               evidence: ['Size chart on the product page', 'Product page: title, price and colour'],
+               returns: 'Free returns within 30 days if unworn, as listed on the product page.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' },
+    atelier: { store: 'Petite Atelier', domain: 'petiteatelier.example', title: 'Almond-toe ballet flat', color: 'Midnight navy', draw: 'g-nude-flats', tone: 'midnight',
+               price: 56, fit: 'supported', size: '6',
+               fitLine: 'Insole lengths are listed, and size 6 matches your usual size.',
+               unknown: 'Comes in one width only.',
+               evidence: ['Garment measurements on the product page', 'Product page: title, price and colour'],
+               returns: 'Returns within 21 days for store credit, as listed.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' },
+    maple:   { store: 'Maple Row', domain: 'maplerow.example', title: 'Bow ballet flat', color: 'Navy', draw: 'g-nude-flats', tone: 'navy',
+               price: 34, fit: 'unknown', size: null,
+               fitLine: 'No size chart on the product page. Check the fit on the store before you buy.',
+               unknown: 'Sizing, width and returns are not known.',
+               evidence: ['Product page: title, price and colour'],
+               returns: 'No return policy found on the product page.',
+               stock: 'Stock not checked', ship: 'Shipping not checked' },
+    lark:    { store: 'Lark & Line', domain: 'larkandline.example', title: 'Square-toe suede flat', color: 'Ink navy', draw: 'g-nude-flats', tone: 'ink',
+               price: 58, fit: 'unknown', size: null,
+               fitLine: 'Found only in a search snippet. The store page was not checked.',
+               unknown: 'Price, sizes and colour may differ on the store page.',
+               evidence: ['Search snippet (not checked)'],
+               returns: 'Not checked.',
+               stock: 'Stock not checked', ship: 'Shipping not checked' },
+    wren:    { store: 'Wren Market', domain: 'wrenmarket.example', title: 'Wide-fit loafer flat', color: 'Navy', draw: 'g-tan-loafers', tone: 'navy',
+               price: 29, fit: 'conflict', size: null,
+               fitLine: 'Listed as wide fit. Your fit notes say wide shoes slip at your heel.',
+               unknown: '',
+               evidence: ['Product page: fit and width'],
+               returns: 'Returns within 30 days, as listed.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' }
+  };
+  var FIT = {
+    supported: { title: 'Sizing guidance found', icon: 'check', blurb: 'The store lists a size chart or measurements we could compare. Still not a guarantee.' },
+    unknown:   { title: 'Fit not known yet', icon: 'info', blurb: 'Not enough on the page to compare. Worth a look, but check the size yourself.' },
+    conflict:  { title: 'Likely a poor fit', icon: 'close', blurb: 'Something listed goes against your fit notes, so it is set aside.' }
+  };
+  function money(n) { return '$' + n; }
+
+  return { q: q, ready: ready, piece: piece, fit: fit, lay: lay, drawn: drawn, toast: toast, PRODUCTS: PRODUCTS, FIT: FIT, money: money };
+})();
+</script>
+<script>
+(function () {
+  var id = Shop.q('id'); if (!Shop.PRODUCTS[id]) id = 'juniper';
+  var P = Shop.PRODUCTS[id], F = Shop.FIT[P.fit];
+  if (Shop.q('back') === 'products') { var b = document.querySelector('.top .back'); b.href = 'products.html?option=tab'; b.lastChild.textContent = 'Saved'; }
+  document.getElementById('title').textContent = P.title + ', ' + P.color.toLowerCase();
+  document.getElementById('store').textContent = P.store + ' · ' + P.domain;
+  document.getElementById('price').textContent = Shop.money(P.price);
+  var badge = document.getElementById('fitbadge');
+  badge.className = 'fitbadge ' + P.fit;
+  badge.innerHTML = '<i data-icon="' + F.icon + '"></i><span></span>'; badge.querySelector('span').textContent = F.title;
+  var ev = document.getElementById('evidence'), html = '';
+  P.evidence.forEach(function (e, i) {
+    html += '<div class="ev"><span class="n">' + (i + 1) + '</span><span>' + (i === 0 ? esc(P.fitLine) : 'Title, price and colour as listed.') +
+            '<small>Source: ' + esc(e) + ' · checked today · simulated</small></span></div>';
+  });
+  html += '<div class="ev unk"><span class="n"><i data-icon="info"></i></span><span>' +
+          esc(P.unknown || 'Nothing else is known about the fit.') + '<small>Still not known. A size guide is not a guarantee.</small></span></div>';
+  ev.innerHTML = html;
+  document.getElementById('returns').textContent = P.returns;
+  document.getElementById('stock').textContent = P.stock;
+  document.getElementById('ship').textContent = P.ship;
+  document.getElementById('open').setAttribute('href', 'handoff.html?id=' + id);
+  document.getElementById('open').setAttribute('aria-label', 'Open ' + P.store + ', simulated');
+
+  var save = document.getElementById('save');
+  function paint() {
+    var on = MockState.get('shop.saved', []).indexOf(id) >= 0;
+    save.classList.toggle('saved', on);
+    save.innerHTML = '<i data-icon="' + (on ? 'bookmark-fill' : 'bookmark') + '"></i>' + (on ? 'Saved, not owned' : 'Save');
+    save.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (window.Icons && document.readyState !== 'loading') Icons.mountAll(save);
+  }
+  save.addEventListener('click', function () {
+    MockState.update('shop.saved', function (l) { l = (l || []).slice(); var i = l.indexOf(id); if (i >= 0) l.splice(i, 1); else l.push(id); return l; });
+    paint();
+  });
+  paint();
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+  Shop.ready(function () {
+    var rep = document.getElementById('rep');
+    Shop.fit(rep, Shop.piece(P.draw, P.tone), 170, 120, -8);
+    var st = rep.querySelector('.stk'); st.style.left = (parseFloat(st.style.left) + 25) + 'px'; st.style.top = (parseFloat(st.style.top) + 15) + 'px';
+    Icons.mountAll(document);
+  });
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+</body>
+</html>

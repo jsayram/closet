@@ -1,0 +1,103 @@
+/* Dark appearance for the room mockups. theme.js loads this file and adds html.theme-dark when the URL has ?theme=dark.
+   It is appended to <head> before room.css, soft.css and the page's own <style>, so every rule here is scoped under
+   html.theme-dark to win on specificity rather than on order.
+
+   The idea: the same room at night. The wall and floor go to a dim warm plum-brown, the drawn furniture is dimmed a
+   little (not inverted, so garment and furniture colours keep their identity), plates turn dark with light text, and
+   plum stays the accent: a light orchid for text and icons, a deeper plum for solid fills with white text.
+
+   Tokens for page authors (use these in your own html.theme-dark rules):
+     --plum         light orchid, for plum text and icons on dark surfaces (8:1 on the wall)
+     --plum-fill    solid plum for selected pills, primary buttons, the active tab (white text 8:1)
+     --on-plum      text on --plum-fill
+     --surface      a raised dark surface (sheets, popovers, panels)        --surface-2  a slightly lighter one
+     --plate        plate background (with --plate-line for any hairline)  --ink / --ink-soft  text
+     --tint-green / --tint-pink / --tint-butter / --tint-lilac   dark tints for the coloured plates, with
+     --tint-green-ink etc. for their text
+   Checked contrast (WCAG): ink on wall 11.5, ink-soft on wall 7.2, ink-soft on plate 6.0, plum on plate 6.7,
+   white on plum-fill 8.0, green ink on green tint 6.8, ink on butter tint 8.3. */
+
+html.theme-dark{
+  color-scheme: dark;
+  --wall:#3A2A33; --wall-2:#32242C; --floor:#45323A; --floor-2:#3D2C33; --floor-line:#2A1D24;
+  --ink:#F6EAF0; --ink-soft:#CDB8C5;
+  --plum:#F2B6DF; --plum-2:#E29BCB; --plum-soft:#4E3046;
+  --plum-fill:#7E3570; --plum-fill-2:#64295A; --on-plum:#FFFFFF;
+  --surface:#3F2E39; --surface-2:#4A3542;
+  --plate:#4A3542; --plate-line:#5E4656;
+  --tint-green:#2F4A35; --tint-green-ink:#CDE8C6;
+  --tint-pink:#5A3A4E; --tint-pink-ink:#F6EAF0;
+  --tint-butter:#4D4428; --tint-butter-ink:#F6EAF0;
+  --tint-lilac:#433A5A; --tint-lilac-ink:#F0E8FA;
+  /* soft.css tints and shadows: dark glass instead of white glass, shadows a touch deeper */
+  --soft-tint: rgba(255,240,248,.07);
+  --soft-tint-strong: rgba(74,53,66,.94);
+  --soft-drop: 0 10px 16px -12px rgba(0,0,0,.55);
+  --soft-drop-lg: 0 16px 22px -16px rgba(0,0,0,.6);
+  --soft-divider: linear-gradient(90deg, rgba(230,200,220,0), rgba(230,200,220,.22) 22%, rgba(230,200,220,.22) 78%, rgba(230,200,220,0));
+  --soft-chev: #BFA5B5;
+  --tabfade: #3D2C33;
+}
+html.theme-dark body{background:var(--wall);color:var(--ink)}
+html.theme-dark .screen{background:var(--wall)}
+
+/* drawn room art: dimmed and warmed, never inverted. Any <img> from ../art/ is room art. */
+html.theme-dark img[src*="art/"]{filter:brightness(.74) saturate(.86) sepia(.06)}
+/* garments are her photos in the real app: keep their colours, just take the glare off */
+html.theme-dark [data-garment] svg{filter:brightness(.92)}
+
+/* text helpers */
+html.theme-dark .title-display{color:var(--ink)}
+html.theme-dark .subtle{color:var(--ink-soft)}
+html.theme-dark .link{color:var(--plum)}
+html.theme-dark .nav{color:var(--ink)}
+html.theme-dark .nav .left, html.theme-dark .nav .right{color:var(--plum)}
+html.theme-dark :focus-visible{outline-color:var(--plum)}
+
+/* plates */
+html.theme-dark .tag{background:var(--soft-tint-strong);color:var(--ink);border-color:transparent;box-shadow:var(--soft-drop)}
+html.theme-dark .tag i[data-icon]{color:var(--plum)}
+html.theme-dark .tag small{color:var(--ink-soft)}
+html.theme-dark .tag .end{color:var(--plum)}
+html.theme-dark .tag.green{background:var(--tint-green);color:var(--tint-green-ink)}
+html.theme-dark .tag.green i[data-icon]{color:var(--tint-green-ink)}
+html.theme-dark .tag.pink{background:var(--tint-pink);color:var(--tint-pink-ink)}
+html.theme-dark .tag.butter{background:var(--tint-butter);color:var(--tint-butter-ink)}
+html.theme-dark .tag.butter i[data-icon]{color:var(--tint-butter-ink)}
+html.theme-dark .tag.lilac{background:var(--tint-lilac);color:var(--tint-lilac-ink)}
+
+/* chips: quiet dark pills; the selected one stays a solid plum pill */
+html.theme-dark .chip{background:var(--soft-tint);color:var(--ink);border-color:transparent}
+html.theme-dark .chip i[data-icon]{color:var(--plum)}
+html.theme-dark .chip.on{background:var(--plum-fill);color:var(--on-plum);border-color:var(--plum-fill)}
+html.theme-dark .chip.on i[data-icon]{color:var(--on-plum)}
+
+/* buttons */
+html.theme-dark .btn{background:var(--plum-fill);color:var(--on-plum);box-shadow:0 14px 20px -14px rgba(0,0,0,.8)}
+html.theme-dark .btn i[data-icon]{color:var(--on-plum)}
+html.theme-dark .btn.ghost{background:var(--soft-tint);color:var(--plum);border-color:transparent;box-shadow:var(--soft-drop)}
+html.theme-dark .btn.ghost i[data-icon]{color:var(--plum)}
+
+/* cards and rows (soft style: no boxes; where a page keeps a card, it is a dark surface) */
+html.theme-dark .card{background:transparent;border-color:transparent;color:var(--ink)}
+html.theme-dark .row{color:var(--ink)}
+html.theme-dark .row .end{color:var(--ink-soft)}
+html.theme-dark .rows > .row{border-bottom-color:transparent}
+
+/* small pieces */
+html.theme-dark .sim{background:rgba(255,240,248,.1);color:var(--ink-soft);border-color:transparent}
+html.theme-dark .meter{background:rgba(255,240,248,.12)}
+html.theme-dark .meter > span{background:var(--plum)}
+html.theme-dark .toggle{background:#6B5563}
+html.theme-dark .toggle.on{background:var(--plum-fill)}
+html.theme-dark .soft-div{background:var(--soft-divider)}
+
+/* tab bar: a dark frosted bar, the active tab a solid plum pill */
+html.theme-dark .tabfade{background:linear-gradient(rgba(61,44,51,0), var(--tabfade) 42%)}
+html.theme-dark .tabbar{background:rgba(58,42,51,.94);border-color:transparent;box-shadow:0 16px 24px -14px rgba(0,0,0,.7), 0 0 0 1px rgba(255,240,248,.06)}
+html.theme-dark .tabbar > a, html.theme-dark .tabbar > div{color:var(--plum)}
+html.theme-dark .tabbar > a.on, html.theme-dark .tabbar > div.on{background:var(--plum-fill);color:var(--on-plum)}
+
+/* form fields pages may use */
+html.theme-dark input, html.theme-dark textarea, html.theme-dark select{color:var(--ink);background:var(--soft-tint);border-color:transparent}
+html.theme-dark input::placeholder, html.theme-dark textarea::placeholder{color:var(--ink-soft)}

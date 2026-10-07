@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask another stylist</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* ---- shared by the stylist and shopping pages (chat, export, findone, purchase, handoff, products) ----
+     Soft style: no outlines on cards, rows or chips; space, soft tints and shadows that fall only below.
+     Pages are in normal flow inside a centred column (max 440 px), so they fill 390 and 507 wide frames
+     and scroll vertically when they are long. The tab bar is fixed at the bottom. */
+  html, body { background: var(--wall); }
+  body { min-height: 100vh; background: linear-gradient(var(--wall), var(--wall-2) 760px) var(--wall-2); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  input, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 12px; }
+  [hidden] { display: none !important; }
+  .art { display: block; pointer-events: none; }
+
+  .col { position: relative; max-width: 440px; margin: 0 auto; padding: 0 16px 140px; }
+  .col.no-tabs { padding-bottom: 40px; }
+
+  /* title row: back chevron to the parent, centred title, profile on the right */
+  .top { position: relative; height: 48px; display: flex; align-items: center; justify-content: center; }
+  .top .t { font-size: 17px; font-weight: 700; line-height: 22px; text-align: center; max-width: 220px; }
+  .top .back { position: absolute; left: -12px; top: 2px; height: 44px; min-width: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; white-space: nowrap; }
+  .top .back i[data-icon] { font-size: 24px; }
+  .top .me { position: absolute; right: -8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 26px; }
+  .top .x { position: absolute; left: -8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 22px; }
+
+  .display { font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1.08; letter-spacing: -.5px; color: var(--ink); text-wrap: balance; }
+  .lede { margin-top: 6px; font-size: 14px; line-height: 19px; color: var(--ink-soft); text-wrap: pretty; }
+  .h2 { margin: 26px 4px 10px; font-size: 17px; line-height: 22px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .h2 .sim { margin-left: auto; }
+  .h2 small { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+  .note { font-size: 13px; line-height: 18px; color: var(--ink-soft); text-wrap: pretty; }
+  .note.c { text-align: center; }
+  .fine { font-size: 11px; line-height: 14px; font-weight: 500; color: var(--ink-soft); text-align: center; }
+
+  /* a soft tinted area with a shadow below; no edge */
+  .soft { position: relative; background: rgba(255,255,255,.62); border-radius: 24px; box-shadow: var(--soft-drop-lg); padding: 14px 16px; }
+  .soft + .soft { margin-top: 14px; }
+  .tint-lilac { background: #EEE4FAE6; }
+  .tint-green { background: #E4F3DFE6; }
+  .tint-butter { background: #FCF0C6; }
+  .tint-pink { background: #FCE6F2E6; }
+
+  /* "Simulated" and "sample" labels */
+  .sim { white-space: nowrap; color: var(--ink-soft); }
+  .sim i[data-icon] { font-size: 12px; }
+
+  /* review options: a lilac strip that names the option and says it is a proposal */
+  .proposal { margin-top: 4px; display: grid; grid-template-columns: 22px 1fr; column-gap: 10px; padding: 11px 14px; border-radius: 20px;
+              background: #EEE4FAE6; box-shadow: var(--soft-drop); font-size: 13px; line-height: 17px; color: var(--ink); }
+  .proposal > i[data-icon] { font-size: 20px; color: var(--plum); margin-top: 1px; }
+  .proposal b { display: block; font-size: 14px; line-height: 18px; color: var(--plum); }
+  .proposal + .proposal { margin-top: 8px; }
+
+  /* buttons: room.css .btn + soft.css; a row of equal buttons */
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .btns.three { grid-template-columns: 1fr 1fr 1fr; }
+  .btns.one { grid-template-columns: 1fr; }
+  .btns .btn { min-width: 0; padding: 0 12px; font-size: 15px; white-space: nowrap; }
+  .btn.ghost { background: rgba(255,255,255,.72); }
+  .btn.quiet { background: var(--plum-soft); color: var(--plum); box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+  .btn[aria-disabled="true"] { background: #E9D9E2; color: #8F7686; box-shadow: none; cursor: default; }
+  .btn .sm { font-size: 11px; font-weight: 600; opacity: .85; }
+
+  /* small pill action, used for "Find one" */
+  .pillbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--plum); color: #fff;
+             font-size: 14px; font-weight: 700; box-shadow: 0 10px 16px -12px rgba(79,21,65,.7); white-space: nowrap; }
+  .pillbtn i[data-icon] { font-size: 17px; }
+  .pillbtn.light { background: rgba(255,255,255,.85); color: var(--plum); box-shadow: var(--soft-drop); }
+
+  /* rows without boxes: a fading divider between them */
+  .rowsx > * + * { background-image: var(--soft-divider); background-repeat: no-repeat; background-size: calc(100% - 24px) 1px; background-position: 12px 0; }
+  .rowx { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 4px; width: 100%; }
+  .rowx .ic { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; color: var(--plum); background: #F0E2EA; }
+  .rowx .ic i[data-icon] { font-size: 18px; }
+  .rowx .tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+  .rowx .tx b { font-size: 15px; font-weight: 600; line-height: 19px; }
+  .rowx .tx small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .rowx .chev { margin-left: auto; color: var(--soft-chev); font-size: 15px; display: grid; }
+
+  /* switch as a real button */
+  .sw { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 4px; text-align: left; }
+  .sw .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .sw .tx b { font-size: 15px; font-weight: 600; line-height: 19px; }
+  .sw .tx small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .sw .toggle { flex: none; }
+  .sw[aria-checked="true"] .toggle { background: var(--plum); }
+  .sw[aria-checked="true"] .toggle::after { left: 22px; }
+
+  /* sticker pieces: a cutout with a thick white edge (stacked drop-shadows) and a soft shadow below */
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .small-stk .stk, .stk.small { filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff)
+                 drop-shadow(1.05px 1.05px 0 #fff) drop-shadow(-1.05px -1.05px 0 #fff) drop-shadow(1.05px -1.05px 0 #fff) drop-shadow(-1.05px 1.05px 0 #fff)
+                 drop-shadow(0 4px 5px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk svg { width: 100%; height: auto; }
+  .bundle { position: relative; display: block; }
+
+  /* a representative product picture: a sticker on a pale warm patch, labelled as not the real product */
+  .rep { position: relative; display: block; flex: none; width: 96px; height: 84px; border-radius: 22px; background: radial-gradient(closest-side, #FFF6EE, #FFF6EE00); }
+  .rep .stk { left: 0; top: 0; }
+
+  /* toast for simulated actions */
+  .toast { position: fixed; left: 50%; bottom: 104px; transform: translateX(-50%); z-index: 50; max-width: calc(100% - 40px);
+           display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 20px; background: #3A2534; color: #fff;
+           font-size: 14px; line-height: 18px; font-weight: 600; box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast i[data-icon] { font-size: 18px; color: #F4C9E2; }
+  .no-tabs ~ .toast, body.no-tabbar .toast { bottom: 28px; }
+
+  /* tab bar, fixed at the bottom of the frame */
+  .tabfade { position: fixed; z-index: 30; --tabfade: #F7D6DC; }
+  .tabbar { position: fixed; z-index: 31; left: 50%; right: auto; transform: translateX(-50%); width: min(362px, calc(100% - 28px)); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* Ask another stylist: a numbered contact sheet of the look's pieces, an editable prompt, optional personal
+     context (all off by default), and explicit Copy, Save and Share. Nothing is sent by the app; in this demo the
+     three actions are simulated. export.html?look=1|2|3|interview|weekend|lace|blazer|pinkblack (default look 1). */
+
+  /* the contact sheet: a sheet of paper resting on the wall, shadow below only */
+  .paper { position: relative; margin-top: 18px; padding: 16px 16px 14px; border-radius: 18px; background: #FFFDFB;
+           box-shadow: 0 18px 24px -18px rgba(90,42,74,.42), 0 2px 10px rgba(90,42,74,.05); transform: rotate(-.6deg); }
+  .paper .ph { display: flex; align-items: baseline; gap: 8px; }
+  .paper .ph b { font-family: var(--font-display); font-size: 19px; font-weight: 800; letter-spacing: -.2px; line-height: 24px; }
+  .paper .ph span { margin-left: auto; font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
+  .sheetgrid { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .cell { position: relative; display: flex; flex-direction: column; align-items: center; padding-bottom: 2px; }
+  .cell .pic { position: relative; width: 120px; height: 104px; }
+  .cell .num { position: absolute; left: 4px; top: 2px; z-index: 2; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; background: var(--plum); color: #fff;
+               display: grid; place-items: center; font-size: 13px; font-weight: 800; box-shadow: 0 6px 10px -6px rgba(79,21,65,.7); }
+  .cell .nm { margin-top: 4px; font-size: 13px; line-height: 16px; font-weight: 600; text-align: center; }
+  .cell .ty { font-size: 11px; line-height: 14px; color: var(--ink-soft); text-align: center; }
+
+  .prompt { display: block; width: 100%; min-height: 168px; resize: vertical; border: 0; border-radius: 20px; padding: 14px 16px; font-size: 15px; line-height: 21px;
+            background: rgba(255,255,255,.8); box-shadow: var(--soft-drop-lg); color: var(--ink); }
+  .prompt:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+  .under { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .under .note { flex: 1; }
+  .linkbtn { min-height: 44px; padding: 0 6px; display: inline-flex; align-items: center; gap: 5px; color: var(--plum); font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .linkbtn i[data-icon] { font-size: 16px; }
+
+  .never { margin-top: 10px; display: grid; grid-template-columns: 20px 1fr; gap: 8px; font-size: 13px; line-height: 18px; color: var(--ink-soft); padding: 0 4px; }
+  .never i[data-icon] { font-size: 17px; color: var(--plum); margin-top: 1px; }
+
+  /* the three explicit actions: equal tiles, icon above the label */
+  .acts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .act { min-height: 72px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 4px;
+         background: rgba(255,255,255,.75); color: var(--plum); font-size: 14px; font-weight: 700; line-height: 17px; text-align: center; box-shadow: var(--soft-drop); }
+  .act i[data-icon], .act svg { font-size: 22px; width: 22px; height: 22px; }
+  .act.primary { background: var(--plum); color: #fff; box-shadow: 0 14px 20px -14px rgba(79,21,65,.7); }
+  .sent { margin-top: 14px; display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 12px 14px; border-radius: 20px; background: #E4F3DFE6;
+          box-shadow: var(--soft-drop); font-size: 13px; line-height: 18px; color: #2F4A33; }
+  .sent i[data-icon] { font-size: 19px; color: #3F7A4B; margin-top: 1px; }
+  .sent b { display: block; font-size: 14px; color: #2B4A30; }
+</style>
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="col">
+  <div class="top">
+    <a class="back" id="back" href="results.html#look-1"><i data-icon="chevron-left"></i>Your looks</a>
+    <a class="me" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+  </div>
+  <h1 class="display">Ask another stylist</h1>
+  <p class="lede">Take this look to any stylist or assistant you like. You choose what goes with it.</p>
+
+  <!-- contact sheet -->
+  <h2 class="h2">Contact sheet <span class="sim">Made on this device</span></h2>
+  <figure class="paper" id="paper" aria-label="Contact sheet">
+    <div class="ph"><b id="sheet-title">Calm office</b><span id="sheet-count">4 pieces · #1 to #4</span></div>
+    <div class="sheetgrid" id="grid"></div>
+  </figure>
+  <p class="note" style="margin:12px 4px 0">Numbers are labels for this picture only. In this demo, drawings stand in for your photos. No AI was used to make the sheet.</p>
+
+  <!-- prompt -->
+  <h2 class="h2"><label for="prompt">Prompt</label> <small>You can edit it</small></h2>
+  <textarea class="prompt" id="prompt" spellcheck="true"></textarea>
+  <div class="under">
+    <p class="note" id="edited">Written from a template on this device.</p>
+    <button class="linkbtn" type="button" id="reset"><i data-icon="undo"></i>Reset</button>
+  </div>
+
+  <!-- optional personal context -->
+  <h2 class="h2">Add about you <small>Optional, all off</small></h2>
+  <div class="soft rowsx" id="ctx" role="group" aria-label="Add about you">
+    <button class="sw" type="button" role="switch" aria-checked="false" data-line="Height: 4 ft 11 in.">
+      <span class="tx"><b>Height</b><small>4 ft 11 in</small></span><span class="toggle"></span></button>
+    <button class="sw" type="button" role="switch" aria-checked="false" data-line="Fit cues: high rise, ankle-length pants, short jackets.">
+      <span class="tx"><b>Size and fit cues</b><small>High rise, ankle-length pants, short jackets</small></span><span class="toggle"></span></button>
+    <button class="sw" type="button" role="switch" aria-checked="false" data-line="Fit notes: I like a little room at the hip.">
+      <span class="tx"><b>Fit notes</b><small>A little room at the hip</small></span><span class="toggle"></span></button>
+    <button class="sw" type="button" role="switch" aria-checked="false" data-line="Style words: soft, polished, calm.">
+      <span class="tx"><b>Style words</b><small>Soft, polished, calm</small></span><span class="toggle"></span></button>
+  </div>
+  <p class="never"><i data-icon="lock"></i><span>Never included: your name, location, weight, other measurements, product links or the rest of your closet.</span></p>
+
+  <!-- explicit actions -->
+  <h2 class="h2">Take it with you <span class="sim">Simulated</span></h2>
+  <div class="acts">
+    <button class="act" type="button" data-done="Prompt copied (simulated)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11.5" height="12.5" rx="2.6"/><path d="M15.5 8.5V6.1A2.6 2.6 0 0 0 12.9 3.5H6.6A2.6 2.6 0 0 0 4 6.1V14.4A2.6 2.6 0 0 0 6.6 17H8.5"/></svg>
+      Copy prompt</button>
+    <button class="act" type="button" data-done="Sheet saved to Photos (simulated)"><i data-icon="photo"></i>Save image</button>
+    <button class="act primary" type="button" data-done="Share sheet opened (simulated)"><i data-icon="send"></i>Share</button>
+  </div>
+  <div class="sent" role="note"><i data-icon="info"></i><span><b>Nothing is sent automatically.</b>The app only copies, saves or opens the share sheet when you tap. You pick the app and the person.</span></div>
+</div>
+
+<div class="tabfade"></div>
+<nav class="tabbar" aria-label="Tabs">
+  <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+  <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+  <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+</nav>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* Shared helpers for the stylist and shopping pages (copied into each page so every page stands alone).
+   Shop.q(name)            URL parameter
+   Shop.ready(fn)          run after icons.js and garments.js have mounted
+   Shop.piece(id, tone)    garment drawing as an svg string; tone recolours shoes for fictional products
+   Shop.fit(box, svg, w, h, rot, cls)  one sticker fitted by its drawn bounds into a w x h box
+   Shop.lay(box, look, k)  a look as a sticker bundle in a 300 x 356 box scaled by k (as on results.html)
+   Shop.toast(text)        a short message for simulated actions
+   Shop.PRODUCTS           the fictional leads Find One shows (stores use the reserved .example domain) */
+window.Shop = (function () {
+  var params = new URLSearchParams(location.search);
+  function q(k) { return params.get(k); }
+  function ready(fn) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+
+  /* Navy tones for the fictional products. The drawings are the closet's flats and loafers recoloured: a
+     representative picture, never a product photo. */
+  var TONES = {
+    navy:     { f: '#2C3A6B', s: '#222E57', h: '#3F4F88', l: '#131A35', d: '#5B6CA3' },
+    midnight: { f: '#222A4E', s: '#1A2140', h: '#323D6B', l: '#0E1328', d: '#4D5B8E' },
+    ink:      { f: '#2F3757', s: '#252C48', h: '#434C70', l: '#151A2E', d: '#5E6890' },
+    pink:     { f: '#F4B4C2', s: '#EC9DB0', h: '#FBD0D9', l: '#D97F97', d: '#D97F97' }
+  };
+  var FROM = {
+    'g-nude-flats':  { f: '#F1DCC6', s: '#E2C8AC', h: '#F9ECDD', l: '#B48F68', d: '#C4A07A' },
+    'g-tan-loafers': { f: '#B98552', s: '#A2713F', h: '#CB9B6B', l: '#7A532A', d: '#8E6234', i: '#8A5B30' }
+  };
+  function piece(id, tone) {
+    var s = Garments.svg(id, {});
+    var from = FROM[id], to = TONES[tone];
+    if (from && to) {
+      Object.keys(from).forEach(function (k) {
+        var target = to[k] || (k === 'i' ? to.s : null);
+        if (target) s = s.replace(new RegExp(from[k], 'gi'), target);
+      });
+    }
+    return s;
+  }
+
+  /* drawn bounds, leaving out full-box texture fills (the lace pattern), which the garment shape clips */
+  function drawn(svg) {
+    var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+    for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+    b = svg.getBBox();
+    for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+    return b;
+  }
+  /* One sticker, centred in a w x h box and as large as fits */
+  function fit(box, svgStr, w, h, rot, cls) {
+    var stk = document.createElement('span'); stk.className = 'stk' + (cls ? ' ' + cls : '');
+    stk.innerHTML = '<span class="rot">' + svgStr + '</span>';
+    stk.style.width = '120px'; stk.style.height = '170px';
+    box.appendChild(stk);
+    var svg = stk.querySelector('svg'), b = drawn(svg);
+    var s = Math.min(w / b.width, h / b.height);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (w / 2 - ox).toFixed(2) + 'px'; stk.style.top = (h / 2 - oy).toFixed(2) + 'px';
+    var r = stk.querySelector('.rot');
+    r.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    r.style.transform = 'rotate(' + (rot || 0) + 'deg)';
+    return stk;
+  }
+
+  /* A look as a bundle, laid out as on results.html: [centre x, centre y, size, 'h' or 'w', rotation] in a 300 x 356 box */
+  var SPOTS = {
+    layer:  [98, 88, 156, 'h', -7],
+    top:    [196, 96, 146, 'h', 5],
+    bottom: [140, 252, 214, 'h', -2],
+    shoes:  [234, 312, 94, 'w', -8],
+    bag:    [252, 210, 92, 'h', 8]
+  };
+  var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+  function lay(box, look, k, spots) {
+    spots = spots || SPOTS;
+    box.innerHTML = '';
+    ORDER.forEach(function (slot) {
+      var id = look[slot]; if (!id || id === 'gap') return;
+      var sp = spots[slot];
+      var stk = document.createElement('span'); stk.className = 'stk';
+      stk.innerHTML = '<span class="rot">' + piece(id) + '</span>';
+      stk.style.width = '120px'; stk.style.height = '170px';
+      box.appendChild(stk);
+      var b = drawn(stk.querySelector('svg'));
+      var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+      var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+      stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+      stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+      var r = stk.querySelector('.rot');
+      r.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+      r.style.transform = 'rotate(' + sp[4] + 'deg)';
+    });
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    var t = document.getElementById('toast');
+    if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    t.innerHTML = '<i data-icon="check"></i><span></span>';
+    t.querySelector('span').textContent = text;
+    if (window.Icons) Icons.mountAll(t);
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
+  }
+
+  /* Fictional leads for one missing piece: navy flats. fit: supported | unknown | conflict */
+  var PRODUCTS = {
+    juniper: { store: 'Juniper Shoe Co.', domain: 'junipershoe.example', title: 'Soft pointed flat', color: 'Navy', draw: 'g-nude-flats', tone: 'navy',
+               price: 48, fit: 'supported', size: '6',
+               fitLine: 'The store lists a size chart and says this style runs true to size. Your usual size 6 is listed.',
+               unknown: 'Width is not listed, so how it fits across the foot is not known.',
+               evidence: ['Size chart on the product page', 'Product page: title, price and colour'],
+               returns: 'Free returns within 30 days if unworn, as listed on the product page.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' },
+    atelier: { store: 'Petite Atelier', domain: 'petiteatelier.example', title: 'Almond-toe ballet flat', color: 'Midnight navy', draw: 'g-nude-flats', tone: 'midnight',
+               price: 56, fit: 'supported', size: '6',
+               fitLine: 'Insole lengths are listed, and size 6 matches your usual size.',
+               unknown: 'Comes in one width only.',
+               evidence: ['Garment measurements on the product page', 'Product page: title, price and colour'],
+               returns: 'Returns within 21 days for store credit, as listed.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' },
+    maple:   { store: 'Maple Row', domain: 'maplerow.example', title: 'Bow ballet flat', color: 'Navy', draw: 'g-nude-flats', tone: 'navy',
+               price: 34, fit: 'unknown', size: null,
+               fitLine: 'No size chart on the product page. Check the fit on the store before you buy.',
+               unknown: 'Sizing, width and returns are not known.',
+               evidence: ['Product page: title, price and colour'],
+               returns: 'No return policy found on the product page.',
+               stock: 'Stock not checked', ship: 'Shipping not checked' },
+    lark:    { store: 'Lark & Line', domain: 'larkandline.example', title: 'Square-toe suede flat', color: 'Ink navy', draw: 'g-nude-flats', tone: 'ink',
+               price: 58, fit: 'unknown', size: null,
+               fitLine: 'Found only in a search snippet. The store page was not checked.',
+               unknown: 'Price, sizes and colour may differ on the store page.',
+               evidence: ['Search snippet (not checked)'],
+               returns: 'Not checked.',
+               stock: 'Stock not checked', ship: 'Shipping not checked' },
+    wren:    { store: 'Wren Market', domain: 'wrenmarket.example', title: 'Wide-fit loafer flat', color: 'Navy', draw: 'g-tan-loafers', tone: 'navy',
+               price: 29, fit: 'conflict', size: null,
+               fitLine: 'Listed as wide fit. Your fit notes say wide shoes slip at your heel.',
+               unknown: '',
+               evidence: ['Product page: fit and width'],
+               returns: 'Returns within 30 days, as listed.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' }
+  };
+  var FIT = {
+    supported: { title: 'Sizing guidance found', icon: 'check', blurb: 'The store lists a size chart or measurements we could compare. Still not a guarantee.' },
+    unknown:   { title: 'Fit not known yet', icon: 'info', blurb: 'Not enough on the page to compare. Worth a look, but check the size yourself.' },
+    conflict:  { title: 'Likely a poor fit', icon: 'close', blurb: 'Something listed goes against your fit notes, so it is set aside.' }
+  };
+  function money(n) { return '$' + n; }
+
+  return { q: q, ready: ready, piece: piece, fit: fit, lay: lay, drawn: drawn, toast: toast, PRODUCTS: PRODUCTS, FIT: FIT, money: money };
+})();
+</script>
+<script>
+(function () {
+  var LOOKS = {
+    '1': { name: 'Calm office', occ: 'the office', pieces: ['g-navy-cardigan', 'g-pink-blouse', 'g-navy-trousers', 'g-nude-flats'], back: 'results.html#look-1', backLabel: 'Your looks' },
+    '2': { name: 'Olive and brick', occ: 'the office', pieces: ['g-brown-jacket', 'g-brick-top', 'g-olive-trousers', 'g-white-sneakers'], back: 'results.html#look-2', backLabel: 'Your looks' },
+    '3': { name: 'Gray blazer office', occ: 'the office', pieces: ['g-gray-blazer', 'g-cream-sweater', 'g-navy-trousers', 'g-black-heels'], back: 'results.html#look-3', backLabel: 'Your looks' },
+    interview: { name: 'Interview navy & pink', occ: 'an interview', pieces: ['g-navy-cardigan', 'g-pink-blouse', 'g-navy-trousers', 'g-nude-flats'], back: 'look.html#interview', backLabel: 'Look' },
+    weekend: { name: 'Weekend olive & brick', occ: 'a casual weekend', pieces: ['g-brown-jacket', 'g-brick-top', 'g-olive-trousers', 'g-white-sneakers'], back: 'look.html#weekend', backLabel: 'Look' },
+    lace: { name: 'Lace date night', occ: 'a date night', pieces: ['g-lace-top', 'g-black-skirt', 'g-black-heels', 'g-burgundy-bag'], back: 'look.html#lace', backLabel: 'Look' },
+    blazer: { name: 'Gray blazer office', occ: 'the office', pieces: ['g-gray-blazer', 'g-cream-sweater', 'g-navy-trousers', 'g-black-heels'], back: 'look.html#blazer', backLabel: 'Look' },
+    pinkblack: { name: 'Pink & black date night', occ: 'a date night', pieces: ['g-pink-blouse', 'g-navy-trousers', 'g-black-heels', 'g-burgundy-bag'], back: 'look.html#pinkblack', backLabel: 'Look' }
+  };
+  var TYPE = { top: 'Top', layer: 'Layer', bottom: 'Bottom', dress: 'Dress', shoes: 'Shoes', accessory: 'Bag' };
+  var ROT = [-5, 4, -2, -7];
+  var key = String(Shop.q('look') || '1').replace(/^look-?/, ''); if (!LOOKS[key]) key = '1';
+  var L = LOOKS[key];
+  var BY = {}; Garments.LIST.forEach(function (g) { BY[g.id] = g; });
+  var dirty = MockState.get('laundry.tracking', true) ? MockState.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) : [];
+
+  var back = document.getElementById('back');
+  if (Shop.q('back') === 'chat') { back.setAttribute('href', 'chat.html?look=' + key); back.lastChild.textContent = 'Ask stylist'; }
+  else { back.setAttribute('href', L.back); back.lastChild.textContent = L.backLabel; }
+  document.getElementById('sheet-title').textContent = L.name;
+  document.getElementById('sheet-count').textContent = L.pieces.length + ' pieces · #1 to #' + L.pieces.length;
+
+  function template() {
+    var s = 'Style these owned items for ' + L.occ + '. They are one look from my closet, numbered in the attached image. ' +
+            'Suggest three combinations using the numbered pieces.';
+    var notes = L.pieces.map(function (g, i) { return dirty.indexOf(g) >= 0 ? '#' + (i + 1) + ' is in the laundry' : null; }).filter(Boolean);
+    if (notes.length) s += ' Note: ' + notes.join('; ') + ', so ask before using it.';
+    s += ' Ask before adding shopping items.';
+    var extra = [].slice.call(document.querySelectorAll('#ctx .sw[aria-checked="true"]')).map(function (b) { return b.getAttribute('data-line'); });
+    if (extra.length) s += '\n\nAbout me: ' + extra.join(' ');
+    return s;
+  }
+  var prompt = document.getElementById('prompt'), edited = false;
+  function refresh() { if (!edited) prompt.value = template(); }
+  prompt.addEventListener('input', function () { edited = true; document.getElementById('edited').textContent = 'Edited by you. Toggles below no longer change it until you reset.'; });
+  document.getElementById('reset').addEventListener('click', function () {
+    edited = false; refresh(); document.getElementById('edited').textContent = 'Written from a template on this device.';
+  });
+  [].forEach.call(document.querySelectorAll('#ctx .sw'), function (b) {
+    b.addEventListener('click', function () { b.setAttribute('aria-checked', b.getAttribute('aria-checked') === 'true' ? 'false' : 'true'); refresh(); });
+  });
+  [].forEach.call(document.querySelectorAll('.act'), function (b) {
+    b.addEventListener('click', function () { Shop.toast(b.getAttribute('data-done')); });
+  });
+  refresh();
+
+  Shop.ready(function () {
+    var grid = document.getElementById('grid');
+    L.pieces.forEach(function (gid, i) {
+      var g = BY[gid] || { name: gid, category: 'top' };
+      var cell = document.createElement('div'); cell.className = 'cell';
+      cell.innerHTML = '<span class="pic"><span class="num">' + (i + 1) + '</span></span><span class="nm"></span><span class="ty"></span>';
+      cell.querySelector('.nm').textContent = g.name;
+      cell.querySelector('.ty').textContent = TYPE[g.category] + (dirty.indexOf(gid) >= 0 ? ' · in the laundry' : '');
+      cell.setAttribute('aria-label', 'Number ' + (i + 1) + ', ' + g.name);
+      grid.appendChild(cell);
+      var small = g.category === 'shoes' || g.category === 'accessory';
+      Shop.fit(cell.querySelector('.pic'), Shop.piece(gid), small ? 92 : 84, small ? 70 : 96, ROT[i % 4], 'small');
+      var st = cell.querySelector('.stk'); st.style.left = (parseFloat(st.style.left) + (120 - (small ? 92 : 84)) / 2) + 'px';
+      st.style.top = (parseFloat(st.style.top) + (104 - (small ? 70 : 96)) / 2) + 'px';
+    });
+  });
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+</body>
+</html>

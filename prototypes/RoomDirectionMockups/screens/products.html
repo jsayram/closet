@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saved products</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* ---- shared by the stylist and shopping pages (chat, export, findone, purchase, handoff, products) ----
+     Soft style: no outlines on cards, rows or chips; space, soft tints and shadows that fall only below.
+     Pages are in normal flow inside a centred column (max 440 px), so they fill 390 and 507 wide frames
+     and scroll vertically when they are long. The tab bar is fixed at the bottom. */
+  html, body { background: var(--wall); }
+  body { min-height: 100vh; background: linear-gradient(var(--wall), var(--wall-2) 760px) var(--wall-2); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  input, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 12px; }
+  [hidden] { display: none !important; }
+  .art { display: block; pointer-events: none; }
+
+  .col { position: relative; max-width: 440px; margin: 0 auto; padding: 0 16px 140px; }
+  .col.no-tabs { padding-bottom: 40px; }
+
+  /* title row: back chevron to the parent, centred title, profile on the right */
+  .top { position: relative; height: 48px; display: flex; align-items: center; justify-content: center; }
+  .top .t { font-size: 17px; font-weight: 700; line-height: 22px; text-align: center; max-width: 220px; }
+  .top .back { position: absolute; left: -12px; top: 2px; height: 44px; min-width: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; white-space: nowrap; }
+  .top .back i[data-icon] { font-size: 24px; }
+  .top .me { position: absolute; right: -8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 26px; }
+  .top .x { position: absolute; left: -8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 22px; }
+
+  .display { font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1.08; letter-spacing: -.5px; color: var(--ink); text-wrap: balance; }
+  .lede { margin-top: 6px; font-size: 14px; line-height: 19px; color: var(--ink-soft); text-wrap: pretty; }
+  .h2 { margin: 26px 4px 10px; font-size: 17px; line-height: 22px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .h2 .sim { margin-left: auto; }
+  .h2 small { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+  .note { font-size: 13px; line-height: 18px; color: var(--ink-soft); text-wrap: pretty; }
+  .note.c { text-align: center; }
+  .fine { font-size: 11px; line-height: 14px; font-weight: 500; color: var(--ink-soft); text-align: center; }
+
+  /* a soft tinted area with a shadow below; no edge */
+  .soft { position: relative; background: rgba(255,255,255,.62); border-radius: 24px; box-shadow: var(--soft-drop-lg); padding: 14px 16px; }
+  .soft + .soft { margin-top: 14px; }
+  .tint-lilac { background: #EEE4FAE6; }
+  .tint-green { background: #E4F3DFE6; }
+  .tint-butter { background: #FCF0C6; }
+  .tint-pink { background: #FCE6F2E6; }
+
+  /* "Simulated" and "sample" labels */
+  .sim { white-space: nowrap; color: var(--ink-soft); }
+  .sim i[data-icon] { font-size: 12px; }
+
+  /* review options: a lilac strip that names the option and says it is a proposal */
+  .proposal { margin-top: 4px; display: grid; grid-template-columns: 22px 1fr; column-gap: 10px; padding: 11px 14px; border-radius: 20px;
+              background: #EEE4FAE6; box-shadow: var(--soft-drop); font-size: 13px; line-height: 17px; color: var(--ink); }
+  .proposal > i[data-icon] { font-size: 20px; color: var(--plum); margin-top: 1px; }
+  .proposal b { display: block; font-size: 14px; line-height: 18px; color: var(--plum); }
+  .proposal + .proposal { margin-top: 8px; }
+
+  /* buttons: room.css .btn + soft.css; a row of equal buttons */
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .btns.three { grid-template-columns: 1fr 1fr 1fr; }
+  .btns.one { grid-template-columns: 1fr; }
+  .btns .btn { min-width: 0; padding: 0 12px; font-size: 15px; white-space: nowrap; }
+  .btn.ghost { background: rgba(255,255,255,.72); }
+  .btn.quiet { background: var(--plum-soft); color: var(--plum); box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+  .btn[aria-disabled="true"] { background: #E9D9E2; color: #8F7686; box-shadow: none; cursor: default; }
+  .btn .sm { font-size: 11px; font-weight: 600; opacity: .85; }
+
+  /* small pill action, used for "Find one" */
+  .pillbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--plum); color: #fff;
+             font-size: 14px; font-weight: 700; box-shadow: 0 10px 16px -12px rgba(79,21,65,.7); white-space: nowrap; }
+  .pillbtn i[data-icon] { font-size: 17px; }
+  .pillbtn.light { background: rgba(255,255,255,.85); color: var(--plum); box-shadow: var(--soft-drop); }
+
+  /* rows without boxes: a fading divider between them */
+  .rowsx > * + * { background-image: var(--soft-divider); background-repeat: no-repeat; background-size: calc(100% - 24px) 1px; background-position: 12px 0; }
+  .rowx { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 4px; width: 100%; }
+  .rowx .ic { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; color: var(--plum); background: #F0E2EA; }
+  .rowx .ic i[data-icon] { font-size: 18px; }
+  .rowx .tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+  .rowx .tx b { font-size: 15px; font-weight: 600; line-height: 19px; }
+  .rowx .tx small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .rowx .chev { margin-left: auto; color: var(--soft-chev); font-size: 15px; display: grid; }
+
+  /* switch as a real button */
+  .sw { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 4px; text-align: left; }
+  .sw .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .sw .tx b { font-size: 15px; font-weight: 600; line-height: 19px; }
+  .sw .tx small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .sw .toggle { flex: none; }
+  .sw[aria-checked="true"] .toggle { background: var(--plum); }
+  .sw[aria-checked="true"] .toggle::after { left: 22px; }
+
+  /* sticker pieces: a cutout with a thick white edge (stacked drop-shadows) and a soft shadow below */
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .small-stk .stk, .stk.small { filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff)
+                 drop-shadow(1.05px 1.05px 0 #fff) drop-shadow(-1.05px -1.05px 0 #fff) drop-shadow(1.05px -1.05px 0 #fff) drop-shadow(-1.05px 1.05px 0 #fff)
+                 drop-shadow(0 4px 5px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk svg { width: 100%; height: auto; }
+  .bundle { position: relative; display: block; }
+
+  /* a representative product picture: a sticker on a pale warm patch, labelled as not the real product */
+  .rep { position: relative; display: block; flex: none; width: 96px; height: 84px; border-radius: 22px; background: radial-gradient(closest-side, #FFF6EE, #FFF6EE00); }
+  .rep .stk { left: 0; top: 0; }
+
+  /* toast for simulated actions */
+  .toast { position: fixed; left: 50%; bottom: 104px; transform: translateX(-50%); z-index: 50; max-width: calc(100% - 40px);
+           display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 20px; background: #3A2534; color: #fff;
+           font-size: 14px; line-height: 18px; font-weight: 600; box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast i[data-icon] { font-size: 18px; color: #F4C9E2; }
+  .no-tabs ~ .toast, body.no-tabbar .toast { bottom: 28px; }
+
+  /* tab bar, fixed at the bottom of the frame */
+  .tabfade { position: fixed; z-index: 30; --tabfade: #F7D6DC; }
+  .tabbar { position: fixed; z-index: 31; left: 50%; right: auto; transform: translateX(-50%); width: min(362px, calc(100% - 28px)); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* Saved products: where they live is open, so two labelled options.
+       ?option=tab      Option 1 (proposal): a third "Products" tab in Saved Looks, beside Looks and Pictures
+       ?option=profile  Option 2 (proposal): a "Saved products" row in Profile; Continue (or the row) opens the list
+                        (?option=profile&view=list), pushed from Profile.
+     The list: what is on its way (recorded after the store handoff) and what she saved for later. Never owned until
+     she says it arrived. Fictional stores, sample prices. */
+  .seg { margin-top: 14px; height: 44px; display: flex; border-radius: 14px; background: #F4D9E0; }
+  .seg a { flex: 1; height: 44px; position: relative; border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--ink-soft);
+           display: grid; place-items: center; isolation: isolate; }
+  .seg a[aria-current="page"] { color: var(--plum); }
+  .seg a[aria-current="page"]::before { content: ""; position: absolute; inset: 3px; z-index: -1; border-radius: 11px; background: #fff; box-shadow: 0 6px 10px -6px rgba(90,42,74,.35); }
+  .seg a.new::after { content: "New"; position: absolute; top: -9px; right: 8px; padding: 1px 6px; border-radius: 8px; font-size: 11px; font-weight: 700;
+                      background: var(--plum); color: #fff; line-height: 14px; }
+  .search { margin-top: 12px; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 22px;
+            background: rgba(255,255,255,.7); box-shadow: var(--soft-drop); color: var(--ink-soft); }
+  .search i[data-icon] { font-size: 18px; color: var(--plum); }
+  .search input { flex: 1; min-width: 0; border: 0; background: none; height: 100%; font-size: 15px; color: var(--ink); }
+  .search input::placeholder { color: var(--ink-soft); opacity: 1; }
+  .search input:focus-visible { outline: none; }
+  .search:focus-within { outline: 3px solid var(--plum); outline-offset: 2px; }
+  .count { margin-top: 4px; font-size: 14px; line-height: 18px; font-weight: 500; color: var(--ink-soft); }
+
+  .prod { margin-top: 12px; padding: 12px 14px 12px 10px; }
+  .prod .main { display: flex; gap: 10px; align-items: flex-start; }
+  .prod .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .prod .tx b { font-size: 15px; line-height: 19px; font-weight: 700; }
+  .prod .tx .store { font-size: 12px; line-height: 15px; color: var(--ink-soft); }
+  .prod .tx .price { font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .prod .tx .price b { font-size: 14px; color: var(--ink); }
+  .status { align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 0 10px; border-radius: 999px;
+            font-size: 12px; font-weight: 700; }
+  .status svg { width: 13px; height: 13px; flex: none; }
+  .status.way { background: #FCF0C4; color: #6A520F; }
+  .status.saved { background: #F0E2EA; color: var(--plum); }
+  .status.arrived { background: #DDF0D8; color: #2F5A36; }
+  .prod .row2 { display: flex; gap: 8px; margin-top: 10px; padding-left: 4px; }
+  .prod .row2 .btn { flex: 1; min-height: 44px; font-size: 14px; padding: 0 10px; white-space: nowrap; }
+  .rep { width: 92px; height: 76px; }
+  .empty { margin-top: 10px; }
+
+  /* Option 2: the Profile entry */
+  .hdr { margin-top: 2px; }
+  .plist { margin-top: 10px; }
+  .plist .rowx { border-radius: 20px; padding: 8px 10px; }
+  .plist .rowx.hl { background: #F7E3EE; box-shadow: var(--soft-drop-lg); }
+  .plist .ic.lilac { background: #EADFF8; } .plist .ic.pink { background: #FCE6F2; } .plist .ic.green { background: #E4F3DF; }
+  .plist .ic.butter { background: #FCF1C8; } .plist .ic.blue { background: #E2EEFB; }
+  .plist .pill { font-size: 12px; font-weight: 700; color: #355E3C; background: #E2F2DD; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .plist .val { font-size: 14px; color: var(--ink-soft); white-space: nowrap; }
+  .plist .tag-new { font-size: 11px; font-weight: 700; color: #fff; background: var(--plum); border-radius: 8px; padding: 1px 7px; margin-left: 6px; vertical-align: 1px; }
+  .gapdiv { height: 1px; margin: 12px 24px; background: var(--soft-divider); }
+  .next { margin-top: 22px; padding: 14px 16px; border-radius: 22px; background: rgba(255,255,255,.55); box-shadow: var(--soft-drop-lg);
+          display: flex; flex-direction: column; gap: 10px; }
+  .next p { font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .next p b { color: var(--ink); }
+</style>
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="col">
+  <!-- ============ Option 1: third tab in Saved Looks ============ -->
+  <section id="opt-tab" hidden>
+    <div class="top"><a class="me" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
+    <h1 class="display">Saved Looks</h1>
+    <div class="proposal" style="margin-top:10px"><i data-icon="eye"></i><div><b>Option 1 (proposal): a third tab</b>Products sits beside Looks and Pictures, so everything she kept is in one place.</div></div>
+    <nav class="seg" aria-label="Saved Looks sections">
+      <a href="saved.html">Looks</a>
+      <a href="saved.html?tab=pictures">Pictures</a>
+      <a class="new" href="products.html?option=tab" aria-current="page">Products</a>
+    </nav>
+    <label class="search"><i data-icon="search"></i><input type="search" placeholder="Search your products" aria-label="Search your products" data-filter></label>
+    <div class="list" data-list></div>
+  </section>
+
+  <!-- ============ Option 2: a row in Profile ============ -->
+  <section id="opt-profile" hidden>
+    <div class="top">
+      <a class="back" href="home.html"><i data-icon="chevron-left"></i>Home</a>
+    </div>
+    <h1 class="display hdr">Profile</h1>
+    <div class="proposal" style="margin-top:10px"><i data-icon="eye"></i><div><b>Option 2 (proposal): a row in Profile</b>Saved Looks keeps two tabs. Saved products is one row here, with the account things.</div></div>
+    <div class="plist rowsx">
+      <a class="rowx" href="access.html"><span class="ic lilac"><i data-icon="sparkles"></i></span><span class="tx"><b>Styling access</b><small>Simulated</small></span><span class="pill">Sponsored</span><span class="chev"><i data-icon="chevron-right"></i></span></a>
+      <a class="rowx" href="settings.html"><span class="ic pink"><i data-icon="person-circle"></i></span><span class="tx"><b>Name on your sign</b><small>Shown in your room</small></span><span class="val">Lily</span><span class="chev"><i data-icon="chevron-right"></i></span></a>
+    </div>
+    <div class="gapdiv"></div>
+    <div class="plist rowsx">
+      <a class="rowx hl" href="products.html?option=profile&amp;view=list"><span class="ic butter"><i data-icon="tag"></i></span><span class="tx"><b>Saved products<span class="tag-new">Option 2</span></b><small>1 on its way · 2 saved for later</small></span><span class="chev"><i data-icon="chevron-right"></i></span></a>
+      <a class="rowx" href="settings.html"><span class="ic blue"><i data-icon="suitcase"></i></span><span class="tx"><b>Closet and suitcases</b></span><span class="chev"><i data-icon="chevron-right"></i></span></a>
+      <a class="rowx" href="settings.html"><span class="ic green"><i data-icon="lock"></i></span><span class="tx"><b>Privacy and data</b></span><span class="chev"><i data-icon="chevron-right"></i></span></a>
+    </div>
+    <div class="next">
+      <p><b>Entry point.</b> The row opens the same list as Option 1, pushed from Profile.</p>
+      <a class="btn" href="products.html?option=profile&amp;view=list">Continue to Saved products<i data-icon="chevron-right"></i></a>
+    </div>
+  </section>
+
+  <!-- ============ Option 2, the list pushed from Profile ============ -->
+  <section id="opt-profile-list" hidden>
+    <div class="top">
+      <a class="back" href="products.html?option=profile"><i data-icon="chevron-left"></i>Profile</a>
+      <a class="me" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+    </div>
+    <h1 class="display">Saved products</h1>
+    <div class="proposal" style="margin-top:10px"><i data-icon="eye"></i><div><b>Option 2 (proposal): reached from Profile</b>The same list as Option 1, one level down.</div></div>
+    <label class="search"><i data-icon="search"></i><input type="search" placeholder="Search your products" aria-label="Search your products" data-filter></label>
+    <div class="list" data-list></div>
+  </section>
+</div>
+
+<div class="tabfade"></div>
+<nav class="tabbar" aria-label="Tabs">
+  <a id="tab-home" href="home.html"><i data-icon="home"></i>Home</a>
+  <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+  <a id="tab-saved" href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+</nav>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* Shared helpers for the stylist and shopping pages (copied into each page so every page stands alone).
+   Shop.q(name)            URL parameter
+   Shop.ready(fn)          run after icons.js and garments.js have mounted
+   Shop.piece(id, tone)    garment drawing as an svg string; tone recolours shoes for fictional products
+   Shop.fit(box, svg, w, h, rot, cls)  one sticker fitted by its drawn bounds into a w x h box
+   Shop.lay(box, look, k)  a look as a sticker bundle in a 300 x 356 box scaled by k (as on results.html)
+   Shop.toast(text)        a short message for simulated actions
+   Shop.PRODUCTS           the fictional leads Find One shows (stores use the reserved .example domain) */
+window.Shop = (function () {
+  var params = new URLSearchParams(location.search);
+  function q(k) { return params.get(k); }
+  function ready(fn) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+
+  /* Navy tones for the fictional products. The drawings are the closet's flats and loafers recoloured: a
+     representative picture, never a product photo. */
+  var TONES = {
+    navy:     { f: '#2C3A6B', s: '#222E57', h: '#3F4F88', l: '#131A35', d: '#5B6CA3' },
+    midnight: { f: '#222A4E', s: '#1A2140', h: '#323D6B', l: '#0E1328', d: '#4D5B8E' },
+    ink:      { f: '#2F3757', s: '#252C48', h: '#434C70', l: '#151A2E', d: '#5E6890' },
+    pink:     { f: '#F4B4C2', s: '#EC9DB0', h: '#FBD0D9', l: '#D97F97', d: '#D97F97' }
+  };
+  var FROM = {
+    'g-nude-flats':  { f: '#F1DCC6', s: '#E2C8AC', h: '#F9ECDD', l: '#B48F68', d: '#C4A07A' },
+    'g-tan-loafers': { f: '#B98552', s: '#A2713F', h: '#CB9B6B', l: '#7A532A', d: '#8E6234', i: '#8A5B30' }
+  };
+  function piece(id, tone) {
+    var s = Garments.svg(id, {});
+    var from = FROM[id], to = TONES[tone];
+    if (from && to) {
+      Object.keys(from).forEach(function (k) {
+        var target = to[k] || (k === 'i' ? to.s : null);
+        if (target) s = s.replace(new RegExp(from[k], 'gi'), target);
+      });
+    }
+    return s;
+  }
+
+  /* drawn bounds, leaving out full-box texture fills (the lace pattern), which the garment shape clips */
+  function drawn(svg) {
+    var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+    for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+    b = svg.getBBox();
+    for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+    return b;
+  }
+  /* One sticker, centred in a w x h box and as large as fits */
+  function fit(box, svgStr, w, h, rot, cls) {
+    var stk = document.createElement('span'); stk.className = 'stk' + (cls ? ' ' + cls : '');
+    stk.innerHTML = '<span class="rot">' + svgStr + '</span>';
+    stk.style.width = '120px'; stk.style.height = '170px';
+    box.appendChild(stk);
+    var svg = stk.querySelector('svg'), b = drawn(svg);
+    var s = Math.min(w / b.width, h / b.height);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (w / 2 - ox).toFixed(2) + 'px'; stk.style.top = (h / 2 - oy).toFixed(2) + 'px';
+    var r = stk.querySelector('.rot');
+    r.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    r.style.transform = 'rotate(' + (rot || 0) + 'deg)';
+    return stk;
+  }
+
+  /* A look as a bundle, laid out as on results.html: [centre x, centre y, size, 'h' or 'w', rotation] in a 300 x 356 box */
+  var SPOTS = {
+    layer:  [98, 88, 156, 'h', -7],
+    top:    [196, 96, 146, 'h', 5],
+    bottom: [140, 252, 214, 'h', -2],
+    shoes:  [234, 312, 94, 'w', -8],
+    bag:    [252, 210, 92, 'h', 8]
+  };
+  var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+  function lay(box, look, k, spots) {
+    spots = spots || SPOTS;
+    box.innerHTML = '';
+    ORDER.forEach(function (slot) {
+      var id = look[slot]; if (!id || id === 'gap') return;
+      var sp = spots[slot];
+      var stk = document.createElement('span'); stk.className = 'stk';
+      stk.innerHTML = '<span class="rot">' + piece(id) + '</span>';
+      stk.style.width = '120px'; stk.style.height = '170px';
+      box.appendChild(stk);
+      var b = drawn(stk.querySelector('svg'));
+      var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+      var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+      stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+      stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+      var r = stk.querySelector('.rot');
+      r.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+      r.style.transform = 'rotate(' + sp[4] + 'deg)';
+    });
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    var t = document.getElementById('toast');
+    if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    t.innerHTML = '<i data-icon="check"></i><span></span>';
+    t.querySelector('span').textContent = text;
+    if (window.Icons) Icons.mountAll(t);
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
+  }
+
+  /* Fictional leads for one missing piece: navy flats. fit: supported | unknown | conflict */
+  var PRODUCTS = {
+    juniper: { store: 'Juniper Shoe Co.', domain: 'junipershoe.example', title: 'Soft pointed flat', color: 'Navy', draw: 'g-nude-flats', tone: 'navy',
+               price: 48, fit: 'supported', size: '6',
+               fitLine: 'The store lists a size chart and says this style runs true to size. Your usual size 6 is listed.',
+               unknown: 'Width is not listed, so how it fits across the foot is not known.',
+               evidence: ['Size chart on the product page', 'Product page: title, price and colour'],
+               returns: 'Free returns within 30 days if unworn, as listed on the product page.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' },
+    atelier: { store: 'Petite Atelier', domain: 'petiteatelier.example', title: 'Almond-toe ballet flat', color: 'Midnight navy', draw: 'g-nude-flats', tone: 'midnight',
+               price: 56, fit: 'supported', size: '6',
+               fitLine: 'Insole lengths are listed, and size 6 matches your usual size.',
+               unknown: 'Comes in one width only.',
+               evidence: ['Garment measurements on the product page', 'Product page: title, price and colour'],
+               returns: 'Returns within 21 days for store credit, as listed.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' },
+    maple:   { store: 'Maple Row', domain: 'maplerow.example', title: 'Bow ballet flat', color: 'Navy', draw: 'g-nude-flats', tone: 'navy',
+               price: 34, fit: 'unknown', size: null,
+               fitLine: 'No size chart on the product page. Check the fit on the store before you buy.',
+               unknown: 'Sizing, width and returns are not known.',
+               evidence: ['Product page: title, price and colour'],
+               returns: 'No return policy found on the product page.',
+               stock: 'Stock not checked', ship: 'Shipping not checked' },
+    lark:    { store: 'Lark & Line', domain: 'larkandline.example', title: 'Square-toe suede flat', color: 'Ink navy', draw: 'g-nude-flats', tone: 'ink',
+               price: 58, fit: 'unknown', size: null,
+               fitLine: 'Found only in a search snippet. The store page was not checked.',
+               unknown: 'Price, sizes and colour may differ on the store page.',
+               evidence: ['Search snippet (not checked)'],
+               returns: 'Not checked.',
+               stock: 'Stock not checked', ship: 'Shipping not checked' },
+    wren:    { store: 'Wren Market', domain: 'wrenmarket.example', title: 'Wide-fit loafer flat', color: 'Navy', draw: 'g-tan-loafers', tone: 'navy',
+               price: 29, fit: 'conflict', size: null,
+               fitLine: 'Listed as wide fit. Your fit notes say wide shoes slip at your heel.',
+               unknown: '',
+               evidence: ['Product page: fit and width'],
+               returns: 'Returns within 30 days, as listed.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' }
+  };
+  var FIT = {
+    supported: { title: 'Sizing guidance found', icon: 'check', blurb: 'The store lists a size chart or measurements we could compare. Still not a guarantee.' },
+    unknown:   { title: 'Fit not known yet', icon: 'info', blurb: 'Not enough on the page to compare. Worth a look, but check the size yourself.' },
+    conflict:  { title: 'Likely a poor fit', icon: 'close', blurb: 'Something listed goes against your fit notes, so it is set aside.' }
+  };
+  function money(n) { return '$' + n; }
+
+  return { q: q, ready: ready, piece: piece, fit: fit, lay: lay, drawn: drawn, toast: toast, PRODUCTS: PRODUCTS, FIT: FIT, money: money };
+})();
+</script>
+<script>
+(function () {
+  var opt = Shop.q('option') === 'profile' ? 'profile' : 'tab';
+  var sec = opt === 'tab' ? 'opt-tab' : (Shop.q('view') === 'list' ? 'opt-profile-list' : 'opt-profile');
+  document.getElementById(sec).hidden = false;
+  var tab = document.getElementById(opt === 'tab' ? 'tab-saved' : 'tab-home');
+  tab.classList.add('on'); tab.setAttribute('aria-current', 'page');
+
+  /* The fixture list (deterministic for review): one recorded purchase on its way, two saved for later.
+     Anything she saved or recorded in this session is added after them. */
+  var ITEMS = [
+    { id: 'juniper', state: 'way', when: 'Ordered · size 6 · in 3 days' },
+    { id: 'atelier', state: 'saved', when: 'Saved today' },
+    { id: 'maple', state: 'saved', when: 'Saved yesterday' }
+  ];
+  var have = ITEMS.map(function (i) { return i.id; });
+  MockState.get('shop.purchased', []).forEach(function (r) { if (have.indexOf(r.id) < 0) { ITEMS.unshift({ id: r.id, state: 'way', when: 'Ordered · size ' + r.size + ' · arriving ' + r.arrival.toLowerCase() }); have.push(r.id); } });
+  MockState.get('shop.saved', []).forEach(function (id) { if (have.indexOf(id) < 0 && Shop.PRODUCTS[id]) { ITEMS.push({ id: id, state: 'saved', when: 'Saved today' }); have.push(id); } });
+
+  var list = document.querySelector('#' + sec + ' [data-list]');
+  if (!list) return;
+  function render(filter) {
+    list.innerHTML = '';
+    var f = (filter || '').toLowerCase().trim(), shown = 0;
+    [['way', 'On its way'], ['saved', 'Saved for later']].forEach(function (g) {
+      var rows = ITEMS.filter(function (it) {
+        var P = Shop.PRODUCTS[it.id];
+        return it.state === g[0] && (!f || (P.title + ' ' + P.color + ' ' + P.store).toLowerCase().indexOf(f) >= 0);
+      });
+      if (!rows.length) return;
+      var h = document.createElement('h2'); h.className = 'h2'; h.textContent = g[1];
+      var sm = document.createElement('small'); sm.textContent = rows.length + (rows.length === 1 ? ' item' : ' items'); h.appendChild(sm);
+      list.appendChild(h);
+      rows.forEach(function (it) {
+        shown++;
+        var P = Shop.PRODUCTS[it.id];
+        var c = document.createElement('article'); c.className = 'soft prod';
+        c.innerHTML = '<div class="main"><span class="rep"></span><div class="tx"><b></b><span class="store"></span><span class="price"></span>' +
+          '<span class="status ' + it.state + '"></span></div></div><div class="row2"></div>';
+        c.querySelector('.tx b').textContent = P.title + ', ' + P.color.toLowerCase();
+        c.querySelector('.store').textContent = P.store + ' · ' + P.domain;
+        c.querySelector('.price').innerHTML = '<b>' + Shop.money(P.price) + '</b> sample price when saved';
+        var st = c.querySelector('.status');
+        st.innerHTML = (it.state === 'way' ? Icons.svg('clock') : Icons.svg('bookmark')) + '<span></span>';
+        st.querySelector('span').textContent = it.when + (it.state === 'saved' ? ' · not owned' : '');
+        var row = c.querySelector('.row2');
+        if (it.state === 'way') {
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'Mark arrived';
+          b.addEventListener('click', function () {
+            st.className = 'status arrived'; st.innerHTML = Icons.svg('check') + '<span>Arrived · added to your closet</span>';
+            b.remove(); Shop.toast('Marked arrived. It can now appear in looks.');
+          });
+          var n = document.createElement('button'); n.type = 'button'; n.className = 'btn ghost'; n.textContent = 'Not yet';
+          n.addEventListener('click', function () { Shop.toast('Okay. It stays on its way.'); });
+          row.appendChild(n); row.appendChild(b);
+        } else {
+          var v = document.createElement('a'); v.className = 'btn ghost'; v.href = 'purchase.html?id=' + it.id + '&back=products'; v.textContent = 'Review';
+          var r = document.createElement('button'); r.type = 'button'; r.className = 'btn ghost'; r.textContent = 'Remove';
+          r.setAttribute('aria-label', 'Remove ' + P.title + ' from this list');
+          r.addEventListener('click', function () {
+            ITEMS = ITEMS.filter(function (x) { return x !== it; });
+            MockState.update('shop.saved', function (l) { return (l || []).filter(function (x) { return x !== it.id; }); });
+            render(filter); Shop.toast('Removed from this list only');
+          });
+          row.appendChild(r); row.appendChild(v);
+        }
+        list.appendChild(c);
+        Shop.fit(c.querySelector('.rep'), Shop.piece(P.draw, P.tone), 78, 58, -8, 'small');
+        var s = c.querySelector('.stk'); s.style.left = (parseFloat(s.style.left) + 7) + 'px'; s.style.top = (parseFloat(s.style.top) + 9) + 'px';
+      });
+    });
+    if (!shown) list.innerHTML = '<p class="note c empty">' + (f ? 'No saved products match "' + f.replace(/</g, '&lt;') + '".' : 'Nothing saved yet. Find One can save a product for later.') + '</p>';
+  }
+  Shop.ready(function () { render(''); });
+  var inp = document.querySelector('#' + sec + ' [data-filter]');
+  if (inp) inp.addEventListener('input', function () { render(inp.value); });
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+</body>
+</html>

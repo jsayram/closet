@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Closet on iPad</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* Closet on iPad, soft style. Three columns: the sidebar (Closet selected), the closet itself (title with the small
+     decorative armoire beside it, search, filter chips, the grid of her pieces) and the selected piece beside it.
+     Landscape 1194 x 834: sidebar 260, piece panel 360. Portrait (?orient=portrait, 834 x 1194, or any frame narrower
+     than 1000): the sidebar becomes a slim rail of icons with their labels under them, and the panel is 320 wide.
+     Tapping a piece selects it and shows it in the panel; nothing opens a new page until she picks an action. */
+  html, body { height: 100%; }
+  body { overflow: hidden; background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  [hidden] { display: none !important; }
+  .app { height: 100vh; display: grid; grid-template-columns: 260px minmax(0, 1fr) 360px; }
+
+  /* ---------- sidebar ---------- */
+  .side { position: relative; display: flex; flex-direction: column; padding: 52px 12px 20px;
+          background: linear-gradient(rgba(255,255,255,.62), rgba(255,255,255,.62)), linear-gradient(var(--wall), var(--wall-2));
+          box-shadow: 10px 0 24px -20px rgba(90,42,74,.35); z-index: 2; }
+  .side-name { padding: 0 12px 18px; font-family: var(--font-display); font-weight: 800; font-size: 26px; letter-spacing: -.5px; line-height: 1.1; }
+  .srow { display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 0 16px; border-radius: 25px; font-size: 16px; font-weight: 600; }
+  .srow i[data-icon] { font-size: 22px; color: var(--plum); flex: none; }
+  .srow.on { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .srow.on i[data-icon] { color: #fff; }
+  .srow .badge { margin-left: auto; min-width: 26px; height: 24px; padding: 0 8px; border-radius: 12px; background: #FCEFC2; color: #5E4A0E;
+                 font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .srow .off { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .srow + .srow { margin-top: 4px; }
+  .side-sep { height: 1px; margin: 12px 14px; background: var(--soft-divider); }
+  .side-me { margin-top: auto; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 6px 14px 6px 8px; border-radius: 24px;
+             background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .side-me .ic { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; flex: none; background: #FCE6F2; color: var(--plum); font-size: 26px; }
+  .side-me .txt { display: flex; flex-direction: column; min-width: 0; }
+  .side-me b { font-size: 16px; } .side-me small { font-size: 13px; color: var(--ink-soft); }
+  .side-me .end { margin-left: auto; color: var(--soft-chev); display: grid; }
+
+  /* ---------- the closet column ---------- */
+  .main { position: relative; overflow-y: auto; overflow-x: hidden;
+          background: linear-gradient(var(--wall), var(--wall-2)) 0 0 / 100% 214px no-repeat,
+                      linear-gradient(var(--floor-line), var(--floor-line)) 0 214px / 100% 2px no-repeat,
+                      linear-gradient(var(--floor), var(--floor-2)) 0 216px / 100% calc(100% - 216px) no-repeat, var(--floor); }
+  .top { position: relative; height: 214px; }
+  .wardrobe { position: absolute; left: calc(100% - 233px); top: 14px; width: 390px; height: 373px; pointer-events: none;
+              transform-origin: 0 0; transform: scale(.535); }
+  .art { position: absolute; display: block; }
+  .g { position: absolute; }
+  .shoe { position: absolute; --s: calc(var(--w) / 120); width: calc(var(--w) * 1px); --dx: 7; --dy: 6; }
+  .shoe.front { left: calc((var(--x) - 53 * var(--s)) * 1px); top: calc((var(--g) - var(--gf) * var(--s)) * 1px); }
+  .shoe.rear  { left: calc((var(--x) + var(--dx) - 67 * var(--s)) * 1px); top: calc((var(--g) - var(--dy) - var(--gb) * var(--s)) * 1px); }
+  .shoe.front svg > g > g:nth-of-type(1), .shoe.front svg > g > ellipse:nth-of-type(1),
+  .shoe.rear svg > g > g:nth-of-type(2), .shoe.rear svg > g > ellipse:nth-of-type(2) { display: none; }
+  .shoe[data-garment="g-black-heels"] { --gf: 126.4; --gb: 90.4; } .shoe[data-garment="g-white-sneakers"] { --gf: 124.8; --gb: 84.8; }
+  .shoe[data-garment="g-tan-loafers"] { --gf: 124.6; --gb: 84.6; } .shoe[data-garment="g-nude-flats"] { --gf: 119.8; --gb: 81.8; }
+  .hdr { position: absolute; left: 28px; top: 56px; display: flex; flex-direction: column; gap: 8px; }
+  .hdr .title-display { font-size: 38px; }
+  .hdr .count { font-size: 16px; font-weight: 600; color: var(--ink-soft); }
+  .hdr .addp { margin-top: 8px; align-self: flex-start; min-height: 44px; display: flex; align-items: center; }
+  .hdr .addp .chip { min-height: 38px; padding: 7px 15px 7px 12px; font-size: 15px; color: var(--plum); background: var(--soft-tint-strong); }
+  .hdr .addp .chip i[data-icon] { font-size: 17px; color: var(--plum); }
+
+  .body { padding: 14px 24px 40px; }
+  .search { height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 6px 0 16px; border-radius: 18px;
+            background: var(--soft-tint-strong); box-shadow: var(--soft-drop); cursor: text; }
+  .search:focus-within { box-shadow: var(--soft-drop), inset 0 0 0 1.5px #6A1F5840; }
+  .search i[data-icon] { font-size: 19px; color: var(--ink-soft); flex: none; }
+  .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); -webkit-appearance: none; appearance: none; }
+  .search input::-webkit-search-cancel-button { display: none; }
+  .search input::placeholder { color: #8E7A87; }
+  .search .clear { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--ink-soft); }
+  .filters { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 0 8px; }
+  .filters > button { min-height: 48px; display: flex; align-items: center; }
+  .filters .chip { font-size: 14px; }
+  .filters .chip:not(.on) i[data-icon] { color: var(--plum); }
+
+  .grid { margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 12px 8px; }
+  .gcard { position: relative; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 8px; border-radius: 22px; }
+  .gcard::before { content: ""; position: absolute; left: 50%; top: 89px; width: 72px; height: 13px; transform: translateX(-50%);
+                   border-radius: 50%; background: radial-gradient(closest-side, rgba(140,70,95,.32), rgba(140,70,95,0)); }
+  .gcard[aria-pressed="true"] { background: rgba(255,255,255,.6); box-shadow: var(--soft-drop-lg); }
+  .gcard .sel { position: absolute; right: 8px; top: 8px; z-index: 2; width: 24px; height: 24px; border-radius: 50%; display: none; place-items: center;
+                background: var(--plum); color: #fff; font-size: 14px; }
+  .gcard[aria-pressed="true"] .sel { display: grid; }
+  .gart { position: relative; z-index: 1; width: 70px; height: 90px; overflow: hidden; flex: none; }
+  .gart > span { position: absolute; left: 0; top: -4.67px; width: 70px; }
+  .gcard.is-dirty .gart > span { left: 2px; top: 5px; width: 66px; }
+  .gname { margin-top: 6px; text-align: center; font-size: 13px; font-weight: 600; line-height: 16px; }
+  .dirty { position: absolute; left: 6px; top: 6px; z-index: 2; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700;
+           line-height: 14px; padding: 1px 8px 1px 6px; border-radius: 999px; background: #FCEFC2; color: #5E4A0E; }
+  .dirty i[data-icon] { font-size: 12px; }
+  .nomatch { margin: 30px 0; text-align: center; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- the selected piece ---------- */
+  .panel { position: relative; overflow-y: auto; padding: 50px 24px 28px; display: flex; flex-direction: column;
+           background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), linear-gradient(var(--wall), var(--wall-2));
+           box-shadow: -10px 0 24px -20px rgba(90,42,74,.35); }
+  .panel .ptop { display: flex; align-items: center; justify-content: space-between; }
+  .panel .ptop .lbl { font-size: 13px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--ink-soft); }
+  .panel .edit { min-height: 44px; display: flex; align-items: center; }
+  .panel .edit .chip { color: var(--plum); background: var(--soft-tint-strong); font-size: 14px; }
+  .panel .edit .chip i[data-icon] { color: var(--plum); }
+  .panel h2 { margin-top: 4px; font-family: var(--font-display); font-weight: 800; font-size: 28px; letter-spacing: -.4px; line-height: 1.1; }
+  .panel .sub { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+  .stage { position: relative; height: 226px; margin: 8px -8px 0; flex: none; }
+  .stage::before { content: ""; position: absolute; left: 50%; top: 4px; width: 260px; height: 220px; transform: translateX(-50%); border-radius: 50%;
+                   background: radial-gradient(closest-side, rgba(255,250,244,.9), rgba(255,250,244,0)); }
+  .stk { position: absolute; z-index: 1; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 8px 9px rgba(110,58,82,.18)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  .flag { position: absolute; z-index: 2; left: 8px; top: 6px; display: inline-flex; align-items: center; gap: 5px; min-height: 28px; padding: 3px 11px 3px 8px;
+          border-radius: 999px; background: #FCEFC2; color: #5E4A0E; font-size: 13px; font-weight: 700; }
+  .facts { margin-top: 6px; }
+  .fact { position: relative; display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 4px 4px; border-radius: 14px; }
+  .fact + .fact::before { content: ""; position: absolute; left: 6px; right: 6px; top: 0; height: 1px; background: var(--soft-divider); }
+  .fact > i[data-icon] { font-size: 18px; color: var(--plum); flex: none; }
+  .fact .l { font-size: 14px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .fact .v { margin-left: auto; display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; text-align: right; }
+  .fact .chev { color: var(--soft-chev); display: grid; font-size: 13px; }
+  .sw { width: 15px; height: 15px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 1.5px rgba(43,27,39,.18); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #5FA36A; box-shadow: 0 0 0 3px #E4F3DF; flex: none; margin: 0 3px; }
+  .dot.dirty { background: #DDBB4E; box-shadow: 0 0 0 3px #FBF1CC; }
+  .pacts { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .pacts .btn { font-size: 15px; min-height: 48px; }
+  .toast { margin-top: 12px; min-height: 46px; display: flex; align-items: center; gap: 8px; padding: 0 4px 0 14px; border-radius: 18px;
+           background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; }
+  .toast .undo { margin-left: auto; min-height: 44px; padding: 0 12px; display: flex; align-items: center; gap: 5px; color: #F8C6D3; font-weight: 700; }
+
+  /* ---------- portrait: a slim rail instead of the full sidebar ---------- */
+  html.portrait .app { grid-template-columns: 84px minmax(0, 1fr) 320px; }
+  html.portrait .side { padding: 40px 6px 20px; align-items: stretch; }
+  html.portrait .side-name { display: none; }
+  html.portrait .srow { flex-direction: column; justify-content: center; gap: 3px; min-height: 64px; padding: 6px 2px; border-radius: 20px; font-size: 11px; text-align: center; }
+  html.portrait .srow .badge { position: absolute; margin: 0; transform: translate(16px, -20px); min-width: 22px; height: 20px; font-size: 11px; }
+  html.portrait .srow { position: relative; }
+  html.portrait .srow .off { display: none; }
+  html.portrait .side-sep { margin: 10px 8px; }
+  html.portrait .side-me { flex-direction: column; padding: 8px 2px; gap: 4px; background: none; box-shadow: none; }
+  html.portrait .side-me .txt { align-items: center; } html.portrait .side-me small, html.portrait .side-me .end { display: none; }
+  html.portrait .side-me b { font-size: 12px; }
+  html.portrait .hdr { left: 22px; }
+  html.portrait .body { padding: 14px 18px 40px; }
+  html.portrait .wardrobe { left: calc(100% - 221px); }
+
+  /* dark (tokens from css/dark.css) */
+  html.theme-dark .side { background: linear-gradient(rgba(255,240,248,.04), rgba(255,240,248,.04)), var(--wall-2); }
+  html.theme-dark .panel { background: var(--surface); }
+  html.theme-dark .srow.on, html.theme-dark .gcard .sel { background: var(--plum-fill); }
+  html.theme-dark .gcard[aria-pressed="true"] { background: rgba(255,240,248,.08); }
+  html.theme-dark .search input { background: none; }
+  html.theme-dark .dirty, html.theme-dark .flag, html.theme-dark .srow .badge { background: var(--tint-butter); color: var(--tint-butter-ink); }
+  html.theme-dark .side-me .ic { background: var(--tint-pink); }
+</style>
+<script>
+  /* portrait layout: from the URL, or when the frame itself is narrower than 1000 */
+  if (new URLSearchParams(location.search).get('orient') === 'portrait' || window.innerWidth < 1000) document.documentElement.classList.add('portrait');
+</script>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/ipad-landscape.css">
+</head>
+<body class="ipad-wide ipad-closet-wide">
+<div class="app">
+  <nav class="side" aria-label="Sections">
+    <div class="side-name">My Petite Style</div>
+    <a class="srow" href="ipad-home.html"><i data-icon="home"></i>Home</a>
+    <a class="srow on" href="ipad-closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+    <a class="srow" href="ipad-saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+    <div class="side-sep"></div>
+    <a class="srow" href="suitcases.html"><i data-icon="suitcase"></i>Suitcases</a>
+    <a class="srow" id="side-laundry" href="laundry.html"><i data-icon="basket"></i>Laundry<span class="badge" id="side-badge" aria-label="2 to wash">2</span></a>
+    <a class="side-me" href="settings.html">
+      <span class="ic" aria-hidden="true"><i data-icon="person-circle"></i></span>
+      <span class="txt"><b>Lily</b><small>Profile and settings</small></span>
+      <span class="end"><i data-icon="chevron-right"></i></span>
+    </a>
+  </nav>
+
+  <main class="main" aria-label="Closet">
+    <div class="top">
+      <div class="wardrobe" aria-hidden="true">
+        <img class="art" src="../art/closet-armoire.svg" alt="" style="left:0;top:89px;width:390px;height:284px">
+        <span class="g" data-garment="g-gray-blazer" data-hanger style="left:56px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-pink-blouse" data-hanger style="left:83px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:110px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-cream-crop" data-hanger style="left:137px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-brown-jacket" data-hanger style="left:164px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-wide-jeans" data-hanger style="left:62px;top:198.87px;width:56px"></span>
+        <span class="g" data-garment="g-navy-trousers" data-hanger style="left:97px;top:198.87px;width:56px"></span>
+        <span class="g" data-garment="g-olive-trousers" data-hanger style="left:130px;top:198.87px;width:56px"></span>
+        <span class="g" data-garment="g-black-skirt" data-hanger style="left:166px;top:198.87px;width:56px"></span>
+        <span class="g" data-garment="g-blue-dress" data-hanger style="left:230.8px;top:188.18px;width:58px"></span>
+        <span class="g" data-garment="g-burgundy-bag" style="left:279px;top:184.1px;width:54px"></span>
+        <span class="shoe rear"  data-garment="g-black-heels"    style="--w:30;--x:90.3;--g:336.6"></span>
+        <span class="shoe front" data-garment="g-black-heels"    style="--w:30;--x:90.3;--g:336.6"></span>
+        <span class="shoe rear"  data-garment="g-nude-flats"     style="--w:30;--x:157.8;--g:336.6"></span>
+        <span class="shoe front" data-garment="g-nude-flats"     style="--w:30;--x:157.8;--g:336.6"></span>
+        <span class="shoe rear"  data-garment="g-white-sneakers" style="--w:30;--x:225.3;--g:336.6"></span>
+        <span class="shoe front" data-garment="g-white-sneakers" style="--w:30;--x:225.3;--g:336.6"></span>
+        <span class="shoe rear"  data-garment="g-tan-loafers"    style="--w:30;--x:292.8;--g:336.6"></span>
+        <span class="shoe front" data-garment="g-tan-loafers"    style="--w:30;--x:292.8;--g:336.6"></span>
+      </div>
+      <div class="hdr">
+        <h1 class="title-display">Closet</h1>
+        <span class="count">Main closet · 21 pieces</span>
+        <a class="addp" href="garment-edit.html"><span class="chip"><i data-icon="plus"></i>Add a piece</span></a>
+      </div>
+    </div>
+
+    <div class="body">
+      <label class="search"><i data-icon="search"></i>
+        <input type="search" id="q" placeholder="Search your closet" aria-label="Search your closet" autocomplete="off">
+        <button type="button" class="clear" id="clear" aria-label="Clear search" hidden><i data-icon="close"></i></button>
+      </label>
+      <div class="filters" id="filters" role="toolbar" aria-label="Show"></div>
+      <div class="grid" id="grid" aria-label="Your pieces"></div>
+      <p class="nomatch" id="nomatch" hidden></p>
+    </div>
+  </main>
+
+  <aside class="panel" id="panel" aria-label="Selected piece" aria-live="polite">
+    <div class="ptop"><span class="lbl">Piece</span><a class="edit" id="p-edit" href="garment-edit.html?step=details&amp;id=g-navy-trousers"><span class="chip"><i data-icon="pencil"></i>Edit</span></a></div>
+    <h2 id="p-name">Navy dress pants</h2>
+    <p class="sub" id="p-sub">Bottoms · Trousers · Main closet</p>
+    <div class="stage" id="stage"><span class="flag" id="p-flag" hidden><i data-icon="basket"></i>In the wash</span></div>
+    <div class="facts">
+      <div class="fact"><i data-icon="palette"></i><span class="l">Color</span><span class="v"><span class="sw" id="p-sw"></span><span id="p-color"></span></span></div>
+      <div class="fact"><i data-icon="basket"></i><span class="l">Status</span><span class="v"><span class="dot" id="p-dot"></span><span id="p-status"></span></span></div>
+      <a class="fact" href="suitcases.html"><i data-icon="suitcase"></i><span class="l">Suitcases</span><span class="v"><span id="p-suit"></span><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+      <a class="fact" id="p-looks-row" href="ipad-saved.html"><i data-icon="bookmark"></i><span class="l">Saved looks</span><span class="v"><span id="p-looks"></span><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+    </div>
+    <div class="pacts">
+      <button type="button" class="btn" id="p-style"><i data-icon="sparkles"></i>Style with this</button>
+      <a class="btn ghost" id="p-suitbtn" href="garment.html?id=g-navy-trousers&amp;sheet=suitcase"><i data-icon="suitcase"></i>Add to a suitcase</a>
+      <button type="button" class="btn ghost" id="p-mark"><i data-icon="basket"></i><span>Mark as dirty</span></button>
+    </div>
+    <div class="toast" id="toast" role="status" hidden><span id="toast-msg"></span><button type="button" class="undo" id="undo"><i data-icon="undo"></i>Undo</button></div>
+  </aside>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+(function () {
+  var P = new URLSearchParams(location.search);
+  var S = window.MockState || { get: function (k, d) { return d; }, set: function () {} };
+  function $(x) { return document.getElementById(x); }
+  function carry(u) { return window.MockTheme ? MockTheme.carry(u) : u; }
+  var CAT = { top: 'Tops', layer: 'Layers', bottom: 'Bottoms', dress: 'Dresses', shoes: 'Shoes', accessory: 'Bags' };
+  var G = [
+    ['g-navy-trousers', 'Navy dress pants', 'bottom', 'Trousers', 'Navy', '#27335F', 'Navy trousers'],
+    ['g-pink-blouse', 'Cute pink shirt', 'top', 'Blouse', 'Light pink', '#F4B4C2', 'Date-night top'],
+    ['g-navy-cardigan', 'Navy cardigan', 'layer', 'Cardigan', 'Navy', '#27335F', ''],
+    ['g-lace-top', 'White lace top', 'top', 'Lace top', 'Soft white', '#FFFDF8', ''],
+    ['g-wide-jeans', 'Wide-leg jeans', 'bottom', 'Jeans', 'Mid-wash denim', '#6F93C4', 'Baggie jeans'],
+    ['g-black-heels', 'Black block heels', 'shoes', 'Heels', 'Black', '#2E2A30', ''],
+    ['g-camel-trench', 'Camel trench coat', 'layer', 'Coat', 'Camel', '#C9A06A', ''],
+    ['g-brick-top', 'Brick knit top', 'top', 'Knit top', 'Brick', '#B5533C', ''],
+    ['g-burgundy-bag', 'Burgundy crossbody bag', 'accessory', 'Bag', 'Burgundy', '#7B2338', ''],
+    ['g-blue-dress', 'Blue floral dress', 'dress', 'Dress', 'Cornflower blue floral', '#8FB3E3', ''],
+    ['g-olive-trousers', 'Olive trousers', 'bottom', 'Trousers', 'Olive', '#7C8450', ''],
+    ['g-white-sneakers', 'White sneakers', 'shoes', 'Sneakers', 'White', '#FAFAFA', ''],
+    ['g-cream-sweater', 'Cream knit sweater', 'top', 'Sweater', 'Cream', '#FFF3E0', ''],
+    ['g-black-tee', 'Black tee', 'top', 'Tee', 'Black', '#2E2A30', ''],
+    ['g-gray-blazer', 'Gray blazer', 'layer', 'Blazer', 'Heather gray', '#A9ABB3', ''],
+    ['g-brown-jacket', 'Brown leather jacket', 'layer', 'Jacket', 'Chocolate brown', '#7A4B2E', ''],
+    ['g-black-skirt', 'Black midi skirt', 'bottom', 'Skirt', 'Black', '#2E2A30', ''],
+    ['g-gray-leggings', 'Old gray leggings', 'bottom', 'Leggings', 'Charcoal', '#8E9098', ''],
+    ['g-cream-crop', 'Cream lace crop top', 'top', 'Lace top', 'Cream', '#F8ECD8', ''],
+    ['g-nude-flats', 'Nude pointed flats', 'shoes', 'Flats', 'Nude', '#F1DCC6', ''],
+    ['g-tan-loafers', 'Tan loafers', 'shoes', 'Loafers', 'Tan', '#B98552', '']
+  ];
+  var BY = {}; G.forEach(function (g) { BY[g[0]] = g; });
+  var SUITS = { jose: ["Jose's house", ['g-navy-trousers', 'g-pink-blouse', 'g-navy-cardigan', 'g-nude-flats', 'g-lace-top']],
+    weekend: ['Weekend', ['g-navy-trousers', 'g-olive-trousers', 'g-wide-jeans', 'g-brick-top', 'g-cream-sweater', 'g-brown-jacket', 'g-white-sneakers', 'g-black-tee']] };
+  var LOOKS = [['g-navy-cardigan', 'g-pink-blouse', 'g-navy-trousers', 'g-nude-flats'], ['g-brown-jacket', 'g-brick-top', 'g-olive-trousers', 'g-white-sneakers'],
+    ['g-lace-top', 'g-black-skirt', 'g-black-heels', 'g-burgundy-bag'], ['g-gray-blazer', 'g-cream-sweater', 'g-navy-trousers', 'g-black-heels'],
+    ['g-pink-blouse', 'g-navy-trousers', 'g-black-heels', 'g-burgundy-bag']];
+  var tracking = P.get('laundry') === 'off' ? false : S.get('laundry.tracking', true);
+  var dirty = S.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) || [];
+  var sel = BY[P.get('id')] ? P.get('id') : 'g-navy-trousers', filter = 'all', last = null;
+  function isDirty(id) { return tracking && dirty.indexOf(id) >= 0; }
+
+  /* sidebar laundry */
+  if (!tracking) { $('side-badge').outerHTML = '<span class="off">Off</span>'; $('side-laundry').href = carry('laundry-off.html'); }
+  else if (!dirty.length) $('side-badge').remove();
+  else { $('side-badge').textContent = dirty.length; $('side-badge').setAttribute('aria-label', dirty.length + ' to wash'); }
+
+  /* filters */
+  var F = [['all', 'All']].concat(Object.keys(CAT).map(function (k) { return [k, CAT[k]]; }));
+  if (tracking) F.push(['dirty', 'Dirty (' + dirty.length + ')']);
+  F.forEach(function (f) {
+    var b = document.createElement('button'); b.type = 'button'; b.dataset.f = f[0];
+    b.innerHTML = '<span class="chip">' + (f[0] === 'dirty' ? '<i data-icon="basket"></i>' : '') + f[1] + '</span>';
+    b.addEventListener('click', function () { filter = f[0]; apply(); });
+    $('filters').appendChild(b);
+  });
+
+  /* grid */
+  G.forEach(function (g) {
+    var b = document.createElement('button'); b.type = 'button';
+    b.className = 'gcard' + (isDirty(g[0]) ? ' is-dirty' : ''); b.dataset.id = g[0];
+    b.dataset.text = [g[1], g[3], g[4], g[6], CAT[g[2]]].join(' ').toLowerCase();
+    b.innerHTML = '<span class="gart" aria-hidden="true"><span data-garment="' + g[0] + '"></span></span><span class="gname">' + g[1] + '</span>' +
+      (isDirty(g[0]) ? '<span class="dirty"><i data-icon="basket"></i>Dirty</span>' : '') + '<span class="sel" aria-hidden="true"><i data-icon="check"></i></span>';
+    b.addEventListener('click', function () { sel = g[0]; paintSel(); show(); });
+    $('grid').appendChild(b);
+  });
+  $('q').addEventListener('input', apply);
+  $('clear').addEventListener('click', function () { $('q').value = ''; apply(); $('q').focus(); });
+  function apply() {
+    var t = $('q').value.trim().toLowerCase(), n = 0;
+    $('clear').hidden = !t;
+    Array.prototype.forEach.call($('grid').children, function (c) {
+      var ok = (!t || t.split(/\s+/).every(function (w) { return c.dataset.text.indexOf(w) >= 0; })) &&
+        (filter === 'all' || (filter === 'dirty' ? isDirty(c.dataset.id) : BY[c.dataset.id][2] === filter));
+      c.hidden = !ok; if (ok) n++;
+    });
+    Array.prototype.forEach.call($('filters').children, function (b) {
+      b.querySelector('.chip').classList.toggle('on', b.dataset.f === filter); b.setAttribute('aria-pressed', b.dataset.f === filter);
+    });
+    $('nomatch').hidden = !!n; $('nomatch').textContent = t ? 'No pieces match “' + $('q').value.trim() + '”.' : 'Nothing here.';
+  }
+  function paintSel() { Array.prototype.forEach.call($('grid').children, function (c) { c.setAttribute('aria-pressed', c.dataset.id === sel); }); }
+
+  /* panel */
+  var stage = $('stage');
+  function show() {
+    var g = BY[sel];
+    $('p-name').textContent = g[1]; $('p-sub').textContent = CAT[g[2]] + ' · ' + g[3] + ' · Main closet';
+    $('p-color').textContent = g[4]; $('p-sw').style.background = g[5];
+    $('p-edit').href = carry('garment-edit.html?step=details&id=' + sel);
+    $('p-suitbtn').href = carry('garment.html?id=' + sel + '&sheet=suitcase');
+    var su = Object.keys(SUITS).filter(function (k) { return SUITS[k][1].indexOf(sel) >= 0; }).map(function (k) { return SUITS[k][0]; });
+    $('p-suit').textContent = su.length ? su.join(', ') : 'None';
+    var n = LOOKS.filter(function (l) { return l.indexOf(sel) >= 0; }).length;
+    $('p-looks').textContent = n ? 'In ' + n + (n === 1 ? ' look' : ' looks') : 'Not in a look yet';
+    var d = isDirty(sel);
+    $('p-status').textContent = !tracking ? 'Available' : d ? 'Dirty' : 'Clean';
+    $('p-dot').classList.toggle('dirty', d); $('p-flag').hidden = !d;
+    var m = $('p-mark'); m.hidden = !tracking;
+    m.querySelector('span').textContent = d ? 'Mark as clean' : 'Mark as dirty';
+    m.querySelector('i').setAttribute('data-icon', d ? 'check' : 'basket');
+    var old = stage.querySelector('.stk'); if (old) old.remove();
+    var stk = document.createElement('span'); stk.className = 'stk'; stk.style.width = '160px';
+    stk.innerHTML = '<span class="rot"><span data-garment="' + sel + '"></span></span>'; stage.appendChild(stk);
+    if (window.Garments) Garments.mountAll(stk);
+    var svg = stk.querySelector('svg');
+    if (svg) {
+      var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i;
+      for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+      var b = svg.getBBox();
+      for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+      var s = Math.min(196 / b.height, 210 / b.width), ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+      stk.style.width = 120 * s + 'px'; stk.style.height = 170 * s + 'px';
+      stk.style.left = stage.clientWidth / 2 - ox + 'px'; stk.style.top = 113 - oy + 'px';
+      var rot = stk.querySelector('.rot'); rot.style.transformOrigin = ox + 'px ' + oy + 'px'; rot.style.transform = 'rotate(-3deg)';
+    }
+    if (window.Icons) Icons.mountAll($('panel'));
+  }
+  $('p-style').addEventListener('click', function () { S.set('start', sel); location.href = carry('styleme.html'); });
+  $('p-mark').addEventListener('click', function () {
+    var was = isDirty(sel); last = [sel, was];
+    dirty = dirty.filter(function (x) { return x !== sel; }); if (!was) dirty.push(sel);
+    S.set('laundry.dirty', dirty);
+    $('toast-msg').textContent = was ? 'Marked clean' : 'Marked as dirty'; $('toast').hidden = false;
+    refreshDirty(); show();
+  });
+  $('undo').addEventListener('click', function () {
+    if (!last) return; dirty = dirty.filter(function (x) { return x !== last[0]; }); if (last[1]) dirty.push(last[0]);
+    S.set('laundry.dirty', dirty); last = null; $('toast').hidden = true; refreshDirty(); show(); $('p-mark').focus();
+  });
+  function refreshDirty() {
+    Array.prototype.forEach.call($('grid').children, function (c) {
+      var d = isDirty(c.dataset.id), badge = c.querySelector('.dirty');
+      c.classList.toggle('is-dirty', d);
+      if (d && !badge) { c.insertAdjacentHTML('beforeend', '<span class="dirty"><i data-icon="basket"></i>Dirty</span>'); Icons.mountAll(c); }
+      if (!d && badge) badge.remove();
+    });
+    var fd = $('filters').querySelector('[data-f="dirty"] .chip'); if (fd) fd.lastChild.textContent = 'Dirty (' + dirty.length + ')';
+    var sb = $('side-badge'); if (sb) sb.textContent = dirty.length;
+  }
+  apply(); paintSel();
+  if (window.Icons) Icons.mountAll(document);
+  if (window.Garments) Garments.mountAll(document);
+  show();
+  window.addEventListener('resize', show);
+})();
+</script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="ipad-closet"></script>
+</body>
+</html>

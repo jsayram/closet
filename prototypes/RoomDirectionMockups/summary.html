@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lily’s notes</title>
+<link rel="stylesheet" href="css/review.css?v=lily-20261007">
+</head>
+<body>
+<main class="wrap">
+  <nav class="bar" aria-label="Review">
+    <a class="back" href="index.html">Choose a screen</a>
+  </nav>
+  <header class="rhead">
+    <p class="eyebrow" id="rev" hidden></p>
+    <h1>Your notes, Lily</h1>
+    <p class="desc">Everything you’ve saved is here. Tap a screen’s name if you want another look.</p>
+    <details class="more">
+      <summary>Extra options</summary>
+    <div class="tools">
+      <label>Show notes from
+        <select id="filter"><option value="">Every version</option></select>
+      </label>
+      <button class="btn ghost" type="button" id="export-json">Download notes (JSON)</button>
+      <button class="btn ghost" type="button" id="export-csv">Download notes for a spreadsheet</button>
+    </div>
+    </details>
+    <p class="counts" id="counts" aria-live="polite"></p>
+  </header>
+  <p class="msg" id="msg" role="status"></p>
+  <div id="summary"></div>
+  <p class="foot">You can come back and add more notes whenever you like.</p>
+</main>
+<script src="js/registry.js?v=tablet-centered-r11"></script>
+<script src="js/review.js?v=restored-preview-r13"></script>
+<script>Review.summary();</script>
+</body>
+</html>

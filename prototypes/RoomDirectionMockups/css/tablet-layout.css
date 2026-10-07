@@ -1,0 +1,122 @@
+/* The ordinary app routes also adapt to tablet widths, including portrait. */
+@media (min-width:768px) {
+  body[data-tablet-screen]:not([data-tablet-screen^="ipad-"]) .tabbar { max-width:760px; }
+  .tablet-panes { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:40px; align-items:start; margin:24px 0; }
+  .tablet-pane { min-width:0; }
+  .tablet-visual { position:sticky; top:24px; }
+  .tablet-details > :first-child { margin-top:0; }
+  body[data-tablet-screen] :is(.col,.wrap) { max-width:1120px; }
+  body[data-tablet-screen] .tablet-visual > .stage { margin-left:auto; margin-right:auto; }
+  body[data-tablet-screen="styleme"] .page { max-width:1120px; padding-left:32px; padding-right:32px; }
+  body[data-tablet-screen="styleme"] .tablet-details .go { position:static; width:auto; max-width:none; margin-top:24px; }
+  body[data-tablet-screen="results"] .col { padding-left:32px; padding-right:32px; }
+  body[data-tablet-screen="results"] .tablet-panes { grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); }
+  body[data-tablet-screen="results"] .tablet-visual .stage { max-width:440px; }
+  body[data-tablet-screen="suitcases"] .col,
+  body[data-tablet-screen="suitcase"] .col,
+  body[data-tablet-screen="laundry"] .col,
+  body[data-tablet-screen="laundry-off"] .col { padding:24px 32px 100px; }
+  body[data-tablet-screen="suitcases"] .tablet-panes { margin-top:0; }
+  body[data-tablet-screen="suitcases"] .tablet-details { padding-top:54px; }
+  body[data-tablet-screen="suitcases"] .scene { height:480px; }
+  body[data-tablet-screen="suitcases"] .hall { transform:scale(1.15); transform-origin:top center; }
+  body[data-tablet-screen="suitcases"] #tags { transform:scale(1.15); transform-origin:top center; }
+  body[data-tablet-screen="suitcases"] .using { bottom:0; }
+  body[data-tablet-screen="garment"] .wrap,
+  body[data-tablet-screen="garment-edit"] .wrap { padding-left:32px; padding-right:32px; }
+  body[data-tablet-screen="look"] .col,
+  body[data-tablet-screen="picture"] .col,
+  body[data-tablet-screen="editor"] .col,
+  body[data-tablet-screen="swap"] .col { padding-left:32px; padding-right:32px; }
+  body[data-tablet-screen="swap"] .rail { flex-wrap:wrap; overflow-x:visible; }
+  body[data-tablet-screen="saved"] .screen { display:grid; grid-template-columns:280px minmax(0,1fr); grid-template-rows:100px 64px 64px auto 1fr; gap:12px 24px; padding:24px 28px 110px; }
+  body[data-tablet-screen="saved"] .screen > :is(.top,.seg,.search,.opt,.chips,.hits) { grid-column:1; margin-left:0; margin-right:0; }
+  body[data-tablet-screen="saved"] .screen > .top { padding:32px 8px 0; }
+  body[data-tablet-screen="saved"] .screen > .gallery { grid-column:2; grid-row:1 / span 6; margin-top:28px; min-width:0; }
+  body[data-tablet-screen="saved"] .wall { max-width:none; width:100%; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:24px 16px; padding:0 12px 80px; }
+  body[data-tablet-screen="saved"] .cell { width:100%; }
+  body[data-tablet-screen="saved"] .cell .frame { left:calc(50% - 68px); }
+  body[data-tablet-screen="saved"] .cell .win { left:calc(50% - 49px); }
+  body[data-tablet-screen="saved"] .lights { width:100%; max-width:none; }
+  body[data-tablet-screen="closet"] .page { display:grid; grid-template-columns:300px minmax(0,1fr); min-height:100vh; }
+  body[data-tablet-screen="closet"] .top { height:calc(100vh - 100px); min-height:500px; position:sticky; top:0; box-shadow:none; }
+  body[data-tablet-screen="closet"] .hdr { max-width:none; left:24px; top:70px; }
+  body[data-tablet-screen="closet"] .wardrobe { left:25px; top:190px; transform:scale(.65); }
+  body[data-tablet-screen="closet"] .main { max-width:none; width:100%; margin:0; padding:70px 24px 120px; }
+  body[data-tablet-screen="closet"] .grid { grid-template-columns:repeat(auto-fill,minmax(125px,1fr)); gap:24px 16px; }
+  /* Account/help screens: illustration and title beside the controls or reading. */
+  body[data-tablet-screen]:is([data-tablet-screen="settings"],[data-tablet-screen="fit"],[data-tablet-screen="help"],[data-tablet-screen="privacy"],[data-tablet-screen="developer"],[data-tablet-screen="feedback"],[data-tablet-screen="access"]) .screen { display:grid; grid-template-columns:minmax(320px,42%) minmax(0,1fr); gap:32px; padding:24px 32px 110px; align-items:start; }
+  body[data-tablet-screen]:is([data-tablet-screen="settings"],[data-tablet-screen="fit"],[data-tablet-screen="help"],[data-tablet-screen="privacy"],[data-tablet-screen="developer"],[data-tablet-screen="feedback"],[data-tablet-screen="access"]) .scene { grid-column:1; position:sticky; top:24px; width:100%; }
+  body[data-tablet-screen]:is([data-tablet-screen="settings"],[data-tablet-screen="fit"],[data-tablet-screen="help"],[data-tablet-screen="privacy"],[data-tablet-screen="developer"],[data-tablet-screen="feedback"],[data-tablet-screen="access"]) .screen > .col { grid-column:2; width:100%; padding-top:40px; }
+  body[data-tablet-screen="products"] .plist,
+  body[data-tablet-screen="products"] .list { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  body[data-tablet-screen="findone"] .page { max-width:1120px; padding-left:32px; padding-right:32px; }
+  body[data-tablet-screen="findone"] .alts { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  body[data-tablet-screen="handoff"] .col,
+  body[data-tablet-screen="purchase"] .col,
+  body[data-tablet-screen="products"] .col,
+  body[data-tablet-screen="export"] .col { padding-left:32px; padding-right:32px; }
+  body[data-tablet-screen="handoff"] .choices { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  body[data-tablet-screen="chat"] .convo { display:grid; grid-template-columns:340px minmax(0,1fr); gap:32px; max-width:1120px; margin:auto; }
+  body[data-tablet-screen="chat"] .strip { width:340px; position:sticky; top:48px; }
+  body[data-tablet-screen="chat"] .thread { max-width:none; width:100%; }
+  body[data-tablet-screen="chat"] .composer .in { max-width:900px; }
+  body[data-tablet-screen="packs"] :is(#packs-view,#out-view),
+  body[data-tablet-screen="paywall"] .sheet { max-width:1120px; width:calc(100% - 48px); margin:auto; }
+  body[data-tablet-screen="packs"] #packs-view,
+  body[data-tablet-screen="paywall"] .sheet { display:grid; grid-template-columns:minmax(320px,1fr) minmax(0,1fr); align-items:start; }
+  body[data-tablet-screen="packs"] .shelf,
+  body[data-tablet-screen="paywall"] .shop { grid-column:1; }
+  body[data-tablet-screen="packs"] #packs-view > .col,
+  body[data-tablet-screen="paywall"] .sheet > .col { grid-column:2; width:100%; padding:36px 24px; }
+}
+
+@media (min-width:768px) {
+  body[data-tablet-screen="chat"] .sheet { max-width:1120px; margin:auto; }
+  body[data-tablet-screen="chat"] .tablet-panes { padding:28px 32px 100px; grid-template-columns:380px minmax(0,1fr); }
+  body[data-tablet-screen="chat"] .convo { display:block; width:100%; }
+  body[data-tablet-screen="chat"] .thread { padding:0 16px 120px; }
+  body[data-tablet-screen="paywall"] .cta,
+  body[data-tablet-screen="packs"] .cta { left:calc(50% + 24px); right:36px; width:auto; max-width:none; }
+}
+@media (min-width:768px) and (max-width:949px) {
+  .tablet-panes { gap:24px; }
+  body[data-tablet-screen="chat"] .tablet-panes { grid-template-columns:300px minmax(0,1fr); padding-left:20px; padding-right:20px; }
+  body[data-tablet-screen="chat"] .strip { width:300px; }
+  body[data-tablet-screen="suitcases"] .hall,
+  body[data-tablet-screen="suitcases"] #tags { transform:scale(.85); }
+  body[data-tablet-screen="suitcases"] .scene { height:380px; }
+  body[data-tablet-screen="saved"] .screen { grid-template-columns:240px minmax(0,1fr); gap:12px; padding-left:20px; padding-right:20px; }
+  body[data-tablet-screen="closet"] .page { grid-template-columns:240px minmax(0,1fr); }
+  body[data-tablet-screen="closet"] .wardrobe { left:10px; transform:scale(.56); }
+}
+
+@media (min-width:768px) {
+  body[data-tablet-screen="garment-edit"] .tablet-visual > .rail { max-width:390px; width:100%; margin:48px auto; }
+  body[data-tablet-screen="garment-edit"] .sec { max-width:none; }
+  body[data-tablet-screen="export"] .paper { max-width:100%; margin:0; }
+  body[data-tablet-screen="handoff"] .choices { grid-template-columns:repeat(3,1fr); }
+  body[data-tablet-screen="products"] .plist .product { min-width:0; }
+  body[data-tablet-screen="packs"] #packs-view > .shelf { width:100%; min-height:340px; }
+  body[data-tablet-screen="packs"] #out-view { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  body[data-tablet-screen="packs"] #out-view[hidden] { display:none; }
+  body[data-tablet-screen="packs"] #out-view > .col { grid-column:2; grid-row:1 / span 2; }
+}
+
+/* Keep paired panes together in the center of the usable tablet canvas.
+   Tall content keeps its natural scroll position instead of being pushed down. */
+@media (min-width:768px) {
+  .tablet-panes { width:100%; max-width:1120px; margin-left:auto; margin-right:auto; }
+  .tablet-panes.tablet-centered { align-content:center; align-items:center; }
+  .tablet-centered > .tablet-visual { position:relative; top:auto; }
+  body[data-tablet-screen]:is([data-tablet-screen="saved"],[data-tablet-screen="settings"],[data-tablet-screen="fit"],[data-tablet-screen="help"],[data-tablet-screen="privacy"],[data-tablet-screen="developer"],[data-tablet-screen="feedback"],[data-tablet-screen="access"]) .screen { max-width:1194px; margin-left:auto; margin-right:auto; }
+  body[data-tablet-screen]:is([data-tablet-screen="settings"],[data-tablet-screen="fit"],[data-tablet-screen="help"],[data-tablet-screen="privacy"],[data-tablet-screen="developer"],[data-tablet-screen="feedback"],[data-tablet-screen="access"]) .screen { min-height:100dvh; align-content:center; }
+  body[data-tablet-screen="closet"] .page { max-width:1194px; margin-left:auto; margin-right:auto; }
+  body[data-tablet-screen="packs"] #packs-view,
+  body[data-tablet-screen="paywall"] .sheet { min-height:calc(100dvh - 110px); align-content:center; align-items:center; }
+}
+
+@media (min-width:768px) {
+  body[data-tablet-screen] .screen.tablet-direct-centered { align-items:center; }
+  body[data-tablet-screen] .screen.tablet-direct-centered > .scene { position:relative; top:auto; }
+}

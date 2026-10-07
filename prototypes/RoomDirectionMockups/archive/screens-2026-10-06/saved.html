@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Saved Looks</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Saved Looks tab, the gallery wall. The header follows the other rooms: the display title at top 46 (as on Style Me,
+     Suitcases and Laundry), a caption under it, then the Looks | Pictures control. Below that the wall scrolls: string
+     lights hang across its top like a garland over the pictures, then each saved look is framed and hung in two columns.
+     This is the top of the wall as it first appears.
+     Frame art: art/saved-frame.svg (136 x 324), window x 19..117, y 38..304 (98 x 266).
+     No figures (STYLE.md, Revision 2). A look with a try-on picture shows that picture (here the simulated placeholder:
+     warm grey to blush, photo icon, "Try-on picture", Simulated). A look without one shows its pieces laid out flat on
+     the cream mat: top above bottom, shoes at the foot, the bag beside the bottom. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .room { --floor-y: 2000px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+  .count { position: absolute; left: 21px; top: 86px; font-size: 14px; line-height: 18px; font-weight: 500; color: var(--ink-soft); }
+
+  /* segmented control, a white plate on the wall */
+  /* 44 px segments; the white pill is drawn 3 px inside each one */
+  .seg { position: absolute; left: 16px; right: 16px; top: 114px; height: 44px; display: flex;
+         border-radius: 14px; background: #F4D9E0; box-shadow: inset 0 0 0 1px #ECCBD5; }
+  .seg button { flex: 1; height: 44px; position: relative; border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--ink-soft);
+                display: grid; place-items: center; isolation: isolate; }
+  .seg button[aria-selected="true"] { color: var(--plum); }
+  .seg button[aria-selected="true"]::before { content: ""; position: absolute; inset: 3px; z-index: -1; border-radius: 11px;
+                background: #fff; box-shadow: 0 1px 2px #5a2a4a1f, 0 2px 6px #5a2a4a12; }
+  .seg button:focus-visible { outline-offset: -2px; }
+
+  /* the wall below the control scrolls (inside the screen; the page itself never scrolls). Its top edge fades over
+     10 px so frames slide away softly under the control. Content: the string lights at 8, frame rows at 58 / 438 / 818,
+     then the floor at 1204. */
+  .gallery { position: absolute; left: 0; right: 0; top: 158px; bottom: 0; overflow-x: hidden; overflow-y: auto;
+             scrollbar-width: none; -webkit-mask-image: linear-gradient(#0000, #000 10px); mask-image: linear-gradient(#0000, #000 10px); }
+  .gallery::-webkit-scrollbar { display: none; }
+  .wall { position: relative; height: 1334px; }
+  /* the end of the wall: baseboard line and floor, with a plant standing beside the last frame */
+  .endfloor { position: absolute; left: 0; right: 0; top: 1204px; bottom: 0;
+              background: linear-gradient(var(--floor-line), var(--floor-line)) 0 0 / 100% 2px no-repeat, linear-gradient(var(--floor), var(--floor-2)); }
+  .look { position: absolute; width: 180px; height: 372px; display: block; }
+  .look .frame { position: absolute; left: 22px; top: 0; width: 136px; height: 324px; }
+  /* the picture window inside the frame */
+  .win { position: absolute; left: 41px; top: 38px; width: 98px; height: 266px; overflow: hidden; }
+  /* pieces laid flat on the cream mat; flatlay() fits each drawing into its spot by its drawn bounds */
+  .win.flat { background: linear-gradient(#FFFAF2, #FBF0DF); }
+  .win.flat .fp { position: absolute; left: 0; top: 0; width: 70px; }
+  /* a try-on picture (simulated placeholder): never a drawn figure */
+  .win.tryon { background: radial-gradient(ellipse 70% 42% at 50% 40%, #FFFFFF73, #FFFFFF00 100%),
+                           linear-gradient(#E9E2DF 0%, #EFDFE0 50%, #F5D2DB 100%);
+               box-shadow: inset 0 0 0 1px #E2D3D3; display: flex; flex-direction: column;
+               align-items: center; justify-content: center; gap: 7px; color: #A8899C; text-align: center; }
+  .win.tryon i[data-icon] { font-size: 30px; }
+  .win.tryon .lbl { font-size: 12px; line-height: 15px; font-weight: 700; color: var(--ink-soft); }
+  .win.tryon .sim { background: #fff; }
+  .look .t { position: absolute; left: 0; right: 0; top: 330px; text-align: center; font-size: 14px; font-weight: 700;
+             line-height: 18px; color: var(--ink); white-space: nowrap; }
+  .look .o { position: absolute; left: 0; right: 0; top: 349px; text-align: center; font-size: 12px; font-weight: 500;
+             line-height: 15px; color: var(--ink-soft); }
+
+  /* Pictures: the looks that have a try-on picture, on the same wall */
+  .pics { height: 520px; }
+  .pics-note { position: absolute; left: 40px; right: 40px; top: 446px; text-align: center; font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .looks[hidden] { display: none; }
+
+  .tabfade { --tabfade: #F7D6DC; }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <div class="nav"><a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
+  <h1 class="title-display hdr-title">Saved Looks</h1>
+  <p class="count">5 looks</p>
+
+  <div class="seg" role="tablist" aria-label="Show">
+    <button type="button" role="tab" aria-selected="true" aria-controls="looks" id="tab-looks">Looks</button>
+    <button type="button" role="tab" aria-selected="false" aria-controls="pictures" id="tab-pictures">Pictures</button>
+  </div>
+
+  <div class="gallery">
+    <!-- string lights across the top of the wall, a garland over the pictures; they scroll with the wall -->
+    <img class="art" src="../art/string-lights.svg" alt="" style="left:0;top:8px;width:390px;height:46px">
+    <div class="looks wall" id="looks" role="tabpanel" aria-labelledby="tab-looks">
+      <!-- row 1 -->
+      <a class="look" href="look.html#interview" style="left:11px;top:58px" aria-label="Interview navy and pink, Office. Try-on picture, simulated">
+        <img class="frame" src="../art/saved-frame.svg" alt="">
+        <span class="win tryon"><i data-icon="photo"></i><span class="lbl">Try-on picture</span><span class="sim">Simulated</span></span>
+        <b class="t">Interview navy &amp; pink</b>
+        <span class="o">Office</span>
+      </a>
+      <a class="look" href="look.html#weekend" style="left:199px;top:58px">
+        <img class="frame" src="../art/saved-frame.svg" alt="">
+        <span class="win flat" data-layout="layer">
+          <span class="fp" data-slot="layer" data-garment="g-brown-jacket"></span>
+          <span class="fp" data-slot="top" data-garment="g-brick-top"></span>
+          <span class="fp" data-slot="bottom" data-garment="g-olive-trousers"></span>
+          <span class="fp" data-slot="shoes" data-garment="g-white-sneakers"></span>
+        </span>
+        <b class="t">Weekend olive &amp; brick</b>
+        <span class="o">Casual</span>
+      </a>
+      <!-- row 2 -->
+      <a class="look" href="look.html#lace" style="left:11px;top:438px" aria-label="Lace date night, Date Night. Try-on picture, simulated">
+        <img class="frame" src="../art/saved-frame.svg" alt="">
+        <span class="win tryon"><i data-icon="photo"></i><span class="lbl">Try-on picture</span><span class="sim">Simulated</span></span>
+        <b class="t">Lace date night</b>
+        <span class="o">Date Night</span>
+      </a>
+      <a class="look" href="look.html#blazer" style="left:199px;top:438px">
+        <img class="frame" src="../art/saved-frame.svg" alt="">
+        <span class="win flat" data-layout="layer">
+          <span class="fp" data-slot="layer" data-garment="g-gray-blazer"></span>
+          <span class="fp" data-slot="top" data-garment="g-cream-sweater"></span>
+          <span class="fp" data-slot="bottom" data-garment="g-navy-trousers"></span>
+          <span class="fp" data-slot="shoes" data-garment="g-black-heels"></span>
+        </span>
+        <b class="t">Gray blazer office</b>
+        <span class="o">Office</span>
+      </a>
+      <!-- row 3, below the fold -->
+      <a class="look" href="look.html#pinkblack" style="left:11px;top:818px">
+        <img class="frame" src="../art/saved-frame.svg" alt="">
+        <span class="win flat" data-layout="bag">
+          <span class="fp" data-slot="top" data-garment="g-pink-blouse"></span>
+          <span class="fp" data-slot="bottom" data-garment="g-navy-trousers"></span>
+          <span class="fp" data-slot="bag" data-garment="g-burgundy-bag"></span>
+          <span class="fp" data-slot="shoes" data-garment="g-black-heels"></span>
+        </span>
+        <b class="t">Pink &amp; black date night</b>
+        <span class="o">Date Night</span>
+      </a>
+      <!-- end of the wall: the floor, and a low console (art/saved-console.svg, 150 x 70) beside the last frame, its feet
+           8 px in front of the baseboard. The plant (0.85, 61.2 x 105.4) stands on the console top (its y 8), right of centre. -->
+      <div class="endfloor" aria-hidden="true"></div>
+      <img class="art" src="../art/saved-console.svg" alt="" style="left:214px;top:1146px;width:150px;height:70px">
+      <img class="art" src="../art/plant-floor.svg" alt="" style="left:279.4px;top:1052px;width:61.2px;height:105.4px">
+    </div>
+    <!-- Pictures: the two looks that have a try-on picture, hung the same way -->
+    <div class="looks wall pics" id="pictures" role="tabpanel" aria-labelledby="tab-pictures" hidden>
+      <a class="look" href="look.html#interview" style="left:11px;top:58px" aria-label="Try-on picture of Interview navy and pink, simulated">
+        <img class="frame" src="../art/saved-frame.svg" alt="">
+        <span class="win tryon"><i data-icon="photo"></i><span class="lbl">Try-on picture</span><span class="sim">Simulated</span></span>
+        <b class="t">Interview navy &amp; pink</b>
+        <span class="o">Office</span>
+      </a>
+      <a class="look" href="look.html#lace" style="left:199px;top:58px" aria-label="Try-on picture of Lace date night, simulated">
+        <img class="frame" src="../art/saved-frame.svg" alt="">
+        <span class="win tryon"><i data-icon="photo"></i><span class="lbl">Try-on picture</span><span class="sim">Simulated</span></span>
+        <b class="t">Lace date night</b>
+        <span class="o">Date Night</span>
+      </a>
+      <p class="pics-note">Make more from any look with Try it on.</p>
+    </div>
+  </div>
+
+  <div class="tabfade"></div>
+  <nav class="tabbar">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a class="on" href="saved.html" aria-current="page"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* Looks | Pictures. #pictures (from Try it on on Your looks) opens on Pictures. */
+(function () {
+  var tabs = document.querySelectorAll('.seg [role="tab"]');
+  function select(tab) {
+    for (var j = 0; j < tabs.length; j++) {
+      var on = tabs[j] === tab;
+      tabs[j].setAttribute('aria-selected', on ? 'true' : 'false');
+      document.getElementById(tabs[j].getAttribute('aria-controls')).hidden = !on;
+    }
+    /* the caption under the title follows the panel */
+    document.querySelector('.count').textContent = tab.id === 'tab-pictures' ? '2 pictures' : '5 looks';
+  }
+  for (var i = 0; i < tabs.length; i++) tabs[i].addEventListener('click', function () { select(this); });
+  if (location.hash === '#pictures') select(document.getElementById('tab-pictures'));
+})();
+
+/* Flat lay: fit each piece into its spot in the 98 x 266 window by its drawn bounds (getBBox), centred in the spot.
+   Spots are [x, y, w, h]. With a layer, the layer lies up and to the left with the top over it; with a bag, the bag
+   lies beside the bottom. Outlines are set near 1 px so small pieces stay crisp. */
+(function () {
+  var SPOTS = {
+    layer: { layer: [4, 8, 62, 82], top: [32, 24, 62, 82], bottom: [24, 112, 50, 104], shoes: [14, 224, 70, 34] },
+    bag:   { top: [10, 8, 78, 92], bottom: [8, 110, 50, 106], bag: [60, 136, 32, 52], shoes: [14, 224, 70, 34] }
+  };
+  var TARGET = 1.0, OUTLINE = 1.5;
+  function fit(el) {
+    var svg = el.querySelector('svg');
+    if (!svg) return;
+    var spot = SPOTS[el.parentNode.getAttribute('data-layout')][el.getAttribute('data-slot')];
+    var b = svg.getBBox();
+    var s = Math.min(spot[2] / b.width, spot[3] / b.height);   /* px per unit */
+    el.style.width = (120 * s).toFixed(2) + 'px';
+    el.style.left = (spot[0] + spot[2] / 2 - (b.x + b.width / 2) * s).toFixed(2) + 'px';
+    el.style.top = (spot[1] + spot[3] / 2 - (b.y + b.height / 2) * s).toFixed(2) + 'px';
+    var f = TARGET / (OUTLINE * s), list = svg.querySelectorAll('[stroke-width]');
+    for (var i = 0; i < list.length; i++) {
+      var w = parseFloat(list[i].getAttribute('stroke-width'));
+      if (w > 0 && f < 1) list[i].setAttribute('stroke-width', (w * Math.max(f, .7)).toFixed(2));
+    }
+  }
+  function run() { var l = document.querySelectorAll('.win.flat .fp'); for (var i = 0; i < l.length; i++) fit(l[i]); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+</script>
+</body>
+</html>

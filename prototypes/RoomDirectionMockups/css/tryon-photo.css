@@ -1,0 +1,8 @@
+#tryon-photo-sheet .panel { max-height: 90vh; overflow-y: auto; }
+#tryon-photo-sheet .photo-preview { width: 132px; height: 180px; margin: 16px auto 8px; border-radius: 22px; background: var(--tint-pink, var(--wall)); display: grid; place-items: center; }
+#tryon-photo-sheet .photo-preview img { height: 92%; width: 90%; object-fit: contain; }
+#tryon-photo-sheet .photo-caption { text-align: center; font-size: 13px; line-height: 1.4; color: var(--ink-soft); }
+#tryon-photo-sheet .photo-controls { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+#tryon-photo-sheet .photo-controls button { min-height: 44px; }
+#tryon-photo-sheet .photo-remove { min-height: 44px; color: var(--plum); font-weight: 600; }
+#tryon-photo-sheet [hidden] { display: none !important; }

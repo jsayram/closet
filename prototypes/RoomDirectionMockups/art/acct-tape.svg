@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 58" width="160" height="58" stroke-linejoin="round" stroke-linecap="round">
+  <!-- A sewing tape measure on the floor for Fit and measurements: a pink case standing on its edge and the cream tape
+       running out of it along the floor in one loose loop, ending in a brass tab. No numbers in the art.
+       The case and the tape rest on y 54 (place y 54 a px or two below the floor line). -->
+  <ellipse cx="78" cy="54.6" rx="76" ry="2.6" fill="#7A4636" opacity=".12"/>
+  <!-- tape: back of the loop first (shade), then the front strip lying on the floor -->
+  <path d="M60,49 C78,49 92,46 100,36 C108,26 124,22 132,30 C138,36 134,46 122,47" fill="none" stroke="#D9C6A5" stroke-width="9.4"/>
+  <path d="M60,49 C78,49 92,46 100,36 C108,26 124,22 132,30 C138,36 134,46 122,47" fill="none" stroke="#F3E6D0" stroke-width="7"/>
+  <path d="M108,50.2 C120,50.2 132,49.6 146,50.6" fill="none" stroke="#D9C6A5" stroke-width="9.4"/>
+  <path d="M108,50.2 C120,50.2 132,49.6 146,50.6" fill="none" stroke="#FFF7EA" stroke-width="7"/>
+  <path d="M122,47 C116,48 112,49.4 108,50.2" fill="none" stroke="#D9C6A5" stroke-width="9.4"/>
+  <path d="M122,47 C116,48 112,49.4 108,50.2" fill="none" stroke="#FFF7EA" stroke-width="7"/>
+  <!-- tick marks along the near strips -->
+  <g stroke="#C9A676" stroke-width="1">
+    <path d="M66,46.6 v3.2 M71,46.5 v2.2 M76,46.3 v3.2 M81,46 v2.2 M86,45.4 v3.2 M91,44.2 v2.2"/>
+    <path d="M114,47.6 v3.2 M119,47.6 v2.2 M124,47.5 v3.2 M129,47.5 v2.2 M134,47.6 v3.2 M139,47.8 v2.2"/>
+  </g>
+  <!-- brass tab at the end -->
+  <rect x="144" y="45.6" width="7" height="9.6" rx="1.4" fill="#E7BC6E" stroke="#B98632" stroke-width="1.2"/>
+  <line x1="146.4" y1="47.6" x2="146.4" y2="53.2" stroke="#FAE7B8" stroke-width="1"/>
+  <!-- the case, standing on its edge -->
+  <circle cx="36" cy="33" r="21" fill="#F4B4C2" stroke="#D97F97" stroke-width="1.5"/>
+  <path d="M36,12 A21,21 0 0 1 57,33 A21,21 0 0 1 36,54 A23,23 0 0 0 51.4,33 A23,23 0 0 0 36,12 Z" fill="#EC9DB0"/>
+  <circle cx="36" cy="33" r="13.5" fill="#FBD0D9" stroke="#D97F97" stroke-width="1.2"/>
+  <circle cx="36" cy="33" r="5" fill="#FFF7EA" stroke="#D9C6A5" stroke-width="1.2"/>
+  <path d="M24,22 A16,16 0 0 1 30,17.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity=".8"/>
+  <!-- slot where the tape leaves the case -->
+  <path d="M52,46 L61,46 L61,52.4 L50,52.4 Z" fill="#F3E6D0" stroke="#D9C6A5" stroke-width="1.2"/>
+</svg>

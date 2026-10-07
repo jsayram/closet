@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* ---- account screens: shared soft layout (same block in every account page) ----
+     The page is one column on the floor colour, under a short wall scene that holds the title and a little art.
+     The scene's art sits in a 390-wide stage centred in the frame, so wider frames (iPad Split View) let it breathe
+     instead of stretching it. The tab bar is fixed at the bottom; the page scrolls vertically when it is long. */
+  html, body { background: var(--floor); }
+  .screen { height: auto; min-height: 100vh; overflow: visible; background: var(--floor); padding-bottom: 124px; }
+  .screen.no-tabs { padding-bottom: 28px; }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; color: inherit; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* wall scene: wall gradient, a floor band at the bottom and the baseboard line */
+  .scene { position: relative; background: linear-gradient(var(--wall), var(--wall-2)); }
+  .scene::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--floor-band, 0px);
+                  background: linear-gradient(var(--floor-line), var(--floor-line)) 0 0/100% 2px no-repeat, var(--floor); }
+  .stage { position: relative; width: 390px; max-width: 100%; margin: 0 auto; z-index: 1; }
+
+  /* nav: back chevron with the parent's name, title in display type */
+  .back { position: absolute; left: 6px; top: 2px; height: 44px; padding: 0 10px 0 2px; display: flex; align-items: center; gap: 1px;
+          color: var(--plum); font-size: 17px; font-weight: 500; border-radius: 12px; }
+  .back i[data-icon] { font-size: 25px; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+  .lede { position: absolute; left: 20px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  /* header in normal flow (title may wrap), with the art placed absolutely around it */
+  .hd { position: relative; z-index: 2; padding: 46px 20px 0; }
+  .hd .lede { position: static; margin-top: 8px; }
+  .hd .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+  /* the column under the scene */
+  .col { max-width: 440px; margin: 0 auto; padding: 8px 16px 0; }
+  .sec-h { margin: 22px 12px 4px; font-size: 13px; font-weight: 700; color: var(--ink-soft); letter-spacing: .1px; }
+  .sec-h:first-child { margin-top: 10px; }
+  .grp { position: relative; }
+  .grp + .grp { margin-top: 26px; }
+  .grp + .grp::before { content: ""; position: absolute; left: 36px; right: 36px; top: -14px; height: 1px; background: var(--soft-divider); }
+  .note { margin: 6px 12px 0; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .note.small { font-size: 12px; line-height: 16px; }
+
+  /* rows: no box, no lines; space and a round tinted icon tell them apart */
+  .item { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 12px; width: 100%;
+          border-radius: 22px; color: var(--ink); }
+  a.item:active, button.item:active { background: var(--soft-tint); }
+  .ic { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; color: var(--plum); }
+  .ic i[data-icon] { font-size: 18px; }
+  .ic.lilac { background: #EADFF8; } .ic.pink { background: #FCE6F2; } .ic.blue { background: #E2EEFB; }
+  .ic.green { background: #E4F3DF; } .ic.butter { background: #FCF1C8; } .ic.cream { background: #FBEEDD; } .ic.mauve { background: #F0E2EA; }
+  .lbl { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .txt small { font-size: 12px; line-height: 16px; color: var(--ink-soft); font-weight: 500; }
+  .end { margin-left: auto; display: flex; align-items: center; gap: 6px; flex: none; }
+  .chev { color: var(--soft-chev); font-size: 14px; display: grid; }
+  .val { font-size: 15px; color: var(--ink-soft); font-weight: 500; }
+  .pill { font-size: 12px; font-weight: 700; color: #355E3C; background: #E2F2DD; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .pill.butter { color: #5E4A0E; background: #FCEFC2; }
+  .pill.mauve { color: var(--ink-soft); background: rgba(255,255,255,.62); font-weight: 600; }
+  .sim { font-size: 11px; }
+
+  /* switch: a real button with role=switch; 44 px tall hit area around the 51 x 31 track */
+  .sw { flex: none; width: 59px; height: 44px; display: grid; place-items: center; border-radius: 22px; }
+  .sw .track { width: 51px; height: 31px; border-radius: 16px; background: #D9CDD5; position: relative; display: block; }
+  .sw .track::after { content: ""; position: absolute; left: 2px; top: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff;
+                      box-shadow: 0 3px 6px -2px rgba(43,27,39,.35); }
+  .sw[aria-checked="true"] .track { background: var(--plum); }
+  .sw[aria-checked="true"] .track::after { left: 22px; }
+
+  /* choice pills: selected is a solid plum pill */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 12px; }
+  .pills button, .pills a { min-height: 44px; padding: 0 16px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
+                  font-size: 14px; font-weight: 600; color: var(--ink); background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .pills [aria-checked="true"], .pills [aria-pressed="true"] { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .pills i[data-icon] { font-size: 16px; }
+
+  /* text links and buttons */
+  .tlink { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 12px; font-size: 15px; font-weight: 600;
+           color: var(--plum); border-radius: 12px; }
+  .tlink i[data-icon] { font-size: 14px; }
+  .btn { width: 100%; }
+  .btn.ghost { color: var(--plum); }
+  .btns { display: flex; flex-direction: column; gap: 10px; padding: 0 4px; }
+
+  /* tab bar: fixed, and centred on wider frames */
+  .tabfade { position: fixed; z-index: 30; }
+  .tabbar { position: fixed; z-index: 31; left: 50%; right: auto; width: calc(100% - 28px); max-width: 430px; transform: translateX(-50%); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* bottom sheet: opened by script (or #id for the plain placeholders), closed by the scrim, Escape or its buttons */
+  .sheet-w { display: none; position: fixed; inset: 0; z-index: 50; }
+  .sheet-w.open, .sheet-w:target { display: block; }
+  .sheet-w .scrim { position: absolute; inset: 0; background: #2B1B2766; }
+  .sheet-w .panel { position: absolute; left: 0; right: 0; bottom: 0; max-width: 520px; margin: 0 auto; padding: 12px 20px 30px;
+                    border-radius: 28px 28px 0 0; background: linear-gradient(var(--wall), var(--wall-2));
+                    box-shadow: 0 -10px 26px -8px rgba(90,42,74,.22); }
+  .sheet-w .grab { width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; margin: 0 auto 14px; }
+  .sheet-w h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.3px; line-height: 1.1; }
+  .sheet-w p { margin-top: 8px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  .sheet-w .sim { margin-top: 10px; }
+  .sheet-w .sim[hidden] { display: none; }
+  .sheet-w .btns { margin-top: 18px; padding: 0; }
+
+  /* toast above the tab bar */
+  .toast { position: fixed; z-index: 40; left: 50%; bottom: 102px; transform: translateX(-50%); width: calc(100% - 40px); max-width: 400px;
+           display: none; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 20px; background: var(--ink); color: #fff;
+           font-size: 14px; line-height: 18px; font-weight: 500; box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast.show { display: flex; }
+  .toast i[data-icon] { font-size: 18px; flex: none; }
+  .no-tabs .toast { bottom: 24px; }
+
+
+  /* Profile: the hallway wall outside the bedroom. Her name sign hangs on the wall (name-sign.svg at 1.3) with a small
+     landscape to its left and the floor plant in the corner. The scene is 246 tall (floor band 14); the rows sit on the floor.
+     Rows: Styling access, Name on your sign, Fit and measurements / Track laundry, Closet and suitcases /
+     Help, Send feedback, Privacy and terms / Demo controls. Track laundry is a real switch (MockState laundry.tracking);
+     ?laundry=off shows it off with its caption. */
+  .scene { --floor-band: 14px; }
+  .scene .stage { height: 246px; }
+  /* name sign: name-sign.svg at 1.3 (143 x 83.2). Its flat text area x 17..93, y 27..53 becomes x 22.1..120.9, y 35.1..68.9 */
+  .sign { position: absolute; display: block; left: 123.5px; top: 112px; width: 143px; height: 83.2px; border-radius: 14px; }
+  .sign img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .sign .name { position: absolute; left: 22.1px; top: 35.1px; width: 98.8px; height: 33.8px; display: flex; align-items: center;
+                justify-content: center; font-family: var(--font-display); font-weight: 700; font-style: italic; color: var(--plum);
+                letter-spacing: .2px; font-size: 30px; white-space: nowrap; overflow: hidden; }
+  .item.tall { align-items: center; }
+  .item .txt small.cap { color: var(--ink-soft); }
+  .laundry-off-cap { color: #5E4A0E !important; }
+
+  /* name editor sheet */
+  .field { display: block; margin-top: 16px; }
+  .field span { display: block; font-size: 13px; font-weight: 700; color: var(--ink-soft); margin: 0 4px 6px; }
+  .field input { width: 100%; min-height: 50px; padding: 0 16px; border: 0; border-radius: 18px; font: inherit; font-size: 17px; color: var(--ink);
+                 background: var(--soft-tint-strong); box-shadow: var(--soft-drop); }
+  .field input:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+
+  /* app tours sheet */
+  .sheet-w .tours { margin: 12px -12px 0; }
+  .sheet-w .tours-sw { margin: 10px -12px 0; }
+  .sheet-w .tours-sw::before { content: ""; position: absolute; left: 24px; right: 24px; top: -6px; height: 1px; background: var(--soft-divider); }
+  .sheet-w .btns { margin-top: 10px; }
+#tours-sheet .panel { max-height: 90vh; overflow-y: auto; }
+</style>
+<link rel="stylesheet" href="../css/tryon-photo.css">
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body class="">
+<div class="screen">
+
+  <div class="scene">
+    <div class="stage">
+      <a class="back" href="home.html" aria-label="Back to Home"><i data-icon="chevron-left"></i>Home</a>
+      <h1 class="title-display hdr-title">Profile</h1>
+      <!-- landscape on a wire, left of the sign -->
+      <img class="art" src="../art/access-picture.svg" alt="" style="left:30px;top:108px;width:74px;height:96px">
+      <!-- floor plant in the corner: pot foot (y 119.6) on the floor band -->
+      <img class="art" src="../art/plant-floor.svg" alt="" style="left:304px;top:120px;width:72px;height:124px">
+      <!-- her name sign, centred at x 195; tapping it opens the same editor as the row -->
+      <button class="sign" type="button" data-edit-name aria-label="Name on your sign: Lily. Change">
+        <img src="../art/name-sign.svg" alt="">
+        <span class="name" data-sign-name>Lily</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="grp">
+      <a class="item" href="access.html">
+        <span class="ic lilac"><i data-icon="sparkles"></i></span>
+        <span class="txt"><span class="lbl">Styling access</span><small>Simulated</small></span>
+        <span class="end"><span class="pill">Sponsored</span><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </a>
+      <button class="item" type="button" data-edit-name>
+        <span class="ic pink"><i data-icon="person-circle"></i></span>
+        <span class="txt"><span class="lbl">Name on your sign</span><small>Shown in your room</small></span>
+        <span class="end"><span class="val" data-sign-name>Lily</span><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </button>
+      <a class="item" href="fit.html">
+        <span class="ic blue"><i data-icon="trousers"></i></span>
+        <span class="txt"><span class="lbl">Fit and measurements</span><small>Optional · stays on this iPhone</small></span>
+        <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </a>
+      <button class="item" type="button" id="tryon-photo-open" aria-haspopup="dialog" aria-controls="tryon-photo-sheet">
+        <span class="ic pink"><i data-icon="camera"></i></span>
+        <span class="txt"><span class="lbl">Your try-on photo</span><small>Try it with an example photo</small></span>
+        <span class="end"><span class="val" id="photo-status">Not added</span><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </button>
+
+    </div>
+
+    <div class="grp">
+      <div class="item tall">
+        <span class="ic butter"><i data-icon="washer"></i></span>
+        <span class="txt"><span class="lbl" id="lt-label">Track laundry</span><small class="cap" id="lt-cap">Style Me skips dirty pieces until they're clean.</small></span>
+        <button class="sw" id="lt" type="button" role="switch" aria-checked="true" aria-labelledby="lt-label" aria-describedby="lt-cap"><span class="track"></span></button>
+      </div>
+      <a class="item" href="suitcases.html">
+        <span class="ic cream"><i data-icon="suitcase"></i></span>
+        <span class="txt"><span class="lbl">Closet and suitcases</span></span>
+        <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </a>
+    </div>
+
+    <div class="grp">
+      <a class="item" href="help.html">
+        <span class="ic butter"><i data-icon="info"></i></span>
+        <span class="txt"><span class="lbl">Help</span></span>
+        <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </a>
+      <button class="item" type="button" id="tours-open" aria-haspopup="dialog">
+        <span class="ic lilac"><i data-icon="sparkle-wand"></i></span>
+        <span class="txt"><span class="lbl">App tours</span><small>Replay the tips for any screen</small></span>
+        <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </button>
+      <a class="item" href="feedback.html">
+        <span class="ic pink"><i data-icon="chat"></i></span>
+        <span class="txt"><span class="lbl">Send feedback</span></span>
+        <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </a>
+      <a class="item" href="privacy.html">
+        <span class="ic green"><i data-icon="lock"></i></span>
+        <span class="txt"><span class="lbl">Privacy and terms</span></span>
+        <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </a>
+    </div>
+
+    <div class="grp">
+      <a class="item" href="developer.html">
+        <span class="ic mauve"><i data-icon="sliders"></i></span>
+        <span class="txt"><span class="lbl">Demo controls</span></span>
+        <span class="end"><span class="pill mauve">Prototype</span><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Optional try-on reference: fictional example only in this review. -->
+  <div class="sheet-w" id="tryon-photo-sheet" role="dialog" aria-modal="true" aria-labelledby="tryon-photo-title">
+    <button class="scrim" type="button" data-photo-close aria-label="Close your try-on photo"></button>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="tryon-photo-title">Your try-on photo</h2>
+      <div id="photo-main">
+        <p>In the app, this is where you would add your photo for outfit pictures.</p>
+        <p id="photo-empty">You can leave this blank and add it later.</p>
+        <div id="photo-current" hidden>
+          <div class="photo-preview"><img src="../art/tryon-person-placeholder.svg" alt="Example person, not your real photo"></div>
+          <p class="photo-caption">Example photo · Simulated</p>
+        </div>
+        <div class="photo-controls">
+          <button class="btn" type="button" id="photo-choose">Choose example photo</button>
+          <button class="photo-remove" type="button" id="photo-remove-open" hidden>Remove photo</button>
+          <button class="btn ghost" type="button" data-photo-close>Done</button>
+        </div>
+        <p class="photo-caption">This preview uses an example person. Nothing is uploaded.</p>
+      </div>
+      <div id="photo-picker" hidden>
+        <p>This is just an example. Tap below to see how it works.</p>
+        <div class="photo-preview"><img src="../art/tryon-person-placeholder.svg" alt="Simulated photo choice: example person"></div>
+        <p class="photo-caption">For now, try this example photo.</p>
+        <div class="photo-controls">
+          <button class="btn" type="button" id="photo-use">Use example photo</button>
+          <button class="btn ghost" type="button" id="photo-picker-cancel">Cancel</button>
+        </div>
+      </div>
+      <div id="photo-remove" hidden>
+        <p>Remove your try-on photo? Your saved outfit pictures will stay.</p>
+        <div class="photo-controls">
+          <button class="btn" type="button" id="photo-remove-confirm">Remove photo</button>
+          <button class="btn ghost" type="button" id="photo-remove-cancel">Keep photo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ name on your sign ============ -->
+  <div class="sheet-w" id="name-sheet" role="dialog" aria-modal="true" aria-labelledby="name-title">
+    <a class="scrim" href="#" data-close aria-label="Close"></a>
+    <form class="panel" id="name-form">
+      <div class="grab"></div>
+      <h2 id="name-title">Name on your sign</h2>
+      <p>The sign in your room shows this name. It stays on this iPhone.</p>
+      <label class="field"><span>Name</span><input id="name-input" type="text" value="Lily" maxlength="12" autocomplete="off"></label>
+      <div class="btns"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-close>Cancel</button></div>
+    </form>
+  </div>
+
+
+  <!-- ============ app tours: pick a screen to replay its tour ============
+       Each main screen has its own short tour that shows once, the first time she opens that screen.
+       Every registered screen has a replayable tour copy; real first-use tracking is future app work. -->
+  <div class="sheet-w" id="tours-sheet" role="dialog" aria-modal="true" aria-labelledby="tours-title">
+    <a class="scrim" href="#" data-close aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="tours-title">App tours</h2>
+      <p>Pick a screen and I'll show you around it again.</p>
+      <div class="tours"><a class="item" href="home-tour.html"><span class="ic pink"><i data-icon="home"></i></span><span class="txt"><span class="lbl">Home</span><small>4 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="closet-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Closet</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="styleme-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Style Me request</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="results-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Your looks</span><small>4 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="saved-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Saved Looks</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="suitcases-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Suitcases</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="fit-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Fit and measurements</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<details><summary style="min-height:44px;display:flex;align-items:center;color:var(--plum);font-weight:600;cursor:pointer">More screen tours</summary><a class="item" href="swap-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Swap a piece</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="editor-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Outfit editor</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="look-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">A saved outfit</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="picture-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Try-on picture</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="garment-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">A piece of clothing</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="garment-edit-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Add or edit a piece</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="laundry-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Laundry</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="suitcase-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Inside your suitcase</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="settings-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Profile and settings</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="laundry-off-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Laundry is off</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="access-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Styling access</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="paywall-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Subscription example</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="packs-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Picture packs (demo)</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="help-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Help</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="feedback-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Send feedback</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="privacy-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Privacy and terms</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="developer-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Demo controls</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="chat-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Ask stylist</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="export-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Ask another stylist</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="findone-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Find One</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="purchase-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Purchase review</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="handoff-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Visiting a shop</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="products-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Saved products</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="onboarding-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Welcome</span><small>2 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="home-ax-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Home at the largest text size</span><small>4 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="home-landscape-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Home, iPhone sideways</span><small>4 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="ipad-home-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Home on iPad</span><small>4 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="ipad-home-portrait-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Home on iPad, upright</span><small>4 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="ipad-results-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Your looks on iPad</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="ipad-saved-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Saved Looks on iPad</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+<a class="item" href="ipad-closet-tour.html"><span class="ic pink"><i data-icon="sparkles"></i></span><span class="txt"><span class="lbl">Closet on iPad</span><small>3 quick tips</small></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a></details></div>
+      <div class="item tall tours-sw">
+        <span class="txt"><span class="lbl" id="ts-label">Show tips on new screens</span><small id="ts-cap">Each tour shows once. Skip ends it.</small></span>
+        <button class="sw" id="ts" type="button" role="switch" aria-checked="true" aria-labelledby="ts-label" aria-describedby="ts-cap"><span class="track"></span></button>
+      </div>
+      <div class="btns"><button class="btn ghost" type="button" data-close>Done</button></div>
+    </div>
+  </div>
+
+  <!-- ============ tab bar: account screens keep Home active ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ============ placeholder sheet for rows that are not mocked (opens on #soon) ============ -->
+  <div class="sheet-w" id="soon" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+    <a class="scrim" href="#" aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="soon-title">Not in this prototype</h2>
+      <p id="soon-text">This page is not part of the mockups yet.</p>
+      <span class="sim" id="soon-sim" hidden>Simulated</span>
+      <div class="btns"><a class="btn" href="#">OK</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+
+  /* Placeholder sheet: fill it from the row that opened it. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#soon"]');
+    if (!a) return;
+    document.getElementById('soon-title').textContent = a.getAttribute('data-soon') || 'Not in this prototype';
+    document.getElementById('soon-text').textContent = a.getAttribute('data-soon-text') || 'This page is not part of the mockups yet.';
+    document.getElementById('soon-sim').hidden = !a.hasAttribute('data-soon-sim');
+  });
+  /* Sheets opened by script: open(id), close on the scrim, [data-close] or Escape, and give focus back. */
+  var Sheet = (function () {
+    var last = null;
+    function open(id) {
+      var w = document.getElementById(id); if (!w) return;
+      last = document.activeElement; w.classList.add('open');
+      var f = w.querySelector('input, textarea, button, a.btn'); if (f) f.focus();
+    }
+    function close(w) { w.classList.remove('open'); if (last && last.focus) last.focus(); }
+    document.addEventListener('click', function (e) {
+      var c = e.target.closest && e.target.closest('[data-close]');
+      if (c) { e.preventDefault(); close(c.closest('.sheet-w')); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var w = document.querySelector('.sheet-w.open'); if (w) close(w);
+      else if (location.hash === '#soon') location.hash = '';
+    });
+    return { open: open, close: close };
+  })();
+  /* Toast: one line, stays 4 s. */
+  function toast(text, icon) {
+    var t = document.getElementById('toast'); if (!t) return;
+    t.innerHTML = '<i data-icon="' + (icon || 'check') + '"></i><span></span>';
+    t.querySelector('span').textContent = text;
+    if (window.Icons) Icons.mountAll(t);
+    t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 4000);
+  }
+  /* Switches: role=switch buttons flip aria-checked and call their handler. */
+  function bindSwitch(btn, onChange) {
+    btn.addEventListener('click', function () {
+      var on = btn.getAttribute('aria-checked') !== 'true';
+      btn.setAttribute('aria-checked', on ? 'true' : 'false');
+      onChange(on);
+    });
+  }
+  /* Radio pills: role=radiogroup of role=radio buttons, arrow keys move. */
+  function bindRadios(group, onChange) {
+    var items = [].slice.call(group.querySelectorAll('[role="radio"]'));
+    function pick(it, focus) {
+      items.forEach(function (x) { var on = x === it; x.setAttribute('aria-checked', on ? 'true' : 'false'); x.tabIndex = on ? 0 : -1; });
+      if (focus) it.focus();
+      onChange(it.getAttribute('data-value'));
+    }
+    items.forEach(function (it, i) {
+      it.tabIndex = it.getAttribute('aria-checked') === 'true' ? 0 : -1;
+      it.addEventListener('click', function () { pick(it); });
+      it.addEventListener('keydown', function (e) {
+        var d = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
+        if (!d) return; e.preventDefault(); pick(items[(i + d + items.length) % items.length], true);
+      });
+    });
+    return function (value) {
+      items.forEach(function (x) { var on = x.getAttribute('data-value') === value;
+        x.setAttribute('aria-checked', on ? 'true' : 'false'); x.tabIndex = on ? 0 : -1; });
+    };
+  }
+  var Q = new URLSearchParams(location.search);
+
+
+  /* Track laundry: ?laundry=off|on decides the review variant; otherwise the stored choice (default on). */
+  (function () {
+    var p = Q.get('laundry');
+    var on = p === 'off' ? false : p === 'on' ? true : MockState.get('laundry.tracking', true) !== false;
+    var sw = document.getElementById('lt'), cap = document.getElementById('lt-cap');
+    function show(v) {
+      sw.setAttribute('aria-checked', v ? 'true' : 'false');
+      cap.textContent = v ? "Style Me skips dirty pieces until they're clean."
+                          : 'Dirty marks are kept. Every piece counts as available.';
+      cap.classList.toggle('laundry-off-cap', !v);
+    }
+    show(on);
+    bindSwitch(sw, function (v) {
+      MockState.set('laundry.tracking', v); show(v);
+      toast(v ? 'Laundry tracking is on.' : 'Laundry tracking is off. Dirty marks are kept.', v ? 'washer' : 'check');
+    });
+  })();
+  /* App tours: the row opens the sheet; each link replays its screen guide.
+     ?sheet=tours opens it on load for review. "Show tips on new screens" is MockState tours.enabled (default on). */
+  (function () {
+    function openTours() { Sheet.open('tours-sheet'); document.querySelector('#tours-sheet .tours .item').focus(); }
+    document.getElementById('tours-open').addEventListener('click', openTours);
+    var sw = document.getElementById('ts');
+    sw.setAttribute('aria-checked', MockState.get('tours.enabled', true) !== false ? 'true' : 'false');
+    bindSwitch(sw, function (v) {
+      MockState.set('tours.enabled', v);
+      toast(v ? "You'll see tips the first time you open a screen." : 'No more tips. You can replay any tour here.', 'check');
+    });
+    if (Q.get('sheet') === 'tours') openTours();
+  })();
+  /* Name on your sign: edits the sign and the row on this page (not kept between screens in the mockups). */
+  (function () {
+    var input = document.getElementById('name-input');
+    document.querySelectorAll('[data-edit-name]').forEach(function (b) {
+      b.addEventListener('click', function () { Sheet.open('name-sheet'); input.select(); });
+    });
+    document.getElementById('name-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = input.value.trim() || 'Lily';
+      document.querySelectorAll('[data-sign-name]').forEach(function (s) { s.textContent = v; });
+      document.querySelector('.sign .name').style.fontSize = Math.min(30, Math.floor(190 / v.length)) + 'px';
+      document.querySelectorAll('[data-edit-name]')[0].setAttribute('aria-label', 'Name on your sign: ' + v + '. Change');
+      Sheet.close(document.getElementById('name-sheet'));
+      toast('Your sign now says ' + v + '.', 'check');
+    });
+  })();
+
+</script>
+<script src="../js/tryon-photo.js"></script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="settings"></script>
+</body>
+</html>

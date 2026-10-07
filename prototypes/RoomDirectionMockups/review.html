@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lily’s wardrobe app</title>
+<link rel="stylesheet" href="css/review.css?v=review-later-r1">
+</head>
+<body>
+<a class="skip" href="#notes-form">Skip to my notes</a>
+<main class="wrap">
+  <nav class="bar" aria-label="Review">
+    <a class="back" href="index.html">Choose a screen</a>
+    <span class="pos" hidden>Screen <span id="pos"></span></span>
+  </nav>
+
+  <header class="rhead">
+    <p class="eyebrow" id="group"></p>
+    <h1 id="title">Screen</h1>
+    <p class="desc" id="desc"></p>
+    <p class="rmeta">
+      <span class="tag on" id="vlabel"></span>
+      <span class="tag" id="device" hidden></span>
+      <span class="tag" id="rev" hidden></span>
+    </p>
+  </header>
+
+  <details class="variants more" id="variants-wrap">
+    <summary id="vh">Other ways this screen could look (optional)</summary>
+    <ul class="pills" id="variants" role="list"></ul>
+  </details>
+
+  <nav class="navrow" aria-label="Previous and next screen">
+    <a class="navbtn prev" id="prev" rel="prev"><span class="nav-word">← Previous screen</span><span class="nav-sub"></span></a>
+    <a class="navbtn next" id="next" rel="next"><span class="nav-word">Next screen →</span><span class="nav-sub"></span></a>
+  </nav>
+  <p class="keys" hidden>Tip: the <kbd>←</kbd> and <kbd>→</kbd> keys move between screens when you're not typing.</p>
+
+  <p class="review-tip">Have a look below, then scroll down to leave your thoughts.</p>
+  <div id="stage">
+    <div class="frame" id="frame"><div class="clip" id="clip"></div></div>
+    <span id="scale" hidden></span>
+  </div>
+
+  <section class="notes-box" aria-labelledby="nh">
+    <h2 id="nh">What do you think, Lily?</h2>
+    <p class="for">Write in either box, or both. A few words are plenty.</p>
+    <form id="notes-form" novalidate>
+      <div class="field">
+        <label for="liked">What I like</label>
+        <textarea id="liked" name="liked" maxlength="4000" rows="4" autocomplete="off" placeholder="Anything you like about this screen…"></textarea>
+      </div>
+      <div class="field">
+        <label for="change">What I'd change</label>
+        <textarea id="change" name="change" maxlength="4000" rows="4" autocomplete="off" placeholder="Anything you’d like to be different…"></textarea>
+      </div>
+      <p class="preview" id="preview" hidden>Saving isn’t available here. Open the shared website link to save your notes.</p>
+      <div class="save-row">
+        <button class="btn" type="submit" id="save">Save my notes</button>
+        <span class="saved" id="saved" role="status" hidden>Saved! You can move on whenever you’re ready.</span>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <div class="error" id="error" role="alert" hidden>
+        <p id="error-text"></p>
+        <button class="btn ghost" type="button" id="retry">Try again</button>
+      </div>
+      <p class="small">Anyone with this link can read your saved notes.</p>
+      <p class="small" id="draft-note" aria-live="polite"></p>
+    </form>
+
+    <section class="earlier" aria-labelledby="eh">
+      <h2 id="eh">Your saved notes here <span id="notes-count"></span></h2>
+      <p class="small" id="notes-msg">Loading…</p>
+      <ul class="notes" id="notes" role="list"></ul>
+    </section>
+  </section>
+
+  <p class="under" style="margin:28px 0 48px">
+    <a class="btn" id="next2" href="#">Next screen</a>
+    <a href="index.html">Choose another screen</a>
+    <a href="summary.html">Read all your notes</a>
+  </p>
+</main>
+<script src="js/registry.js?v=tablet-centered-r11"></script>
+<script src="js/review.js?v=restored-preview-r13"></script>
+<script>Review.review();</script>
+<script src="js/review-later.js?v=1"></script>
+</body>
+</html>

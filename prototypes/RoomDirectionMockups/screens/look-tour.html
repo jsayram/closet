@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saved look</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* A saved look, opened (soft style). Title with the favourite star, a line of facts, the look as a large sticker bundle
+     on a soft warm glow (the results.html technique), its try-on picture if it has one (else "Try it on", simulated),
+     the actions as an even 2 x 2 grid, the pieces resting on soft contact shadows, and the note.
+     Which look: ?id=interview | weekend | lace | blazer | pinkblack (the old #hash still works). Default: Interview. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+  .screen { display: flex; flex-direction: column; min-height: 100vh; overflow: visible; padding-bottom: 112px; }
+  .room { --floor-y: 99999px; }
+  .art { display: block; pointer-events: none; }
+  [hidden] { display: none !important; }
+  .col { position: relative; width: 100%; max-width: 420px; margin: 0 auto; padding: 0 16px; }
+
+  /* nav: back to Saved Looks, profile on the right */
+  .nav { z-index: 3; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; border-radius: 12px; }
+  .nav .back i[data-icon] { font-size: 24px; }
+
+  /* title row: the display title (may wrap to two lines) and the favourite star */
+  .head { position: relative; padding-top: 46px; display: flex; align-items: flex-start; gap: 8px; }
+  .head h1 { flex: 1; min-width: 0; padding-left: 4px; }
+  .star { flex: none; width: 48px; height: 48px; margin-top: -4px; border-radius: 50%; display: grid; place-items: center; font-size: 24px;
+          color: var(--plum); background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .star[aria-pressed="true"] { background: #FCF0C4; color: #8A6A10; box-shadow: 0 10px 16px -12px rgba(110,84,16,.6); }
+  .star[aria-pressed="true"] svg * { fill: currentColor; }
+  .facts { position: relative; margin: 8px 0 0 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .facts .chip { min-height: 30px; padding: 4px 11px; font-size: 13px; color: var(--ink); }
+  .facts .chip i[data-icon] { color: var(--plum); }
+
+  /* the bundle */
+  .stage { position: relative; height: 302px; margin-top: 6px; }
+  .mat { position: absolute; left: 50%; top: -14px; width: 340px; height: 330px; transform: translateX(-50%); pointer-events: none;
+         background: radial-gradient(closest-side, #FDF0E6 0%, #FCEDE3F2 46%, #FBE8E2A8 70%, #FBE5E800 100%); }
+  .bundle { position: absolute; pointer-events: none; }
+  .stage .bundle { left: 50%; top: 0; width: 255px; height: 302px; margin-left: -127.5px; }
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  .mini .stk { filter: drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff)
+                       drop-shadow(0 2px 2px rgba(110,58,82,.18)); }
+
+  /* its try-on picture: a soft row with a small simulated placeholder; or Try it on when there is none */
+  .picrow { position: relative; margin-top: 12px; min-height: 84px; display: flex; align-items: center; gap: 14px; padding: 8px 14px 8px 8px;
+            border-radius: 24px; background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .thumb { flex: none; width: 52px; height: 68px; border-radius: 14px; display: grid; place-items: center; color: #A8899C; font-size: 22px;
+           background: radial-gradient(ellipse 70% 42% at 50% 40%, #FFFFFF73, #FFFFFF00 100%), linear-gradient(#E9E2DF 0%, #EFDFE0 50%, #F5D2DB 100%); }
+  .picrow .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .picrow b { font-size: 15px; line-height: 19px; }
+  .picrow small { font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .picrow > i[data-icon] { flex: none; font-size: 16px; color: var(--plum); }
+  .picrow .btn { flex: none; min-height: 44px; padding: 0 14px; font-size: 15px; border-radius: 15px; }
+  .picrow .btn.ghost { color: var(--plum); background: rgba(255,255,255,.75); }
+  .picrow.making .thumb { color: var(--plum); }
+  .picrow .bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,.8); overflow: hidden; margin-top: 4px; max-width: 160px; }
+  .picrow .bar span { display: block; height: 100%; width: 62%; border-radius: 3px; background: var(--plum); }
+
+  /* actions: an even 2 x 2 grid */
+  .acts { position: relative; margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .acts .btn { min-height: 48px; height: 48px; padding: 0 10px; font-size: 15px; border-radius: 15px; gap: 7px; white-space: nowrap; }
+  .acts .btn i[data-icon] { font-size: 18px; }
+  .acts .btn.ghost { color: var(--plum); background: rgba(255,255,255,.7); }
+  #wear[aria-pressed="true"] { background: var(--plum-soft); color: var(--plum); box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+  .acts .laundry { grid-column: 1 / -1; height: auto; min-height: 52px; justify-content: flex-start; background: #FCF0C4; color: var(--ink);
+                   box-shadow: 0 10px 16px -12px rgba(110,84,16,.5); white-space: normal; }
+  .acts.has-laundry #addcoll { grid-column: 1 / -1; }
+  .acts .laundry .lt { display: flex; flex-direction: column; text-align: left; font-size: 13px; line-height: 17px; font-weight: 500; }
+  .acts .laundry .lt b { font-size: 14px; font-weight: 700; }
+  .acts .laundry i.go { margin-left: auto; }
+
+  /* pieces resting on soft contact shadows */
+  h2.sec { position: relative; margin: 22px 4px 6px; font-size: 13px; line-height: 17px; font-weight: 700; color: var(--ink-soft); }
+  .pieces { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .piece { position: relative; display: flex; flex-direction: column; align-items: center; min-height: 110px; padding-top: 4px; border-radius: 16px; }
+  .piece .pa { position: relative; width: 64px; height: 64px; display: grid; place-items: end center; }
+  .piece .pa::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: -4px; height: 10px; border-radius: 50%;
+                      background: radial-gradient(closest-side, rgba(140,70,95,.28), rgba(140,70,95,0)); }
+  .piece .pa span { position: relative; z-index: 1; }
+  .piece .nm { margin-top: 8px; text-align: center; font-size: 12px; line-height: 15px; font-weight: 600; color: var(--ink); padding: 0 2px; }
+  .piece .dirty { position: absolute; left: 50%; top: 0; transform: translateX(-50%); z-index: 2; border-radius: 999px; padding: 1px 8px; font-size: 11px;
+                  font-weight: 700; line-height: 15px; background: #FCEFC2; color: #5E4A0E; box-shadow: 0 6px 10px -8px rgba(110,84,16,.5); }
+
+  .note { position: relative; margin-top: 16px; display: grid; grid-template-columns: 18px 1fr; gap: 10px; padding: 12px 16px; border-radius: 20px;
+          background: rgba(252,240,196,.7); box-shadow: var(--soft-drop); font-size: 14px; line-height: 20px; color: var(--ink); }
+  .note i[data-icon] { font-size: 18px; color: var(--plum); margin-top: 1px; }
+  .fine { position: relative; margin-top: 14px; text-align: center; font-size: 11px; line-height: 14px; font-weight: 500; color: var(--ink-soft); }
+
+  /* add to a collection: a bottom sheet */
+  .scrim { position: fixed; inset: 0; z-index: 8; background: rgba(43,27,39,.32); }
+  .sheet { position: fixed; z-index: 9; left: 0; right: 0; bottom: 0; max-width: 480px; margin: 0 auto; padding: 10px 16px 26px; border-radius: 30px 30px 0 0;
+           background: #FFF8FA; box-shadow: 0 -10px 30px -8px rgba(90,42,74,.3); }
+  .sheet .grab { width: 40px; height: 5px; border-radius: 3px; background: #E3CFDA; margin: 0 auto 12px; }
+  .sheet h2 { font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height: 28px; margin: 0 4px; }
+  .sheet p { margin: 4px 4px 10px; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .sheet .opt { width: 100%; min-height: 54px; display: flex; align-items: center; gap: 12px; padding: 0 10px; border-radius: 18px; font-size: 16px; font-weight: 600; }
+  .sheet .opt + .opt { background: var(--soft-divider) 14px 0 / calc(100% - 28px) 1px no-repeat; }
+  .sheet .opt .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--plum-soft); color: var(--plum); font-size: 17px; }
+  .sheet .opt small { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+  .sheet .opt .tick { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 15px;
+                      background: #F1E4EB; color: transparent; }
+  .sheet .opt[aria-checked="true"] .tick { background: var(--plum); color: #fff; }
+  .sheet .done { margin-top: 12px; width: 100%; }
+
+  .tabfade { position: fixed; z-index: 4; --tabfade: #F7D6DC; }
+  .tabbar { position: fixed; z-index: 5; max-width: 480px; margin: 0 auto; }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* dark appearance: tokens from css/dark.css */
+  html.theme-dark .mat { background: radial-gradient(closest-side, #4A3640 0%, #45323CF2 46%, #3F2E37A8 70%, #3A2A3300 100%); }
+  html.theme-dark .star[aria-pressed="true"] { background: var(--tint-butter); color: #F3D97C; }
+  html.theme-dark .thumb { background: linear-gradient(#4E4148, #654556); color: #CDB8C5; }
+  html.theme-dark .picrow .btn.ghost, html.theme-dark .acts .btn.ghost { background: var(--soft-tint); color: var(--plum); }
+  html.theme-dark #wear[aria-pressed="true"] { background: var(--plum-soft); color: var(--plum); }
+  html.theme-dark .acts .laundry { background: var(--tint-butter); color: var(--ink); }
+  html.theme-dark .note { background: var(--tint-butter); }
+  html.theme-dark .piece .dirty { background: var(--tint-butter); color: var(--ink); }
+  html.theme-dark .sheet { background: var(--surface); }
+  html.theme-dark .sheet .opt .tick { background: #5E4656; }
+  html.theme-dark .sheet .opt[aria-checked="true"] .tick { background: var(--plum-fill); }
+  html.theme-dark .tabfade { --tabfade: #3D2C33; }
+</style>
+<link rel="stylesheet" href="../css/tryon-placeholder.css">
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <div class="nav">
+    <a class="back" href="saved.html"><i data-icon="chevron-left"></i>Saved Looks</a>
+    <a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+  </div>
+
+  <div class="col">
+    <div class="head">
+      <h1 class="title-display" id="title">Interview navy &amp; pink</h1>
+      <button class="star" type="button" id="star" aria-pressed="false" aria-label="Favorite"><i data-icon="star"></i></button>
+    </div>
+    <p class="facts" id="facts"></p>
+
+    <div class="stage">
+      <div class="mat"></div>
+      <div class="bundle" id="bundle" role="img" aria-label=""></div>
+    </div>
+
+    <div id="picture"></div>
+
+    <div class="acts" id="acts">
+      <button class="btn" type="button" id="wear" aria-pressed="false"><i data-icon="check"></i><span>Wear today</span></button>
+      <a class="btn ghost" href="chat.html" id="ask"><i data-icon="chat"></i>Ask stylist</a>
+      <a class="btn ghost" href="editor.html" id="edit"><i data-icon="pencil"></i>Edit</a>
+      <button class="btn ghost" type="button" id="addcoll" aria-haspopup="dialog"><i data-icon="bookmark"></i><span>Add to collection</span></button>
+    </div>
+
+    <h2 class="sec" id="piecesh">Pieces</h2>
+    <div class="pieces" id="pieces" aria-labelledby="piecesh"></div>
+
+    <div class="note"><i data-icon="sparkles"></i><span id="note"></span></div>
+    <p class="fine">Simulated · In the app, this would be you wearing this look. For now, it is an example person in different clothes.</p>
+  </div>
+
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a class="on" href="saved.html" aria-current="page"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h" hidden>
+  <div class="grab" aria-hidden="true"></div>
+  <h2 id="sheet-h">Add to a collection</h2>
+  <p>Collections are private. A look can be in more than one.</p>
+  <div id="sheet-list" role="group" aria-labelledby="sheet-h"></div>
+  <button class="btn done" type="button" id="sheet-done">Done</button>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* ===== Saved data (the prototype fixtures). The same block is in look.html, picture.html and ipad-saved.html. ===== */
+var SAVED = (function () {
+  var LOOKS = [
+    { id: 'interview', title: 'Interview navy & pink', occasion: 'Office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+      note: 'Navy and light pink keep it polished but soft. The cardigan handles a cool office.', saved: '28 Aug 2026', from: 'Main closet', fav: true },
+    { id: 'weekend', title: 'Weekend olive & brick', occasion: 'Casual', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+      note: 'Muted olive with brick feels warm and easy. Sneakers keep it relaxed.', saved: '22 Sep 2026', from: 'Weekend suitcase' },
+    { id: 'lace', title: 'Lace date night', occasion: 'Date night', top: 'g-lace-top', bottom: 'g-black-skirt', bag: 'g-burgundy-bag', shoes: 'g-black-heels',
+      note: 'White lace and a black skirt feel dressed up. The burgundy bag adds a little color.', saved: '29 Jul 2026', from: 'Main closet' },
+    { id: 'blazer', title: 'Gray blazer office', occasion: 'Office', layer: 'g-gray-blazer', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels',
+      note: 'A classic neutral office look. Cream and navy are calm together.', saved: '20 Mar 2026', from: 'Main closet' },
+    { id: 'pinkblack', title: 'Pink & black date night', occasion: 'Date night', top: 'g-pink-blouse', bottom: 'g-navy-trousers', bag: 'g-burgundy-bag', shoes: 'g-black-heels',
+      note: 'Light pink against navy with a burgundy bag: soft and a little unexpected.', saved: '6 Apr 2026', from: 'Main closet' }
+  ];
+  /* looks saved on Your looks (results.html) that are not fixtures */
+  var EXTRA = {
+    calm:  { id: 'calm', title: 'Calm office', occasion: 'Office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+             note: 'Polished navy layers. Warm enough for 58°F and rain.', saved: 'Today', from: 'Main closet', isNew: true },
+    olive: { id: 'olive', title: 'Olive and brick', occasion: 'Office', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+             note: 'Leather over a warm knit for the rain. Sneakers keep it relaxed.', saved: 'Today', from: 'Main closet', isNew: true }
+  };
+  var PICS = [
+    { id: 'p-interview', look: 'interview', date: '28 Aug 2026', short: '28 Aug', version: 'Current version of the look', fav: true },
+    { id: 'p-interview-earlier', look: 'interview', date: '27 Aug 2026', short: '27 Aug', version: 'An earlier version of the look' },
+    { id: 'p-lace', look: 'lace', date: '29 Jul 2026', short: '29 Jul', version: 'Current version of the look' }
+  ];
+  var COLLECTIONS = [
+    { id: 'work', name: 'Work', looks: ['interview', 'blazer'], pics: ['p-interview'] },
+    { id: 'going-out', name: 'Going out', looks: ['weekend', 'lace'], pics: ['p-lace'] },
+    { id: 'gym', name: 'Gym', looks: [], pics: [] }
+  ];
+  var BY = {}; LOOKS.forEach(function (l) { BY[l.id] = l; });
+  Object.keys(EXTRA).forEach(function (k) { BY[k] = EXTRA[k]; });
+  var NAMES = {}; (window.Garments ? Garments.LIST : []).forEach(function (g) { NAMES[g.id] = g.name; });
+
+  /* an id from MockState saved.looks: a fixture id, a results look (1-3 / "calm" / "olive" / "gray"), or a full object */
+  function resolve(x) {
+    if (x && typeof x === 'object') { if (x.id && BY[x.id]) return BY[x.id]; if (x.title && x.top) { if (x.id) BY[x.id] = x; return x; } return null; }
+    var s = String(x || '').toLowerCase().replace(/^o-/, '');
+    if (BY[s]) return BY[s];
+    if (/lace/.test(s)) return BY.lace;
+    if (/history|pinkblack|pink-black/.test(s)) return BY.pinkblack;
+    if (/calm|(^|\D)1$/.test(s)) return BY.calm;
+    if (/olive|(^|\D)2$/.test(s)) return BY.olive;
+    if (/gray|grey|blazer|(^|\D)3$/.test(s)) return BY.blazer;
+    return null;
+  }
+  function looks(params) {
+    if (params && params.get('state') === 'empty') return [];
+    var list = LOOKS.slice(), seen = {};
+    LOOKS.forEach(function (l) { seen[l.id] = 1; });
+    var stored = window.MockState ? MockState.get('saved.looks', null) : null;
+    if (Array.isArray(stored)) {
+      var add = [];
+      stored.forEach(function (x) { var l = resolve(x); if (l && !seen[l.id]) { seen[l.id] = 1; add.unshift(l); } });
+      list = add.concat(list);
+    }
+    return list;
+  }
+  function pictures(params) {
+    if (params && params.get('state') === 'empty') return [];
+    var gone = window.MockState ? MockState.get('pictures.deleted', []) : [];
+    var list = PICS.slice();
+    var made = window.MockState ? MockState.get('pictures', null) : null;
+    if (Array.isArray(made)) made.forEach(function (x, i) {
+      var l = resolve(x && x.look ? x.look : x);
+      if (l) list.unshift({ id: 'p-new-' + l.id + '-' + i, look: l.id, date: 'Today', short: 'Today', version: 'Current version of the look', isNew: true });
+    });
+    return list.filter(function (p) { return gone.indexOf(p.id) < 0; });
+  }
+  function pieces(l) { return ['layer', 'top', 'bottom', 'bag', 'shoes'].filter(function (k) { return l[k]; }).map(function (k) { return l[k]; }); }
+  function name(id) { return NAMES[id] || id; }
+  /* search: every word must appear in the title, the occasion or a piece name */
+  function match(l, q) {
+    var words = String(q || '').toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return { ok: true };
+    var names = pieces(l).map(name), hay = [l.title, l.occasion].concat(names).join(' ').toLowerCase().replace(/&/g, 'and');
+    var ok = words.every(function (w) { return hay.indexOf(w.replace(/&/g, 'and')) >= 0; });
+    if (!ok) return { ok: false };
+    var head = (l.title + ' ' + l.occasion).toLowerCase();
+    var byPiece = null;
+    words.forEach(function (w) { if (head.indexOf(w) < 0 && !byPiece) byPiece = names.filter(function (n) { return n.toLowerCase().indexOf(w) >= 0; })[0]; });
+    return { ok: true, piece: byPiece };
+  }
+  /* favourites and collection membership changed on look.html / picture.html (kept in MockState for the session) */
+  function fav(id, dflt) {
+    var m = window.MockState ? MockState.get('saved.favorites', {}) : {};
+    return m && Object.prototype.hasOwnProperty.call(m, id) ? !!m[id] : !!dflt;
+  }
+  function setFav(id, on) { if (window.MockState) MockState.update('saved.favorites', function (m) { m = m || {}; m[id] = !!on; return m; }); }
+  function inColl(cid, kind, id) {
+    var m = window.MockState ? MockState.get('saved.collections', {}) : {}, key = cid + '|' + id;
+    if (m && Object.prototype.hasOwnProperty.call(m, key)) return !!m[key];
+    var c = COLLECTIONS.filter(function (x) { return x.id === cid; })[0];
+    return !!c && c[kind].indexOf(id) >= 0;
+  }
+  function setColl(cid, id, on) { if (window.MockState) MockState.update('saved.collections', function (m) { m = m || {}; m[cid + '|' + id] = !!on; return m; }); }
+  return { LOOKS: LOOKS, BY: BY, PICS: PICS, COLLECTIONS: COLLECTIONS, looks: looks, pictures: pictures, pieces: pieces, name: name, match: match,
+           resolve: resolve, fav: fav, setFav: setFav, inColl: inColl, setColl: setColl };
+})();
+
+/* ===== Sticker bundles (the results.html technique). Each piece is wrapped in a sticker (.stk: white edge and soft
+   shadow) with a rotation inside, then fitted by its drawn bounds: [centre x, centre y, size, 'h' height | 'w' width, deg]. ===== */
+var Bundle = (function () {
+  var SPOTS = {
+    /* the 98 x 266 frame window */
+    win: { layer: { layer: [33, 66, 74, 'h', -7], top: [63, 72, 70, 'h', 5], bottom: [45, 152, 104, 'h', -2], shoes: [70, 214, 44, 'w', -8] },
+           bag:   { top: [49, 76, 76, 'h', 4], bottom: [41, 152, 86, 'h', -2], bag: [75, 142, 44, 'h', 9], shoes: [63, 214, 46, 'w', -8] } },
+    /* a 300 x 356 box (Your looks), scaled by k */
+    box: { layer: { layer: [98, 88, 156, 'h', -7], top: [196, 96, 146, 'h', 5], bottom: [140, 252, 214, 'h', -2], shoes: [234, 312, 94, 'w', -8] },
+           bag:   { top: [118, 92, 150, 'h', 4], bottom: [124, 250, 190, 'h', -2], bag: [236, 190, 100, 'h', 9], shoes: [226, 318, 94, 'w', -8] } }
+  };
+  var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+  function drawn(svg) {
+    var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+    for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+    b = svg.getBBox();
+    for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+    return b;
+  }
+  function lay(box, L, set, k) {
+    k = k || 1;
+    var spots = SPOTS[set][L.layer || !L.bag ? 'layer' : 'bag'];
+    box.innerHTML = '';
+    ORDER.forEach(function (slot) {
+      if (!L[slot] || !spots[slot]) return;
+      var stk = document.createElement('span'); stk.className = 'stk'; stk.setAttribute('data-slot', slot);
+      stk.innerHTML = '<span class="rot"><span data-garment="' + L[slot] + '"></span></span>';
+      stk.style.width = (120 * k * .9 * (set === 'win' ? .45 : 1)) + 'px';
+      box.appendChild(stk);
+    });
+    Garments.mountAll(box);
+    var list = box.querySelectorAll('.stk');
+    for (var i = 0; i < list.length; i++) {
+      var stk = list[i], sp = spots[stk.getAttribute('data-slot')], svg = stk.querySelector('svg');
+      if (!svg) continue;
+      var b = drawn(svg), s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+      var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+      stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+      stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+      var rot = stk.querySelector('.rot');
+      rot.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+      rot.style.transform = 'rotate(' + sp[4] + 'deg)';
+    }
+  }
+  return { lay: lay };
+})();
+
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+function go(href) { return window.MockTheme ? MockTheme.carry(href) : href; }
+
+(function () {
+  var P = new URLSearchParams(location.search);
+  var key = P.get('id') || (location.hash || '').slice(1) || 'interview';
+  if (SAVED.looks) SAVED.looks(null); if (SAVED.pictures) SAVED.pictures(null);
+  var L = SAVED.resolve(key) || SAVED.BY[key] || SAVED.BY.interview;
+  var $ = function (id) { return document.getElementById(id); };
+
+  document.title = L.title;
+  /* keep "&" with the word after it and a short last word with the one before, so a two-line title never strands a word */
+  $('title').textContent = L.title.replace(/ & /g, ' & ').replace(/ (\S{1,5})$/, ' $1');
+  $('facts').innerHTML = '<span class="chip"><i data-icon="calendar"></i>' + esc(L.occasion) + '</span>' +
+    '<span>Saved ' + esc(L.saved) + ' · ' + esc(L.from) + '</span>';
+  $('note').textContent = L.note;
+  $('ask').setAttribute('href', go('chat.html?look=' + L.id));
+  $('edit').setAttribute('href', go('editor.html?look=' + L.id));
+
+  /* favourite */
+  var star = $('star');
+  function paintStar() {
+    var on = SAVED.fav(L.id, L.fav);
+    star.setAttribute('aria-pressed', on ? 'true' : 'false');
+    star.setAttribute('aria-label', on ? 'Favorite, on' : 'Favorite');
+  }
+  star.addEventListener('click', function () { SAVED.setFav(L.id, !SAVED.fav(L.id, L.fav)); paintStar(); });
+  paintStar();
+
+  /* pieces, with the laundry state (only when tracking is on) */
+  var tracking = MockState.get('laundry.tracking', true) !== false && P.get('laundry') !== 'off';
+  var dirty = tracking ? MockState.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) : [];
+  var ids = SAVED.pieces(L);
+  $('pieces').innerHTML = ids.map(function (id) {
+    var d = dirty.indexOf(id) >= 0;
+    return '<a class="piece" href="' + go('garment.html?id=' + id) + '" aria-label="' + esc(SAVED.name(id)) + (d ? ', in the laundry' : '') + '. Open piece">' +
+      (d ? '<span class="dirty">Dirty</span>' : '') +
+      '<span class="pa"><span data-garment="' + id + '" data-fit="1"></span></span><span class="nm">' + esc(SAVED.name(id)) + '</span></a>';
+  }).join('');
+  $('piecesh').textContent = ids.length + ' pieces';
+
+  var inWash = ids.filter(function (id) { return dirty.indexOf(id) >= 0; });
+  if (inWash.length) {
+    var who = inWash.length === 1 ? SAVED.name(inWash[0]) : inWash.length + ' pieces';
+    var verb = inWash.length === 1 ? 'is in the laundry' : 'are in the laundry';
+    var a = document.createElement('a');
+    a.className = 'btn laundry'; a.href = go('laundry.html');
+    a.setAttribute('aria-label', who + ' ' + verb + '. Open Laundry');
+    a.innerHTML = '<i data-icon="basket"></i><span class="lt"><b>' + esc(who) + ' ' + verb + '</b><span>Wear today comes back once it is clean.</span></span><i class="go" data-icon="chevron-right"></i>';
+    var w = $('wear'); w.parentNode.replaceChild(a, w);
+    $('acts').insertBefore(a, $('acts').firstChild);
+    $('acts').classList.add('has-laundry');
+  }
+
+  /* Wear today (prototype only) */
+  var wear = $('wear');
+  if (wear) wear.addEventListener('click', function () {
+    var on = wear.getAttribute('aria-pressed') !== 'true';
+    wear.setAttribute('aria-pressed', on ? 'true' : 'false');
+    wear.querySelector('span').textContent = on ? 'Wearing today' : 'Wear today';
+  });
+
+  /* its try-on picture, or Try it on (simulated) */
+  function pics() { return SAVED.pictures(P).filter(function (p) { return p.look === L.id; }); }
+  function paintPicture(state) {
+    var box = $('picture'), list = pics();
+    if (state === 'making') {
+      box.innerHTML = '<div class="picrow making" role="status"><span class="thumb"><i data-icon="camera"></i></span>' +
+        '<span class="txt"><b>Making a try-on picture</b><small>Simulated · about a minute</small><span class="bar"><span></span></span></span></div>';
+    } else if (list.length) {
+      var p = list[0], more = list.length - 1;
+      box.innerHTML = '<a class="picrow" href="' + go('picture.html?id=' + p.id) + '" aria-label="Try-on picture, simulated, ' + esc(p.date) + '. Open picture">' +
+        '<span class="thumb"><img class="tryon-person" src="../art/tryon-person-placeholder.svg" alt="Example person wearing placeholder clothes, not Lily or this look"></span><span class="txt"><b>Try-on picture</b>' +
+        '<small>Simulated · ' + esc(p.short) + (more ? ' · ' + more + ' earlier' : '') + '</small></span><i data-icon="chevron-right"></i></a>';
+    } else {
+      box.innerHTML = '<div class="picrow"><span class="thumb"><i data-icon="photo"></i></span>' +
+        '<span class="txt"><b>No try-on picture yet</b><small>Made only when you ask. Simulated.</small></span>' +
+        '<button class="btn ghost" type="button" id="tryon"><i data-icon="camera"></i>Try it on</button></div>';
+      $('tryon').addEventListener('click', function () {
+        paintPicture('making');
+        setTimeout(function () {
+          MockState.update('pictures', function (a) { a = Array.isArray(a) ? a : []; return a.concat(L.id); });
+          paintPicture(); var r = document.querySelector('.picrow'); if (r) r.focus();
+        }, 1400);
+      });
+    }
+    Icons.mountAll(box);
+  }
+  paintPicture();
+
+  /* add to a collection */
+  var sheet = $('sheet'), scrim = $('scrim'), opener = $('addcoll');
+  function paintSheet() {
+    $('sheet-list').innerHTML = SAVED.COLLECTIONS.map(function (c) {
+      var on = SAVED.inColl(c.id, 'looks', L.id);
+      return '<button class="opt" type="button" role="checkbox" aria-checked="' + on + '" data-c="' + c.id + '">' +
+        '<span class="ic"><i data-icon="bookmark"></i></span><span>' + esc(c.name) + '</span><span class="tick"><i data-icon="check"></i></span></button>';
+    }).join('') + '<button class="opt" type="button" id="newc"><span class="ic"><i data-icon="plus"></i></span><span>New collection</span></button>';
+    Icons.mountAll(sheet);
+  }
+  function countColl() {
+    var n = SAVED.COLLECTIONS.filter(function (c) { return SAVED.inColl(c.id, 'looks', L.id); }).length;
+    opener.querySelector('span').textContent = n ? 'In ' + n + (n === 1 ? ' collection' : ' collections') : 'Add to collection';
+  }
+  function open() { paintSheet(); sheet.hidden = scrim.hidden = false; var f = sheet.querySelector('.opt'); if (f) f.focus(); }
+  function close() { sheet.hidden = scrim.hidden = true; countColl(); opener.focus(); }
+  opener.addEventListener('click', open);
+  scrim.addEventListener('click', close);
+  $('sheet-done').addEventListener('click', close);
+  sheet.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  $('sheet-list').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-c]'); if (!b) return;
+    var on = b.getAttribute('aria-checked') !== 'true';
+    SAVED.setColl(b.getAttribute('data-c'), L.id, on);
+    b.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
+  countColl();
+
+  /* the bundle and the piece drawings */
+  function run() {
+    Icons.mountAll(document);
+    var box = $('bundle');
+    Bundle.lay(box, L, 'box', 0.85);
+    box.setAttribute('aria-label', L.title + ': ' + ids.map(function (id) { return SAVED.name(id).toLowerCase(); }).join(', '));
+    Garments.mountAll($('pieces'));
+    var l = document.querySelectorAll('[data-fit] svg');
+    for (var i = 0; i < l.length; i++) {
+      var svg = l[i], b = svg.getBBox(), host = svg.parentNode, s = Math.min(58 / b.width, 60 / b.height);
+      host.style.width = (120 * s) + 'px'; host.style.height = (170 * s) + 'px';
+      host.style.marginBottom = (-(170 - b.y - b.height) * s) + 'px';
+      host.style.marginLeft = host.style.marginRight = '0';
+      host.style.transform = 'translateX(' + ((60 - (b.x + b.width / 2)) * s) + 'px)';
+    }
+    if (P.get('sheet') === 'collection') open();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="look"></script>
+</body>
+</html>

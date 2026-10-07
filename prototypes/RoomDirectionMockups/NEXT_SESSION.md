@@ -1,6 +1,64 @@
 # Picking up the room direction
 
+## Review preview restored, 7 October 2026
+
+Owner clarified that only full-screen “See it bigger” links should be removed. Those links are removed from gallery and review pages; the screen URL initialization required by the preview availability check is preserved. The embedded screen remains above the feedback form. Verify an actual rendered iframe when changing review navigation; presence of the notes button alone is insufficient.
+
+## Centered tablet panes, 7 October 2026 (R11)
+
+Owner requested centered two-pane layouts. The shared tablet layout centers each short pair vertically between its header and bottom navigation, with both panes aligned to the same center. Taller content retains its natural scrolling position. Direct tablet grids have a centered maximum width; compact account and shop layouts center within the available height. ResizeObserver recalculates paired panes after content changes and resize. Phone layouts are preserved. No native changes or commit.
+
+## Adaptive tablet layouts, 7 October 2026 (R10)
+
+Owner requested two panes or columns on all iPad views where useful, including ordinary screen routes opened on an iPad. Shared `css/tablet-layout.css` and `js/tablet-layout.js` adapt regular pages at 768 px and wider: Saved Looks has controls beside its gallery, Closet has the room header beside the clothing grid, Suitcases has the hall beside its list, and detail/request/settings screens separate their illustration or preview from their controls. The script moves existing elements and restores them below the breakpoint, preserving handlers and phone layouts. Tour copies use the same adaptation. Registry adds an “On iPad, sideways” review view to regular screens and uses live previews for R10 pages; stable screen IDs and existing view keys are preserved.
+
+Visually checked 25 tablet routes at 1194 × 834, the three reported screens at 834 × 1194, and Saved Looks at 390 × 844. Confirmed search/picture switching, the request editor, breakpoint restoration, and tablet tour positioning. Renders are in `/private/tmp/tablet-*.png`, outside snapshots. Native code is unchanged. No commit.
+
+
+## iPad landscape spacing, 7 October 2026
+
+Owner requested full use of landscape tablet space across every iPad mockup. Home now arranges wardrobe, window, suitcase, desk, shelves and sign across a wide room with bottom navigation; the previous sidebar/request column Home composition is replaced. Its shared `css/home-wide.css` also adapts normal Home at landscape tablet widths while preserving phone and compact layouts. Closet, Results and Saved Looks retain navigation and browsing/detail columns, with slimmer navigation, wider grids and responsive spacing in `css/ipad-landscape.css`. All four iPad tour copies follow those layouts. Affected screens are R9 with live gallery previews. Checked at 1194 × 834 and 1024 × 768; phone Home checked at 390 × 844. Native code is unchanged.
+
+
+## Come back later list, 7 October 2026
+
+Owner requested a running list of skipped screens. Review pages now have Come back later, which saves the exact screen/view and advances to the next screen. The gallery and each review page show the saved list with direct return links and Done with this removal buttons. The list persists in localStorage in the same browser; it is not synced across devices or shared with notes. A storage failure stays on the screen and reports the problem. Shared notes and their manifest are unchanged.
+
+
+## Review order, 7 October 2026
+
+Jose requested all guided tours first on the gallery, followed by the regular app screens. The Home tour now belongs to Quick tours. Registry order also makes Take a look start with Home quick tour and Next screen follow all 38 tours before the 38 regular screens. IDs, variants, revisions and saved-note associations are unchanged.
+
+
+## Profile try-on photo, 7 October 2026
+
+Jose approved adding Your try-on photo to Profile. The row opens a simple optional reference-photo sheet, with Choose example photo, an explicitly simulated example choice, Change example photo and confirmed Remove photo. Jose clarified that Lily will not upload a real image in the mockups. Saved try-on pictures are preserved when the reference is removed. State stays in the preview session; no personal image is collected or uploaded. Profile and its tour copy are R8; review variants include the empty sheet, example choice and added state. Real image-service validation and native permissions remain governed by the PRD. No commit.
+
+## Try-on portrait placeholders, 7 October 2026
+
+Jose requested a simple generic person in the simulated try-on picture slots, keeping the Simulated label and bottom hint. Picture, Saved Looks, saved-outfit thumbnails, iPad Saved Looks and their tour copies now use one shared SVG placeholder and explain that the real picture would show her in that look, while the sample clothes do not match. This is an explicit exception to the earlier no-person rule only inside try-on previews; room/Profile and native app are unchanged. See README for files. No commit.
+
+## Remaining screen tours completed, 7 October 2026
+
+The owner requested tours for the remaining screens. There are now 37 additional `*-tour.html` copies and 102 tips, all registered in the Quick tours gallery group. Profile’s App tours sheet replays every guide; More screen tours keeps the main list short. Read the README’s Tours for every screen section for files, parameters and verification. Original pages are preserved except for those Profile replay links. Home retains its exact approved tour. First-use tracking and native integration are still future work; the tours requirement is now accepted in master PRD Section 7.8 / FR-73 / AC-103. Native implementation is pending. No commit was made.
+
+## Home quick tour, 7 October 2026
+
+The owner requested and approved a separate `screens/home-tour.html` mockup: four coach marks for laptop, wardrobe, suitcase and name sign. It is listed in `js/registry.js`, including direct step links and `?tour=off`. Read the README’s Home quick tour section for behavior and render locations. Original `home.html` is unchanged. Profile replay links were completed by the owner’s follow-up request. Actual first-launch integration remains future work.
+
+## Reusable client review workflow, 7 October 2026
+
+Jose asked to keep this review process for future client apps. Read [CLIENT_REVIEW_WORKFLOW.md](../../CLIENT_REVIEW_WORKFLOW.md) for the project handoff and pointers to the canonical Obsidian workflow/checklist. The live review copy is now personal to Lily, with short instructions and optional extra views; main navigation moves between main screens. Saved notes were preserved across that update. Future agents are welcome to add dated, verified lessons to the reusable workflow. This documentation does not change the feedback sign-off process below.
+
 Written 6 October 2026 at the end of a long session, so the next session can continue without the old conversation.
+
+## Status, 7 October 2026 (R5)
+
+The mockup update described below is done. Every screen in the checklist is built in the soft style, with its versions listed in `js/registry.js`. The review site is live at https://turbo-gazebo-e3jy.here.now/ (notes summary at `summary.html`). Lily's notes are saved there and kept across updates. To update it, run `tools/build-site.sh` and publish `site/` to the same slug (`turbo-gazebo-e3jy`). Next step: Lily's notes go through the sign-off process in README.md ("Lily's notes: pull, sign off, run"). "Pull Lily notes" only pulls and writes a sign-off sheet. "Run Lily notes" makes only the items the owner approved. After that, wait for the go-ahead before the SwiftUI work or the PRD amendment.
+
+## First-use tours (owner request, 7 Oct)
+
+Jose approved a coach-mark tour for Home: the room dims, one object is spotlit and a soft frosted card says "Quick tour · 1 of 4" with Skip and Next (laptop, wardrobe, suitcase, name sign). `screens/home-tour.html` is being built from that design. Profile now has an "App tours" row that opens a sheet where she picks a screen to replay its tour, plus a "Show tips on new screens" switch (`screens/settings.html`, `?sheet=tours`). All registered screens now have separate replayable tour mockups; automatic first-use tracking remains future app work. The PRD change is proposed in [PRD_Amendment_First_Use_Tours.md](../../PRD_Amendment_First_Use_Tours.md) and was accepted and integrated into master PRD Section 7.8 on 7 October 2026.
 
 ## Prompt to start the next session
 
@@ -15,7 +73,7 @@ Read prototypes/RoomDirectionMockups/NEXT_SESSION.md and prototypes/RoomDirectio
 - The SwiftUI prototype is in `prototypes/LilyStyleMockup` on branch `closet/mock`, committed in `bc6c9e4`. All 14 flow tests passed on iPhone 14 and iPad Pro 11 after the last prototype changes.
 - The room-direction mockups are in `prototypes/RoomDirectionMockups`, committed in `7bd29a9`. Its `README.md` lists the 12 owner decisions and every screen. Read that first.
 - None of the room direction is in the SwiftUI app yet.
-- The PRD (`My_Petite_Style_PRD_v2.md`) is never edited. Changes go in separate amendment proposals.
+- Edit the master PRD only with explicit owner approval. Jose approved integrating the first-use tours on 7 October 2026; Section 7.8 is authoritative. Other proposed amendments remain proposals.
 
 ## The next job (only after the owner approves the updated mockups)
 

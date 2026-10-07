@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask stylist</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* ---- shared by the stylist and shopping pages (chat, export, findone, purchase, handoff, products) ----
+     Soft style: no outlines on cards, rows or chips; space, soft tints and shadows that fall only below.
+     Pages are in normal flow inside a centred column (max 440 px), so they fill 390 and 507 wide frames
+     and scroll vertically when they are long. The tab bar is fixed at the bottom. */
+  html, body { background: var(--wall); }
+  body { min-height: 100vh; background: linear-gradient(var(--wall), var(--wall-2) 760px) var(--wall-2); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  input, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 12px; }
+  [hidden] { display: none !important; }
+  .art { display: block; pointer-events: none; }
+
+  .col { position: relative; max-width: 440px; margin: 0 auto; padding: 0 16px 140px; }
+  .col.no-tabs { padding-bottom: 40px; }
+
+  /* title row: back chevron to the parent, centred title, profile on the right */
+  .top { position: relative; height: 48px; display: flex; align-items: center; justify-content: center; }
+  .top .t { font-size: 17px; font-weight: 700; line-height: 22px; text-align: center; max-width: 220px; }
+  .top .back { position: absolute; left: -12px; top: 2px; height: 44px; min-width: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; white-space: nowrap; }
+  .top .back i[data-icon] { font-size: 24px; }
+  .top .me { position: absolute; right: -8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 26px; }
+  .top .x { position: absolute; left: -8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 22px; }
+
+  .display { font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1.08; letter-spacing: -.5px; color: var(--ink); text-wrap: balance; }
+  .lede { margin-top: 6px; font-size: 14px; line-height: 19px; color: var(--ink-soft); text-wrap: pretty; }
+  .h2 { margin: 26px 4px 10px; font-size: 17px; line-height: 22px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .h2 .sim { margin-left: auto; }
+  .h2 small { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+  .note { font-size: 13px; line-height: 18px; color: var(--ink-soft); text-wrap: pretty; }
+  .note.c { text-align: center; }
+  .fine { font-size: 11px; line-height: 14px; font-weight: 500; color: var(--ink-soft); text-align: center; }
+
+  /* a soft tinted area with a shadow below; no edge */
+  .soft { position: relative; background: rgba(255,255,255,.62); border-radius: 24px; box-shadow: var(--soft-drop-lg); padding: 14px 16px; }
+  .soft + .soft { margin-top: 14px; }
+  .tint-lilac { background: #EEE4FAE6; }
+  .tint-green { background: #E4F3DFE6; }
+  .tint-butter { background: #FCF0C6; }
+  .tint-pink { background: #FCE6F2E6; }
+
+  /* "Simulated" and "sample" labels */
+  .sim { white-space: nowrap; color: var(--ink-soft); }
+  .sim i[data-icon] { font-size: 12px; }
+
+  /* review options: a lilac strip that names the option and says it is a proposal */
+  .proposal { margin-top: 4px; display: grid; grid-template-columns: 22px 1fr; column-gap: 10px; padding: 11px 14px; border-radius: 20px;
+              background: #EEE4FAE6; box-shadow: var(--soft-drop); font-size: 13px; line-height: 17px; color: var(--ink); }
+  .proposal > i[data-icon] { font-size: 20px; color: var(--plum); margin-top: 1px; }
+  .proposal b { display: block; font-size: 14px; line-height: 18px; color: var(--plum); }
+  .proposal + .proposal { margin-top: 8px; }
+
+  /* buttons: room.css .btn + soft.css; a row of equal buttons */
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .btns.three { grid-template-columns: 1fr 1fr 1fr; }
+  .btns.one { grid-template-columns: 1fr; }
+  .btns .btn { min-width: 0; padding: 0 12px; font-size: 15px; white-space: nowrap; }
+  .btn.ghost { background: rgba(255,255,255,.72); }
+  .btn.quiet { background: var(--plum-soft); color: var(--plum); box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+  .btn[aria-disabled="true"] { background: #E9D9E2; color: #8F7686; box-shadow: none; cursor: default; }
+  .btn .sm { font-size: 11px; font-weight: 600; opacity: .85; }
+
+  /* small pill action, used for "Find one" */
+  .pillbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--plum); color: #fff;
+             font-size: 14px; font-weight: 700; box-shadow: 0 10px 16px -12px rgba(79,21,65,.7); white-space: nowrap; }
+  .pillbtn i[data-icon] { font-size: 17px; }
+  .pillbtn.light { background: rgba(255,255,255,.85); color: var(--plum); box-shadow: var(--soft-drop); }
+
+  /* rows without boxes: a fading divider between them */
+  .rowsx > * + * { background-image: var(--soft-divider); background-repeat: no-repeat; background-size: calc(100% - 24px) 1px; background-position: 12px 0; }
+  .rowx { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 4px; width: 100%; }
+  .rowx .ic { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; color: var(--plum); background: #F0E2EA; }
+  .rowx .ic i[data-icon] { font-size: 18px; }
+  .rowx .tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+  .rowx .tx b { font-size: 15px; font-weight: 600; line-height: 19px; }
+  .rowx .tx small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .rowx .chev { margin-left: auto; color: var(--soft-chev); font-size: 15px; display: grid; }
+
+  /* switch as a real button */
+  .sw { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 4px; text-align: left; }
+  .sw .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .sw .tx b { font-size: 15px; font-weight: 600; line-height: 19px; }
+  .sw .tx small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .sw .toggle { flex: none; }
+  .sw[aria-checked="true"] .toggle { background: var(--plum); }
+  .sw[aria-checked="true"] .toggle::after { left: 22px; }
+
+  /* sticker pieces: a cutout with a thick white edge (stacked drop-shadows) and a soft shadow below */
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .small-stk .stk, .stk.small { filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff)
+                 drop-shadow(1.05px 1.05px 0 #fff) drop-shadow(-1.05px -1.05px 0 #fff) drop-shadow(1.05px -1.05px 0 #fff) drop-shadow(-1.05px 1.05px 0 #fff)
+                 drop-shadow(0 4px 5px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk svg { width: 100%; height: auto; }
+  .bundle { position: relative; display: block; }
+
+  /* a representative product picture: a sticker on a pale warm patch, labelled as not the real product */
+  .rep { position: relative; display: block; flex: none; width: 96px; height: 84px; border-radius: 22px; background: radial-gradient(closest-side, #FFF6EE, #FFF6EE00); }
+  .rep .stk { left: 0; top: 0; }
+
+  /* toast for simulated actions */
+  .toast { position: fixed; left: 50%; bottom: 104px; transform: translateX(-50%); z-index: 50; max-width: calc(100% - 40px);
+           display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 20px; background: #3A2534; color: #fff;
+           font-size: 14px; line-height: 18px; font-weight: 600; box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast i[data-icon] { font-size: 18px; color: #F4C9E2; }
+  .no-tabs ~ .toast, body.no-tabbar .toast { bottom: 28px; }
+
+  /* tab bar, fixed at the bottom of the frame */
+  .tabfade { position: fixed; z-index: 30; --tabfade: #F7D6DC; }
+  .tabbar { position: fixed; z-index: 31; left: 50%; right: auto; transform: translateX(-50%); width: min(362px, calc(100% - 28px)); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* Ask stylist, soft pass. A page sheet over the screen it came from. The top of the sheet is a slim strip of the
+     bedroom (sage desk, lamp, the stylist's note card, a cup of tea, the rainy window), drawn 1:1 and centred.
+     The conversation is a pale panel below it. The look she asked about is attached as a small sticker bundle.
+     Suggestions only fill the field; nothing goes until she taps Send. The stylist is simulated.
+     chat.html?back=<page>&look=<id> : look 1, 2 or 3 from Your looks, or a saved look (interview, weekend, lace, blazer,
+     pinkblack). From Style Me (back=home) with no look it opens on a fresh conversation. */
+  html, body { background: #9A878F; }
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+  .peek { height: 12px; margin: 0 16px; border-radius: 12px 12px 0 0; background: linear-gradient(#BEACB3, #B8A5AC); flex: none; }
+  .sheet { flex: 1; display: flex; flex-direction: column; border-radius: 14px 14px 0 0; overflow: hidden;
+           background: linear-gradient(var(--wall), var(--wall-2) 190px); }
+  .grabber { width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; margin: 5px auto 0; flex: none; }
+
+  /* the room strip: 390 x 168, centred; art at 1:1 */
+  .strip { position: relative; width: 390px; max-width: 100%; height: 168px; margin: 0 auto; flex: none; }
+  .strip .art { position: absolute; }
+  .strip .card-icon { position: absolute; display: grid; place-items: center; color: var(--plum); font-size: 18px; }
+  .navx { position: absolute; left: 0; right: 0; top: 2px; height: 48px; }
+  .navx .x { position: absolute; left: 8px; top: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 22px; }
+  .navx .ttl { position: absolute; left: 90px; right: 90px; top: 4px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .navx .ttl h1 { font-size: 17px; font-weight: 700; line-height: 21px; }
+
+  /* conversation panel */
+  .convo { flex: 1; position: relative; background: #FFF9F8; border-radius: 26px 26px 0 0; box-shadow: 0 -10px 22px -14px rgba(90,42,74,.3); }
+  .thread { max-width: 440px; margin: 0 auto; padding: 14px 16px 120px; display: flex; flex-direction: column; }
+  .day { text-align: center; font-size: 11px; font-weight: 600; line-height: 14px; color: var(--ink-soft); }
+  .ctx { align-self: center; margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+         background: #F7EBF0; font-size: 12px; font-weight: 600; line-height: 15px; color: var(--ink-soft); }
+  .ctx i[data-icon] { font-size: 14px; color: var(--plum); }
+
+  /* the attached look: a small sticker bundle with its name, resting on a soft tint, aligned with her message */
+  .look { align-self: flex-end; margin-top: 10px; display: flex; align-items: center; gap: 6px; padding: 8px 12px 8px 8px; border-radius: 24px;
+          background: #F8ECF1; box-shadow: var(--soft-drop); max-width: 300px; }
+  .look .bundle { width: 108px; height: 128px; flex: none; }
+  .look .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .look .txt small { font-size: 11px; line-height: 14px; font-weight: 600; color: var(--ink-soft); }
+  .look .txt b { font-family: var(--font-display); font-size: 17px; font-weight: 800; line-height: 20px; letter-spacing: -.2px; text-wrap: balance; }
+  .look .txt span { font-size: 12px; line-height: 15px; color: var(--ink-soft); }
+  .look .chev { color: var(--plum); font-size: 15px; display: grid; margin-left: 2px; }
+
+  .bubble { font-size: 16px; line-height: 21px; padding: 10px 14px; border-radius: 20px; text-wrap: pretty; max-width: 300px; }
+  .me { align-self: flex-end; margin-top: 8px; background: var(--plum); color: #fff; border-bottom-right-radius: 6px;
+        box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .who { margin: 20px 0 4px 46px; font-size: 11px; font-weight: 600; line-height: 14px; color: var(--ink-soft); }
+  .reply { display: flex; align-items: flex-end; gap: 8px; }
+  .them { background: #fff; color: var(--ink); border-bottom-left-radius: 6px; box-shadow: var(--soft-drop); }
+  .stylist { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: #EEE4FA; color: var(--plum); font-size: 20px; }
+
+  .sugh { margin: 16px 0 6px 46px; font-size: 12px; font-weight: 600; line-height: 15px; color: var(--ink-soft); }
+  .sugs { display: flex; flex-wrap: wrap; gap: 8px; margin-left: 44px; }
+  .sug { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #F6E9EF;
+         color: var(--plum); font-size: 14px; font-weight: 600; box-shadow: 0 8px 12px -10px rgba(90,42,74,.35); }
+  .sug:hover { background: #F2E0E9; }
+  .other { align-self: center; margin-top: 22px; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px;
+           font-size: 14px; font-weight: 600; color: var(--plum); }
+  .other i[data-icon] { font-size: 16px; }
+
+  /* composer: field and an explicit Send button, fixed at the bottom */
+  .composer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 22px 16px 22px;
+              background: linear-gradient(#FFF9F800, #FFF9F8 30%); }
+  .composer .in { max-width: 408px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+  .field { flex: 1; min-width: 0; height: 48px; border-radius: 24px; background: #fff; box-shadow: var(--soft-drop); display: flex; }
+  .field input { width: 100%; height: 100%; border: 0; background: none; padding: 0 18px; font-size: 15px; color: var(--ink); border-radius: 24px; }
+  .field input:focus-visible { outline: 3px solid var(--plum); outline-offset: 0; }
+  .field input::placeholder { color: var(--ink-soft); opacity: 1; }
+  .send { flex: none; height: 48px; padding: 0 16px 0 14px; border-radius: 24px; display: inline-flex; align-items: center; gap: 6px;
+          font-size: 15px; font-weight: 700; background: #EFE0E8; color: #8F7686; cursor: default; }
+  .send i[data-icon] { font-size: 18px; }
+  .send.ready { background: var(--plum); color: #fff; cursor: pointer; box-shadow: 0 10px 16px -12px rgba(79,21,65,.7); }
+  .typing { color: var(--ink-soft); font-style: italic; }
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body class="no-tabbar">
+<div class="peek" aria-hidden="true"></div>
+<div class="sheet">
+  <div class="grabber" aria-hidden="true"></div>
+  <!-- ============ the room strip (390 x 168, art 1:1) ============ -->
+  <div class="strip">
+    <img class="art" src="../art/window-rain.svg" alt="" style="left:300px;top:4px;width:81.6px;height:156.4px">
+    <!-- desk top surface at y 156; the panel covers it below the top rail -->
+    <img class="art" src="../art/desk.svg" alt="" style="left:40px;top:152px;width:196px;height:134px">
+    <img class="art" src="../art/lamp.svg" alt="" style="left:54px;top:93.6px;width:44px;height:64px">
+    <img class="art" src="../art/note-stand.svg" alt="" style="left:113px;top:96.3px;width:48px;height:61.7px">
+    <span class="card-icon" aria-hidden="true" style="left:121.6px;top:100.9px;width:30.7px;height:45.6px"><i data-icon="chat"></i></span>
+    <img class="art" src="../art/chat-teacup.svg" alt="" style="left:176px;top:118.2px;width:40px;height:40px">
+    <div class="navx">
+      <a class="x" id="close" href="results.html#look-1" aria-label="Close"><i data-icon="close"></i></a>
+      <div class="ttl"><h1>Ask stylist</h1><span class="sim">Simulated</span></div>
+    </div>
+  </div>
+
+  <!-- ============ conversation ============ -->
+  <main class="convo" aria-label="Conversation">
+    <div class="thread" id="thread">
+      <div class="day">Today · simulated stylist · not saved</div>
+      <div class="ctx" id="ctx" hidden><i data-icon="calendar"></i><span>Office · 58°F · Rain · Jose's house</span></div>
+
+      <a class="look" id="look" href="results.html#look-1">
+        <span class="bundle" id="bundle" aria-hidden="true"></span>
+        <span class="txt"><small>About this look</small><b id="look-name">Calm office</b><span id="look-sub">Look 1 · 4 pieces</span></span>
+        <span class="chev"><i data-icon="chevron-right"></i></span>
+      </a>
+      <div class="bubble me" id="ask">Would white sneakers work with this?</div>
+
+      <div class="who">Stylist</div>
+      <div class="reply">
+        <span class="stylist" aria-hidden="true"><i data-icon="hanger"></i></span>
+        <div class="bubble them" id="answer">For a casual day, yes. For the office, the nude flats look neater with the navy.</div>
+      </div>
+
+      <div id="more"></div>
+
+      <p class="sugh" id="sugh">Suggested questions</p>
+      <div class="sugs" id="sugs" role="group" aria-labelledby="sugh"></div>
+
+      <a class="other" id="other" href="export.html?look=1"><i data-icon="send"></i>Ask another stylist instead</a>
+    </div>
+  </main>
+</div>
+
+<!-- ============ composer ============ -->
+<div class="composer">
+  <div class="in">
+    <label class="field"><input id="input" type="text" placeholder="Ask about this look" aria-label="Ask about this look" autocomplete="off"></label>
+    <button class="send" id="send" type="button" aria-disabled="true"><i data-icon="send"></i>Send</button>
+  </div>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* Shared helpers for the stylist and shopping pages (copied into each page so every page stands alone).
+   Shop.q(name)            URL parameter
+   Shop.ready(fn)          run after icons.js and garments.js have mounted
+   Shop.piece(id, tone)    garment drawing as an svg string; tone recolours shoes for fictional products
+   Shop.fit(box, svg, w, h, rot, cls)  one sticker fitted by its drawn bounds into a w x h box
+   Shop.lay(box, look, k)  a look as a sticker bundle in a 300 x 356 box scaled by k (as on results.html)
+   Shop.toast(text)        a short message for simulated actions
+   Shop.PRODUCTS           the fictional leads Find One shows (stores use the reserved .example domain) */
+window.Shop = (function () {
+  var params = new URLSearchParams(location.search);
+  function q(k) { return params.get(k); }
+  function ready(fn) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+
+  /* Navy tones for the fictional products. The drawings are the closet's flats and loafers recoloured: a
+     representative picture, never a product photo. */
+  var TONES = {
+    navy:     { f: '#2C3A6B', s: '#222E57', h: '#3F4F88', l: '#131A35', d: '#5B6CA3' },
+    midnight: { f: '#222A4E', s: '#1A2140', h: '#323D6B', l: '#0E1328', d: '#4D5B8E' },
+    ink:      { f: '#2F3757', s: '#252C48', h: '#434C70', l: '#151A2E', d: '#5E6890' },
+    pink:     { f: '#F4B4C2', s: '#EC9DB0', h: '#FBD0D9', l: '#D97F97', d: '#D97F97' }
+  };
+  var FROM = {
+    'g-nude-flats':  { f: '#F1DCC6', s: '#E2C8AC', h: '#F9ECDD', l: '#B48F68', d: '#C4A07A' },
+    'g-tan-loafers': { f: '#B98552', s: '#A2713F', h: '#CB9B6B', l: '#7A532A', d: '#8E6234', i: '#8A5B30' }
+  };
+  function piece(id, tone) {
+    var s = Garments.svg(id, {});
+    var from = FROM[id], to = TONES[tone];
+    if (from && to) {
+      Object.keys(from).forEach(function (k) {
+        var target = to[k] || (k === 'i' ? to.s : null);
+        if (target) s = s.replace(new RegExp(from[k], 'gi'), target);
+      });
+    }
+    return s;
+  }
+
+  /* drawn bounds, leaving out full-box texture fills (the lace pattern), which the garment shape clips */
+  function drawn(svg) {
+    var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+    for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+    b = svg.getBBox();
+    for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+    return b;
+  }
+  /* One sticker, centred in a w x h box and as large as fits */
+  function fit(box, svgStr, w, h, rot, cls) {
+    var stk = document.createElement('span'); stk.className = 'stk' + (cls ? ' ' + cls : '');
+    stk.innerHTML = '<span class="rot">' + svgStr + '</span>';
+    stk.style.width = '120px'; stk.style.height = '170px';
+    box.appendChild(stk);
+    var svg = stk.querySelector('svg'), b = drawn(svg);
+    var s = Math.min(w / b.width, h / b.height);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (w / 2 - ox).toFixed(2) + 'px'; stk.style.top = (h / 2 - oy).toFixed(2) + 'px';
+    var r = stk.querySelector('.rot');
+    r.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    r.style.transform = 'rotate(' + (rot || 0) + 'deg)';
+    return stk;
+  }
+
+  /* A look as a bundle, laid out as on results.html: [centre x, centre y, size, 'h' or 'w', rotation] in a 300 x 356 box */
+  var SPOTS = {
+    layer:  [98, 88, 156, 'h', -7],
+    top:    [196, 96, 146, 'h', 5],
+    bottom: [140, 252, 214, 'h', -2],
+    shoes:  [234, 312, 94, 'w', -8],
+    bag:    [252, 210, 92, 'h', 8]
+  };
+  var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+  function lay(box, look, k, spots) {
+    spots = spots || SPOTS;
+    box.innerHTML = '';
+    ORDER.forEach(function (slot) {
+      var id = look[slot]; if (!id || id === 'gap') return;
+      var sp = spots[slot];
+      var stk = document.createElement('span'); stk.className = 'stk';
+      stk.innerHTML = '<span class="rot">' + piece(id) + '</span>';
+      stk.style.width = '120px'; stk.style.height = '170px';
+      box.appendChild(stk);
+      var b = drawn(stk.querySelector('svg'));
+      var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+      var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+      stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+      stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+      var r = stk.querySelector('.rot');
+      r.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+      r.style.transform = 'rotate(' + sp[4] + 'deg)';
+    });
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    var t = document.getElementById('toast');
+    if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    t.innerHTML = '<i data-icon="check"></i><span></span>';
+    t.querySelector('span').textContent = text;
+    if (window.Icons) Icons.mountAll(t);
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
+  }
+
+  /* Fictional leads for one missing piece: navy flats. fit: supported | unknown | conflict */
+  var PRODUCTS = {
+    juniper: { store: 'Juniper Shoe Co.', domain: 'junipershoe.example', title: 'Soft pointed flat', color: 'Navy', draw: 'g-nude-flats', tone: 'navy',
+               price: 48, fit: 'supported', size: '6',
+               fitLine: 'The store lists a size chart and says this style runs true to size. Your usual size 6 is listed.',
+               unknown: 'Width is not listed, so how it fits across the foot is not known.',
+               evidence: ['Size chart on the product page', 'Product page: title, price and colour'],
+               returns: 'Free returns within 30 days if unworn, as listed on the product page.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' },
+    atelier: { store: 'Petite Atelier', domain: 'petiteatelier.example', title: 'Almond-toe ballet flat', color: 'Midnight navy', draw: 'g-nude-flats', tone: 'midnight',
+               price: 56, fit: 'supported', size: '6',
+               fitLine: 'Insole lengths are listed, and size 6 matches your usual size.',
+               unknown: 'Comes in one width only.',
+               evidence: ['Garment measurements on the product page', 'Product page: title, price and colour'],
+               returns: 'Returns within 21 days for store credit, as listed.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' },
+    maple:   { store: 'Maple Row', domain: 'maplerow.example', title: 'Bow ballet flat', color: 'Navy', draw: 'g-nude-flats', tone: 'navy',
+               price: 34, fit: 'unknown', size: null,
+               fitLine: 'No size chart on the product page. Check the fit on the store before you buy.',
+               unknown: 'Sizing, width and returns are not known.',
+               evidence: ['Product page: title, price and colour'],
+               returns: 'No return policy found on the product page.',
+               stock: 'Stock not checked', ship: 'Shipping not checked' },
+    lark:    { store: 'Lark & Line', domain: 'larkandline.example', title: 'Square-toe suede flat', color: 'Ink navy', draw: 'g-nude-flats', tone: 'ink',
+               price: 58, fit: 'unknown', size: null,
+               fitLine: 'Found only in a search snippet. The store page was not checked.',
+               unknown: 'Price, sizes and colour may differ on the store page.',
+               evidence: ['Search snippet (not checked)'],
+               returns: 'Not checked.',
+               stock: 'Stock not checked', ship: 'Shipping not checked' },
+    wren:    { store: 'Wren Market', domain: 'wrenmarket.example', title: 'Wide-fit loafer flat', color: 'Navy', draw: 'g-tan-loafers', tone: 'navy',
+               price: 29, fit: 'conflict', size: null,
+               fitLine: 'Listed as wide fit. Your fit notes say wide shoes slip at your heel.',
+               unknown: '',
+               evidence: ['Product page: fit and width'],
+               returns: 'Returns within 30 days, as listed.',
+               stock: 'Listed in stock', ship: 'Ships to the US, per the product page' }
+  };
+  var FIT = {
+    supported: { title: 'Sizing guidance found', icon: 'check', blurb: 'The store lists a size chart or measurements we could compare. Still not a guarantee.' },
+    unknown:   { title: 'Fit not known yet', icon: 'info', blurb: 'Not enough on the page to compare. Worth a look, but check the size yourself.' },
+    conflict:  { title: 'Likely a poor fit', icon: 'close', blurb: 'Something listed goes against your fit notes, so it is set aside.' }
+  };
+  function money(n) { return '$' + n; }
+
+  return { q: q, ready: ready, piece: piece, fit: fit, lay: lay, drawn: drawn, toast: toast, PRODUCTS: PRODUCTS, FIT: FIT, money: money };
+})();
+</script>
+<script>
+/* Which conversation to show and where Close goes (chat.html?back=<page>&look=<id>). Suggestions fill the field;
+   Send adds her message and a canned, simulated reply. Nothing leaves the page. */
+(function () {
+  var PAGES = { home: 1, 'home-ax': 1, 'ipad-home': 1, results: 1, look: 1, saved: 1, swap: 1, styleme: 1, 'ipad-results': 1 };
+  var STYLE_ME = { home: 1, 'home-ax': 1, 'ipad-home': 1, styleme: 1 };
+  var SNEAKERS = 'Would white sneakers work with this?';
+  /* looks 1 to 3 as on results.html, and the five saved looks */
+  var LOOKS = {
+    '1': { name: 'Calm office', sub: 'Look 1 · 4 pieces', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+           ask: SNEAKERS, answer: 'For a casual day, yes. For the office, the nude flats look neater with the navy.',
+           sugs: ['Try it with loafers?', 'How do I make it warmer?', 'Does it work for a meeting?'] },
+    '2': { name: 'Olive and brick', sub: 'Look 2 · 4 pieces', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+           ask: 'Would loafers work with this?', answer: 'Yes. Tan loafers suit the olive and brick and look a little smarter than sneakers.',
+           sugs: ['Is the jacket too warm?', 'Try it with jeans?', 'Make it dressier?'] },
+    '3': { name: 'Gray blazer office', sub: 'Look 3 · 4 pieces', layer: 'g-gray-blazer', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels',
+           ask: SNEAKERS, answer: 'For a relaxed Friday, yes. On other office days the black heels suit the blazer better.',
+           sugs: ['Try it with flats?', 'Is it warm enough for rain?', 'Swap the sweater?'] },
+    interview: { name: 'Interview navy & pink', sub: 'Saved look · 4 pieces', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+           ask: SNEAKERS, answer: 'For a casual day, yes. For an interview, the nude flats look neater with the navy.',
+           sugs: ['Try it with loafers?', 'How do I make it warmer?', 'Does it work for a meeting?'] },
+    weekend: { name: 'Weekend olive & brick', sub: 'Saved look · 4 pieces', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+           ask: 'Would loafers work with this?', answer: 'Yes. Tan loafers suit the olive and brick and look a little smarter than sneakers.',
+           sugs: ['Try it with jeans?', 'Make it dressier?'] },
+    lace: { name: 'Lace date night', sub: 'Saved look · 4 pieces', top: 'g-lace-top', bottom: 'g-black-skirt', shoes: 'g-black-heels', bag: 'g-burgundy-bag',
+           ask: SNEAKERS, answer: 'For a relaxed evening, yes. For a date night the black heels look more dressed up with the skirt.',
+           sugs: ['How do I make it warmer?', 'Try a different top?'] },
+    blazer: { name: 'Gray blazer office', sub: 'Saved look · 4 pieces', layer: 'g-gray-blazer', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels',
+           ask: SNEAKERS, answer: 'For a relaxed Friday, yes. On other office days the black heels suit the blazer better.',
+           sugs: ['Try it with flats?', 'Swap the sweater?'] },
+    pinkblack: { name: 'Pink & black date night', sub: 'Saved look · 4 pieces', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag',
+           ask: SNEAKERS, answer: 'For a casual dinner, yes. For a date night the black heels dress up the pink shirt.',
+           sugs: ['How do I make it warmer?', 'Try it with a skirt?'] }
+  };
+  var FRESH = { answer: 'Hello. Ask me what to wear today, or about any piece in your closet.',
+                sugs: ['What suits a rainy office day?', 'What goes with navy dress pants?'] };
+  /* canned replies for whatever she sends; the stylist is simulated */
+  var REPLIES = ['A simulated answer: keep the navy pieces and change one thing at a time, so the look stays calm.',
+                 'A simulated answer: that works. The colours stay close, so nothing pulls focus.'];
+
+  function page(s) { s = String(s || '').split(/[?#]/)[0].replace(/^.*\//, '').replace(/\.html$/i, '').toLowerCase(); return PAGES[s] ? s : ''; }
+  function lookId(s) { s = String(s || '').toLowerCase().replace(/^#/, '').replace(/^look-?(?=\d)/, '').trim(); return LOOKS.hasOwnProperty(s) ? s : ''; }
+
+  var back = page(Shop.q('back')), id = lookId(Shop.q('look'));
+  if (!id && !STYLE_ME[back]) id = back === 'look' || back === 'saved' ? 'interview' : '1';
+  var L = id ? LOOKS[id] : null, fromResults = /^[123]$/.test(id);
+  var lookHref = L ? (fromResults ? 'results.html#look-' + id : 'look.html#' + id) : '';
+  document.getElementById('close').setAttribute('href', back ? back + '.html' + (back === 'results' && fromResults ? '#look-' + id : '') : (lookHref || 'home.html'));
+
+  var thread = document.getElementById('thread'), input = document.getElementById('input'), send = document.getElementById('send');
+  var sugBox = document.getElementById('sugs'), more = document.getElementById('more');
+  var NAMES = {}; Garments.LIST.forEach(function (g) { NAMES[g.id] = g.name; });
+
+  function chips(list) {
+    sugBox.innerHTML = '';
+    list.forEach(function (t) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'sug'; b.textContent = t;
+      b.addEventListener('click', function () { input.value = t; sync(); input.focus(); });
+      sugBox.appendChild(b);
+    });
+  }
+  function sync() {
+    var on = input.value.trim().length > 0;
+    send.classList.toggle('ready', on);
+    send.setAttribute('aria-disabled', on ? 'false' : 'true');
+  }
+  function bubble(cls, text) { var d = document.createElement('div'); d.className = 'bubble ' + cls; d.textContent = text; return d; }
+  var n = 0;
+  function doSend() {
+    var t = input.value.trim(); if (!t) return;
+    more.appendChild(bubble('me', t));
+    var who = document.createElement('div'); who.className = 'who'; who.textContent = 'Stylist';
+    var row = document.createElement('div'); row.className = 'reply';
+    row.innerHTML = '<span class="stylist" aria-hidden="true">' + Icons.svg('hanger') + '</span>';
+    row.appendChild(bubble('them', REPLIES[n++ % REPLIES.length]));
+    more.appendChild(who); more.appendChild(row);
+    input.value = ''; sync();
+    row.scrollIntoView({ block: 'nearest' });
+  }
+  input.addEventListener('input', sync);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); doSend(); } });
+  send.addEventListener('click', doSend);
+
+  Shop.ready(function () {
+    var card = document.getElementById('look'), ask = document.getElementById('ask');
+    if (L) {
+      card.setAttribute('href', lookHref);
+      document.getElementById('look-name').textContent = L.name;
+      document.getElementById('look-sub').textContent = L.sub;
+      var pieces = [L.layer, L.top, L.bottom, L.shoes, L.bag].filter(Boolean).map(function (g) { return NAMES[g] || g; });
+      card.setAttribute('aria-label', 'About this look: ' + L.name + ', ' + pieces.join(', ') + '. Open the look');
+      Shop.lay(document.getElementById('bundle'), L, 0.36);
+      document.getElementById('bundle').classList.add('small-stk');
+      ask.textContent = L.ask;
+      document.getElementById('answer').textContent = L.answer;
+      chips(L.sugs);
+      document.getElementById('other').setAttribute('href', 'export.html?look=' + id);
+    } else {
+      document.getElementById('ctx').hidden = !STYLE_ME[back];
+      card.remove(); ask.remove();
+      document.getElementById('answer').textContent = FRESH.answer;
+      chips(FRESH.sugs);
+      input.placeholder = 'Ask the stylist';
+      input.setAttribute('aria-label', 'Ask the stylist');
+      document.getElementById('other').hidden = true;
+    }
+  });
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="chat"></script>
+</body>
+</html>

@@ -2,727 +2,416 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=1194">
-<title>Style Me iPad</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home, iPad</title>
+<script src="../js/theme.js"></script>
 <link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
 <style>
-  /* iPad landscape Style Me. Sidebar 0..260, the bedroom 260..854, results panel 854..1194.
-     The room uses the same art as home.html at about 1.15 (one step up for iPad type), floor line 628. */
+  /* Home, the bedroom. Every object leads somewhere:
+       wardrobe -> Closet, suitcase -> Suitcases (and shows the Style Me source), laptop -> Style Me,
+       calendar -> the occasion sheet in Style Me, hamper -> Laundry, desk drawers -> Help / Send feedback / Privacy,
+       shelf -> Saved Looks, name sign -> Profile, window -> the weather (simulated).
+     The room is drawn in a 390 x 844 stage at 1 SVG unit per px. On a wider frame (iPad Split View, 507 x 834) the
+     stage is centred, the wall and floor run to both edges, the wardrobe shows whole and the bed stays in the corner.
+     Floor line 550. */
   body { background: var(--wall); }
   a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
   button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
-  .room { --floor-y: 628px; }
+  .screen { height: 100vh; min-height: 640px; }
+  .room { --floor-y: 550px; }
+  .stage { position: absolute; left: 50%; top: 0; width: 390px; height: 844px; margin-left: -195px; }
   .art { position: absolute; display: block; }
-  .hit { position: absolute; display: block; }
+  .hit { position: absolute; display: block; border-radius: 14px; }
   .hit > .tag { position: absolute; }
   .tag b { letter-spacing: -.1px; }
-  .stagecut { position: absolute; left: 0; top: 0; width: 854px; height: 834px; overflow: hidden; }
 
-  /* ---------- sidebar ---------- */
-  .side { position: absolute; left: 0; top: 0; width: 260px; height: 834px; background: linear-gradient(#FFFFFFCC, #FFFFFFCC), linear-gradient(var(--wall), var(--wall-2));
-          box-shadow: 1px 0 0 #EBDCE4, 4px 0 18px #5a2a4a0d; }
-  .side-name { position: absolute; left: 24px; top: 58px; font-family: var(--font-display); font-weight: 800; font-size: 26px;
-               letter-spacing: -.5px; line-height: 1.1; color: var(--ink); }
-  .side-rows { position: absolute; left: 12px; right: 12px; top: 112px; display: flex; flex-direction: column; gap: 4px; }
-  .srow { display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 16px; border-radius: 24px;
-          font-size: 16px; font-weight: 600; color: var(--ink); }
-  .srow i[data-icon] { font-size: 22px; color: var(--plum); }
-  .srow.on { background: var(--plum); color: #fff; box-shadow: 0 2px 0 var(--plum-2); }
-  .srow.on i[data-icon] { color: #fff; }
-  .srow .badge { margin-left: auto; min-width: 24px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--butter);
-                 border: 1px solid var(--butter-line); font-size: 12px; font-weight: 700; display: grid; place-items: center; color: var(--ink); }
-  .side-sep { height: 1px; background: #EFE2E9; margin: 8px 14px; }
-  .side-me { position: absolute; left: 12px; right: 12px; bottom: 20px; height: 76px; display: flex; align-items: center; gap: 12px;
-             padding: 0 14px 0 10px; border-radius: 18px; background: #fff; border: 1px solid var(--plate-line); box-shadow: 0 3px 10px #5a2a4a14; }
-  .side-me .ic { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; flex: none;
-                 background: #FCE6F2; color: var(--plum); font-size: 28px; }
-  .side-me .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .side-me b { font-size: 15px; }
-  .side-me small { font-size: 12px; color: var(--ink-soft); }
-  .side-me .end { margin-left: auto; color: var(--plum); font-size: 15px; display: grid; }
+  /* header (screen-left, like a large title) */
+  .hdr-title { position: absolute; left: 20px; top: 46px; z-index: 2; }
+  .wx { position: absolute; left: 14px; top: 81px; height: 44px; padding: 0 4px 0 6px; display: flex; align-items: center; gap: 4px; z-index: 2;
+        color: var(--plum); font-size: 15px; font-weight: 600; letter-spacing: -.2px; white-space: nowrap; border-radius: 12px; }
+  .wx .ic { font-size: 18px; margin-right: 1px; display: grid; }
+  .wx .chev { display: grid; }
+  .wx .chev i[data-icon] { font-size: 13px; }
+  .ic svg { width: 1em; height: 1em; display: block; }
 
-  /* ---------- header in the room ---------- */
-  .hdr-title { position: absolute; left: 284px; top: 50px; font-size: 36px; }
-  .wx { position: absolute; left: 277px; top: 90px; height: 44px; padding: 0 7px; display: flex; align-items: center; gap: 7px;
-        color: var(--plum); font-size: 16px; font-weight: 600; }
-  .wx i[data-icon] { font-size: 21px; }
-  .wx .chev { font-size: 15px; display: grid; }
+  /* wardrobe: the whole thing is the Closet link; its label zone (x 9.6..152, y 152..230) carries one plate */
+  .wardrobe { position: absolute; left: -12px; top: 124px; width: 177px; height: 426px; border-radius: 10px; }
+  .wardrobe > .art { left: 0; top: 0; width: 177.1px; height: 425.5px; }
+  .wardrobe:focus-visible { outline-offset: -4px; }  /* the wardrobe runs off the left edge at 390, so its focus ring sits inside */
+  .wardrobe .rail { position: absolute; left: 26px; top: 110px; width: 136px; height: 114px; overflow: hidden; }
+  .wardrobe .rail .g { position: absolute; }
+  .closetp { left: 37px; top: 45px; width: 112px; height: 44px; gap: 7px; padding: 0 10px 0 12px; }
+  .closetp b { font-size: 15px; }
+  .closetp .end i[data-icon] { font-size: 14px; }
 
-  /* weather detail: an iPad popover under the weather line (sample weather, nothing is fetched) */
-  .pop { position: absolute; left: 277px; top: 136px; width: 296px; padding: 14px 14px 4px 16px; background: #fff; border: 1px solid var(--plate-line);
-         border-radius: 18px; box-shadow: 0 10px 30px #5a2a4a2e; z-index: 5; }
-  .pop[hidden] { display: none; }
-  .pop-h { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; white-space: nowrap; }
-  .pop-h i[data-icon] { font-size: 20px; color: var(--plum); }
-  .pop-h .sim { margin-left: auto; }
-  .pop p { margin-top: 6px; font-size: 13px; line-height: 1.35; color: var(--ink-soft); }
-  .pop .close { display: block; margin: 4px 0 0 auto; height: 44px; padding: 0 4px; font-size: 15px; font-weight: 600; color: var(--plum); }
+  /* suitcase where the rack was: the Source control. Label zone (art x 4..92, y 30..78) takes the Source plate,
+     the ribs below take the scope plate. The whole case links to Suitcases. */
+  .suit { position: absolute; left: 4px; top: 430px; width: 112px; height: 190px; }
+  .suit > .art { left: 4px; top: 6px; width: 104px; height: 182px; }
+  .srcp { left: 4px; top: 36px; width: 104px; height: 46px; padding: 3px 7px 3px 9px; gap: 4px; }
+  .srcp .txt { flex: 1; }
+  .srcp .lbl { display: flex; align-items: center; justify-content: space-between; }
+  .srcp .lbl i[data-icon] { font-size: 13px; color: var(--plum); }
+  .srcp b { font-size: 14px; }
+  .scopep { left: 6px; top: 87px; width: 100px; min-height: 0; height: 40px; padding: 2px 8px 2px 9px; gap: 0; flex-direction: column; align-items: flex-start; justify-content: center; border-radius: 13px; }
+  .scopep .l1 { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; line-height: 16px; color: #24452B; }
+  .scopep .l1 i[data-icon] { font-size: 12px; color: #3E6B45; }
+  .scopep .l2 { font-size: 13px; font-weight: 600; line-height: 16px; color: #2F5536; white-space: nowrap; }
+  .scopep.main { background: var(--soft-tint-strong); }
+  .scopep.main .l1, .scopep.main .l2 { color: var(--ink); }
+  .scopep.main .l1 i[data-icon] { color: var(--plum); }
+  .scopep.empty { background: #FCF0C4; }
+  .scopep.empty .l1, .scopep.empty .l2 { color: #5E4A0E; }
 
-  /* ---------- wardrobe plates: label zone x 299..451, y 204.5..287.3 ---------- */
-  .src { left: 296.5px; top: 203px; width: 156px; height: 46px; padding: 3px 10px; gap: 8px; }
-  .src i[data-icon] { font-size: 22px; }
-  .src .txt { flex: 1; }
-  .src .lbl { display: flex; align-items: center; justify-content: space-between; }
-  .src small { font-size: 12px; }
-  .src b { font-size: 16px; }
-  .src .lbl i[data-icon] { font-size: 14px; color: var(--plum); }
-  .lockp { left: 296.5px; top: 252px; width: 156px; height: 38px; min-height: 0; padding: 1px 10px; gap: 8px; border-radius: 10px; }
-  .lockp i[data-icon] { font-size: 17px; color: #3E6B45; }
-  .lockp .txt b { font-size: 15px; line-height: 1.1; }
-  .lockp .txt span { font-size: 15px; font-weight: 600; line-height: 1.1; color: #355E3C; }
-  .rail { position: absolute; left: 306px; top: 291.9px; width: 142px; height: 111.5px; overflow: hidden; }
-  .rail .g { position: absolute; }
+  /* hamper on the floor in front of the suitcase, at the rug's edge (home-hamper*.svg at 1:1, rim y 646, base 727) */
+  .hamper { position: absolute; left: 12px; top: 632px; width: 92px; height: 100px; }
+  .hamper > .art { left: 2px; top: 4px; width: 88px; height: 96px; }
+  .hamper.off > .art { filter: saturate(.4) brightness(1.1) contrast(.8); }
+  .laup { left: 8px; top: 44px; width: 76px; min-height: 0; height: 40px; padding: 2px 6px 2px 9px; gap: 0; flex-direction: column; align-items: flex-start; justify-content: center; border-radius: 13px; }
+  .laup small { font-size: 11px; line-height: 14px; }
+  .laup b { font-size: 13px; line-height: 17px; }
+  .hamper.off .laup { background: rgba(255,255,255,.6); box-shadow: none; }
+  .hamper.off .laup b { color: var(--ink-soft); font-weight: 600; }
 
-  /* ---------- shelf plate ---------- */
-  .saved { left: 0; top: 5px; width: 152px; height: 34px; min-height: 0; padding: 0 9px; gap: 6px; justify-content: center; border-radius: 11px; }
-  .saved i[data-icon] { font-size: 18px; }
-  .saved b { font-size: 15px; }
+  /* Saved Looks plate under the plant shelf */
+  .saved { left: 0; top: 7px; width: 132px; height: 30px; min-height: 0; padding: 0 8px; gap: 5px; justify-content: center; border-radius: 12px; }
+  .saved i[data-icon] { font-size: 17px; }
+  .saved b { font-size: 13px; }
   .saved .end { margin-left: 1px; }
-  .saved .end i[data-icon] { font-size: 14px; }
+  .saved .end i[data-icon] { font-size: 13px; }
   .card-ov { position: absolute; display: block; }
   .card-ov .th { position: absolute; left: 0; top: 0; width: 40px; }
 
-  /* ---------- calendar at 1.15, flat face x 631.7..716.8, y 333.1..384.9 ---------- */
-  .cal { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--ink); }
-  .cal .t { display: flex; align-items: center; gap: 3px; font-size: 15px; font-weight: 700; letter-spacing: -.3px; line-height: 18px; }
+  /* calendar label, inside the flat face x 8..82, y 20..65: it opens the Occasion sheet in Style Me */
+  .cal { position: absolute; display: flex; color: var(--ink); flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 8px; }
+  .cal .t { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; }
   .cal .t i[data-icon] { font-size: 14px; color: var(--plum); }
-  .cal .pick { display: flex; align-items: center; gap: 1px; }
-  .cal .chip { min-height: 26px; padding: 0 7px 0 5px; gap: 2px; font-size: 15px; letter-spacing: -.2px; }
+  .cal .pick { display: flex; align-items: center; gap: 1px; max-width: 78px; }
+  .cal .chip { min-height: 24px; padding: 0 7px 0 5px; gap: 2px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; }
   .cal .chip i[data-icon] { font-size: 11px; }
   .cal .pick > i[data-icon] { font-size: 12px; color: var(--plum); }
 
-
-  /* ---------- laptop ---------- */
-  .styleme { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-             color: #fff; font-size: 17px; font-weight: 700; border-radius: 3px; }
-  .styleme i[data-icon] { font-size: 21px; }
-
-  /* ---------- desk drawer plate ---------- */
-  .more { left: 0; top: 1px; width: 106px; height: 42px; min-height: 0; padding: 2px 4px; gap: 0; flex-direction: column; justify-content: center; border-radius: 10px; }
-  .more b { font-size: 15px; font-weight: 600; }
-  .more i[data-icon] { font-size: 14px; color: var(--ink); }
-
-  /* ---------- rack plates ---------- */
-  /* the plate grows with a long piece name (158 to 212 px, so it stays clear of the name sign at 473); a name that still
-     does not fit steps down to 14 then 13 px (script below). The link takes its size from the plate. */
-  #startp { height: 50px; }
-  #startp > .tag { position: relative; }
-  .start { left: 0; top: 0; width: auto; min-width: 158px; max-width: 212px; height: 50px; padding: 4px 8px 4px 10px; gap: 2px; flex-direction: column; align-items: flex-start; justify-content: center; }
-  .start > b { display: flex; align-items: center; gap: 5px; font-size: 15px; line-height: 18px; }
-  .start > b i[data-icon] { font-size: 16px; }
-  .start .act { display: flex; align-items: center; gap: 6px; width: 100%; font-size: 15px; font-weight: 600; line-height: 18px; color: var(--plum); white-space: nowrap; overflow: hidden; }
-  .start .act .chev { margin-left: auto; font-size: 13px; display: grid; flex: none; }
-  .rackfit { position: absolute; }
-
-  /* ---------- her name sign on the wall: name-sign.svg with the profile's first name as live text ---------- */
+  /* her name sign on the wall: name-sign.svg with the profile's first name as live text over its flat panel */
   .sign { position: absolute; display: block; }
   .sign img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
   .sign .name { position: absolute; display: flex; align-items: center; justify-content: center;
                 font-family: var(--font-display); font-weight: 700; font-style: italic; color: var(--plum); letter-spacing: .2px; }
 
-  /* ---------- results column: a white panel beside the room ---------- */
-  .results { position: absolute; left: 854px; top: 0; width: 340px; height: 834px;
-             background: linear-gradient(#FFFFFFE6, #FFFFFFE6), linear-gradient(var(--wall), var(--wall-2));
-             box-shadow: -1px 0 0 #EBDCE4, -4px 0 18px #5a2a4a0d; padding: 58px 16px 12px; display: flex; flex-direction: column; }
-  /* same size, line height and top as the sidebar's app name, so the two share a baseline and sit under "Style Me" */
-  .title-display.res-h { font-size: 26px; line-height: 1.1; letter-spacing: -.5px; }
-  .res-sub { margin-top: 5px; font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
-  .res-sub i[data-icon] { font-size: 15px; color: var(--plum); }
-  .looks { margin-top: 10px; display: flex; flex-direction: column; gap: 7px; }
-  /* cards take the height of their text; the laid-out pieces keep a floor of 168 */
-  .look { position: relative; display: flex; gap: 12px; padding: 10px; border-radius: 18px; background: #fff;
-          border: 1.5px solid var(--plate-line); box-shadow: 0 2px 8px #5a2a4a0f; }
-  .look.on { border: 2px solid var(--plum); padding: 9.5px; }
-  /* the look's pieces laid out flat on a linen board (top above bottom, shoes beside); the board selects the look */
-  .stage { position: relative; flex: none; width: 84px; min-height: 168px; border-radius: 13px; overflow: hidden;
-           background: linear-gradient(#FFF9F0, #F7EBDD); border: 1px solid #EFE0CC; }
-  .stage .lay { position: absolute; left: 0; top: max(0px, calc((100% - 172px) / 2)); width: 82px; height: 138px; pointer-events: none; }
-  .stage .lay .th { position: absolute; left: 0; top: 0; width: 40px; }
-  .stage .try { position: absolute; left: 6px; right: 6px; bottom: 6px; height: 22px; display: flex; align-items: center; justify-content: center; gap: 3px;
-                border-radius: 11px; background: #fff; border: 1px solid #EBD7E3; font-size: 11px; font-weight: 700; color: var(--plum); white-space: nowrap; }
-  .stage .try i[data-icon] { font-size: 12px; }
-  .look.on .stage .try { background: var(--plum); border-color: var(--plum); color: #fff; }
-  .lk { display: flex; flex-direction: column; min-width: 0; flex: 1; }
-  .lk h3 { font-size: 17px; font-weight: 700; line-height: 21px; white-space: nowrap; }
-  .lk p { font-size: 13px; line-height: 17px; color: var(--ink-soft); margin-top: 2px; }
-  .pcs { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
-  .pcr { display: flex; align-items: center; gap: 7px; height: 28px; font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; }
-  .pc { position: relative; width: 28px; height: 28px; flex: none; border-radius: 8px; background: #FBF1F4; border: 1px solid #F1E2E9; overflow: hidden; }
-  .pc .th { position: absolute; left: 0; top: 0; width: 40px; }
-  .pcr .more { margin-left: auto; height: 20px; padding: 0 7px; border-radius: 10px; background: #F6EEF2; font-size: 11px; font-weight: 700; color: var(--ink-soft);
-               display: grid; place-items: center; }
-  /* a piece she let in from the wash for this one request (the PRD's exception to "Dirty pieces are left out") */
-  .lk p.ok { display: flex; align-items: flex-start; gap: 5px; color: #355E3C; font-weight: 600; margin-top: 3px; }
-  .lk p.ok[hidden] { display: none; }
-  .lk p.ok i[data-icon] { flex: none; margin-top: 1px; width: 15px; height: 15px; border-radius: 50%; background: #E4F3DF; border: 1px solid #BFDDB8;
-                          display: grid; place-items: center; font-size: 10px; color: #3E6B45; }
-  .lk p.ok i[data-icon] svg { stroke-width: 2.6; }
-  .acts { display: flex; gap: 6px; margin-top: 4px; margin-left: -2px; }
-  .acts > * { height: 44px; display: flex; align-items: center; }
-  .acts .chip { min-height: 34px; padding: 6px 12px 6px 10px; font-size: 14px; }
-  .acts .chip i[data-icon] { font-size: 16px; color: var(--plum); }
-  .acts .chip.on i[data-icon] { color: #fff; }
-  /* Ask stylist about the chosen look (the selected card) */
-  .ask { margin-top: auto; height: 46px; flex: none; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 12px; border-radius: 14px;
-         background: #EEE4FA; border: 1.5px solid #D2BEEE; font-size: 15px; font-weight: 700; color: var(--ink); white-space: nowrap; }
-  .ask i[data-icon] { font-size: 18px; color: var(--plum); }
-  .res-note { margin-top: 4px; text-align: center; font-size: 11px; font-weight: 600; color: var(--ink-soft); }
-  .results .looks { transition: opacity .25s; }
-  .results.busy .looks { opacity: .35; }
+  /* laptop screen: opens the Style Me request screen */
+  .styleme { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+             color: #fff; font-size: 15px; font-weight: 700; border-radius: 3px; }
+  .styleme i[data-icon] { font-size: 19px; }
 
-  /* ---------- the iPad shell around the phone screens that have no iPad layout yet ----------
-     Sidebar sections (Saved Looks, Suitcases, Laundry, Profile) open in the content area beside the sidebar, which stays.
-     The phone screen shows as a card from just under its nav to just above its tab bar (phone y 37..751): the sidebar
-     does that job here. Swap and Ask stylist are presented over the room as a sheet, as on iPad. */
-  .side { z-index: 7; }
-  .pane { position: absolute; left: 260px; top: 0; right: 0; bottom: 0; z-index: 6; background: linear-gradient(var(--wall), var(--wall-2)); }
-  .pane[hidden], .sheet[hidden], .pane-back[hidden] { display: none; }
-  .pane-card { position: absolute; left: 272px; top: 47px; width: 390px; height: 714px; border-radius: 22px; overflow: hidden;
-               background: var(--wall); box-shadow: 0 0 0 1px #EBDCE4, 0 10px 30px #5a2a4a1f; }
-  .pane-card iframe { position: absolute; left: 0; top: -37px; width: 390px; height: 844px; border: 0; display: block; }
-  .pane-cap { position: absolute; left: 127px; width: 680px; top: 778px; text-align: center; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
-  .pane-back { position: absolute; left: 16px; top: 50px; height: 44px; padding: 0 10px 0 4px; display: flex; align-items: center; gap: 4px;
-               border-radius: 12px; color: var(--plum); font-size: 16px; font-weight: 600; }
-  .pane-back i[data-icon] { font-size: 20px; }
-  .sheet { position: absolute; inset: 0; z-index: 10; }
-  .scrim { position: absolute; inset: 0; background: #2B1B2742; }
-  .sheet-box { position: absolute; left: 402px; top: 10px; width: 390px; height: 824px; border-radius: 20px 20px 0 0; overflow: hidden;
-               background: var(--wall); box-shadow: 0 0 0 1px #00000014, 0 18px 50px #2B1B2747; }
-  .sheet-box iframe { position: absolute; left: 0; top: 0; width: 390px; height: 844px; border: 0; display: block; }
+  /* desk drawers: a small plate on each drawer front, the pull below it; each drawer is a 80 x 44 control */
+  .drawer { position: absolute; left: 297px; width: 80px; height: 44px; border-radius: 6px; }
+  .dplate { position: absolute; left: 5px; top: 5px; width: 70px; height: 24px; min-height: 0; padding: 0 4px; justify-content: center;
+            border-radius: 9px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+
+  /* lamp light at night */
+  .glow { position: absolute; left: 296px; top: 340px; width: 120px; height: 120px; border-radius: 50%; pointer-events: none; display: none;
+          background: radial-gradient(closest-side, rgba(255,228,150,.55), rgba(255,228,150,0)); }
+  html.is-night .glow { display: block; }
+
+  /* weather detail: a small sheet that the weather link opens in place */
+  .wxsheet { position: absolute; left: 14px; top: 124px; width: 262px; z-index: 20; padding: 4px 4px 14px 16px;
+             background: #fff; border-radius: 22px; box-shadow: 0 22px 30px -18px rgba(90,42,74,.42), 0 2px 24px rgba(90,42,74,.08); }
+  .wxsheet[hidden] { display: none; }
+  .wxsheet .wh { display: flex; align-items: center; gap: 6px; min-height: 44px; }
+  .wxsheet .wh .ic { font-size: 19px; color: var(--plum); display: grid; }
+  .wxsheet .wh b { font-size: 15px; }
+  .wxsheet .x { margin-left: auto; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; color: var(--ink-soft); font-size: 17px; }
+  .wxsheet .big { font-size: 17px; font-weight: 700; line-height: 1.25; }
+  .wxsheet .say { margin-top: 4px; padding-right: 10px; font-size: 13px; line-height: 1.35; color: var(--ink-soft); }
+  .wxsheet .say a { color: var(--plum); font-weight: 600; }
+
+  /* tab bar items are links */
+  .tabbar { z-index: 10; }
+  .tabfade { z-index: 9; }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
   /* Maya, the sleeping poodle: decoration only. Her z's float very slowly; still under reduced motion. */
   .maya, .maya-zzz { pointer-events: none; }
   .maya-zzz { animation: mayaZ 7s ease-in-out infinite; }
   @keyframes mayaZ { 0%, 100% { transform: translate(0, 0); opacity: 1; } 50% { transform: translate(1.5px, -3px); opacity: .8; } }
   @media (prefers-reduced-motion: reduce) { .maya-zzz { animation: none; } }
+
+  /* bed: anchored to the screen's bottom-right corner, so it stays a corner piece on any width */
+  .bed { right: 0; bottom: 0; width: 118px; height: 272px; }
+
+  /* ---------- dark appearance: the same room at night (tokens from css/dark.css) ---------- */
+  html.theme-dark .room { background:
+      linear-gradient(var(--floor-line), var(--floor-line)) 0 var(--floor-y)/100% 2px no-repeat,
+      linear-gradient(var(--floor), var(--floor-2)) 0 var(--floor-y)/100% 100% no-repeat,
+      radial-gradient(60% 40% at 82% 50%, #4A3540, rgba(74,53,64,0)),
+      linear-gradient(var(--wall), var(--wall-2)); }
+  html.theme-dark .glow { display: block; background: radial-gradient(closest-side, rgba(255,214,140,.32), rgba(255,214,140,0)); }
+  html.theme-dark .scopep { background: var(--tint-green); }
+  html.theme-dark .scopep .l1, html.theme-dark .scopep .l2, html.theme-dark .scopep .l1 i[data-icon] { color: var(--tint-green-ink); }
+  html.theme-dark .scopep.main { background: var(--soft-tint-strong); }
+  html.theme-dark .scopep.main .l1, html.theme-dark .scopep.main .l2 { color: var(--ink); }
+  html.theme-dark .scopep.empty { background: var(--tint-butter); }
+  html.theme-dark .scopep.empty .l1, html.theme-dark .scopep.empty .l2 { color: var(--tint-butter-ink); }
+  html.theme-dark .hamper.off .laup { background: rgba(74,53,66,.7); }
+  html.theme-dark .wxsheet { background: var(--surface); box-shadow: 0 22px 30px -18px rgba(0,0,0,.7); }
+  /* text laid straight on drawn surfaces (the calendar face, the sign's panel, the laptop screen) keeps dark ink,
+     since the art is dimmed, not inverted */
+  html.theme-dark .cal { color: #2B1B27; }
+  html.theme-dark .cal .t i[data-icon], html.theme-dark .cal .pick > i[data-icon] { color: #6A1F58; }
+  html.theme-dark .cal .chip.on { background: #6A1F58; }
+  html.theme-dark .sign .name { color: #5A1A4B; }
+  html.theme-dark .hamper.off > .art { filter: brightness(.6) saturate(.4) contrast(.85); }
 </style>
+<link rel="stylesheet" href="../css/home-wide.css">
 </head>
-<body class="pad">
+<body>
 <div class="screen">
   <div class="room"></div>
 
-  <div class="stagecut">
-  <!-- ============ wall, back to front ============ -->
-  <!-- window at 1.15 (110.4 x 211.6): glass x 504.7..565.7, y 93.3..257.7; mullion y 200.8..206.1; sill lip to 275 -->
-  <img class="art" src="../art/window-rain.svg" alt="" style="left:480px;top:72px;width:110.4px;height:211.6px">
+  <div class="stage">
+    <!-- ============ wall, back to front ============ -->
+    <!-- window, 0.85 scale (81.6 x 156.4). The art follows the weather (?weather=rain|sun|cloudy|snow, ?time=night). -->
+    <img class="art" id="window" src="../art/window-rain.svg" alt="" style="left:170px;top:134px;width:81.6px;height:156.4px">
 
-  <!-- plant shelf at 1.1 (167.2 x 121): board y 113.2..125.3, plate zone x 675.7..827.5 y 123.1..156.1 -->
-  <img class="art" src="../art/shelf-top.svg" alt="" style="left:668px;top:52px;width:167.2px;height:121px">
-  <!-- frames shelf at 1.076 (131.3 x 109.8), centred under the plant shelf as on the phone -->
-  <img class="art" src="../art/shelf-frames.svg" alt="" style="left:686px;top:180.3px;width:131.3px;height:109.8px">
+    <!-- plant shelf, 0.9 scale (136.8 x 99): plate zone x 256..380.5 y 100.9..128 -->
+    <img class="art" src="../art/shelf-top.svg" alt="" style="left:250px;top:46px;width:136.8px;height:99px">
+    <img class="art" src="../art/shelf-frames.svg" alt="" style="left:264.7px;top:151px;width:107.4px;height:89.8px">
 
-  <!-- calendar at 1.15 (103.5 x 92), like the rest of the room: face x 631.7..716.8, y 333.1..384.9; it hangs clear of the
-       frames shelf (290) and the lamp shade (425) -->
-  <img class="art" src="../art/calendar.svg" alt="" style="left:622.5px;top:310.1px;width:103.5px;height:92px">
+    <!-- calendar, 1:1, label face x 211..285, y 313..358 -->
+    <img class="art" src="../art/calendar.svg" alt="" style="left:203px;top:293px;width:90px;height:80px">
 
-  <!-- ============ wardrobe at 1.15 (188.6 x 453.1), feet on 626 ============ -->
-  <img class="art" src="../art/wardrobe.svg" alt="" style="left:276px;top:174.6px;width:188.6px;height:453.1px">
-  <!-- opening x 303.6..448.5, y 291.9..413.8; rail at page y 303.4 (box y 11.5); floor board top 403.4 -->
-  <div class="rail" aria-hidden="true">
-    <!-- W 71.3: top = 11.5 - 11*71.3/120 = 4.96 -->
-    <span class="g" data-garment="g-pink-blouse" data-hanger style="left:90px;top:4.96px;width:71.3px;height:101px"></span>
-    <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:-6px;top:4.96px;width:71.3px;height:101px"></span>
-    <span class="g" data-garment="g-lace-top" data-hanger style="left:58px;top:4.96px;width:71.3px;height:101px"></span>
-    <span class="g" data-garment="g-navy-trousers" data-hanger style="left:25px;top:4.96px;width:71.3px;height:101px"></span>
-  </div>
-  <img class="art" src="../art/home-flats.svg" alt="" style="left:332px;top:398.5px;width:39.1px;height:11.5px">
-
-  <!-- ============ desk at 1.15 (225.4 x 154.1), top surface 511.4 over x 612..837, label zone x 735..827, y 529.8..571.2 ============ -->
-  <!-- two props on the top with a clear gap, as on home.html: laptop 653..758.8 left of centre, tall lamp 778..828.6 at the
-       right end (home-lamp.svg; base on the top at 511.4) -->
-  <img class="art" src="../art/desk.svg" alt="" style="left:612px;top:506.8px;width:225.4px;height:154.1px">
-  <img class="art" src="../art/home-lamp.svg" alt="" style="left:778px;top:421.2px;width:50.6px;height:92px">
-  <img class="art" src="../art/laptop.svg" alt="" style="left:653px;top:437.6px;width:105.8px;height:73.6px">
-  <img class="art" src="../art/chair.svg" alt="" style="left:621.2px;top:544.8px;width:108.1px;height:128.8px">
-
-  <!-- ============ floor ============ -->
-  <img class="art" src="../art/rug.svg" alt="" style="left:356px;top:642px;width:358.8px;height:174.8px">
-  <!-- Maya, the toy poodle, curled up asleep on the rug at 1.15. Decoration only. -->
-  <img class="art maya" src="../art/maya.svg" alt="" aria-hidden="true" style="left:462px;top:690px;width:126.5px;height:69px">
-  <img class="art maya-zzz" src="../art/maya-zzz.svg" alt="" aria-hidden="true" style="left:496.5px;top:662px;width:46px;height:46px">
-  <img class="art" src="../art/bed.svg" alt="" style="left:722px;top:596px;width:135.7px;height:312.8px">
-
-  <!-- rack at 1.15 (128.8 x 216.2): top bar centre 512, castors to 711; lower crossbar (art y 153) at 676.5 -->
-  <img class="art" src="../art/rack.svg" alt="" style="left:286.8px;top:500.5px;width:128.8px;height:216.2px">
-  <!-- A starting piece from the closet (?start=<id>) replaces the hanging pants: tops, layers, bottoms and the dress on the
-       hanger (W 87.4: top = 11.5 - 11*87.4/120); shoes stand on the floor inside the base (soles at box y 190, just behind
-       the front bar); the bag hangs from the top bar by its strap (bar centre at box y 11.5). -->
-  <div class="abs" id="rackbox" aria-hidden="true" style="left:286.8px;top:500.5px;width:128.8px;height:216.2px">
-    <span class="g" id="rackg" data-garment="g-navy-trousers" data-hanger style="position:absolute;left:20.7px;top:3.49px;width:87.4px;height:123.8px"></span>
-  </div>
-
-  <!-- ============ her name sign, under the window, between the wardrobe and the calendar ============ -->
-  <!-- name-sign.svg at 1.15 (126.5 x 73.6); text area x 17..93, y 27..53 becomes x 19.6..107, y 31.1..61. It opens Profile
-       (settings.html) beside the sidebar. -->
-  <a class="sign" href="#p=profile" data-route="profile" aria-label="Name sign: Lily. Opens Profile" style="left:473px;top:328px;width:126.5px;height:73.6px">
-    <img src="../art/name-sign.svg" alt="">
-    <span class="name" style="left:19.6px;top:31.1px;width:87.4px;height:29.9px;font-size:26px">Lily</span>
-  </a>
-  </div>
-
-  <!-- ============ labels in the room ============ -->
-  <div class="title-display hdr-title">Home</div>
-  <button class="wx" type="button" data-pop="wxpop" aria-haspopup="dialog" aria-expanded="false" aria-label="Weather: 58°F, rain today. Simulated"><i data-icon="rain"></i>58°F · Rain today<span class="chev"><i data-icon="chevron-right"></i></span></button>
-
-  <a class="tag src" href="#p=suitcases" data-route="suitcases">
-    <i data-icon="suitcase"></i>
-    <span class="txt"><span class="lbl"><small>Source</small><i data-icon="chevron-updown"></i></span><b>Jose's house</b></span>
-  </a>
-  <div class="tag green lockp">
-    <i data-icon="lock"></i>
-    <span class="txt"><b>5 pieces</b><span>Suitcase only</span></span>
-  </div>
-
-  <a class="hit" href="#p=saved" data-route="saved" style="left:675.6px;top:117.6px;width:152px;height:44px">
-    <span class="tag pink saved"><i data-icon="bookmark"></i><b>Saved Looks</b><span class="end"><i data-icon="chevron-right"></i></span></span>
-  </a>
-  <!-- saved looks in the three cards, frames at 1.076 -->
-  <a class="abs" href="#p=saved" data-route="saved" aria-label="Saved looks: Interview navy and pink, Weekend olive and brick, Lace date night" style="left:688px;top:186px;width:128px;height:73px">
-    <span class="card-ov" style="left:3.9px;top:2.9px;width:33px;height:67.3px">
-      <span class="th fit" data-garment="g-pink-blouse" data-detail="low" data-box="2.4,2.4,28.1,25.7"></span>
-      <span class="th fit" data-garment="g-navy-trousers" data-detail="low" data-box="6.1,26.9,20.8,37.9"></span>
-    </span>
-    <span class="card-ov" style="left:46.9px;top:2.9px;width:33px;height:67.3px">
-      <span class="th fit" data-garment="g-brick-top" data-detail="low" data-box="2.4,2.4,28.1,25.7"></span>
-      <span class="th fit" data-garment="g-olive-trousers" data-detail="low" data-box="6.1,26.9,20.8,37.9"></span>
-    </span>
-    <span class="card-ov" style="left:89.9px;top:2.9px;width:33px;height:67.3px">
-      <span class="th fit" data-garment="g-lace-top" data-detail="low" data-box="2.4,2.4,28.1,25.7"></span>
-      <span class="th fit" data-garment="g-black-skirt" data-detail="low" data-box="4.9,26.9,23.2,35.5"></span>
-    </span>
-  </a>
-
-  <button class="cal" type="button" aria-haspopup="listbox" aria-label="Occasion: Office" style="left:631.7px;top:333.1px;width:85.1px;height:51.8px">
-    <span class="t"><i data-icon="calendar"></i>Occasion</span>
-    <span class="pick"><span class="chip on"><i data-icon="check"></i>Office</span><i data-icon="chevron-down"></i></span>
-  </button>
-
-  <!-- laptop screen at 1.15: x 659.9..751.9, y 443.35..495.1 -->
-  <button class="styleme" type="button" id="go" aria-controls="results" style="left:659.9px;top:443.4px;width:92px;height:51.7px"><i data-icon="sparkles"></i>Style Me</button>
-
-  <button class="hit" type="button" aria-expanded="false" style="left:728px;top:528px;width:106px;height:44px">
-    <span class="tag butter more"><b>More options</b><i data-icon="chevron-down"></i></span>
-  </button>
-
-  <a class="hit" id="startp" href="ipad-closet.html" style="left:273px;top:456px">
-    <span class="tag pink start"><b><i data-icon="hanger"></i>Starting piece</b><span class="act"><span id="startname">Choose a piece</span><span class="chev"><i data-icon="chevron-right"></i></span></span></span>
-  </a>
-
-  <!-- weather detail popover -->
-  <div class="pop" id="wxpop" role="dialog" aria-label="Weather" hidden>
-    <div class="pop-h"><i data-icon="rain"></i>58°F · Rain today<span class="sim">Simulated</span></div>
-    <p>Looks are picked for a cool, wet day. To plan for other weather, open More options on the desk.</p>
-    <button class="close" type="button">Done</button>
-  </div>
-
-  <!-- ============ sidebar ============ -->
-  <nav class="side" aria-label="My Petite Style">
-    <div class="side-name">My Petite Style</div>
-    <!-- Style Me and Closet are iPad screens. The other sections open in this screen's content area, with the sidebar kept. -->
-    <div class="side-rows">
-      <a class="srow on" href="ipad-home.html" data-nav="self" aria-current="page"><i data-icon="home"></i>Home</a>
-      <a class="srow" href="ipad-closet.html"><i data-icon="hanger"></i>Closet</a>
-      <a class="srow" href="#p=saved" data-route="saved" data-nav="saved"><i data-icon="bookmark"></i>Saved Looks</a>
-      <a class="srow" href="#p=suitcases" data-route="suitcases" data-nav="suitcases"><i data-icon="suitcase"></i>Suitcases</a>
-      <a class="srow" href="#p=laundry" data-route="laundry" data-nav="laundry" aria-label="Laundry, 2 pieces to wash"><i data-icon="washer"></i>Laundry<span class="badge">2</span></a>
-      <div class="side-sep"></div>
-      <a class="srow" href="#p=profile" data-route="profile" data-nav="profile"><i data-icon="person-circle"></i>Profile</a>
-    </div>
-    <a class="side-me" href="#p=profile" data-route="profile" aria-label="Lily. Profile">
-      <span class="ic"><i data-icon="person-circle"></i></span>
-      <span class="txt"><b>Lily</b><small>Profile</small></span>
-      <span class="end"><i data-icon="chevron-right"></i></span>
+    <!-- ============ wardrobe: one link to Closet ============ -->
+    <a class="wardrobe" href="ipad-closet.html" aria-label="Wardrobe. Opens Closet">
+      <img class="art" src="../art/wardrobe.svg" alt="">
+      <!-- rail at page y 245; opening x 14..150, y 234..348.6 -->
+      <span class="rail" aria-hidden="true">
+        <span class="g" data-garment="g-pink-blouse" data-hanger style="left:81px;top:5.3px;width:62px;height:87.8px"></span>
+        <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:-4px;top:5.3px;width:62px;height:87.8px"></span>
+        <span class="g" data-garment="g-lace-top" data-hanger style="left:52px;top:5.3px;width:62px;height:87.8px"></span>
+        <span class="g" data-garment="g-navy-trousers" data-hanger style="left:23px;top:5.3px;width:62px;height:87.8px"></span>
+      </span>
+      <img class="art" src="../art/home-flats.svg" alt="" style="left:32px;top:211px;width:34px;height:10px">
+      <span class="tag closetp"><i data-icon="hanger"></i><b>Closet</b><span class="end"><i data-icon="chevron-right"></i></span></span>
     </a>
-  </nav>
 
-  <!-- ============ results: three looks from Jose's house, beside the room ============ -->
-  <section class="results" id="results" aria-label="Your looks" aria-live="polite">
-    <h2 class="title-display res-h">Your looks</h2>
-    <div class="res-sub"><i data-icon="calendar"></i>Office · 58°F · Rain · Jose's house</div>
-    <div class="looks">
-      <article class="look on" data-look="1" data-name="Calm office">
-        <button class="stage" type="button" aria-label="Choose look 1" aria-pressed="true">
-          <span class="lay" data-top="g-pink-blouse"><span class="th fit" data-garment="g-pink-blouse" data-detail="low" data-box="5,9,34,37" data-slot="top"></span><span class="th fit" data-garment="g-navy-cardigan" data-detail="low" data-box="43,9,34,37"></span><span class="th fit" data-garment="g-navy-trousers" data-detail="low" data-box="15,52,32,78"></span><span class="th fit" data-garment="g-nude-flats" data-detail="low" data-box="50,112,28,18"></span></span>
-          <span class="try" aria-hidden="true"></span>
-        </button>
-        <div class="lk">
-          <h3>Calm office</h3>
-          <p>Polished navy layers. Warm enough for 58°F and rain.</p>
-          <p class="ok" hidden><i data-icon="check"></i><span></span></p>
-          <div class="pcs" role="list" data-rest="Navy dress pants, Nude pointed flats">
-            <span class="pcr" role="listitem"><span class="pc"><span class="th fit" data-garment="g-navy-cardigan" data-box="3,3,22,22"></span></span><span class="nm">Navy cardigan</span></span>
-            <span class="pcr" role="listitem" data-slot="top"><span class="pc"><span class="th fit" data-garment="g-pink-blouse" data-box="3,3,22,22"></span></span><span class="nm">Cute pink shirt</span><span class="more" title="Navy dress pants, Nude pointed flats">+2</span></span>
-          </div>
-          <div class="acts">
-            <button type="button" class="save"><span class="chip"><i data-icon="heart"></i>Save</span></button>
-            <a class="swapl" href="#p=swap&amp;look=1" data-route="swap"><span class="chip"><i data-icon="swap"></i>Swap</span></a>
-          </div>
-        </div>
-      </article>
-      <article class="look" data-look="2" data-name="Pink and navy">
-        <button class="stage" type="button" aria-label="Choose look 2" aria-pressed="false">
-          <span class="lay" data-top="g-pink-blouse"><span class="th fit" data-garment="g-pink-blouse" data-detail="low" data-box="21,8,40,39" data-slot="top"></span><span class="th fit" data-garment="g-navy-trousers" data-detail="low" data-box="15,52,32,78"></span><span class="th fit" data-garment="g-nude-flats" data-detail="low" data-box="50,112,28,18"></span></span>
-          <span class="try" aria-hidden="true"></span>
-        </button>
-        <div class="lk">
-          <h3>Pink and navy</h3>
-          <p>Light and easy. Bring the cardigan if it runs cool.</p>
-          <p class="ok" hidden><i data-icon="check"></i><span></span></p>
-          <div class="pcs" role="list" data-rest="Navy dress pants, Nude pointed flats">
-            <span class="pcr" role="listitem" data-slot="top"><span class="pc"><span class="th fit" data-garment="g-pink-blouse" data-box="3,3,22,22"></span></span><span class="nm">Cute pink shirt</span></span>
-            <span class="pcr" role="listitem"><span class="pc"><span class="th fit" data-garment="g-navy-trousers" data-box="3,3,22,22"></span></span><span class="nm">Navy dress pants</span><span class="more" title="Nude pointed flats">+1</span></span>
-          </div>
-          <div class="acts">
-            <button type="button" class="save"><span class="chip"><i data-icon="heart"></i>Save</span></button>
-            <a class="swapl" href="#p=swap&amp;look=2" data-route="swap"><span class="chip"><i data-icon="swap"></i>Swap</span></a>
-          </div>
-        </div>
-      </article>
-      <!-- The lace top is in the wash. Dirty pieces stay out of new looks unless she allows one for a request (PRD FR-34,
-           FR-64, 7.3); this request allowed it, so under the note on why it works, the look says so (as results.html). -->
-      <article class="look" data-look="3" data-name="Lace and navy">
-        <button class="stage" type="button" aria-label="Choose look 3" aria-pressed="false">
-          <span class="lay" data-top="g-lace-top"><span class="th fit" data-garment="g-lace-top" data-detail="low" data-box="5,9,34,37" data-slot="top"></span><span class="th fit" data-garment="g-navy-cardigan" data-detail="low" data-box="43,9,34,37"></span><span class="th fit" data-garment="g-navy-trousers" data-detail="low" data-box="15,52,32,78"></span><span class="th fit" data-garment="g-nude-flats" data-detail="low" data-box="50,112,28,18"></span></span>
-          <span class="try" aria-hidden="true"></span>
-        </button>
-        <div class="lk">
-          <h3>Lace and navy</h3>
-          <p>Soft lace under navy. Warm enough for 58°F.</p>
-          <p class="ok"><i data-icon="check"></i><span>You allowed the lace top for this request.</span></p>
-          <div class="pcs" role="list" data-rest="Navy dress pants, Nude pointed flats">
-            <span class="pcr" role="listitem" data-slot="top"><span class="pc"><span class="th fit" data-garment="g-lace-top" data-box="3,3,22,22"></span></span><span class="nm">White lace top</span></span>
-            <span class="pcr" role="listitem"><span class="pc"><span class="th fit" data-garment="g-navy-cardigan" data-box="3,3,22,22"></span></span><span class="nm">Navy cardigan</span><span class="more" title="Navy dress pants, Nude pointed flats">+2</span></span>
-          </div>
-          <div class="acts">
-            <button type="button" class="save"><span class="chip"><i data-icon="heart"></i>Save</span></button>
-            <a class="swapl" href="#p=swap&amp;look=3" data-route="swap"><span class="chip"><i data-icon="swap"></i>Swap</span></a>
-          </div>
-        </div>
-      </article>
-    </div>
-    <a class="ask" id="ask" href="#p=chat" data-route="chat"><i data-icon="search"></i><span id="askt">Ask stylist about Calm office</span></a>
-    <p class="res-note">Drawings of your looks · picture previews are simulated</p>
-  </section>
+    <!-- ============ her name sign: opens Profile ============ -->
+    <a class="sign" href="settings.html" aria-label="Name sign: Lily. Opens Profile" style="left:291px;top:247px;width:96.8px;height:56.3px">
+      <img src="../art/name-sign.svg" alt="">
+      <span class="name" style="left:15px;top:23.8px;width:66.8px;height:22.8px;font-size:21px">Lily</span>
+    </a>
 
-  <!-- ============ iPad shell: a sidebar section shown beside the sidebar (filled by the script below) ============ -->
-  <section class="pane" id="pane" aria-label="" hidden>
-    <a class="pane-back" id="pane-back" href="#" hidden><i data-icon="chevron-left"></i><span></span></a>
-    <div class="pane-card" id="pane-box"></div>
-    <p class="pane-cap">Phone layout for now. The iPad layout of this screen is not drawn yet.</p>
-  </section>
-  <!-- ============ iPad shell: a sheet over the room for Swap and Ask stylist ============ -->
-  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="" hidden>
-    <div class="scrim" id="scrim"></div>
-    <div class="sheet-box" id="sheet-box"></div>
+    <!-- ============ floor, back to front ============ -->
+    <img class="art" src="../art/rug.svg" alt="" style="left:14px;top:566px;width:312px;height:152px">
+    <div class="glow" aria-hidden="true"></div>
+
+    <!-- desk with three drawers (home-desk.svg, 196 x 160): slab top 442, drawer fronts x 297..377 at y 456, 502, 548; feet 600 -->
+    <img class="art" src="../art/home-desk.svg" alt="" style="left:190px;top:440px;width:196px;height:160px">
+    <img class="art" src="../art/laptop.svg" alt="" style="left:226px;top:381.6px;width:92px;height:64px">
+    <img class="art" src="../art/home-lamp.svg" alt="" style="left:334px;top:365.6px;width:44px;height:80px">
+    <img class="art" src="../art/chair.svg" alt="" style="left:198px;top:493px;width:94px;height:112px">
+
+    <!-- Maya, the toy poodle, asleep on the rug. Decoration only. -->
+    <img class="art maya" src="../art/maya.svg" alt="" aria-hidden="true" style="left:142px;top:630px;width:110px;height:60px">
+    <img class="art maya-zzz" src="../art/maya-zzz.svg" alt="" aria-hidden="true" style="left:170px;top:604px;width:40px;height:40px">
+
+    <!-- suitcase where the rack stood: the Source control, opens Suitcases -->
+    <a class="suit" id="suit" href="suitcases.html" aria-label="Source: Jose's house, 5 pieces, suitcase only. Opens Suitcases">
+      <img class="art" src="../art/home-suitcase.svg" alt="">
+      <span class="tag srcp"><span class="txt"><span class="lbl"><small>Source</small><i data-icon="chevron-updown"></i></span><b id="src-name">Jose's house</b></span></span>
+      <span class="tag scopep" id="scope"><span class="l1"><i data-icon="lock"></i><span id="scope-1">5 pieces</span></span><span class="l2" id="scope-2">Suitcase only</span></span>
+    </a>
+
+    <!-- laundry hamper: its state comes from ?laundry=off|clean or MockState (laundry.tracking, laundry.dirty) -->
+    <a class="hamper" id="hamper" href="laundry.html" aria-label="Laundry: 2 to wash. Opens Laundry">
+      <img class="art" id="hamper-art" src="../art/home-hamper-dirty.svg" alt="">
+      <span class="tag laup"><small>Laundry</small><b id="lau-text">2 to wash</b></span>
+    </a>
+
+    <!-- ============ plates on the wall and desk ============ -->
+    <a class="hit" href="ipad-saved.html" style="left:252.4px;top:94px;width:132px;height:44px">
+      <span class="tag pink saved"><i data-icon="bookmark"></i><b>Saved Looks</b><span class="end"><i data-icon="chevron-right"></i></span></span>
+    </a>
+    <!-- saved looks in the three frames (0.88): x 270.3 / 305.5 / 340.7, y 158.4 -->
+    <a class="abs" href="ipad-saved.html" aria-label="Saved looks: Interview navy and pink, Weekend olive and brick, Lace date night" style="left:266px;top:154px;width:104px;height:62px">
+      <span class="card-ov" style="left:3.5px;top:4px;width:27px;height:55px">
+        <span class="th fit" data-garment="g-pink-blouse" data-detail="low" data-box="2,2,23,21"></span>
+        <span class="th fit" data-garment="g-navy-trousers" data-detail="low" data-box="5,22,17,31"></span>
+      </span>
+      <span class="card-ov" style="left:38.7px;top:4px;width:27px;height:55px">
+        <span class="th fit" data-garment="g-brick-top" data-detail="low" data-box="2,2,23,21"></span>
+        <span class="th fit" data-garment="g-olive-trousers" data-detail="low" data-box="5,22,17,31"></span>
+      </span>
+      <span class="card-ov" style="left:73.9px;top:4px;width:27px;height:55px">
+        <span class="th fit" data-garment="g-lace-top" data-detail="low" data-box="2,2,23,21"></span>
+        <span class="th fit" data-garment="g-black-skirt" data-detail="low" data-box="4,22,19,29"></span>
+      </span>
+    </a>
+
+    <a class="cal" id="cal" href="styleme.html?sheet=occasion" aria-label="Occasion: Office. Change" style="left:208px;top:313px;width:80px;height:45px">
+      <span class="t"><i data-icon="calendar"></i>Occasion</span>
+      <span class="pick"><span class="chip on"><i data-icon="check"></i><span id="occ">Office</span></span><i data-icon="chevron-down"></i></span>
+    </a>
+
+    <a class="styleme" href="styleme.html" aria-label="Style Me. Opens your request" style="left:232px;top:386.6px;width:80px;height:45px"><i data-icon="sparkles"></i>Style Me</a>
+
+    <a class="drawer" href="help.html" aria-label="Help (top drawer)" style="top:455px"><span class="tag dplate">Help</span></a>
+    <a class="drawer" href="feedback.html" aria-label="Send feedback (middle drawer)" style="top:501px"><span class="tag dplate">Feedback</span></a>
+    <a class="drawer" href="privacy.html" aria-label="Privacy and terms (bottom drawer)" style="top:547px"><span class="tag dplate">Privacy</span></a>
   </div>
+
+  <img class="art bed" src="../art/bed.svg" alt="">
+
+  <!-- ============ header ============ -->
+  <div class="nav">Home<a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
+  <div class="title-display hdr-title">My Petite Style</div>
+  <button class="wx" type="button" id="wx" aria-haspopup="dialog" aria-expanded="false" aria-controls="wx-sheet"><span class="ic" id="wx-ic"></span><span id="wx-text">58°F · Rain today</span><span class="chev"><i data-icon="chevron-right"></i></span></button>
+
+  <!-- ============ weather detail sheet (closed until the weather link is tapped) ============ -->
+  <div class="wxsheet" id="wx-sheet" role="dialog" aria-label="Weather" hidden>
+    <div class="wh"><span class="ic" id="wxs-ic"></span><b>Weather</b><span class="sim">Simulated</span>
+      <button class="x" type="button" id="wx-close" aria-label="Close weather"><i data-icon="close"></i></button></div>
+    <p class="big" id="wxs-big">58°F · Rain today</p>
+    <p class="say"><span id="wxs-say">Style Me picks looks for a cool, wet day.</span> To plan for other weather, change it in <a href="styleme.html">Style Me</a>.</p>
+  </div>
+
+  <!-- ============ tab bar ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="ipad-closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="ipad-saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
 </div>
 
 <script src="../js/icons.js"></script>
 <script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
 <script>
-/* Drawn bounds of a garment SVG in its own units. getBBox counts the lace pattern's full clipped rect, so measure
-   the visible shapes outside clip groups instead, and fall back to getBBox. */
-function drawnBox(svg) {
-  var sr = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
-  if (!sr.width || !vb || !vb.width) return svg.getBBox();
-  var k = vb.width / sr.width, x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-  var els = svg.querySelectorAll('path,rect,circle,ellipse,polygon,polyline,line');
-  for (var i = 0; i < els.length; i++) {
-    if (els[i].closest('defs,pattern,clipPath,[clip-path]')) continue;
-    var r = els[i].getBoundingClientRect();
-    if (!r.width && !r.height) continue;
-    x0 = Math.min(x0, r.left); y0 = Math.min(y0, r.top); x1 = Math.max(x1, r.right); y1 = Math.max(y1, r.bottom);
-  }
-  if (x1 < x0) return svg.getBBox();
-  return { x: vb.x + (x0 - sr.left) * k, y: vb.y + (y0 - sr.top) * k, width: (x1 - x0) * k, height: (y1 - y0) * k };
-}
+/* ---------- Home state, shared by home, home-ax, home-landscape and both iPad homes ----------
+   URL variant parameters override stored state for display and are not written back:
+     ?weather=rain|sun|cloudy|snow (default rain, the 58°F fixture)   ?time=night (night window, "tonight" wording)
+     ?laundry=off|clean (otherwise MockState laundry.tracking, default true, and laundry.dirty, default 2 pieces)
+   Source comes from MockState `source` (default Jose's house) and Occasion from `occasion` (default Office). */
+var HOME = (function () {
+  var P = new URLSearchParams(location.search);
+  var S = window.MockState || { get: function (k, f) { return f; }, set: function () {} };
+  var SUITCASES = { jose: { name: "Jose's house", n: 5 }, weekend: { name: 'Weekend', n: 8 }, spring: { name: 'Spring trip', n: 0 } };
+  var OCC = { office: 'Office', dateNight: 'Date Night', brunch: 'Brunch', concert: 'Concert', casual: 'Casual', event: 'Event', other: 'Other' };
+  var WX = {
+    rain:   { icon: 'rain',  art: 'window-rain',   t: 58, tn: 54, day: 'Rain today',   night: 'Rain tonight',   say: 'Style Me picks looks for a cool, wet day.' },
+    sun:    { icon: 'sun',   art: 'window-sun',    t: 72, tn: 61, day: 'Sunny today',  night: 'Clear tonight',  say: 'Style Me picks looks for a mild, sunny day.', nicon: 'moon' },
+    cloudy: { icon: 'cloud', art: 'window-cloudy', t: 63, tn: 57, day: 'Cloudy today', night: 'Cloudy tonight', say: 'Style Me picks looks for a mild, cloudy day.' },
+    snow:   { icon: 'snow',  art: 'window-snow',   t: 30, tn: 26, day: 'Snow today',   night: 'Snow tonight',   say: 'Style Me picks warm looks for a cold, snowy day.' }
+  };
+  /* the first visit remembers the prototype's default source, so Style Me shows the same source as Home */
+  if (S.get('source', null) === null) S.set('source', { type: 'suitcase', id: 'jose' });
+
+  var wkey = WX[P.get('weather')] ? P.get('weather') : 'rain';
+  var night = P.get('time') === 'night';
+  var w = WX[wkey];
+  var weather = {
+    key: wkey, night: night, art: night ? 'window-night' : w.art, icon: night && w.nicon ? w.nicon : w.icon,
+    temp: (night ? w.tn : w.t) + '°F', words: night ? w.night : w.day,
+    say: night ? w.say.replace(' day.', ' evening.') : w.say
+  };
+  weather.text = weather.temp + ' · ' + weather.words;
+  if (night) document.documentElement.classList.add('is-night');
+
+  var lp = P.get('laundry');
+  var tracking = lp === 'off' ? false : (lp === 'clean' ? true : S.get('laundry.tracking', true) !== false);
+  var dirty = lp === 'clean' ? [] : (S.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) || []);
+  var laundry = !tracking
+    ? { state: 'off', text: 'Off', href: 'laundry-off.html', label: 'Laundry tracking is off. Opens what laundry tracking does' }
+    : dirty.length
+      ? { state: 'dirty', n: dirty.length, text: dirty.length + ' to wash', href: 'laundry.html', label: 'Laundry: ' + dirty.length + ' to wash. Opens Laundry' }
+      : { state: 'clean', text: 'All clean', href: 'laundry.html', label: 'Laundry: all clean. Opens Laundry' };
+
+  var src = S.get('source', { type: 'suitcase', id: 'jose' }) || {};
+  var sid = String(src.id || '').replace(/^s-/, '');
+  var source = src.type === 'suitcase' && SUITCASES[sid]
+    ? { suitcase: true, name: SUITCASES[sid].name, n: SUITCASES[sid].n }
+    : { suitcase: false, name: 'Main closet', n: 21 };
+  source.count = source.n === 0 ? 'Empty' : source.n + (source.n === 1 ? ' piece' : ' pieces');
+  source.scope = source.suitcase ? 'Suitcase only' : 'Whole closet';
+  source.label = 'Source: ' + source.name + ', ' + (source.n === 0 ? 'empty' : source.count) + ', ' + source.scope.toLowerCase() + '. Opens Suitcases';
+
+  var ok = S.get('occasion', 'office');
+  var occasion = OCC[ok] || 'Office';
+  var occasionLong = ok === 'other' && S.get('occasionOther', '') ? 'Other: ' + S.get('occasionOther', '') : occasion;
+
+  var SNOW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.6 4.6 12 6.6l2.4-2M9.6 19.4 12 17.4l2.4 2M4.6 11.1l2.9-.6-.9-2.9M19.4 11.1l-2.9-.6.9-2.9M4.6 12.9l2.9.6-.9 2.9M19.4 12.9l-2.9.6.9 2.9"/></svg>';
+  function icon(name) { return name === 'snow' ? SNOW : (window.Icons ? window.Icons.svg(name) : ''); }
+  function txt(id, t) { var e = document.getElementById(id); if (e) e.textContent = t; }
+
+  return { weather: weather, laundry: laundry, source: source, occasion: occasion, occasionLong: occasionLong, icon: icon, txt: txt };
+})();
+
+/* ---------- this page ---------- */
+(function () {
+  var H = HOME, w = H.weather, l = H.laundry, s = H.source;
+  document.getElementById('window').src = '../art/' + w.art + '.svg';
+  document.getElementById('wx-ic').innerHTML = H.icon(w.icon);
+  document.getElementById('wxs-ic').innerHTML = H.icon(w.icon);
+  H.txt('wx-text', w.text); H.txt('wxs-big', w.text); H.txt('wxs-say', w.say);
+  document.getElementById('wx').setAttribute('aria-label', 'Weather: ' + w.text + '. Simulated');
+
+  var ham = document.getElementById('hamper');
+  ham.className = 'hamper ' + l.state;
+  ham.setAttribute('href', l.href);
+  ham.setAttribute('aria-label', l.label);
+  document.getElementById('hamper-art').src = '../art/' + (l.state === 'dirty' ? 'home-hamper-dirty' : 'home-hamper') + '.svg';
+  H.txt('lau-text', l.text);
+
+  H.txt('src-name', s.name);
+  H.txt('scope-1', s.count); H.txt('scope-2', s.scope);
+  document.getElementById('scope').className = 'tag scopep' + (s.suitcase ? (s.n === 0 ? ' empty' : '') : ' main');
+  document.getElementById('suit').setAttribute('aria-label', s.label);
+
+  H.txt('occ', H.occasion);
+  document.getElementById('cal').setAttribute('aria-label', 'Occasion: ' + H.occasionLong + '. Change');
+})();
+
 /* Fit small garment drawings into a box (data-box = x,y,w,h in the parent's px) by their drawn bounds, and thicken
-   their outlines so they land near 1.1 px. Same method as home.html. */
-function fitAll(root) {
-  var TARGET = 1.1;
-  var l = (root || document).querySelectorAll('.fit');
-  for (var i = 0; i < l.length; i++) {
-    var el = l[i], svg = el.querySelector('svg');
-    if (!svg || el.getAttribute('data-fitted')) continue;
-    var b = drawnBox(svg);
+   their outlines so they land near 1.1 px, like the frame outlines around them. */
+(function () {
+  var TARGET = 1.1, OUTLINE = 3;
+  function fit(el) {
+    var svg = el.querySelector('svg');
+    if (!svg || el.getAttribute('data-fitted')) return;
+    var b = svg.getBBox();
     var box = el.getAttribute('data-box').split(',').map(Number);
     var s = Math.min(box[2] / b.width, box[3] / b.height);
     el.style.width = (120 * s).toFixed(2) + 'px';
     el.style.left = (box[0] + box[2] / 2 - (b.x + b.width / 2) * s).toFixed(2) + 'px';
     el.style.top = (box[1] + box[3] - (b.y + b.height) * s).toFixed(2) + 'px';
-    /* the low-detail drawing outlines at 3 units, the full drawing at 1.5 */
-    var f = TARGET / ((el.getAttribute('data-detail') === 'high' ? 1.5 : 3) * s);
+    var f = TARGET / (OUTLINE * s);
     var list = svg.querySelectorAll('[stroke-width]');
-    for (var j = 0; j < list.length; j++) {
-      var w = parseFloat(list[j].getAttribute('stroke-width'));
-      if (w > 0) list[j].setAttribute('stroke-width', (w * f).toFixed(2));
+    for (var i = 0; i < list.length; i++) {
+      var w = parseFloat(list[i].getAttribute('stroke-width'));
+      if (w > 0) list[i].setAttribute('stroke-width', (w * f).toFixed(2));
     }
     el.setAttribute('data-fitted', '1');
   }
-}
-/* Starting piece from the closet: ipad-closet.html links here with ?start=<garment id>. The plate shows its name and the
-   rack shows the piece itself. */
-(function () {
-  var id = null;
-  try { id = new URLSearchParams(location.search).get('start'); } catch (e) { /* no URL API: keep "Choose a piece" */ }
-  if (!id || !window.Garments) return;
-  var g = window.Garments.LIST.filter(function (x) { return x.id === id; })[0];
-  if (!g) return;
-  var name = document.getElementById('startname'), act = name.parentNode;
-  name.textContent = g.name;
-  /* a name too long for the widest plate steps down a size, then another (13 px is the floor for body text);
-     measured once the chevron icon is in */
-  function shrink() { [14, 13].forEach(function (px) { if (act.scrollWidth > act.clientWidth + 0.5) act.style.fontSize = px + 'px'; }); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', shrink); else shrink();
-  document.getElementById('startp').setAttribute('aria-label', 'Starting piece: ' + g.name + '. Change');
-  var r = document.getElementById('rackg');
-  if (['top', 'layer', 'bottom', 'dress'].indexOf(g.category) >= 0) {
-    r.setAttribute('data-garment', id);
-    window.Garments.mountAll(r.parentNode);
-    return;
-  }
-  r.style.display = 'none';
-  var el = document.createElement('span');
-  el.className = 'rackfit fit';
-  el.setAttribute('data-garment', id);
-  el.setAttribute('data-detail', 'high');
-  el.setAttribute('data-box', g.category === 'shoes' ? '35,168,64,31' : '41,12,52,84');
-  document.getElementById('rackbox').appendChild(el);
-  window.Garments.mountAll(el.parentNode);
-})();
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { fitAll(); }); else fitAll();
-/* Weather detail popover (sample weather). Both weather controls open it; Done, Escape or a tap outside closes it. */
-(function () {
-  var pop = document.getElementById('wxpop'), triggers = document.querySelectorAll('[data-pop="wxpop"]');
-  function set(open) {
-    pop.hidden = !open;
-    for (var i = 0; i < triggers.length; i++) triggers[i].setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-  for (var i = 0; i < triggers.length; i++) triggers[i].addEventListener('click', function (e) { e.stopPropagation(); set(pop.hidden); });
-  pop.querySelector('.close').addEventListener('click', function () { set(false); });
-  pop.addEventListener('click', function (e) { e.stopPropagation(); });
-  document.addEventListener('click', function () { if (!pop.hidden) set(false); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) set(false); });
-})();
-/* Style Me on the laptop: the looks refresh in the column beside the room (sample results, no request is sent). */
-(function () {
-  var go = document.getElementById('go'), res = document.getElementById('results');
-  if (!go || !res) return;
-  go.addEventListener('click', function () { res.classList.add('busy'); setTimeout(function () { res.classList.remove('busy'); }, 600); });
-})();
-/* Looks: each card shows its pieces laid out flat. Tapping them chooses that look; its label reads "Chosen" and the
-   others read "Choose". Ask stylist below the cards is about the chosen look. Save toggles. */
-var LOOKS_UI = (function () {
-  var looks = document.querySelectorAll('.look');
-  function paint() {
-    for (var i = 0; i < looks.length; i++) {
-      var on = looks[i].classList.contains('on'), b = looks[i].querySelector('.try');
-      b.innerHTML = on ? '<i data-icon="check"></i>Chosen' : 'Choose';
-      looks[i].querySelector('.stage').setAttribute('aria-pressed', on ? 'true' : 'false');
-      if (window.Icons) window.Icons.mountAll(b);
-      if (on) {
-        document.getElementById('askt').textContent = 'Ask stylist about ' + looks[i].getAttribute('data-name');
-        document.getElementById('ask').setAttribute('href', '#p=chat&look=' + looks[i].getAttribute('data-look'));
-      }
-      var pcs = looks[i].querySelector('.pcs'), names = [];
-      [].forEach.call(pcs.querySelectorAll('.nm'), function (n) { names.push(n.textContent); });
-      pcs.setAttribute('aria-label', 'Pieces: ' + names.join(', ') + ', ' + pcs.getAttribute('data-rest'));
-    }
-  }
-  function choose(look) {
-    for (var i = 0; i < looks.length; i++) looks[i].classList.toggle('on', looks[i] === look);
-    paint();
-  }
-  for (var i = 0; i < looks.length; i++) (function (look) {
-    look.querySelector('.stage').addEventListener('click', function () { choose(look); });
-    var sv = look.querySelector('.save');
-    sv.addEventListener('click', function () {
-      var chip = sv.querySelector('.chip'), on = !chip.classList.contains('on');
-      chip.classList.toggle('on', on);
-      chip.innerHTML = on ? '<i data-icon="heart-fill"></i>Saved' : '<i data-icon="heart"></i>Save';
-      if (window.Icons) window.Icons.mountAll(chip);
-    });
-  })(looks[i]);
-  paint();
-
-  /* A top chosen on the Swap sheet comes back as look N with that top (the same rule as results.html): the top in the
-     card's laid-out pieces and its top row change. A top from the wash is allowed for this
-     request and the card says so; the allowed line goes when that piece comes off. */
-  var DIRTY = { 'g-lace-top': 'lace top', 'g-black-tee': 'black tee' };
-  function topOf(n) {
-    var look = document.querySelector('.look[data-look="' + n + '"]');
-    return look ? look.querySelector('.lay').getAttribute('data-top') : '';
-  }
-  function setTop(n, id) {
-    var look = document.querySelector('.look[data-look="' + n + '"]');
-    var g = window.Garments && window.Garments.LIST.filter(function (x) { return x.id === id; })[0];
-    if (!look || !g || g.category !== 'top' || topOf(n) === id) return;
-    var lay = look.querySelector('.lay'), old = lay.querySelector('[data-slot="top"]');
-    lay.setAttribute('data-top', id);
-    var nt = document.createElement('span');
-    nt.className = 'th fit';
-    nt.setAttribute('data-garment', id);
-    nt.setAttribute('data-detail', 'low');
-    nt.setAttribute('data-slot', 'top');
-    nt.setAttribute('data-box', old.getAttribute('data-box'));
-    lay.replaceChild(nt, old);
-    window.Garments.mountAll(lay);
-    fitAll(lay);
-    var row = look.querySelector('[data-slot="top"]'), pc = row.querySelector('.pc');
-    pc.innerHTML = '<span class="th fit" data-garment="' + id + '" data-box="3,3,22,22"></span>';
-    window.Garments.mountAll(pc);
-    fitAll(pc);
-    row.querySelector('.nm').textContent = g.name;
-    var ok = look.querySelector('.ok');
-    ok.hidden = !DIRTY[id];
-    if (DIRTY[id]) ok.querySelector('span').textContent = 'You allowed the ' + DIRTY[id] + ' for this request.';
-    if (look.classList.contains('on')) choose(look); else paint();
-  }
-  return { topOf: topOf, setTop: setTop };
+  function run() { var l = document.querySelectorAll('.fit'); for (var i = 0; i < l.length; i++) fit(l[i]); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
 
-/* ---------- iPad shell ----------
-   Routes live in the hash (#p=saved, #p=swap&look=2) so Back and the phone pages' own history.back() close them.
-   Sections show the phone screen beside the sidebar; Swap and Ask stylist show it as a sheet.
-   When the browser lets this page see into the frame (a local server, or Chrome with file access), links in the phone
-   screen that lead back to Style Me or the Closet come here instead, and a top picked on Swap lands on its card.
-   When it does not (file pages in most browsers), a sheet closes as soon as its page moves on (Done, Cancel, Close,
-   Keep current, Use this top), and a section gets a back link to its first page after any tap inside it. */
+/* Weather sheet: the weather link opens it; the close button, Escape or a tap outside closes it. */
 (function () {
-  var SELF = 'ipad-home.html';
-  var IPAD = { 'home.html': 'ipad-home.html', 'results.html': 'ipad-home.html', 'ipad-home.html': 'ipad-home.html',
-               'closet.html': 'ipad-closet.html', 'garment.html': 'ipad-closet.html', 'ipad-closet.html': 'ipad-closet.html' };
-  var ROUTES = {
-    saved:     { kind: 'pane',  title: 'Saved Looks', src: function () { return 'saved.html'; } },
-    suitcases: { kind: 'pane',  title: 'Suitcases',   src: function () { return 'suitcases.html'; } },
-    laundry:   { kind: 'pane',  title: 'Laundry',     src: function () { return 'laundry.html'; } },
-    profile:   { kind: 'pane',  title: 'Profile',     src: function () { return 'settings.html'; } },
-    /* chat.html draws itself as a sheet (from phone y 57) over a dimmed screen; the iPad sheet starts at its top edge */
-    chat:      { kind: 'sheet', title: 'Ask stylist', cut: 57, src: function () { return 'chat.html'; } },
-    swap:      { kind: 'sheet', title: 'Swap a piece', src: function (q) {
-                   var n = /^[123]$/.test(q.look) ? q.look : '1';
-                   return 'swap.html?look=' + n + '&top=' + encodeURIComponent(LOOKS_UI.topOf(n) || 'g-pink-blouse'); } }
-  };
-  var BY_FILE = { 'saved.html': 'saved', 'suitcases.html': 'suitcases', 'laundry.html': 'laundry', 'settings.html': 'profile', 'chat.html': 'chat' };
-  var pane = document.getElementById('pane'), sheet = document.getElementById('sheet');
-  var back = document.getElementById('pane-back');
-  var cur = null, frame = null, loads = 0;
-
-  function parse() {
-    var o = {};
-    location.hash.replace(/^#/, '').split('&').forEach(function (kv) {
-      var p = kv.split('=');
-      if (p[0]) { try { o[p[0]] = decodeURIComponent(p[1] || ''); } catch (e) { o[p[0]] = ''; } }
-    });
-    return o;
+  var sheet = document.getElementById('wx-sheet'), opener = document.getElementById('wx');
+  function set(open, refocus) {
+    sheet.hidden = !open;
+    opener.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) document.getElementById('wx-close').focus(); else if (refocus) opener.focus();
   }
-  function fileOf(href) { return String(href || '').split(/[?#]/)[0].replace(/^.*\//, ''); }
-  function queryOf(href) {
-    var o = {}, q = String(href || '').split('#')[0].split('?')[1] || '';
-    q.split('&').forEach(function (kv) { var p = kv.split('='); if (p[0]) o[p[0]] = decodeURIComponent(p[1] || ''); });
-    return o;
-  }
-  function sidebar(nav) {
-    var rows = document.querySelectorAll('.srow[data-nav]');
-    for (var i = 0; i < rows.length; i++) {
-      var on = rows[i].getAttribute('data-nav') === (nav || 'self');
-      rows[i].classList.toggle('on', on);
-      if (on) rows[i].setAttribute('aria-current', 'page'); else rows[i].removeAttribute('aria-current');
-    }
-  }
-  function open(key, extra) { location.hash = 'p=' + key + (extra || ''); }
-  function swapTo(key) { location.replace('#p=' + key); }
-  /* closing replaces the entry rather than going back: a frame that moved on has its own history entries, and Back
-     would step through those instead */
-  function close() { location.replace('#'); }
-  /* a link in the phone screen that leads to an iPad screen */
-  function leave(target, q) {
-    if (target !== SELF) { location.href = target; return; }
-    if (cur && cur.key === 'swap' && q.look && q.top) LOOKS_UI.setTop(q.look, q.top);
-    close();
-  }
-  function watch(doc, win) {
-    /* bubble phase on the frame's window, after the page's own handlers: Cancel still restores her look, and a page
-       that already handled the tap itself (chat's Close goes back in history) is left alone */
-    win.addEventListener('click', function (e) {
-      if (e.defaultPrevented) return;
-      var a = e.target && e.target.closest && e.target.closest('a[href]');
-      if (!a) return;
-      var href = a.getAttribute('href'), file = fileOf(href);
-      if (IPAD[file]) { e.preventDefault(); leave(IPAD[file], queryOf(href)); return; }
-      var key = BY_FILE[file];
-      if (key && key !== cur.key) { e.preventDefault(); swapTo(key); }
-    });
-  }
-  /* a sheet whose page draws its own sheet edge is cut to that edge: the box starts 11 px higher than the page's edge
-     would sit and runs to the bottom of the screen */
-  function place(box, r) {
-    if (r.kind !== 'sheet') return;
-    box.style.top = (r.cut ? r.cut - 11 : 10) + 'px';
-    box.style.height = (834 - (r.cut ? r.cut - 11 : 10)) + 'px';
-    frame.style.top = (-r.cut) + 'px';
-  }
-  function build(r) {
-    var box = document.getElementById(r.kind === 'pane' ? 'pane-box' : 'sheet-box');
-    box.innerHTML = '';
-    loads = 0;
-    frame = document.createElement('iframe');
-    frame.title = r.title;
-    frame.src = r.url;
-    place(box, r);
-    frame.addEventListener('load', function () {
-      loads++;
-      var doc = null, win = null;
-      try { win = frame.contentWindow; doc = frame.contentDocument; void win.location.href; } catch (e) { doc = null; }
-      if (doc) {
-        watch(doc, win);
-        if (r.kind === 'pane') back.hidden = fileOf(win.location.href) === fileOf(r.url);
-        return;
-      }
-      if (loads > 1 && r.kind === 'sheet') close();
-      if (loads > 1 && r.kind === 'pane') back.hidden = false;
-    });
-    box.appendChild(frame);
-  }
-  function render() {
-    var q = parse(), base = q.p && ROUTES[q.p];
-    if (!base) {
-      cur = null; frame = null;
-      pane.hidden = true; sheet.hidden = true;
-      document.getElementById('pane-box').innerHTML = '';
-      document.getElementById('sheet-box').innerHTML = '';
-      sidebar(null);
-      return;
-    }
-    var r = { key: q.p, kind: base.kind, title: base.title, cut: base.cut || 0, url: base.src(q) };
-    if (cur && cur.key === r.key && cur.url === r.url) return;
-    cur = r;
-    if (r.kind === 'pane') {
-      sheet.hidden = true; document.getElementById('sheet-box').innerHTML = '';
-      pane.hidden = false; pane.setAttribute('aria-label', r.title);
-      back.hidden = true; back.querySelector('span').textContent = r.title;
-      sidebar(r.key);
-    } else {
-      sheet.hidden = false; sheet.setAttribute('aria-label', r.title);
-    }
-    build(r);
-  }
-
-  /* links into the shell */
-  document.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('a[data-route], a[data-nav="self"]');
-    if (!a) return;
-    e.preventDefault();
-    if (a.getAttribute('data-nav') === 'self') { if (cur) close(); return; }
-    var h = a.getAttribute('href').replace(/^#p=[a-z]+/, '');
-    var key = a.getAttribute('data-route');
-    if (cur && cur.kind === 'pane' && ROUTES[key].kind === 'pane') swapTo(key + h); else open(key, h);
-  });
-  back.addEventListener('click', function (e) { e.preventDefault(); if (cur) build(cur); back.hidden = true; });
-  document.getElementById('scrim').addEventListener('click', close);
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && cur && cur.kind === 'sheet') close(); });
-  window.addEventListener('hashchange', render);
-  render();
+  opener.addEventListener('click', function (e) { e.stopPropagation(); set(sheet.hidden, true); });
+  document.getElementById('wx-close').addEventListener('click', function () { set(false, true); });
+  sheet.addEventListener('click', function (e) { e.stopPropagation(); });
+  document.addEventListener('click', function () { if (!sheet.hidden) set(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) set(false, true); });
 })();
 </script>
 </body>

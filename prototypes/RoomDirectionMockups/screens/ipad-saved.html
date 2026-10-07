@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saved Looks (iPad)</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* iPad landscape Saved Looks (1194 x 834), soft style. Sidebar 0..260 (Saved Looks selected), the gallery wall
+     260..836 with the title, Looks | Pictures, the search field and three columns of framed looks (it scrolls on its
+     own), and the selected look open in a side panel 836..1194. Tapping a frame opens it in the panel; on Pictures the
+     panel shows the picture and the look it came from. ?id=<look> picks the open look, ?tab=pictures, ?q=... */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+  html, body { height: 100%; overflow: hidden; }
+  .screen { height: 100vh; min-height: 640px; }
+  .room { --floor-y: 99999px; }
+  .art { display: block; pointer-events: none; }
+  [hidden] { display: none !important; }
+
+  /* ---------- sidebar (as ipad-home / ipad-closet, soft: no edge lines) ---------- */
+  .side { position: absolute; left: 0; top: 0; bottom: 0; width: 260px; z-index: 3;
+          background: linear-gradient(rgba(255,255,255,.62), rgba(255,255,255,.62)), linear-gradient(var(--wall), var(--wall-2)); }
+  .side-name { position: absolute; left: 24px; top: 58px; font-family: var(--font-display); font-weight: 800; font-size: 26px;
+               letter-spacing: -.5px; line-height: 1.1; color: var(--ink); }
+  .side-rows { position: absolute; left: 12px; right: 12px; top: 112px; display: flex; flex-direction: column; gap: 4px; }
+  .srow { display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 16px; border-radius: 24px; font-size: 16px; font-weight: 600; color: var(--ink); }
+  .srow i[data-icon] { font-size: 22px; color: var(--plum); }
+  .srow.on { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .srow.on i[data-icon] { color: #fff; }
+  .srow .badge { margin-left: auto; min-width: 24px; height: 22px; padding: 0 7px; border-radius: 11px; background: #FCEFC2; font-size: 12px; font-weight: 700;
+                 display: grid; place-items: center; color: #5E4A0E; }
+  .side-sep { height: 1px; background: var(--soft-divider); margin: 8px 14px; }
+  .side-me { position: absolute; left: 12px; right: 12px; bottom: 20px; height: 76px; display: flex; align-items: center; gap: 12px; padding: 0 14px 0 10px;
+             border-radius: 22px; background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .side-me .ic { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; flex: none; background: #FCE6F2; color: var(--plum); font-size: 28px; }
+  .side-me .txt { display: flex; flex-direction: column; gap: 2px; }
+  .side-me b { font-size: 15px; } .side-me small { font-size: 12px; color: var(--ink-soft); }
+  .side-me .end { margin-left: auto; color: var(--plum); font-size: 15px; display: grid; }
+
+  /* ---------- the wall ---------- */
+  .main { position: absolute; left: 260px; top: 0; bottom: 0; width: 576px; display: flex; flex-direction: column; }
+  .hdr { padding: 46px 24px 0; display: flex; align-items: baseline; gap: 14px; }
+  .hdr .count { font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+  .tools { padding: 14px 20px 0; display: flex; flex-direction: column; gap: 10px; }
+  .seg { height: 48px; width: 320px; display: flex; gap: 4px; padding: 2px; border-radius: 24px; background: rgba(255,255,255,.5); box-shadow: var(--soft-drop); }
+  .seg button { flex: 1; min-height: 44px; border-radius: 22px; font-size: 15px; font-weight: 700; color: var(--plum); display: grid; place-items: center; }
+  .seg button[aria-selected="true"] { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .search { height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 2px 0 14px; border-radius: 18px; background: var(--soft-tint-strong); box-shadow: var(--soft-drop); }
+  .search > i[data-icon] { font-size: 19px; color: var(--ink-soft); flex: none; }
+  .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); -webkit-appearance: none; appearance: none; }
+  .search input::-webkit-search-cancel-button { display: none; }
+  .search input::placeholder { color: #8E7A87; }
+  .search:focus-within { box-shadow: var(--soft-drop), 0 0 0 3px var(--plum); }
+  .search .clear { flex: none; width: 44px; height: 44px; border-radius: 16px; display: grid; place-items: center; }
+  .search .clear span { width: 22px; height: 22px; border-radius: 50%; background: #E8D7E0; color: #6B5563; display: grid; place-items: center; font-size: 13px; }
+  .scroll { position: relative; flex: 1; overflow-y: auto; overflow-x: hidden; margin-top: 8px; scrollbar-width: none;
+            -webkit-mask-image: linear-gradient(#0000, #000 12px); mask-image: linear-gradient(#0000, #000 12px); }
+  .scroll::-webkit-scrollbar { display: none; }
+  .lights { width: 100%; height: auto; aspect-ratio: 390 / 46; }
+  .hits { padding: 0 24px; font-size: 13px; line-height: 17px; font-weight: 600; color: var(--ink-soft); }
+  .wall { display: grid; grid-template-columns: repeat(3, 180px); column-gap: 6px; row-gap: 6px; justify-content: center; padding-bottom: 40px; }
+  .cell { position: relative; width: 180px; height: 372px; display: block; border-radius: 24px; }
+  .cell[aria-current="true"]::before { content: ""; position: absolute; left: 6px; right: 6px; top: 8px; bottom: -2px; border-radius: 26px;
+                                       background: rgba(255,255,255,.55); box-shadow: var(--soft-drop-lg); }
+  .frame { position: absolute; left: 22px; top: 0; width: 136px; height: 324px; }
+  .win { position: absolute; left: 41px; top: 38px; width: 98px; height: 266px; overflow: hidden; }
+  .cell .t { position: absolute; left: 6px; right: 6px; top: 330px; text-align: center; font-size: 14px; font-weight: 700; line-height: 18px; color: var(--ink);
+             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cell .o { position: absolute; left: 6px; right: 6px; top: 349px; text-align: center; font-size: 12px; font-weight: 500; line-height: 15px; color: var(--ink-soft);
+             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cell .o b { color: var(--plum); }
+  .win.flat { background: linear-gradient(#FFFAF2, #FBF0DF); }
+  .win.tryon { background: radial-gradient(ellipse 70% 42% at 50% 40%, #FFFFFF73, #FFFFFF00 100%), linear-gradient(#E9E2DF 0%, #EFDFE0 50%, #F5D2DB 100%);
+               display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; color: #A8899C; text-align: center; }
+  .win.tryon i[data-icon] { font-size: 30px; }
+  .win.tryon .lbl { font-size: 12px; line-height: 15px; font-weight: 700; color: var(--ink-soft); }
+  .win.tryon .sim { background: rgba(255,255,255,.8); }
+  .win.tryon .when { position: absolute; left: 0; right: 0; bottom: 10px; font-size: 11px; font-weight: 600; color: #8C7283; }
+  .msg { margin: 30px 40px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .msg .ic { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.6); color: var(--plum); font-size: 28px; }
+  .msg h2 { margin-top: 14px; font-family: var(--font-display); font-size: 22px; font-weight: 800; }
+  .msg p { margin-top: 6px; font-size: 14px; line-height: 20px; color: var(--ink-soft); }
+  .msg .btn { margin-top: 16px; color: var(--plum); background: rgba(255,255,255,.7); }
+
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff)
+                 drop-shadow(1.05px 1.05px 0 #fff) drop-shadow(-1.05px -1.05px 0 #fff) drop-shadow(1.05px -1.05px 0 #fff) drop-shadow(-1.05px 1.05px 0 #fff)
+                 drop-shadow(0 4px 5px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  .bundle { position: absolute; pointer-events: none; }
+  .big .stk { filter: drop-shadow(2.2px 0 0 #fff) drop-shadow(-2.2px 0 0 #fff) drop-shadow(0 2.2px 0 #fff) drop-shadow(0 -2.2px 0 #fff)
+                      drop-shadow(1.6px 1.6px 0 #fff) drop-shadow(-1.6px -1.6px 0 #fff) drop-shadow(1.6px -1.6px 0 #fff) drop-shadow(-1.6px 1.6px 0 #fff)
+                      drop-shadow(0 6px 8px rgba(110,58,82,.16)); }
+  .mini .stk { filter: drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff) drop-shadow(0 2px 2px rgba(110,58,82,.18)); }
+
+  /* ---------- the side panel ---------- */
+  .panel { position: absolute; left: 836px; right: 0; top: 0; bottom: 0; overflow-y: auto; scrollbar-width: none; padding: 0 20px 28px;
+           background: linear-gradient(rgba(255,255,255,.42), rgba(255,255,255,.42)); }
+  .panel::-webkit-scrollbar { display: none; }
+  .ptop { display: flex; justify-content: flex-end; gap: 4px; padding-top: 8px; }
+  .ptop a { height: 44px; padding: 0 10px; display: inline-flex; align-items: center; gap: 4px; border-radius: 14px; color: var(--plum); font-size: 16px; font-weight: 600; }
+  .ptop a.prof { width: 44px; padding: 0; justify-content: center; font-size: 26px; }
+  .phead { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; }
+  .phead h2 { flex: 1; font-family: var(--font-display); font-weight: 800; font-size: 27px; line-height: 1.08; letter-spacing: -.4px; }
+  .star { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; color: var(--plum);
+          background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .star[aria-pressed="true"] { background: #FCF0C4; color: #8A6A10; }
+  .star[aria-pressed="true"] svg * { fill: currentColor; }
+  .facts { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; font-size: 13px; color: var(--ink-soft); }
+  .facts .chip { min-height: 30px; padding: 4px 11px; font-size: 13px; color: var(--ink); }
+  .facts .chip i[data-icon] { color: var(--plum); }
+  .stage { position: relative; height: 250px; margin-top: 8px; }
+  .stage .mat { position: absolute; left: 50%; top: -10px; width: 300px; height: 280px; transform: translateX(-50%);
+                background: radial-gradient(closest-side, #FDF0E6 0%, #FCEDE3F2 46%, #FBE8E2A8 70%, #FBE5E800 100%); }
+  .stage .bundle { left: 50%; top: 0; width: 210px; height: 249px; margin-left: -105px; }
+  .stage .ph { position: absolute; left: 50%; top: 0; width: 196px; height: 246px; margin-left: -98px; border-radius: 22px; overflow: hidden;
+               background: radial-gradient(ellipse 70% 42% at 50% 42%, #FFFFFF73, #FFFFFF00 100%), linear-gradient(#E9E2DF 0%, #EFDFE0 50%, #F5D2DB 100%);
+               display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #A8899C; box-shadow: var(--soft-drop-lg); }
+  .stage .ph i[data-icon] { font-size: 38px; }
+  .stage .ph .lbl { font-size: 15px; font-weight: 700; color: var(--ink-soft); }
+  .stage .ph .sim { background: rgba(255,255,255,.8); }
+  .row { margin-top: 12px; min-height: 76px; display: flex; align-items: center; gap: 12px; padding: 8px 14px 8px 8px; border-radius: 22px;
+         background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .row .thumb { flex: none; width: 46px; height: 60px; border-radius: 12px; display: grid; place-items: center; color: #A8899C; font-size: 20px;
+                background: linear-gradient(#E9E2DF, #F5D2DB); }
+  .row .mini { position: relative; flex: none; width: 50px; height: 60px; }
+  .row .txt { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+  .row b { font-size: 15px; line-height: 19px; } .row small { font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .row > i[data-icon] { flex: none; font-size: 15px; color: var(--plum); }
+  .row .btn { flex: none; min-height: 44px; padding: 0 12px; font-size: 14px; border-radius: 14px; color: var(--plum); background: rgba(255,255,255,.75); }
+  .acts { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .acts .btn { min-height: 46px; height: 46px; padding: 0 8px; font-size: 15px; border-radius: 15px; gap: 6px; white-space: nowrap; }
+  .acts .btn i[data-icon] { font-size: 17px; }
+  .acts .btn.ghost { color: var(--plum); background: rgba(255,255,255,.75); }
+  .acts .del { color: #9B2C45 !important; }
+  .acts .laundry { grid-column: 1 / -1; height: auto; min-height: 50px; justify-content: flex-start; background: #FCF0C4; color: var(--ink); white-space: normal; font-size: 14px; font-weight: 700; }
+  #pwear[aria-pressed="true"] { background: var(--plum-soft); color: var(--plum); }
+  .psec { margin: 16px 2px 4px; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .pieces { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .piece { display: flex; flex-direction: column; align-items: center; min-height: 92px; border-radius: 14px; padding-top: 2px; }
+  .piece .pa { position: relative; width: 52px; height: 50px; display: grid; place-items: end center; }
+  .piece .pa::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: -4px; height: 9px; border-radius: 50%;
+                      background: radial-gradient(closest-side, rgba(140,70,95,.28), rgba(140,70,95,0)); }
+  .piece .pa span { position: relative; z-index: 1; }
+  .piece .nm { margin-top: 7px; text-align: center; font-size: 12px; line-height: 14px; font-weight: 600; }
+  .pnote { margin-top: 12px; display: grid; grid-template-columns: 17px 1fr; gap: 9px; padding: 11px 14px; border-radius: 18px; background: rgba(252,240,196,.7);
+           font-size: 13px; line-height: 19px; }
+  .pnote i[data-icon] { font-size: 17px; color: var(--plum); }
+  .pfine { margin-top: 10px; text-align: center; font-size: 11px; font-weight: 500; color: var(--ink-soft); }
+
+  /* dark: tokens from css/dark.css */
+  html.theme-dark .side { background: linear-gradient(rgba(255,240,248,.05), rgba(255,240,248,.05)), linear-gradient(var(--wall), var(--wall-2)); }
+  html.theme-dark .srow.on, html.theme-dark .seg button[aria-selected="true"] { background: var(--plum-fill); color: var(--on-plum); }
+  html.theme-dark .seg { background: var(--soft-tint); }
+  html.theme-dark .panel { background: rgba(255,240,248,.04); }
+  html.theme-dark .search input { background: none; }
+  html.theme-dark .win.flat { background: linear-gradient(#E6DCCB, #D9CAB3); }
+</style>
+<link rel="stylesheet" href="../css/tryon-placeholder.css">
+<link rel="stylesheet" href="../css/ipad-landscape.css">
+</head>
+<body class="pad ipad-wide ipad-saved-wide">
+<div class="screen">
+  <div class="room"></div>
+
+  <nav class="side" aria-label="My Petite Style">
+    <div class="side-name">My Petite Style</div>
+    <div class="side-rows">
+      <a class="srow" href="ipad-home.html"><i data-icon="home"></i>Home</a>
+      <a class="srow" href="ipad-closet.html"><i data-icon="hanger"></i>Closet</a>
+      <a class="srow on" href="ipad-saved.html" aria-current="page"><i data-icon="bookmark"></i>Saved Looks</a>
+      <a class="srow" href="suitcases.html"><i data-icon="suitcase"></i>Suitcases</a>
+      <a class="srow" href="laundry.html" id="laundry"><i data-icon="washer"></i>Laundry<span class="badge" id="laundryn">2</span></a>
+      <div class="side-sep"></div>
+      <a class="srow" href="settings.html"><i data-icon="person-circle"></i>Profile</a>
+    </div>
+    <a class="side-me" href="settings.html" aria-label="Lily. Profile">
+      <span class="ic"><i data-icon="person-circle"></i></span>
+      <span class="txt"><b>Lily</b><small>Profile</small></span>
+      <span class="end"><i data-icon="chevron-right"></i></span>
+    </a>
+  </nav>
+
+  <section class="main" aria-label="Saved Looks">
+    <div class="hdr"><h1 class="title-display">Saved Looks</h1><span class="count" id="count">5 looks</span></div>
+    <div class="tools">
+      <div class="seg" role="tablist" aria-label="Show">
+        <button type="button" role="tab" aria-selected="true" aria-controls="wall" id="tab-looks">Looks</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="wall" id="tab-pictures">Pictures</button>
+      </div>
+      <div class="search">
+        <i data-icon="search"></i>
+        <input id="q" type="search" placeholder="Search your looks" aria-label="Search your looks" autocomplete="off">
+        <button class="clear" type="button" id="clear" aria-label="Clear search" hidden><span><i data-icon="close"></i></span></button>
+      </div>
+    </div>
+    <div class="scroll" id="scroll">
+      <img class="art lights" src="../art/string-lights.svg" alt="">
+      <p class="hits" id="hits" aria-live="polite" hidden></p>
+      <div class="wall" id="wall" role="tabpanel" aria-labelledby="tab-looks"></div>
+      <div id="msg"></div>
+<p class="tryon-note" id="tryon-note" hidden>Simulated · In the app, this would be you wearing this look. For now, it is an example person in different clothes.</p>
+    </div>
+  </section>
+
+  <aside class="panel" id="panel" aria-label="Selected look" aria-live="polite"></aside>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* ===== Saved data (the prototype fixtures). The same block is in look.html, picture.html and ipad-saved.html. ===== */
+var SAVED = (function () {
+  var LOOKS = [
+    { id: 'interview', title: 'Interview navy & pink', occasion: 'Office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+      note: 'Navy and light pink keep it polished but soft. The cardigan handles a cool office.', saved: '28 Aug 2026', from: 'Main closet', fav: true },
+    { id: 'weekend', title: 'Weekend olive & brick', occasion: 'Casual', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+      note: 'Muted olive with brick feels warm and easy. Sneakers keep it relaxed.', saved: '22 Sep 2026', from: 'Weekend suitcase' },
+    { id: 'lace', title: 'Lace date night', occasion: 'Date night', top: 'g-lace-top', bottom: 'g-black-skirt', bag: 'g-burgundy-bag', shoes: 'g-black-heels',
+      note: 'White lace and a black skirt feel dressed up. The burgundy bag adds a little color.', saved: '29 Jul 2026', from: 'Main closet' },
+    { id: 'blazer', title: 'Gray blazer office', occasion: 'Office', layer: 'g-gray-blazer', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels',
+      note: 'A classic neutral office look. Cream and navy are calm together.', saved: '20 Mar 2026', from: 'Main closet' },
+    { id: 'pinkblack', title: 'Pink & black date night', occasion: 'Date night', top: 'g-pink-blouse', bottom: 'g-navy-trousers', bag: 'g-burgundy-bag', shoes: 'g-black-heels',
+      note: 'Light pink against navy with a burgundy bag: soft and a little unexpected.', saved: '6 Apr 2026', from: 'Main closet' }
+  ];
+  /* looks saved on Your looks (results.html) that are not fixtures */
+  var EXTRA = {
+    calm:  { id: 'calm', title: 'Calm office', occasion: 'Office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+             note: 'Polished navy layers. Warm enough for 58°F and rain.', saved: 'Today', from: 'Main closet', isNew: true },
+    olive: { id: 'olive', title: 'Olive and brick', occasion: 'Office', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+             note: 'Leather over a warm knit for the rain. Sneakers keep it relaxed.', saved: 'Today', from: 'Main closet', isNew: true }
+  };
+  var PICS = [
+    { id: 'p-interview', look: 'interview', date: '28 Aug 2026', short: '28 Aug', version: 'Current version of the look', fav: true },
+    { id: 'p-interview-earlier', look: 'interview', date: '27 Aug 2026', short: '27 Aug', version: 'An earlier version of the look' },
+    { id: 'p-lace', look: 'lace', date: '29 Jul 2026', short: '29 Jul', version: 'Current version of the look' }
+  ];
+  var COLLECTIONS = [
+    { id: 'work', name: 'Work', looks: ['interview', 'blazer'], pics: ['p-interview'] },
+    { id: 'going-out', name: 'Going out', looks: ['weekend', 'lace'], pics: ['p-lace'] },
+    { id: 'gym', name: 'Gym', looks: [], pics: [] }
+  ];
+  var BY = {}; LOOKS.forEach(function (l) { BY[l.id] = l; });
+  Object.keys(EXTRA).forEach(function (k) { BY[k] = EXTRA[k]; });
+  var NAMES = {}; (window.Garments ? Garments.LIST : []).forEach(function (g) { NAMES[g.id] = g.name; });
+
+  /* an id from MockState saved.looks: a fixture id, a results look (1-3 / "calm" / "olive" / "gray"), or a full object */
+  function resolve(x) {
+    if (x && typeof x === 'object') { if (x.id && BY[x.id]) return BY[x.id]; if (x.title && x.top) { if (x.id) BY[x.id] = x; return x; } return null; }
+    var s = String(x || '').toLowerCase().replace(/^o-/, '');
+    if (BY[s]) return BY[s];
+    if (/lace/.test(s)) return BY.lace;
+    if (/history|pinkblack|pink-black/.test(s)) return BY.pinkblack;
+    if (/calm|(^|\D)1$/.test(s)) return BY.calm;
+    if (/olive|(^|\D)2$/.test(s)) return BY.olive;
+    if (/gray|grey|blazer|(^|\D)3$/.test(s)) return BY.blazer;
+    return null;
+  }
+  function looks(params) {
+    if (params && params.get('state') === 'empty') return [];
+    var list = LOOKS.slice(), seen = {};
+    LOOKS.forEach(function (l) { seen[l.id] = 1; });
+    var stored = window.MockState ? MockState.get('saved.looks', null) : null;
+    if (Array.isArray(stored)) {
+      var add = [];
+      stored.forEach(function (x) { var l = resolve(x); if (l && !seen[l.id]) { seen[l.id] = 1; add.unshift(l); } });
+      list = add.concat(list);
+    }
+    return list;
+  }
+  function pictures(params) {
+    if (params && params.get('state') === 'empty') return [];
+    var gone = window.MockState ? MockState.get('pictures.deleted', []) : [];
+    var list = PICS.slice();
+    var made = window.MockState ? MockState.get('pictures', null) : null;
+    if (Array.isArray(made)) made.forEach(function (x, i) {
+      var l = resolve(x && x.look ? x.look : x);
+      if (l) list.unshift({ id: 'p-new-' + l.id + '-' + i, look: l.id, date: 'Today', short: 'Today', version: 'Current version of the look', isNew: true });
+    });
+    return list.filter(function (p) { return gone.indexOf(p.id) < 0; });
+  }
+  function pieces(l) { return ['layer', 'top', 'bottom', 'bag', 'shoes'].filter(function (k) { return l[k]; }).map(function (k) { return l[k]; }); }
+  function name(id) { return NAMES[id] || id; }
+  /* search: every word must appear in the title, the occasion or a piece name */
+  function match(l, q) {
+    var words = String(q || '').toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return { ok: true };
+    var names = pieces(l).map(name), hay = [l.title, l.occasion].concat(names).join(' ').toLowerCase().replace(/&/g, 'and');
+    var ok = words.every(function (w) { return hay.indexOf(w.replace(/&/g, 'and')) >= 0; });
+    if (!ok) return { ok: false };
+    var head = (l.title + ' ' + l.occasion).toLowerCase();
+    var byPiece = null;
+    words.forEach(function (w) { if (head.indexOf(w) < 0 && !byPiece) byPiece = names.filter(function (n) { return n.toLowerCase().indexOf(w) >= 0; })[0]; });
+    return { ok: true, piece: byPiece };
+  }
+  /* favourites and collection membership changed on look.html / picture.html (kept in MockState for the session) */
+  function fav(id, dflt) {
+    var m = window.MockState ? MockState.get('saved.favorites', {}) : {};
+    return m && Object.prototype.hasOwnProperty.call(m, id) ? !!m[id] : !!dflt;
+  }
+  function setFav(id, on) { if (window.MockState) MockState.update('saved.favorites', function (m) { m = m || {}; m[id] = !!on; return m; }); }
+  function inColl(cid, kind, id) {
+    var m = window.MockState ? MockState.get('saved.collections', {}) : {}, key = cid + '|' + id;
+    if (m && Object.prototype.hasOwnProperty.call(m, key)) return !!m[key];
+    var c = COLLECTIONS.filter(function (x) { return x.id === cid; })[0];
+    return !!c && c[kind].indexOf(id) >= 0;
+  }
+  function setColl(cid, id, on) { if (window.MockState) MockState.update('saved.collections', function (m) { m = m || {}; m[cid + '|' + id] = !!on; return m; }); }
+  return { LOOKS: LOOKS, BY: BY, PICS: PICS, COLLECTIONS: COLLECTIONS, looks: looks, pictures: pictures, pieces: pieces, name: name, match: match,
+           resolve: resolve, fav: fav, setFav: setFav, inColl: inColl, setColl: setColl };
+})();
+
+/* ===== Sticker bundles (the results.html technique). Each piece is wrapped in a sticker (.stk: white edge and soft
+   shadow) with a rotation inside, then fitted by its drawn bounds: [centre x, centre y, size, 'h' height | 'w' width, deg]. ===== */
+var Bundle = (function () {
+  var SPOTS = {
+    /* the 98 x 266 frame window */
+    win: { layer: { layer: [33, 66, 74, 'h', -7], top: [63, 72, 70, 'h', 5], bottom: [45, 152, 104, 'h', -2], shoes: [70, 214, 44, 'w', -8] },
+           bag:   { top: [49, 76, 76, 'h', 4], bottom: [41, 152, 86, 'h', -2], bag: [75, 142, 44, 'h', 9], shoes: [63, 214, 46, 'w', -8] } },
+    /* a 300 x 356 box (Your looks), scaled by k */
+    box: { layer: { layer: [98, 88, 156, 'h', -7], top: [196, 96, 146, 'h', 5], bottom: [140, 252, 214, 'h', -2], shoes: [234, 312, 94, 'w', -8] },
+           bag:   { top: [118, 92, 150, 'h', 4], bottom: [124, 250, 190, 'h', -2], bag: [236, 190, 100, 'h', 9], shoes: [226, 318, 94, 'w', -8] } }
+  };
+  var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+  function drawn(svg) {
+    var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+    for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+    b = svg.getBBox();
+    for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+    return b;
+  }
+  function lay(box, L, set, k) {
+    k = k || 1;
+    var spots = SPOTS[set][L.layer || !L.bag ? 'layer' : 'bag'];
+    box.innerHTML = '';
+    ORDER.forEach(function (slot) {
+      if (!L[slot] || !spots[slot]) return;
+      var stk = document.createElement('span'); stk.className = 'stk'; stk.setAttribute('data-slot', slot);
+      stk.innerHTML = '<span class="rot"><span data-garment="' + L[slot] + '"></span></span>';
+      stk.style.width = (120 * k * .9 * (set === 'win' ? .45 : 1)) + 'px';
+      box.appendChild(stk);
+    });
+    Garments.mountAll(box);
+    var list = box.querySelectorAll('.stk');
+    for (var i = 0; i < list.length; i++) {
+      var stk = list[i], sp = spots[stk.getAttribute('data-slot')], svg = stk.querySelector('svg');
+      if (!svg) continue;
+      var b = drawn(svg), s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+      var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+      stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+      stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+      var rot = stk.querySelector('.rot');
+      rot.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+      rot.style.transform = 'rotate(' + sp[4] + 'deg)';
+    }
+  }
+  return { lay: lay };
+})();
+
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+function go(href) { return window.MockTheme ? MockTheme.carry(href) : href; }
+
+(function () {
+  var P = new URLSearchParams(location.search);
+  var $ = function (id) { return document.getElementById(id); };
+  var S = { tab: P.get('tab') === 'pictures' ? 'pictures' : 'looks', q: P.get('q') || '', look: P.get('id') || 'interview', pic: P.get('pic') || 'p-interview' };
+  var input = $('q'); input.value = S.q;
+
+  /* laundry badge in the sidebar follows MockState */
+  var tracking = MockState.get('laundry.tracking', true) !== false;
+  var dirty = tracking ? MockState.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) : [];
+  $('laundryn').textContent = dirty.length; $('laundryn').hidden = !dirty.length;
+  $('laundry').setAttribute('aria-label', dirty.length ? 'Laundry, ' + dirty.length + ' pieces to wash' : 'Laundry');
+
+  function looksCell(l, m) {
+    var occ = m && m.piece ? 'With <b>' + esc(m.piece.toLowerCase()) + '</b>' : esc(l.occasion);
+    return '<a class="cell" href="' + go('look.html?id=' + l.id) + '" data-sel="' + l.id + '" aria-current="' + (S.look === l.id) + '" aria-label="' + esc(l.title) + ', ' + esc(l.occasion) + '">' +
+      '<img class="art frame" src="../art/saved-frame.svg" alt=""><span class="win flat" data-bundle="' + l.id + '"></span>' +
+      '<b class="t">' + esc(l.title) + '</b><span class="o">' + occ + '</span></a>';
+  }
+  function picCell(p) {
+    var l = SAVED.BY[p.look];
+    return '<a class="cell" href="' + go('picture.html?id=' + p.id) + '" data-pic="' + p.id + '" aria-current="' + (S.pic === p.id) + '" aria-label="Try-on picture from ' + esc(p.date) + ', simulated, from ' + esc(l.title) + '">' +
+      '<img class="art frame" src="../art/saved-frame.svg" alt=""><span class="win tryon"><img class="tryon-person" src="../art/tryon-person-placeholder.svg" alt="Example person wearing placeholder clothes, not Lily or this look"><span class="lbl">Try-on picture</span><span class="sim">Simulated</span><span class="when">' + esc(p.short) + '</span></span>' +
+      '<b class="t">' + esc(l.title) + '</b><span class="o">From this look</span></a>';
+  }
+
+  function render() {
+    var pics = S.tab === 'pictures';
+    $('tryon-note').hidden = !pics;
+    [$('tab-looks'), $('tab-pictures')].forEach(function (t) { var on = (t.id === 'tab-pictures') === pics; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; });
+    $('wall').setAttribute('aria-labelledby', pics ? 'tab-pictures' : 'tab-looks');
+    var ph = pics ? 'Search your pictures' : 'Search your looks'; input.placeholder = ph; input.setAttribute('aria-label', ph);
+    $('clear').hidden = !S.q;
+    var looks = SAVED.looks(P), allp = SAVED.pictures(P);
+    $('count').textContent = pics ? allp.length + ' pictures' : looks.length + ' looks';
+    var items = pics ? allp.filter(function (p) { return SAVED.match(SAVED.BY[p.look], S.q).ok; })
+                     : looks.map(function (l) { return { l: l, m: SAVED.match(l, S.q) }; }).filter(function (x) { return x.m.ok; });
+    var noun = pics ? (items.length === 1 ? 'picture' : 'pictures') : (items.length === 1 ? 'look' : 'looks');
+    $('hits').hidden = !S.q || !items.length; $('hits').textContent = items.length + ' ' + noun + ' match “' + S.q + '”';
+    $('msg').innerHTML = !items.length && S.q ? '<div class="msg"><span class="ic"><i data-icon="search"></i></span><h2>Nothing matches “' + esc(S.q) + '”</h2>' +
+      '<p>Try a color, a piece or an occasion.</p><button class="btn ghost" type="button" id="clear2">Clear search</button></div>' : '';
+    if ($('clear2')) $('clear2').addEventListener('click', clear);
+    $('wall').innerHTML = items.map(function (x) { return pics ? picCell(x) : looksCell(x.l, x.m); }).join('');
+    Icons.mountAll(document);
+    var l = document.querySelectorAll('[data-bundle]');
+    for (var i = 0; i < l.length; i++) Bundle.lay(l[i], SAVED.BY[l[i].getAttribute('data-bundle')], 'win', 1);
+    panel();
+  }
+
+  /* the side panel: the open look, or on Pictures the open picture */
+  function panel() {
+    var box = $('panel'), pics = S.tab === 'pictures';
+    if (pics) {
+      var p = SAVED.pictures(P).filter(function (x) { return x.id === S.pic; })[0] || SAVED.PICS[0], L = SAVED.BY[p.look], favp = SAVED.fav(p.id, p.fav);
+      box.setAttribute('aria-label', 'Selected picture');
+      box.innerHTML = '<div class="ptop"><a href="' + go('picture.html?id=' + p.id) + '">Open<i data-icon="chevron-right"></i></a><a class="prof" href="' + go('settings.html') + '" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>' +
+        '<div class="phead"><h2>Try-on picture</h2><button class="star" type="button" id="pstar" aria-pressed="' + favp + '" aria-label="Favorite"><i data-icon="star"></i></button></div>' +
+        '<p class="facts"><span>Simulated · ' + esc(p.date) + '</span></p>' +
+        '<div class="stage"><div class="ph" role="img" aria-label="Simulated try-on: example person in different clothes, not Lily"><img class="tryon-person" src="../art/tryon-person-placeholder.svg" alt="Example person wearing placeholder clothes, not Lily or this look"><span class="lbl">Try-on picture</span><span class="sim">Simulated</span></div></div>' +
+        '<a class="row" href="' + go('look.html?id=' + L.id) + '" aria-label="From the look ' + esc(L.title) + '. Open look"><span class="bundle mini" data-mini="' + L.id + '"></span>' +
+        '<span class="txt"><small>From the look</small><b>' + esc(L.title) + '</b><small>' + esc(L.occasion) + '</small></span><i data-icon="chevron-right"></i></a>' +
+        '<div class="acts"><a class="btn ghost" href="' + go('look.html?id=' + L.id) + '"><i data-icon="bookmark"></i>See the look</a>' +
+        '<a class="btn ghost del" href="' + go('picture.html?id=' + p.id + '&confirm=delete') + '"><i data-icon="trash"></i>Delete</a></div>' +
+        '<p class="pnote" style="background:rgba(238,228,250,.7)"><i data-icon="info"></i><span>In the app, this would be you wearing this look. For now, it is an example person in different clothes. Made only when you tap Try it on.</span></p>';
+      $('pstar').addEventListener('click', function () { SAVED.setFav(p.id, !SAVED.fav(p.id, p.fav)); this.setAttribute('aria-pressed', SAVED.fav(p.id, p.fav)); });
+    } else {
+      var L2 = SAVED.resolve(S.look) || SAVED.BY.interview, ids = SAVED.pieces(L2), favl = SAVED.fav(L2.id, L2.fav);
+      var lp = SAVED.pictures(P).filter(function (x) { return x.look === L2.id; });
+      var wash = ids.filter(function (id) { return dirty.indexOf(id) >= 0; });
+      box.setAttribute('aria-label', 'Selected look');
+      box.innerHTML = '<div class="ptop"><a href="' + go('look.html?id=' + L2.id) + '">Open<i data-icon="chevron-right"></i></a><a class="prof" href="' + go('settings.html') + '" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>' +
+        '<div class="phead"><h2>' + esc(L2.title) + '</h2><button class="star" type="button" id="lstar" aria-pressed="' + favl + '" aria-label="Favorite"><i data-icon="star"></i></button></div>' +
+        '<p class="facts"><span class="chip"><i data-icon="calendar"></i>' + esc(L2.occasion) + '</span><span>Saved ' + esc(L2.saved) + '</span></p>' +
+        '<div class="stage"><div class="mat"></div><div class="bundle big" id="pbundle" role="img" aria-label="' + esc(L2.title) + ': ' + ids.map(function (i) { return SAVED.name(i).toLowerCase(); }).join(', ') + '"></div></div>' +
+        (lp.length ? '<a class="row" href="' + go('picture.html?id=' + lp[0].id) + '"><span class="thumb"><img class="tryon-person" src="../art/tryon-person-placeholder.svg" alt="Example person wearing placeholder clothes, not Lily or this look"></span><span class="txt"><b>Try-on picture</b><small>Simulated · ' + esc(lp[0].short) + (lp.length > 1 ? ' · ' + (lp.length - 1) + ' earlier' : '') + '</small></span><i data-icon="chevron-right"></i></a>'
+                   : '<div class="row"><span class="thumb"><i data-icon="photo"></i></span><span class="txt"><b>No try-on picture</b><small>Simulated, only when you ask</small></span><a class="btn" href="' + go('look.html?id=' + L2.id) + '"><i data-icon="camera"></i>Try it on</a></div>') +
+        '<div class="acts">' +
+          (wash.length ? '<a class="btn laundry" href="' + go('laundry.html') + '"><i data-icon="basket"></i><span>' + esc(SAVED.name(wash[0])) + ' is in the laundry</span><i data-icon="chevron-right" style="margin-left:auto"></i></a>'
+                       : '<button class="btn" type="button" id="pwear" aria-pressed="false"><i data-icon="check"></i><span>Wear today</span></button>') +
+          '<a class="btn ghost" href="' + go('chat.html?look=' + L2.id) + '"><i data-icon="chat"></i>Ask stylist</a>' +
+          '<a class="btn ghost" href="' + go('editor.html?look=' + L2.id) + '"><i data-icon="pencil"></i>Edit</a>' +
+          '<a class="btn ghost" href="' + go('look.html?id=' + L2.id + '&sheet=collection') + '"' + (wash.length ? ' style="grid-column:1 / -1"' : '') + '><i data-icon="bookmark"></i>Collection</a></div>' +
+        '<h3 class="psec">' + ids.length + ' pieces</h3><div class="pieces">' + ids.map(function (id) {
+          return '<a class="piece" href="' + go('garment.html?id=' + id) + '"><span class="pa"><span data-garment="' + id + '" data-fit="1"></span></span><span class="nm">' + esc(SAVED.name(id)) + '</span></a>'; }).join('') + '</div>' +
+        '<p class="pnote"><i data-icon="sparkles"></i><span>' + esc(L2.note) + '</span></p><p class="pfine">Try-on pictures are simulated</p>';
+      $('lstar').addEventListener('click', function () { SAVED.setFav(L2.id, !SAVED.fav(L2.id, L2.fav)); this.setAttribute('aria-pressed', SAVED.fav(L2.id, L2.fav)); });
+      var w = $('pwear'); if (w) w.addEventListener('click', function () { var on = w.getAttribute('aria-pressed') !== 'true'; w.setAttribute('aria-pressed', on); w.querySelector('span').textContent = on ? 'Wearing today' : 'Wear today'; });
+    }
+    Icons.mountAll(box);
+    var b = $('pbundle'); if (b) Bundle.lay(b, SAVED.resolve(S.look) || SAVED.BY.interview, 'box', 0.7);
+    var m = box.querySelector('[data-mini]'); if (m) Bundle.lay(m, SAVED.BY[m.getAttribute('data-mini')], 'box', 50 / 300);
+    Garments.mountAll(box);
+    var l = box.querySelectorAll('[data-fit] svg');
+    for (var i = 0; i < l.length; i++) {
+      var svg = l[i], bb = svg.getBBox(), host = svg.parentNode, s = Math.min(48 / bb.width, 48 / bb.height);
+      host.style.width = (120 * s) + 'px'; host.style.height = (170 * s) + 'px';
+      host.style.marginBottom = (-(170 - bb.y - bb.height) * s) + 'px';
+      host.style.transform = 'translateX(' + ((60 - (bb.x + bb.width / 2)) * s) + 'px)';
+    }
+  }
+
+  function clear() { S.q = ''; input.value = ''; render(); input.focus(); }
+  input.addEventListener('input', function () { S.q = input.value.trim(); render(); });
+  $('clear').addEventListener('click', clear);
+  $('tab-looks').addEventListener('click', function () { S.tab = 'looks'; render(); });
+  $('tab-pictures').addEventListener('click', function () { S.tab = 'pictures'; render(); });
+  /* on iPad a frame opens in the side panel instead of a new screen */
+  $('wall').addEventListener('click', function (e) {
+    var c = e.target.closest('.cell'); if (!c) return;
+    e.preventDefault();
+    if (c.hasAttribute('data-sel')) S.look = c.getAttribute('data-sel'); else S.pic = c.getAttribute('data-pic');
+    var all = document.querySelectorAll('.cell'); for (var i = 0; i < all.length; i++) all[i].setAttribute('aria-current', all[i] === c);
+    panel();
+  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+})();
+</script>
+</body>
+</html>

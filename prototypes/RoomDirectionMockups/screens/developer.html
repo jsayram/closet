@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo controls</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* ---- account screens: shared soft layout (same block in every account page) ----
+     The page is one column on the floor colour, under a short wall scene that holds the title and a little art.
+     The scene's art sits in a 390-wide stage centred in the frame, so wider frames (iPad Split View) let it breathe
+     instead of stretching it. The tab bar is fixed at the bottom; the page scrolls vertically when it is long. */
+  html, body { background: var(--floor); }
+  .screen { height: auto; min-height: 100vh; overflow: visible; background: var(--floor); padding-bottom: 124px; }
+  .screen.no-tabs { padding-bottom: 28px; }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; color: inherit; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* wall scene: wall gradient, a floor band at the bottom and the baseboard line */
+  .scene { position: relative; background: linear-gradient(var(--wall), var(--wall-2)); }
+  .scene::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--floor-band, 0px);
+                  background: linear-gradient(var(--floor-line), var(--floor-line)) 0 0/100% 2px no-repeat, var(--floor); }
+  .stage { position: relative; width: 390px; max-width: 100%; margin: 0 auto; z-index: 1; }
+
+  /* nav: back chevron with the parent's name, title in display type */
+  .back { position: absolute; left: 6px; top: 2px; height: 44px; padding: 0 10px 0 2px; display: flex; align-items: center; gap: 1px;
+          color: var(--plum); font-size: 17px; font-weight: 500; border-radius: 12px; }
+  .back i[data-icon] { font-size: 25px; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+  .lede { position: absolute; left: 20px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  /* header in normal flow (title may wrap), with the art placed absolutely around it */
+  .hd { position: relative; z-index: 2; padding: 46px 20px 0; }
+  .hd .lede { position: static; margin-top: 8px; }
+  .hd .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+  /* the column under the scene */
+  .col { max-width: 440px; margin: 0 auto; padding: 8px 16px 0; }
+  .sec-h { margin: 22px 12px 4px; font-size: 13px; font-weight: 700; color: var(--ink-soft); letter-spacing: .1px; }
+  .sec-h:first-child { margin-top: 10px; }
+  .grp { position: relative; }
+  .grp + .grp { margin-top: 26px; }
+  .grp + .grp::before { content: ""; position: absolute; left: 36px; right: 36px; top: -14px; height: 1px; background: var(--soft-divider); }
+  .note { margin: 6px 12px 0; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .note.small { font-size: 12px; line-height: 16px; }
+
+  /* rows: no box, no lines; space and a round tinted icon tell them apart */
+  .item { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 12px; width: 100%;
+          border-radius: 22px; color: var(--ink); }
+  a.item:active, button.item:active { background: var(--soft-tint); }
+  .ic { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; color: var(--plum); }
+  .ic i[data-icon] { font-size: 18px; }
+  .ic.lilac { background: #EADFF8; } .ic.pink { background: #FCE6F2; } .ic.blue { background: #E2EEFB; }
+  .ic.green { background: #E4F3DF; } .ic.butter { background: #FCF1C8; } .ic.cream { background: #FBEEDD; } .ic.mauve { background: #F0E2EA; }
+  .lbl { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .txt small { font-size: 12px; line-height: 16px; color: var(--ink-soft); font-weight: 500; }
+  .end { margin-left: auto; display: flex; align-items: center; gap: 6px; flex: none; }
+  .chev { color: var(--soft-chev); font-size: 14px; display: grid; }
+  .val { font-size: 15px; color: var(--ink-soft); font-weight: 500; }
+  .pill { font-size: 12px; font-weight: 700; color: #355E3C; background: #E2F2DD; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .pill.butter { color: #5E4A0E; background: #FCEFC2; }
+  .pill.mauve { color: var(--ink-soft); background: rgba(255,255,255,.62); font-weight: 600; }
+  .sim { font-size: 11px; }
+
+  /* switch: a real button with role=switch; 44 px tall hit area around the 51 x 31 track */
+  .sw { flex: none; width: 59px; height: 44px; display: grid; place-items: center; border-radius: 22px; }
+  .sw .track { width: 51px; height: 31px; border-radius: 16px; background: #D9CDD5; position: relative; display: block; }
+  .sw .track::after { content: ""; position: absolute; left: 2px; top: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff;
+                      box-shadow: 0 3px 6px -2px rgba(43,27,39,.35); }
+  .sw[aria-checked="true"] .track { background: var(--plum); }
+  .sw[aria-checked="true"] .track::after { left: 22px; }
+
+  /* choice pills: selected is a solid plum pill */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 12px; }
+  .pills button, .pills a { min-height: 44px; padding: 0 16px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
+                  font-size: 14px; font-weight: 600; color: var(--ink); background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .pills [aria-checked="true"], .pills [aria-pressed="true"] { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .pills i[data-icon] { font-size: 16px; }
+
+  /* text links and buttons */
+  .tlink { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 12px; font-size: 15px; font-weight: 600;
+           color: var(--plum); border-radius: 12px; }
+  .tlink i[data-icon] { font-size: 14px; }
+  .btn { width: 100%; }
+  .btn.ghost { color: var(--plum); }
+  .btns { display: flex; flex-direction: column; gap: 10px; padding: 0 4px; }
+
+  /* tab bar: fixed, and centred on wider frames */
+  .tabfade { position: fixed; z-index: 30; }
+  .tabbar { position: fixed; z-index: 31; left: 50%; right: auto; width: calc(100% - 28px); max-width: 430px; transform: translateX(-50%); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* bottom sheet: opened by script (or #id for the plain placeholders), closed by the scrim, Escape or its buttons */
+  .sheet-w { display: none; position: fixed; inset: 0; z-index: 50; }
+  .sheet-w.open, .sheet-w:target { display: block; }
+  .sheet-w .scrim { position: absolute; inset: 0; background: #2B1B2766; }
+  .sheet-w .panel { position: absolute; left: 0; right: 0; bottom: 0; max-width: 520px; margin: 0 auto; padding: 12px 20px 30px;
+                    border-radius: 28px 28px 0 0; background: linear-gradient(var(--wall), var(--wall-2));
+                    box-shadow: 0 -10px 26px -8px rgba(90,42,74,.22); }
+  .sheet-w .grab { width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; margin: 0 auto 14px; }
+  .sheet-w h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.3px; line-height: 1.1; }
+  .sheet-w p { margin-top: 8px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  .sheet-w .sim { margin-top: 10px; }
+  .sheet-w .sim[hidden] { display: none; }
+  .sheet-w .btns { margin-top: 18px; padding: 0; }
+
+  /* toast above the tab bar */
+  .toast { position: fixed; z-index: 40; left: 50%; bottom: 102px; transform: translateX(-50%); width: calc(100% - 40px); max-width: 400px;
+           display: none; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 20px; background: var(--ink); color: #fff;
+           font-size: 14px; line-height: 18px; font-weight: 500; box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast.show { display: flex; }
+  .toast i[data-icon] { font-size: 18px; flex: none; }
+  .no-tabs .toast { bottom: 24px; }
+
+
+  /* Demo controls: prototype-only switches for reviewing states. Plain screen (no room art), clearly marked
+     "Prototype only". Everything writes MockState: reset (MockState.reset), laundry.tracking, purchases.demo, offline,
+     access.plan, weather and night. Links open the matching review variants. */
+  .scene { --floor-band: 0px; background: none; }
+  .hd { padding-bottom: 6px; }
+  .proto { display: flex; gap: 10px; margin: 6px 4px 0; padding: 12px 16px; border-radius: 20px; background: #EEE4FAE6; box-shadow: var(--soft-drop);
+           font-size: 13px; line-height: 18px; color: var(--ink); }
+  .proto i[data-icon] { font-size: 18px; color: var(--plum); flex: none; margin-top: 1px; }
+  .links { display: flex; flex-wrap: wrap; gap: 0 4px; padding: 0 0 0 44px; }
+  .links .tlink { font-size: 14px; }
+  .links.dim { opacity: .45; }
+  .open { margin: 8px 4px 0; }
+  [hidden] { display: none !important; }
+
+</style>
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body class="">
+<div class="screen">
+
+  <div class="scene">
+    <div class="stage" style="height:auto">
+      <a class="back" href="settings.html" aria-label="Back to Profile"><i data-icon="chevron-left"></i>Profile</a>
+      <div class="hd">
+        <h1 class="title-display">Demo controls</h1>
+        <div class="badges"><span class="sim">Prototype only · not in the app</span></div>
+        <p class="lede">Switches for reviewing the mockups. They change only this demo and never contact a real service.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <h2 class="sec-h">Demo data</h2>
+    <button class="item" type="button" id="reset">
+      <span class="ic pink"><i data-icon="undo"></i></span>
+      <span class="txt"><span class="lbl">Reset demo data</span><small>Back to Lily's fictional closet, looks and choices</small></span>
+      <span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span>
+    </button>
+
+    <h2 class="sec-h">Laundry</h2>
+    <div class="item">
+      <span class="ic butter"><i data-icon="washer"></i></span>
+      <span class="txt"><span class="lbl" id="lt-l">Track laundry</span><small id="lt-c"></small></span>
+      <button class="sw" id="lt" type="button" role="switch" aria-checked="true" aria-labelledby="lt-l" aria-describedby="lt-c"><span class="track"></span></button>
+    </div>
+    <div class="links"><a class="tlink" href="laundry.html">Open Laundry<i data-icon="chevron-right"></i></a><a class="tlink" href="home.html" data-home-laundry>Home hamper<i data-icon="chevron-right"></i></a></div>
+
+    <h2 class="sec-h" id="plan-h">Styling access plan</h2>
+    <div class="pills" role="radiogroup" aria-labelledby="plan-h" id="plan">
+      <button type="button" role="radio" aria-checked="true" data-value="sponsored">Sponsored</button>
+      <button type="button" role="radio" aria-checked="false" data-value="trial">Free month</button>
+      <button type="button" role="radio" aria-checked="false" data-value="out">Out of pictures</button>
+      <button type="button" role="radio" aria-checked="false" data-value="none">Not subscribed</button>
+    </div>
+    <div class="links"><a class="tlink" id="plan-open" href="access.html">Open Styling access<i data-icon="chevron-right"></i></a></div>
+
+    <div class="item" style="margin-top:6px">
+      <span class="ic lilac"><i data-icon="creditcard"></i></span>
+      <span class="txt"><span class="lbl" id="pd-l">Purchases demo</span><small id="pd-c">Shows the paywall, picture packs and out-of-pictures screens. Off while testing.</small></span>
+      <button class="sw" id="pd" type="button" role="switch" aria-checked="false" aria-labelledby="pd-l" aria-describedby="pd-c"><span class="track"></span></button>
+    </div>
+    <div class="links" id="pd-links">
+      <a class="tlink" href="paywall.html">Paywall<i data-icon="chevron-right"></i></a>
+      <a class="tlink" href="packs.html">Picture packs<i data-icon="chevron-right"></i></a>
+      <a class="tlink" href="packs.html?state=out">Out of pictures<i data-icon="chevron-right"></i></a>
+    </div>
+
+    <h2 class="sec-h">Connection</h2>
+    <div class="item">
+      <span class="ic mauve"><i data-icon="wifi-off"></i></span>
+      <span class="txt"><span class="lbl" id="of-l">Simulate offline</span><small id="of-c">Style Me and Try it on show their offline state. Closet and Saved Looks keep working.</small></span>
+      <button class="sw" id="of" type="button" role="switch" aria-checked="false" aria-labelledby="of-l" aria-describedby="of-c"><span class="track"></span></button>
+    </div>
+    <div class="links"><a class="tlink" href="styleme.html?state=offline">Style Me offline<i data-icon="chevron-right"></i></a><a class="tlink" href="results.html?state=offline">Your looks offline<i data-icon="chevron-right"></i></a></div>
+
+    <h2 class="sec-h" id="wx-h">Weather in the window</h2>
+    <div class="pills" role="radiogroup" aria-labelledby="wx-h" id="wx">
+      <button type="button" role="radio" aria-checked="true" data-value="rain">Rain</button>
+      <button type="button" role="radio" aria-checked="false" data-value="sun">Sun</button>
+      <button type="button" role="radio" aria-checked="false" data-value="cloudy">Cloudy</button>
+      <button type="button" role="radio" aria-checked="false" data-value="snow">Snow</button>
+    </div>
+    <div class="item" style="margin-top:8px">
+      <span class="ic blue"><i data-icon="moon"></i></span>
+      <span class="txt"><span class="lbl" id="nt-l">Night</span><small>After dark the window shows the night sky.</small></span>
+      <button class="sw" id="nt" type="button" role="switch" aria-checked="false" aria-labelledby="nt-l"><span class="track"></span></button>
+    </div>
+    <div class="open"><a class="btn ghost small" id="wx-open" href="home.html?weather=rain">Open Home with this weather</a></div>
+    <p class="note small">Weather is simulated.</p>
+
+    <div class="proto" style="margin-top:24px"><i data-icon="info"></i><span>Fictional data only. Nothing here is sent anywhere, bought or charged.</span></div>
+  </div>
+
+  <!-- ============ reset confirm ============ -->
+  <div class="sheet-w" id="reset-sheet" role="dialog" aria-modal="true" aria-labelledby="r-title">
+    <a class="scrim" href="#" data-close aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="r-title">Reset demo data?</h2>
+      <p>Laundry marks, saved looks, pictures, fit notes and every choice in these mockups go back to the start. Nothing is sent anywhere.</p>
+      <div class="btns"><button class="btn" type="button" id="reset-go">Reset</button><button class="btn ghost" type="button" data-close>Cancel</button></div>
+    </div>
+  </div>
+
+
+  <!-- ============ tab bar: account screens keep Home active ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ============ placeholder sheet for rows that are not mocked (opens on #soon) ============ -->
+  <div class="sheet-w" id="soon" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+    <a class="scrim" href="#" aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="soon-title">Not in this prototype</h2>
+      <p id="soon-text">This page is not part of the mockups yet.</p>
+      <span class="sim" id="soon-sim" hidden>Simulated</span>
+      <div class="btns"><a class="btn" href="#">OK</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+
+  /* Placeholder sheet: fill it from the row that opened it. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#soon"]');
+    if (!a) return;
+    document.getElementById('soon-title').textContent = a.getAttribute('data-soon') || 'Not in this prototype';
+    document.getElementById('soon-text').textContent = a.getAttribute('data-soon-text') || 'This page is not part of the mockups yet.';
+    document.getElementById('soon-sim').hidden = !a.hasAttribute('data-soon-sim');
+  });
+  /* Sheets opened by script: open(id), close on the scrim, [data-close] or Escape, and give focus back. */
+  var Sheet = (function () {
+    var last = null;
+    function open(id) {
+      var w = document.getElementById(id); if (!w) return;
+      last = document.activeElement; w.classList.add('open');
+      var f = w.querySelector('input, textarea, button, a.btn'); if (f) f.focus();
+    }
+    function close(w) { w.classList.remove('open'); if (last && last.focus) last.focus(); }
+    document.addEventListener('click', function (e) {
+      var c = e.target.closest && e.target.closest('[data-close]');
+      if (c) { e.preventDefault(); close(c.closest('.sheet-w')); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var w = document.querySelector('.sheet-w.open'); if (w) close(w);
+      else if (location.hash === '#soon') location.hash = '';
+    });
+    return { open: open, close: close };
+  })();
+  /* Toast: one line, stays 4 s. */
+  function toast(text, icon) {
+    var t = document.getElementById('toast'); if (!t) return;
+    t.innerHTML = '<i data-icon="' + (icon || 'check') + '"></i><span></span>';
+    t.querySelector('span').textContent = text;
+    if (window.Icons) Icons.mountAll(t);
+    t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 4000);
+  }
+  /* Switches: role=switch buttons flip aria-checked and call their handler. */
+  function bindSwitch(btn, onChange) {
+    btn.addEventListener('click', function () {
+      var on = btn.getAttribute('aria-checked') !== 'true';
+      btn.setAttribute('aria-checked', on ? 'true' : 'false');
+      onChange(on);
+    });
+  }
+  /* Radio pills: role=radiogroup of role=radio buttons, arrow keys move. */
+  function bindRadios(group, onChange) {
+    var items = [].slice.call(group.querySelectorAll('[role="radio"]'));
+    function pick(it, focus) {
+      items.forEach(function (x) { var on = x === it; x.setAttribute('aria-checked', on ? 'true' : 'false'); x.tabIndex = on ? 0 : -1; });
+      if (focus) it.focus();
+      onChange(it.getAttribute('data-value'));
+    }
+    items.forEach(function (it, i) {
+      it.tabIndex = it.getAttribute('aria-checked') === 'true' ? 0 : -1;
+      it.addEventListener('click', function () { pick(it); });
+      it.addEventListener('keydown', function (e) {
+        var d = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
+        if (!d) return; e.preventDefault(); pick(items[(i + d + items.length) % items.length], true);
+      });
+    });
+    return function (value) {
+      items.forEach(function (x) { var on = x.getAttribute('data-value') === value;
+        x.setAttribute('aria-checked', on ? 'true' : 'false'); x.tabIndex = on ? 0 : -1; });
+    };
+  }
+  var Q = new URLSearchParams(location.search);
+
+
+  (function () {
+    var lt = document.getElementById('lt'), pd = document.getElementById('pd'), of = document.getElementById('of'), nt = document.getElementById('nt');
+    var setPlan, setWx;
+    function load() {
+      var t = MockState.get('laundry.tracking', true) !== false;
+      lt.setAttribute('aria-checked', t ? 'true' : 'false'); laundryCap(t);
+      var p = !!MockState.get('purchases.demo', false); pd.setAttribute('aria-checked', p ? 'true' : 'false'); purchasesLinks(p);
+      of.setAttribute('aria-checked', MockState.get('offline', false) ? 'true' : 'false');
+      nt.setAttribute('aria-checked', MockState.get('night', false) ? 'true' : 'false');
+      setPlan(MockState.get('access.plan', 'sponsored')); planLink(MockState.get('access.plan', 'sponsored'));
+      setWx(MockState.get('weather', 'rain')); wxLink();
+    }
+    function laundryCap(t) {
+      document.getElementById('lt-c').textContent = t ? 'On: dirty pieces are skipped until marked clean.' : 'Off: dirty marks are kept; every piece counts as available.';
+      document.querySelector('[data-home-laundry]').setAttribute('href', MockTheme.carry(t ? 'home.html' : 'home.html?laundry=off'));
+    }
+    function purchasesLinks(p) {
+      var l = document.getElementById('pd-links'); l.classList.toggle('dim', !p);
+      l.querySelectorAll('a').forEach(function (a) { if (p) a.removeAttribute('aria-disabled'); else a.setAttribute('aria-disabled', 'true'); });
+    }
+    function planLink(v) { document.getElementById('plan-open').setAttribute('href', MockTheme.carry('access.html?plan=' + v)); }
+    function wxLink() {
+      var w = MockState.get('weather', 'rain'), n = MockState.get('night', false);
+      document.getElementById('wx-open').setAttribute('href', MockTheme.carry('home.html?weather=' + w + (n ? '&time=night' : '')));
+    }
+    bindSwitch(lt, function (on) { MockState.set('laundry.tracking', on); laundryCap(on); toast(on ? 'Laundry tracking is on.' : 'Laundry tracking is off.'); });
+    bindSwitch(pd, function (on) { MockState.set('purchases.demo', on); purchasesLinks(on); toast(on ? 'Purchases demo is on.' : 'Purchases demo is off.'); });
+    bindSwitch(of, function (on) { MockState.set('offline', on); toast(on ? 'Simulating offline.' : 'Back online (simulated).', on ? 'wifi-off' : 'check'); });
+    bindSwitch(nt, function (on) { MockState.set('night', on); wxLink(); });
+    setPlan = bindRadios(document.getElementById('plan'), function (v) { MockState.set('access.plan', v); planLink(v); });
+    setWx = bindRadios(document.getElementById('wx'), function (v) { MockState.set('weather', v); wxLink(); });
+    /* with the purchases demo off, the preview links explain instead of opening */
+    document.getElementById('pd-links').addEventListener('click', function (e) {
+      if (pd.getAttribute('aria-checked') === 'true') return;
+      var a = e.target.closest('a'); if (!a) return;
+      e.preventDefault(); toast('Turn on Purchases demo to preview these screens.', 'info');
+    });
+    document.getElementById('reset').addEventListener('click', function () { Sheet.open('reset-sheet'); });
+    document.getElementById('reset-go').addEventListener('click', function () {
+      MockState.reset(); load(); Sheet.close(document.getElementById('reset-sheet'));
+      toast('Demo data reset.');
+    });
+    load();
+  })();
+
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+</body>
+</html>

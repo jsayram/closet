@@ -2,45 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=390">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Closet</title>
+<script src="../js/theme.js"></script>
 <link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
 <style>
-  /* Closet tab: the inside of her wardrobe. Header like the other tab roots: profile button in the nav, the "Add a piece"
-     chip beside it, then the display title at left 20 / top 46 with the count beside it (same as the iPad closet).
-     The armoire is a fixed, decorative picture (not her real clothes). It is drawn at full size inside .wardrobe
-     (art at left 0, top 89 there, so wrapper y = art y + 13) and the whole wrapper is scaled to 0.535 and set at the
-     right of the title, top 48. Floor line: art y 348 -> page 48 + 272 * 0.535 = 193.5. The real pieces are the grid. */
-  body { background: var(--wall); }
+  /* Closet tab, soft style (approved R4 design, rebuilt to flow so it fills 390 and 507 wide frames and reflows at the
+     largest text size). Top: the wall with the display title at left 20 / top 46 and the small decorative armoire at the
+     right (the full-size armoire scaled to 0.535, floor line at 194). Below the floor line: search, filter chips, the
+     Suitcases and Laundry tiles, then her pieces standing on the floor in a grid that gains columns as the frame widens.
+     The armoire only says where you are; it is not tappable and never stretches.
+     Variants: ?filter=dirty, ?laundry=off, ?state=empty, ?theme=dark, ?text=xl (theme.js adds html.theme-dark / html.text-xl). */
+  html { background: var(--floor); }
+  body { background: linear-gradient(var(--floor), var(--floor-2)) 0 0 / 100% 100% no-repeat, var(--floor); min-height: 100vh; }
   a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
   button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
-  .room { --floor-y: 194px; }
-  .wardrobe { position: absolute; left: 0; top: 0; width: 390px; height: 373px; pointer-events: none;
-              transform-origin: 0 0; transform: translate(169px, 0.4px) scale(.535); }
 
-  /* header */
-  .hdr { position: absolute; left: 20px; top: 46px; display: flex; flex-direction: column; gap: 6px; white-space: nowrap; }
-  .hdr .count { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--ink-soft); }
-
-  /* search */
-  .search { position: absolute; left: 16px; right: 16px; top: 206px; height: 46px; display: flex; align-items: center; gap: 8px;
-            padding: 0 14px; background: #fff; border: 1.5px solid var(--plate-line); border-radius: 15px; box-shadow: 0 3px 10px #5a2a4a0f; cursor: text; }
-  .search i[data-icon] { font-size: 19px; color: var(--ink-soft); flex: none; }
-  .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); -webkit-appearance: none; appearance: none; }
-  .search input::placeholder { color: #8E7A87; }
-  .search:focus-within { border-color: var(--plum); }
-  .addp { position: absolute; right: 54px; top: 2px; height: 44px; display: flex; align-items: center; }
-  .addp .chip { min-height: 34px; padding: 6px 13px 6px 10px; font-size: 14px; color: var(--plum); }
-  .addp .chip i[data-icon] { font-size: 17px; color: var(--plum); }
+  /* ---------- the wall and the armoire ---------- */
+  .top { position: relative; height: 194px; background: linear-gradient(var(--wall), var(--wall-2)); box-shadow: 0 2px 0 var(--floor-line); }
+  .wardrobe { position: absolute; left: calc(100% - 221px); top: 0; width: 390px; height: 373px; pointer-events: none;
+              transform-origin: 0 0; transform: translateY(.4px) scale(.535); }
   .art { position: absolute; display: block; }
   .g { position: absolute; }
-
-  /* shoe ledge. Each pair from garments.js is mounted twice: the "rear" span shows only the shoe drawn behind,
-     the "front" span only the shoe drawn in front, so the two can be set closer together than the drawing does.
-     The garment svg is  svg > g(centring) > ellipse(rear shadow), ellipse(front shadow), g(rear shoe), g(front shoe).
-     --w display width, --x centre of the front shoe, --g page y of the front sole, --dx/--dy where the rear shoe sits
-     relative to the front one (right and up, in px). --gf/--gb are each drawing's sole lines in garment units. */
+  /* shoe ledge: each pair is mounted twice (rear shoe / front shoe) so the two sit closer than the drawing does */
   .shoe { position: absolute; --s: calc(var(--w) / 120); width: calc(var(--w) * 1px); --dx: 7; --dy: 6; }
   .shoe.front { left: calc((var(--x) - 53 * var(--s)) * 1px); top: calc((var(--g) - var(--gf) * var(--s)) * 1px); }
   .shoe.rear  { left: calc((var(--x) + var(--dx) - 67 * var(--s)) * 1px); top: calc((var(--g) - var(--dy) - var(--gb) * var(--s)) * 1px); }
@@ -50,149 +35,393 @@
   .shoe[data-garment="g-white-sneakers"]  { --gf: 124.8; --gb: 84.8; }
   .shoe[data-garment="g-tan-loafers"]     { --gf: 124.6; --gb: 84.6; }
   .shoe[data-garment="g-nude-flats"]      { --gf: 119.8; --gb: 81.8; }
+  .is-empty .wardrobe .clothes { display: none; }
 
-  /* filter row */
-  .filters { position: absolute; left: 16px; right: 16px; top: 260px; height: 44px; display: flex; gap: 8px; }
-  .filters > button { height: 44px; display: flex; align-items: center; }
+  /* nav: Add a piece beside the profile button */
+  .nav { z-index: 3; }
+  .addp { position: absolute; right: 54px; top: 2px; height: 44px; display: flex; align-items: center; z-index: 3; }
+  .addp .chip { min-height: 36px; padding: 6px 13px 6px 10px; font-size: 14px; color: var(--plum); background: var(--soft-tint-strong); }
+  .addp .chip i[data-icon] { font-size: 17px; color: var(--plum); }
+  .hdr { position: absolute; left: 20px; top: 46px; display: flex; flex-direction: column; gap: 6px; max-width: calc(100% - 240px); }
+  .hdr .count { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--ink-soft); }
+
+  /* ---------- below the floor line ---------- */
+  .main { padding: 12px 16px 120px; max-width: 760px; margin: 0 auto; }
+  .search { height: 46px; display: flex; align-items: center; gap: 8px; padding: 0 6px 0 14px; border-radius: 16px;
+            background: var(--soft-tint-strong); box-shadow: var(--soft-drop); cursor: text; }
+  .search:focus-within { box-shadow: var(--soft-drop), inset 0 0 0 1.5px #6A1F5840; }
+  .search i[data-icon] { font-size: 19px; color: var(--ink-soft); flex: none; }
+  .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; color: var(--ink);
+                  -webkit-appearance: none; appearance: none; }
+  .search input::-webkit-search-cancel-button { display: none; }
+  .search input::placeholder { color: #8E7A87; }
+  .search .clear { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--ink-soft); font-size: 16px; flex: none; }
+  .search .clear[hidden] { display: none; }
+
+  .filters { position: relative; margin-top: 8px; display: flex; flex-wrap: wrap; gap: 0 8px; }
+  .filters > button { height: 48px; display: flex; align-items: center; }
+  .filters .chip { font-size: 14px; }
   .filters .chip i[data-icon] { font-size: 15px; }
   .filters .chip:not(.on) i[data-icon] { color: var(--plum); }
+  .filters [hidden] { display: none !important; }
+  /* category menu under the first chip */
+  .menu { position: absolute; left: 0; top: 50px; z-index: 6; min-width: 200px; padding: 6px; border-radius: 20px; background: #FFFDFE;
+          box-shadow: 0 18px 30px -14px rgba(90,42,74,.45), 0 2px 18px rgba(90,42,74,.08); display: flex; flex-direction: column; }
+  .menu[hidden] { display: none; }
+  .menu button { min-height: 44px; padding: 0 12px; border-radius: 14px; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; }
+  .menu button i[data-icon] { font-size: 16px; color: var(--plum); visibility: hidden; }
+  .menu button[aria-checked="true"] i[data-icon] { visibility: visible; }
+  .menu button:hover { background: var(--plum-soft); }
 
-  /* room-object tiles */
-  .tiles { position: absolute; left: 16px; right: 16px; top: 310px; height: 60px; display: flex; gap: 12px; }
-  .tile { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 5px 8px 5px 5px; background: #fff;
-          border: 1px solid var(--plate-line); border-radius: 16px; box-shadow: 0 3px 10px #5a2a4a14; }
-  .tile .scene { position: relative; width: 50px; height: 50px; border-radius: 11px; flex: none; overflow: hidden;
-          background: linear-gradient(var(--wall), var(--wall-2)) 0 0 / 100% 37px no-repeat, linear-gradient(var(--floor), var(--floor-2)); }
-  .tile .scene::after { content: ""; position: absolute; left: 0; right: 0; top: 36px; height: 1px; background: var(--floor-line); }
-  .tile .scene img { position: absolute; left: 1px; top: 0; width: 48px; height: 44px; z-index: 1; }
+  .tiles { margin-top: 6px; display: flex; gap: 12px; }
+  .tile { flex: 1 1 0; min-width: 0; min-height: 60px; display: flex; align-items: center; gap: 8px; padding: 5px 8px 5px 5px;
+          border-radius: 24px; background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .tile .scene { position: relative; width: 50px; height: 50px; flex: none; }
+  .tile .scene img { position: absolute; left: 1px; top: 0; width: 48px; height: 44px; }
   .tile .txt { display: flex; flex-direction: column; min-width: 0; }
   .tile b { font-size: 15px; font-weight: 700; line-height: 1.2; }
   .tile small { font-size: 13px; color: var(--ink-soft); line-height: 1.25; }
-  .tile b, .tile small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tile .end { margin-left: auto; color: var(--plum); font-size: 15px; display: grid; }
+  .tile .end { margin-left: auto; color: var(--soft-chev); font-size: 15px; display: grid; flex: none; }
+  .tile.off .scene { opacity: .6; }
 
-  /* garment grid */
-  .grid { position: absolute; left: 16px; right: 16px; top: 380px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 8px; }
-  .gcard { position: relative; display: flex; flex-direction: column; align-items: center; height: 116px; padding: 4px 4px 0;
-           background: #fff; border: 1px solid var(--plate-line); border-radius: 16px; box-shadow: 0 3px 10px #5a2a4a14; }
-  .gart { position: relative; width: 70px; height: 90px; overflow: hidden; flex: none; }
-  .gart > span { position: absolute; left: 0; top: -4.67px; width: 70px; }
-  .gname { margin-top: 3px; font-size: 12px; font-weight: 600; line-height: 15px; letter-spacing: -.3px; color: var(--ink); white-space: nowrap; }
-  .dirty { position: absolute; left: 6px; top: 5px; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700;
-           line-height: 14px; padding: 0 6px 0 4px; border-radius: 8px; background: var(--butter); border: 1px solid var(--butter-line); color: #6B5410; }
+  .note { margin: 14px 4px 0; display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 1.35; color: var(--ink-soft); }
+  .note a { color: var(--plum); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+  .note[hidden] { display: none; }
+
+  /* her pieces stand on the floor: no card, a contact shadow under each piece, the name below */
+  .grid { margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 14px 8px; }
+  .gcard { position: relative; display: flex; flex-direction: column; align-items: center; padding: 4px 2px 2px; border-radius: 18px; }
+  .gcard::before { content: ""; position: absolute; left: 50%; top: 85px; width: 72px; height: 13px; transform: translateX(-50%);
+                   border-radius: 50%; background: radial-gradient(closest-side, rgba(140,70,95,.32), rgba(140,70,95,0)); }
+  .gcard[hidden] { display: none; }
+  .gart { position: relative; z-index: 1; width: 70px; height: 90px; overflow: hidden; flex: none; }
+  .gart > span, .gart > img { position: absolute; left: 0; top: -4.67px; width: 70px; }
+  .gart > img { height: 99.2px; }
+  .gname { margin-top: 5px; max-width: 100%; text-align: center; font-size: 13px; font-weight: 600; line-height: 16px; letter-spacing: -.2px; color: var(--ink); }
+  .dirty { position: absolute; left: 4px; top: 3px; z-index: 2; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700;
+           line-height: 14px; padding: 1px 8px 1px 6px; border-radius: 999px; background: #FCEFC2; color: #5E4A0E;
+           box-shadow: 0 6px 10px -8px rgba(110,84,16,.5); }
   .dirty i[data-icon] { font-size: 12px; }
-  /* the piece in a dirty card is drawn a little smaller and lower so the badge clears its collar and the hem still fits */
   .gcard.is-dirty .gart > span { left: 2px; top: 5px; width: 66px; }
 
-  /* the grid scrolls under the fade and the bar */
-  .tabfade { z-index: 4; } .tabbar { z-index: 5; }
+  .nomatch { margin: 26px 8px 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .nomatch[hidden] { display: none; }
+  .nomatch p { font-size: 15px; color: var(--ink-soft); line-height: 1.4; }
+  .nomatch .row2 { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .nomatch .btn { min-height: 44px; font-size: 15px; padding: 0 16px; }
 
-  /* tab bar items are links */
+  /* empty closet */
+  .empty { margin: 34px auto 0; max-width: 360px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .empty[hidden] { display: none; }
+  .empty img { width: 200px; height: 64px; }
+  .empty h2 { margin-top: 18px; font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -.3px; color: var(--ink); }
+  .empty p { margin-top: 8px; font-size: 15px; line-height: 1.45; color: var(--ink-soft); }
+  .empty .acts { margin-top: 22px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
+  .empty .priv { margin-top: 16px; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); }
+  .empty .priv i[data-icon] { font-size: 15px; color: var(--plum); }
+  .is-empty .search, .is-empty .filters, .is-empty .tiles, .is-empty .grid { display: none; }
+
+  /* toast after adding a piece */
+  .toast { position: fixed; z-index: 7; left: 16px; right: 16px; bottom: 100px; max-width: 480px; margin: 0 auto; min-height: 48px;
+           display: flex; align-items: center; gap: 9px; padding: 0 16px; background: var(--ink); color: #fff; border-radius: 20px;
+           box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); font-size: 15px; font-weight: 600; }
+  .toast[hidden] { display: none; }
+  .toast .ok { width: 24px; height: 24px; border-radius: 50%; background: #B7D5B1; color: var(--ink); display: grid; place-items: center; flex: none; font-size: 14px; }
+
+  /* tab bar: fixed, the grid scrolls under the fade */
+  .tabfade { position: fixed; z-index: 4; }
+  .tabbar { position: fixed; z-index: 5; max-width: 480px; margin: 0 auto; }
   .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
                 font-size: 12px; font-weight: 600; color: var(--plum); }
   .tabbar > a i[data-icon] { font-size: 23px; }
   .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* ---------- largest text size: bigger type, tiles stacked, chips wrap, two columns of pieces ---------- */
+  html.text-xl .title-display { font-size: 40px; }
+  html.text-xl .hdr { top: 52px; }
+  html.text-xl .hdr .count { font-size: 19px; }
+  html.text-xl .top { height: 214px; }
+  html.text-xl .wardrobe { transform: translateY(20px) scale(.535); }
+  html.text-xl .addp .chip { font-size: 17px; min-height: 40px; }
+  html.text-xl .search { height: 56px; }
+  html.text-xl .search input { font-size: 20px; }
+  html.text-xl .search i[data-icon] { font-size: 22px; }
+  html.text-xl .filters { gap: 8px; }
+  html.text-xl .filters .chip { font-size: 18px; min-height: 46px; padding: 8px 16px; }
+  html.text-xl .filters .chip i[data-icon] { font-size: 18px; }
+  html.text-xl .menu button { font-size: 19px; min-height: 52px; }
+  html.text-xl .tiles { flex-direction: column; gap: 10px; margin-top: 12px; }
+  html.text-xl .tile { min-height: 72px; padding: 8px 14px 8px 8px; }
+  html.text-xl .tile b { font-size: 20px; }
+  html.text-xl .tile small { font-size: 17px; }
+  html.text-xl .tile .end { font-size: 19px; }
+  html.text-xl .note { font-size: 18px; }
+  html.text-xl .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px 10px; }
+  html.text-xl .gcard::before { top: 116px; width: 96px; height: 16px; }
+  html.text-xl .gart { width: 92px; height: 120px; }
+  html.text-xl .gart > span, html.text-xl .gart > img { width: 92px; top: -6px; }
+  html.text-xl .gart > img { height: 130.3px; }
+  html.text-xl .gcard.is-dirty .gart > span { left: 4px; top: 8px; width: 84px; }
+  html.text-xl .gname { font-size: 18px; line-height: 22px; margin-top: 6px; }
+  html.text-xl .dirty { font-size: 15px; line-height: 20px; padding: 2px 10px 2px 8px; }
+  html.text-xl .dirty i[data-icon] { font-size: 15px; }
+  html.text-xl .tabbar > a { font-size: 14px; }
+  html.text-xl .empty h2 { font-size: 30px; }
+  html.text-xl .empty p, html.text-xl .nomatch p { font-size: 19px; }
+
+  /* ---------- dark appearance: tokens and shared rules come from css/dark.css (html.theme-dark); page rules only ---------- */
+  html.theme-dark .addp .chip { background: var(--soft-tint-strong); }
+  html.theme-dark .search input { background: none; }
+  html.theme-dark .search input::placeholder { color: var(--ink-soft); }
+  html.theme-dark .search:focus-within { box-shadow: var(--soft-drop), inset 0 0 0 1.5px rgba(242,182,223,.45); }
+  html.theme-dark .menu { background: var(--surface-2); box-shadow: 0 18px 30px -14px rgba(0,0,0,.75); }
+  html.theme-dark .gcard::before { background: radial-gradient(closest-side, rgba(0,0,0,.45), rgba(0,0,0,0)); }
+  html.theme-dark .dirty { background: var(--tint-butter); color: var(--tint-butter-ink); box-shadow: none; }
+  html.theme-dark .dirty i[data-icon] { color: var(--tint-butter-ink); }
+  html.theme-dark .toast { background: var(--surface-2); color: var(--ink); }
+  html.theme-dark .tile .scene img[src*="basket-empty"] { opacity: 1; }
 </style>
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
 </head>
-<body>
-<div class="screen">
-  <div class="room"></div>
+<body class="soft-closet">
+<div class="page" id="page">
+  <div class="top">
+    <!-- the armoire: a fixed decorative picture, scaled down beside the title, not tappable -->
+    <div class="wardrobe" aria-hidden="true">
+      <img class="art" src="../art/closet-armoire.svg" alt="" style="left:0;top:89px;width:390px;height:284px">
+      <!-- page y = art y + 13. Upper rail centre y 134 (W 60), lower rail 204 (W 56). The lace top and black tee are in the
+           wash, so they are not hung here. -->
+      <div class="clothes">
+        <span class="g" data-garment="g-gray-blazer" data-hanger style="left:56px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-pink-blouse" data-hanger style="left:83px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:110px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-cream-crop" data-hanger style="left:137px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-brown-jacket" data-hanger style="left:164px;top:128.5px;width:60px"></span>
+        <span class="g" data-garment="g-wide-jeans" data-hanger style="left:62px;top:198.87px;width:56px"></span>
+        <span class="g" data-garment="g-navy-trousers" data-hanger style="left:97px;top:198.87px;width:56px"></span>
+        <span class="g" data-garment="g-olive-trousers" data-hanger style="left:130px;top:198.87px;width:56px"></span>
+        <span class="g" data-garment="g-black-skirt" data-hanger style="left:166px;top:198.87px;width:56px"></span>
+        <span class="g" data-garment="g-blue-dress" data-hanger style="left:230.8px;top:188.18px;width:58px"></span>
+        <span class="g" data-garment="g-burgundy-bag" style="left:279px;top:184.1px;width:54px"></span>
+        <span class="shoe rear"  data-garment="g-black-heels"    style="--w:30;--x:90.3;--g:336.6"></span>
+        <span class="shoe front" data-garment="g-black-heels"    style="--w:30;--x:90.3;--g:336.6"></span>
+        <span class="shoe rear"  data-garment="g-nude-flats"     style="--w:30;--x:157.8;--g:336.6"></span>
+        <span class="shoe front" data-garment="g-nude-flats"     style="--w:30;--x:157.8;--g:336.6"></span>
+        <span class="shoe rear"  data-garment="g-white-sneakers" style="--w:30;--x:225.3;--g:336.6"></span>
+        <span class="shoe front" data-garment="g-white-sneakers" style="--w:30;--x:225.3;--g:336.6"></span>
+        <span class="shoe rear"  data-garment="g-tan-loafers"    style="--w:30;--x:292.8;--g:336.6"></span>
+        <span class="shoe front" data-garment="g-tan-loafers"    style="--w:30;--x:292.8;--g:336.6"></span>
+      </div>
+    </div>
 
-  <!-- ============ the armoire: a fixed decorative picture, scaled down beside the title, not tappable ============ -->
-  <div class="wardrobe" aria-hidden="true">
-  <img class="art" src="../art/closet-armoire.svg" alt="" style="left:0;top:89px;width:390px;height:284px">
-
-  <!-- page y = art y + 13. Upper rail, centre y 134. W 60: top = 134 - 5.5. Tops and layers that are clean.
-       The brick knit top, cream knit sweater and gray leggings are folded on the right bay shelf (drawn in the armoire art);
-       the lace top and black tee are in the wash, so they are not shown. -->
-  <div aria-hidden="true">
-    <span class="g" data-garment="g-gray-blazer" data-hanger style="left:56px;top:128.5px;width:60px"></span>
-    <span class="g" data-garment="g-pink-blouse" data-hanger style="left:83px;top:128.5px;width:60px"></span>
-    <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:110px;top:128.5px;width:60px"></span>
-    <span class="g" data-garment="g-cream-crop" data-hanger style="left:137px;top:128.5px;width:60px"></span>
-    <span class="g" data-garment="g-brown-jacket" data-hanger style="left:164px;top:128.5px;width:60px"></span>
-    <!-- lower rail, centre y 204. W 56: top = 204 - 5.13 -->
-    <span class="g" data-garment="g-wide-jeans" data-hanger style="left:62px;top:198.87px;width:56px"></span>
-    <span class="g" data-garment="g-navy-trousers" data-hanger style="left:97px;top:198.87px;width:56px"></span>
-    <span class="g" data-garment="g-olive-trousers" data-hanger style="left:130px;top:198.87px;width:56px"></span>
-    <span class="g" data-garment="g-black-skirt" data-hanger style="left:166px;top:198.87px;width:56px"></span>
-    <!-- right bay, two wall hooks (art contract): the blue dress on its hanger, hook loop centred on the left cup
-         (259.8, 193.5), W 58: left = 259.8 - 29, top = 193.5 - 11 * 58 / 120 -->
-    <span class="g" data-garment="g-blue-dress" data-hanger style="left:230.8px;top:188.18px;width:58px"></span>
-    <!-- the bag by its strap on the right hook (rosette 306, 184), W 54 (0.45): strap top (17.5 units) over the cup -->
-    <span class="g" data-garment="g-burgundy-bag" style="left:279px;top:184.1px;width:54px"></span>
-    <!-- shoe ledge: all four pairs from the closet at W 30 (a shoe about 23 px long, in proportion to the trousers above),
-         front soles on y 336.6, the rear shoe 7 px right and 6 px back. Pairs evenly spaced, centred at x 94, 161, 229, 296
-         (front shoe centre = pair centre - 3.5). -->
-    <span class="shoe rear"  data-garment="g-black-heels"    style="--w:30;--x:90.3;--g:336.6"></span>
-    <span class="shoe front" data-garment="g-black-heels"    style="--w:30;--x:90.3;--g:336.6"></span>
-    <span class="shoe rear"  data-garment="g-nude-flats"     style="--w:30;--x:157.8;--g:336.6"></span>
-    <span class="shoe front" data-garment="g-nude-flats"     style="--w:30;--x:157.8;--g:336.6"></span>
-    <span class="shoe rear"  data-garment="g-white-sneakers" style="--w:30;--x:225.3;--g:336.6"></span>
-    <span class="shoe front" data-garment="g-white-sneakers" style="--w:30;--x:225.3;--g:336.6"></span>
-    <span class="shoe rear"  data-garment="g-tan-loafers"    style="--w:30;--x:292.8;--g:336.6"></span>
-    <span class="shoe front" data-garment="g-tan-loafers"    style="--w:30;--x:292.8;--g:336.6"></span>
-  </div>
+    <div class="nav">
+      <a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+    </div>
+    <a class="addp" href="garment-edit.html"><span class="chip"><i data-icon="plus"></i>Add a piece</span></a>
+    <div class="hdr"><h1 class="title-display">Closet</h1><span class="count" id="count">Main closet<br>21 pieces</span></div>
   </div>
 
-  <!-- ============ nav and header ============ -->
-  <div class="nav">
-    <a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
-  </div>
-  <button class="addp" type="button"><span class="chip"><i data-icon="plus"></i>Add a piece</span></button>
-  <div class="hdr"><h1 class="title-display">Closet</h1><span class="count">Main closet<br>21 pieces</span></div>
+  <main class="main">
+    <label class="search"><i data-icon="search"></i>
+      <input type="search" id="q" placeholder="Search your closet" aria-label="Search your closet" autocomplete="off">
+      <button type="button" class="clear" id="clear" aria-label="Clear search" hidden><i data-icon="close"></i></button>
+    </label>
 
-  <!-- ============ search ============ -->
-  <label class="search"><i data-icon="search"></i><input type="search" placeholder="Search your closet" aria-label="Search your closet"></label>
+    <div class="filters" role="toolbar" aria-label="Show">
+      <button type="button" id="f-all" aria-haspopup="menu" aria-expanded="false"><span class="chip on"><span id="f-all-label">All pieces</span><i data-icon="chevron-down"></i></span></button>
+      <button type="button" id="f-dirty" aria-pressed="false"><span class="chip"><i data-icon="basket"></i><span id="f-dirty-label">Dirty (2)</span></span></button>
+      <button type="button" id="f-avail" aria-pressed="false"><span class="chip">Available</span></button>
+      <div class="menu" id="menu" role="menu" aria-label="Kind of piece" hidden></div>
+    </div>
 
-  <!-- ============ filters ============ -->
-  <div class="filters" role="toolbar" aria-label="Filter pieces">
-    <button type="button" aria-haspopup="listbox" aria-label="Show: All pieces"><span class="chip on">All pieces<i data-icon="chevron-down"></i></span></button>
-    <button type="button" aria-pressed="false"><span class="chip"><i data-icon="basket"></i>Dirty (2)</span></button>
-    <button type="button" aria-pressed="false"><span class="chip">Available</span></button>
-  </div>
+    <div class="tiles">
+      <a class="tile" href="suitcases.html">
+        <span class="scene" aria-hidden="true"><img src="../art/closet-suitcase.svg" alt=""></span>
+        <span class="txt"><b>Suitcases</b><small>3 suitcases</small></span>
+        <span class="end"><i data-icon="chevron-right"></i></span>
+      </a>
+      <a class="tile" id="laundry-tile" href="laundry.html">
+        <span class="scene" aria-hidden="true"><img id="basket" src="../art/closet-basket.svg" alt=""></span>
+        <span class="txt"><b>Laundry</b><small id="laundry-sub">2 to wash</small></span>
+        <span class="end"><i data-icon="chevron-right"></i></span>
+      </a>
+    </div>
 
-  <!-- ============ room objects ============ -->
-  <div class="tiles">
-    <a class="tile" href="suitcases.html">
-      <span class="scene" aria-hidden="true"><img src="../art/closet-suitcase.svg" alt=""></span>
-      <span class="txt"><b>Suitcases</b><small>3 suitcases</small></span>
-      <span class="end"><i data-icon="chevron-right"></i></span>
-    </a>
-    <a class="tile" href="laundry.html">
-      <span class="scene" aria-hidden="true"><img src="../art/closet-basket.svg" alt=""></span>
-      <span class="txt"><b>Laundry</b><small>2 to wash</small></span>
-      <span class="end"><i data-icon="chevron-right"></i></span>
-    </a>
-  </div>
+    <p class="note" id="dirty-note" hidden><span>These are in the wash. <a href="laundry.html">Mark them clean in Laundry</a></span></p>
 
-  <!-- ============ pieces ============ -->
-  <div class="grid">
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-navy-trousers"></span></span><span class="gname">Navy dress pants</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-pink-blouse"></span></span><span class="gname">Cute pink shirt</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-navy-cardigan"></span></span><span class="gname">Navy cardigan</span></a>
-    <a class="gcard is-dirty" href="garment.html"><span class="gart"><span data-garment="g-lace-top"></span></span><span class="gname">White lace top</span><span class="dirty"><i data-icon="basket"></i>Dirty</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-wide-jeans"></span></span><span class="gname">Wide-leg jeans</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-black-heels"></span></span><span class="gname">Black block heels</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-camel-trench"></span></span><span class="gname">Camel trench coat</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-brick-top"></span></span><span class="gname">Brick knit top</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-burgundy-bag"></span></span><span class="gname">Burgundy bag</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-blue-dress"></span></span><span class="gname">Blue floral dress</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-olive-trousers"></span></span><span class="gname">Olive trousers</span></a>
-    <a class="gcard" href="garment.html"><span class="gart"><span data-garment="g-white-sneakers"></span></span><span class="gname">White sneakers</span></a>
-  </div>
+    <div class="grid" id="grid" aria-label="Your pieces"></div>
 
-  <!-- ============ tab bar ============ -->
-  <div class="tabfade"></div>
-  <nav class="tabbar">
-    <a href="home.html"><i data-icon="home"></i>Home</a>
-    <a class="on" href="closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
-    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
-  </nav>
+    <div class="nomatch" id="nomatch" hidden>
+      <p id="nomatch-text">No pieces match.</p>
+      <div class="row2">
+        <button type="button" class="btn ghost small" id="nomatch-clear">Clear search</button>
+        <a class="btn ghost small" href="garment-edit.html"><i data-icon="plus"></i>Add a piece</a>
+      </div>
+    </div>
+
+    <section class="empty" id="empty" aria-labelledby="empty-h" hidden>
+      <img src="../art/closet-empty-hangers.svg" alt="">
+      <h2 id="empty-h">Your closet is empty</h2>
+      <p>Add a piece from a photo, or describe it in words. You can add more whenever you like.</p>
+      <div class="acts">
+        <a class="btn" href="garment-edit.html"><i data-icon="plus"></i>Add a piece</a>
+        <a class="btn ghost" href="garment-edit.html?mode=text"><i data-icon="pencil"></i>Describe in words</a>
+      </div>
+      <p class="priv"><i data-icon="lock"></i>Photos stay on this iPhone.</p>
+    </section>
+  </main>
 </div>
+
+<div class="toast" id="toast" role="status" hidden><span class="ok"><i data-icon="check"></i></span><span id="toast-msg"></span></div>
+
+<div class="tabfade"></div>
+<nav class="tabbar" aria-label="Tabs">
+  <a href="home.html"><i data-icon="home"></i>Home</a>
+  <a class="on" href="closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+  <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+</nav>
 
 <script src="../js/icons.js"></script>
 <script src="../js/garments.js"></script>
-<script src="../js/avatar.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* Closet. Pieces come from the prototype fixtures (21 garments). Search filters the grid as she types (name, other
+   names, kind, colour, category). The first chip opens a small menu of kinds; Dirty and Available are the other two
+   choices, and only one is active at a time. Laundry comes from MockState laundry.tracking / laundry.dirty; ?laundry=off
+   hides the Dirty chip and the badges (the dirty marks are kept, the pieces count as available). */
+(function () {
+  var P = new URLSearchParams(location.search);
+  var CAT = { top: 'Tops', layer: 'Layers', bottom: 'Bottoms', dress: 'Dresses', shoes: 'Shoes', accessory: 'Bags' };
+  /* id: [name, category, kind, colour, other names] */
+  var PIECES = [
+    ['g-navy-trousers', 'Navy dress pants', 'bottom', 'Trousers', 'Navy', 'Navy trousers'],
+    ['g-pink-blouse', 'Cute pink shirt', 'top', 'Blouse', 'Light pink', 'Date-night top'],
+    ['g-navy-cardigan', 'Navy cardigan', 'layer', 'Cardigan', 'Navy', ''],
+    ['g-lace-top', 'White lace top', 'top', 'Lace top', 'Soft white', ''],
+    ['g-wide-jeans', 'Wide-leg jeans', 'bottom', 'Jeans', 'Mid-wash denim', 'Baggie jeans'],
+    ['g-black-heels', 'Black block heels', 'shoes', 'Heels', 'Black', ''],
+    ['g-camel-trench', 'Camel trench coat', 'layer', 'Coat', 'Camel', ''],
+    ['g-brick-top', 'Brick knit top', 'top', 'Knit top', 'Brick', ''],
+    ['g-burgundy-bag', 'Burgundy crossbody bag', 'accessory', 'Bag', 'Burgundy', ''],
+    ['g-blue-dress', 'Blue floral dress', 'dress', 'Dress', 'Cornflower blue floral', ''],
+    ['g-olive-trousers', 'Olive trousers', 'bottom', 'Trousers', 'Olive', ''],
+    ['g-white-sneakers', 'White sneakers', 'shoes', 'Sneakers', 'White', ''],
+    ['g-cream-sweater', 'Cream knit sweater', 'top', 'Sweater', 'Cream', ''],
+    ['g-black-tee', 'Black tee', 'top', 'Tee', 'Black', ''],
+    ['g-gray-blazer', 'Gray blazer', 'layer', 'Blazer', 'Heather gray', ''],
+    ['g-brown-jacket', 'Brown leather jacket', 'layer', 'Jacket', 'Chocolate brown', ''],
+    ['g-black-skirt', 'Black midi skirt', 'bottom', 'Skirt', 'Black', ''],
+    ['g-gray-leggings', 'Old gray leggings', 'bottom', 'Leggings', 'Charcoal', ''],
+    ['g-cream-crop', 'Cream lace crop top', 'top', 'Lace top', 'Cream', ''],
+    ['g-nude-flats', 'Nude pointed flats', 'shoes', 'Flats', 'Nude', ''],
+    ['g-tan-loafers', 'Tan loafers', 'shoes', 'Loafers', 'Tan', '']
+  ];
+  var S = window.MockState || { get: function (k, d) { return d; }, set: function () {} };
+  var tracking = P.get('laundry') === 'off' ? false : P.get('laundry') === 'on' ? true : S.get('laundry.tracking', true);
+  var dirtyIds = S.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) || [];
+  var empty = P.get('state') === 'empty';
+  /* a piece added in garment-edit.html this session (local, simulated) */
+  var added = empty ? [] : (S.get('closet.added', []) || []);
+  added.forEach(function (a) { PIECES.unshift([a.id, a.name, a.category || 'layer', a.kind || '', a.color || '', '', a.img]); });
+
+  var page = document.getElementById('page'), grid = document.getElementById('grid'), q = document.getElementById('q');
+  var clearBtn = document.getElementById('clear'), nomatch = document.getElementById('nomatch');
+  var fAll = document.getElementById('f-all'), fDirty = document.getElementById('f-dirty'), fAvail = document.getElementById('f-avail');
+  var menu = document.getElementById('menu');
+  var status = P.get('filter') === 'dirty' && tracking ? 'dirty' : P.get('filter') === 'available' ? 'available' : 'all';
+  var cat = 'all';
+  function isDirty(id) { return tracking && dirtyIds.indexOf(id) >= 0; }
+  function href(u) { return window.MockTheme ? MockTheme.carry(u) : u; }
+
+  /* build the grid */
+  PIECES.forEach(function (p) {
+    var a = document.createElement('a');
+    a.className = 'gcard' + (isDirty(p[0]) ? ' is-dirty' : '');
+    a.href = href('garment.html?id=' + p[0]);
+    a.dataset.id = p[0]; a.dataset.cat = p[2];
+    a.dataset.text = [p[1], p[3], p[4], p[5], CAT[p[2]]].join(' ').toLowerCase();
+    var art = p[6] ? '<img src="' + p[6] + '" alt="">' : '<span data-garment="' + p[0] + '"></span>';
+    a.innerHTML = '<span class="gart" aria-hidden="true">' + art + '</span><span class="gname">' + p[1] + '</span>' +
+      (isDirty(p[0]) ? '<span class="dirty"><i data-icon="basket"></i>Dirty</span>' : '');
+    if (isDirty(p[0])) a.setAttribute('aria-label', p[1] + ', dirty');
+    grid.appendChild(a);
+  });
+
+  /* counts, laundry tile, chips */
+  var nDirty = dirtyIds.length;
+  document.getElementById('count').innerHTML = empty ? 'Main closet<br>No pieces yet' : 'Main closet<br>' + PIECES.length + ' pieces';
+  document.getElementById('f-dirty-label').textContent = 'Dirty (' + nDirty + ')';
+  fDirty.hidden = !tracking;
+  var tile = document.getElementById('laundry-tile'), sub = document.getElementById('laundry-sub'), basket = document.getElementById('basket');
+  if (!tracking) {
+    tile.classList.add('off'); tile.href = href('laundry-off.html'); sub.textContent = 'Off · Turn on in Settings';
+    basket.src = '../art/closet-basket-empty.svg';
+    tile.setAttribute('aria-label', 'Laundry is off. Turn it on in Settings');
+  } else if (!nDirty) {
+    sub.textContent = 'All clean'; basket.src = '../art/closet-basket-empty.svg';
+  } else {
+    sub.textContent = nDirty + ' to wash';
+  }
+  if (empty) { page.classList.add('is-empty'); document.getElementById('empty').hidden = false; }
+
+  /* category menu */
+  var MENU = [['all', 'All pieces']].concat(Object.keys(CAT).map(function (k) { return [k, CAT[k]]; }));
+  MENU.forEach(function (m) {
+    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitemradio'); b.dataset.cat = m[0];
+    b.innerHTML = '<i data-icon="check"></i>' + m[1];
+    b.addEventListener('click', function () { cat = m[0]; status = 'all'; closeMenu(); fAll.focus(); apply(); });
+    menu.appendChild(b);
+  });
+  function openMenu() { menu.hidden = false; fAll.setAttribute('aria-expanded', 'true'); var c = menu.querySelector('[aria-checked="true"]'); (c || menu.firstChild).focus(); }
+  function closeMenu() { menu.hidden = true; fAll.setAttribute('aria-expanded', 'false'); }
+  fAll.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (status !== 'all') { status = 'all'; apply(); return; }   // first tap from Dirty/Available goes back to all
+    if (menu.hidden) openMenu(); else closeMenu();
+  });
+  document.addEventListener('click', function (e) { if (!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) { closeMenu(); fAll.focus(); } });
+  fDirty.addEventListener('click', function () { status = status === 'dirty' ? 'all' : 'dirty'; cat = 'all'; apply(); });
+  fAvail.addEventListener('click', function () { status = status === 'available' ? 'all' : 'available'; cat = 'all'; apply(); });
+
+  /* search */
+  q.addEventListener('input', apply);
+  clearBtn.addEventListener('click', function () { q.value = ''; apply(); q.focus(); });
+  document.getElementById('nomatch-clear').addEventListener('click', function () { q.value = ''; status = 'all'; cat = 'all'; apply(); q.focus(); });
+  if (P.get('q')) q.value = P.get('q');
+
+  function apply() {
+    var term = q.value.trim().toLowerCase(), shown = 0;
+    clearBtn.hidden = !term;
+    Array.prototype.forEach.call(grid.children, function (c) {
+      var ok = (!term || term.split(/\s+/).every(function (w) { return c.dataset.text.indexOf(w) >= 0; })) &&
+               (cat === 'all' || c.dataset.cat === cat) &&
+               (status === 'all' || (status === 'dirty' ? isDirty(c.dataset.id) : !isDirty(c.dataset.id)));
+      c.hidden = !ok; if (ok) shown++;
+    });
+    fAll.querySelector('.chip').classList.toggle('on', status === 'all');
+    document.getElementById('f-all-label').textContent = cat === 'all' ? 'All pieces' : CAT[cat];
+    fDirty.querySelector('.chip').classList.toggle('on', status === 'dirty'); fDirty.setAttribute('aria-pressed', status === 'dirty');
+    fAvail.querySelector('.chip').classList.toggle('on', status === 'available'); fAvail.setAttribute('aria-pressed', status === 'available');
+    Array.prototype.forEach.call(menu.children, function (b) { b.setAttribute('aria-checked', b.dataset.cat === cat); });
+    document.getElementById('dirty-note').hidden = status !== 'dirty' || !shown;
+    var none = !empty && shown === 0;
+    nomatch.hidden = !none;
+    if (none) document.getElementById('nomatch-text').textContent = term ? 'No pieces match “' + q.value.trim() + '”.' :
+      status === 'dirty' ? 'Nothing in the wash. Everything is clean.' : 'No pieces here yet.';
+    document.getElementById('nomatch-clear').hidden = !term;
+  }
+  apply();
+  if (window.Icons) Icons.mountAll(document);
+  if (window.Garments) Garments.mountAll(document);
+
+  /* after Save in garment-edit.html */
+  if (location.hash === '#added' && added.length) {
+    var t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = added[0].name + ' is in your closet';
+    t.hidden = false; setTimeout(function () { t.hidden = true; }, 4000);
+  }
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
 </body>
 </html>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 54" width="64" height="54" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- A small parcel on the floor, for "expected arrival" after the store handoff (handoff.html). 1:1 at phone size.
+       Butter box with a pink tape band over the top and down the side, and a cream label patch (no text). Bottom edge at y 49. -->
+  <ellipse cx="32" cy="50" rx="27" ry="2.6" fill="#8A5A48" opacity=".12"/>
+  <!-- top face -->
+  <path d="M8 18L26 10L56 16L38 24Z" fill="#FCF0C4"/>
+  <!-- front face -->
+  <path d="M8 18L38 24V49L8 43Z" fill="#FBE9A6"/>
+  <!-- side face -->
+  <path d="M38 24L56 16V41L38 49Z" fill="#F3D97C"/>
+  <!-- tape band across top and down the front -->
+  <path d="M15.56 14.64L18.44 13.36L48.44 19.36L45.56 20.64Z" fill="#F4B4C2"/>
+  <path d="M45.56 20.64L48.44 19.36V44.36L45.56 45.64Z" fill="#EC9DB0"/>
+  <!-- cream label patch on the front -->
+  <path d="M13 27.4L28 30.4V38.4L13 35.4Z" fill="#FFF7EA" stroke="#D9C6A5" stroke-width="1"/>
+  <path d="M15.4 30.6L25 32.5M15.4 33.4L21.6 34.6" stroke="#D9C6A5" stroke-width=".9"/>
+  <!-- outlines -->
+  <path d="M8 18L26 10L56 16L38 24Z" stroke="#DDBB4E" stroke-width="1.4"/>
+  <path d="M8 18V43L38 49L56 41V16" stroke="#DDBB4E" stroke-width="1.4"/>
+  <path d="M38 24V49" stroke="#DDBB4E" stroke-width="1.4"/>
+  <path d="M11 21.4L35 26.2" stroke="#FFFFFF" stroke-width="1" opacity=".7"/>
+</svg>

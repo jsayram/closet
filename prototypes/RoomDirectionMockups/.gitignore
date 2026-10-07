@@ -1,0 +1,3 @@
+# Built review site (tools/build-site.sh) and here.now publish state
+site/
+.herenow/state.json

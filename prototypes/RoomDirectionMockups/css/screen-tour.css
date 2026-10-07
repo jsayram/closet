@@ -1,0 +1,12 @@
+/* Adapt the approved Home treatment to the actual controls on each screen. */
+.screen-tour-background { position: fixed; inset: 0; overflow: auto; isolation: isolate; z-index: 0; }
+.screen-tour-layer { position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
+.screen-tour-layer .tour-blocker { position: absolute; pointer-events: auto; }
+.screen-tour-layer .tour-card { pointer-events: auto; box-sizing: border-box; max-width: calc(100vw - 32px); color: var(--ink); font: 14px var(--font-body, -apple-system, BlinkMacSystemFont, sans-serif); }
+.screen-tour-layer .tour-card.tail-left::after { left: -9px; top: var(--tour-tail); border-bottom-left-radius: 6px; }
+.screen-tour-layer .tour-card.tail-right::after { left: auto; right: -9px; top: var(--tour-tail); border-top-right-radius: 6px; }
+.screen-tour-layer button { border: 0; cursor: pointer; font-family: inherit; }
+.screen-tour-layer .tour-skip { background: transparent; }
+.screen-tour-layer .tour-card h2 { line-height: 1.15; }
+.screen-tour-layer .tour-dots { flex-shrink: 0; }
+@media (prefers-reduced-motion: reduce) { .screen-tour-layer * { animation: none !important; transition: none !important; } }

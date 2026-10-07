@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit look</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* Outfit editor (manual looks), soft style, R5. Build or adjust a look by hand, one slot at a time.
+     Top: the look's name and where its pieces come from. Then a live sticker bundle with Undo and Redo beside it.
+     Then one soft row per slot (layer, top, bottom, shoes, bag): the chosen piece as a small sticker, its name, Change and
+     Remove. An empty slot says "Choose a top" and offers Choose. Change and Choose open a sheet of pieces of that kind from
+     the same source only (never invented, never from elsewhere). Save look stores it in MockState saved.looks.
+     URL: ?new=1 starts empty.  ?look=1..3  &source=main|jose edits that look from Your looks (default: look 1, Main closet). */
+  body { background: var(--wall); }
+  a, button, input { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 14px; }
+  [hidden] { display: none !important; }
+
+  .screen { min-height: 100vh; height: auto; overflow: visible; background: linear-gradient(var(--wall), var(--wall-2)) fixed; }
+  .col { position: relative; max-width: 440px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 96px; }
+  .nav { position: relative; flex: none; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+
+  .name { flex: none; margin: 2px 16px 0; display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 14px; border-radius: 18px;
+          background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .name i[data-icon] { font-size: 18px; color: var(--plum); flex: none; }
+  .name input { flex: 1; min-width: 0; height: 46px; border: 0; background: none; font: inherit; font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--ink); }
+  .name input::placeholder { color: #A58A99; font-weight: 700; }
+  .name input:focus-visible { outline: none; }
+  .name:focus-within { box-shadow: 0 0 0 3px var(--plum), var(--soft-drop); }
+  .srcline { position: relative; z-index: 2; flex: none; margin-top: 6px; text-align: center; font-size: 12px; line-height: 16px; color: var(--ink-soft); padding: 0 16px; }
+
+  /* preview with undo / redo */
+  .stage { position: relative; flex: none; height: 176px; margin-top: 2px; }
+  .mat { position: absolute; left: 50%; top: 50%; width: 260px; height: 260px; margin: -130px 0 0 -130px; pointer-events: none;
+         background: radial-gradient(closest-side, #FDF0E6 0%, #FCEDE3F2 46%, #FBE8E2A8 70%, #FBE5E800 100%); }
+  .bundle { position: absolute; pointer-events: none; }
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+                 drop-shadow(1.4px 1.4px 0 #fff) drop-shadow(-1.4px -1.4px 0 #fff) drop-shadow(1.4px -1.4px 0 #fff) drop-shadow(-1.4px 1.4px 0 #fff)
+                 drop-shadow(0 6px 7px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  .empty-hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 200px; text-align: center; font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .hist { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; }
+  .hist button { width: 52px; min-height: 52px; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+                 background: rgba(255,255,255,.7); box-shadow: var(--soft-drop); color: var(--plum); font-size: 11px; font-weight: 700; }
+  .hist button i[data-icon] { font-size: 19px; }
+  .hist .redo i[data-icon] { transform: scaleX(-1); }
+  .hist button[disabled] { opacity: .4; box-shadow: none; cursor: default; }
+  .status { position: absolute; left: 16px; bottom: 0; width: 120px; font-size: 12px; line-height: 15px; color: var(--ink-soft); }
+
+  /* slot rows: no boxes; a pale tint per row and a fading line between */
+  .rows { flex: none; margin: 4px 12px 0; display: flex; flex-direction: column; gap: 4px; }
+  .slot { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 4px 8px 4px 6px; border-radius: 22px; background: rgba(255,255,255,.5); }
+  .slot .pic { position: relative; flex: none; width: 48px; height: 48px; border-radius: 16px; }
+  .slot .pic .bundle { left: 0; top: 0; width: 48px; height: 48px; }
+  .slot .pic .stk { filter: drop-shadow(1.2px 0 0 #fff) drop-shadow(-1.2px 0 0 #fff) drop-shadow(0 1.2px 0 #fff) drop-shadow(0 -1.2px 0 #fff)
+                            drop-shadow(0 3px 4px rgba(110,58,82,.18)); }
+  .slot .pic .ph { position: absolute; inset: 6px; border-radius: 14px; background: rgba(255,255,255,.75); display: grid; place-items: center; color: #B79AAB; font-size: 20px; }
+  .slot .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .slot .t small { font-size: 11px; line-height: 14px; font-weight: 700; color: var(--ink-soft); text-transform: none; }
+  .slot .t b { font-size: 15px; line-height: 19px; font-weight: 600; color: var(--ink); }
+  .slot.empty { background: rgba(255,255,255,.3); }
+  .slot.empty .t b { color: var(--plum); font-weight: 700; }
+  .slot .sb { flex: none; min-height: 44px; padding: 0 12px; border-radius: 15px; display: inline-flex; align-items: center; gap: 5px;
+              font-size: 14px; font-weight: 700; color: var(--plum); background: rgba(255,255,255,.75); box-shadow: 0 8px 12px -10px rgba(90,42,74,.4); white-space: nowrap; }
+  .slot .sb.rm { width: 44px; padding: 0; justify-content: center; color: var(--ink-soft); background: none; box-shadow: none; }
+  .slot .sb.rm i[data-icon] { font-size: 18px; }
+  .slot .sb.choose { background: rgba(255,255,255,.85); }
+
+  .saverow { flex: none; margin: 10px 16px 0; }
+  .saverow .btn { width: 100%; min-height: 52px; }
+  .saverow .btn[aria-disabled="true"] { opacity: .45; box-shadow: none; cursor: default; }
+  .saverow .btn.is-saved { background: var(--plum-soft); color: var(--plum); box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+  .cap { flex: none; margin-top: 7px; text-align: center; font-size: 12px; line-height: 16px; color: var(--ink-soft); padding: 0 16px; }
+  .cap a { color: var(--plum); font-weight: 700; }
+
+  /* picker sheet */
+  .scrim { position: fixed; inset: 0; z-index: 20; background: rgba(43,27,39,.28); }
+  .sheet { position: fixed; z-index: 21; left: 50%; bottom: 0; width: 100%; max-width: 440px; transform: translateX(-50%);
+           background: #FFF8FB; border-radius: 28px 28px 0 0; padding: 10px 16px 28px; box-shadow: 0 -18px 34px -18px rgba(90,42,74,.45); }
+  .sheet .grab { width: 36px; height: 5px; border-radius: 3px; background: #E4D3DC; margin: 0 auto 8px; }
+  .sheet .hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .sheet h2 { font-size: 19px; line-height: 24px; font-weight: 700; }
+  .sheet .x { min-width: 44px; min-height: 44px; display: grid; place-items: center; color: var(--plum); font-size: 15px; font-weight: 700; }
+  .sheet .from { font-size: 13px; line-height: 17px; color: var(--ink-soft); margin-top: 2px; }
+  .opts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 6px; margin-top: 14px; }
+  .opt { display: flex; flex-direction: column; align-items: center; gap: 5px; border-radius: 18px; padding: 2px 0 4px; min-height: 44px; }
+  .opt .pic { position: relative; width: 70px; height: 70px; border-radius: 22px; background: #F8EBF1; }
+  .opt .pic .bundle { left: 0; top: 0; width: 70px; height: 70px; }
+  .opt .n { font-size: 12px; line-height: 14px; font-weight: 600; text-align: center; padding: 2px 6px; border-radius: 12px; text-wrap: balance; }
+  .opt[aria-checked="true"] .n { background: var(--plum); color: #fff; }
+  .opt.wash { opacity: .5; cursor: default; }
+  .sheet .note { margin-top: 12px; font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+
+  .tabfade { position: fixed; --tabfade: #F7D6DC; z-index: 8; }
+  .tabbar { position: fixed; z-index: 9; }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="screen">
+<div class="col">
+  <div class="nav"><span id="navtitle">Edit look</span><a class="back" href="results.html" id="back"><i data-icon="chevron-left"></i>Your looks</a><a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
+
+  <label class="name"><i data-icon="pencil"></i><input id="lookname" type="text" aria-label="Look name" placeholder="Name this look" value="Calm office"></label>
+  <p class="srcline" id="srcline">Pieces from Main closet only</p>
+
+  <div class="stage" id="stage">
+    <div class="mat"></div>
+    <div class="bundle" id="bundle" role="img" aria-label=""></div>
+    <p class="empty-hint" id="emptyhint" hidden>Your look shows here as you choose pieces.</p>
+    <div class="hist">
+      <button type="button" id="undo" aria-label="Undo"><i data-icon="undo"></i>Undo</button>
+      <button type="button" id="redo" class="redo" aria-label="Redo"><i data-icon="undo"></i>Redo</button>
+    </div>
+    <p class="status" id="status" aria-live="polite"></p>
+  </div>
+
+  <div class="rows" id="rows"></div>
+
+  <div class="saverow"><a class="btn" id="save" href="#save"><i data-icon="heart"></i><span>Save look</span></a></div>
+  <p class="cap" id="cap">Saved looks work without pictures or credits.</p>
+</div>
+
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheettitle" hidden>
+    <div class="grab"></div>
+    <div class="hd"><h2 id="sheettitle">Choose a top</h2><button type="button" class="x" id="sheetclose">Cancel</button></div>
+    <p class="from" id="sheetfrom"></p>
+    <div class="opts" role="radiogroup" aria-labelledby="sheettitle" id="opts"></div>
+    <p class="note" id="sheetnote"></p>
+  </div>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+var CURRENT = {
+  main: [
+    { name: 'Calm office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+    { name: 'Olive and brick', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers' },
+    { name: 'Cream and navy', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag' }
+  ],
+  jose: [
+    { name: 'Navy and pink', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+    { name: 'Just the pink shirt', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' }
+  ]
+};
+/* What each source holds that can be worn today, and what is in the wash. */
+var SOURCE = {
+  main: { name: 'Main closet', ready: {
+            layer: ['g-navy-cardigan', 'g-brown-jacket'], top: ['g-pink-blouse', 'g-cream-sweater', 'g-brick-top'],
+            bottom: ['g-navy-trousers', 'g-olive-trousers', 'g-wide-jeans'], shoes: ['g-nude-flats', 'g-black-heels', 'g-white-sneakers', 'g-tan-loafers'],
+            bag: ['g-burgundy-bag'] },
+          wash: { top: ['g-lace-top', 'g-black-tee'] } },
+  jose: { name: "Jose's house", ready: { layer: ['g-navy-cardigan'], top: ['g-pink-blouse'], bottom: ['g-navy-trousers'], shoes: ['g-nude-flats'], bag: [] },
+          wash: { top: ['g-lace-top'] } }
+};
+var SLOTS = [['layer', 'Layer', 'a layer', 'layers'], ['top', 'Top', 'a top', 'tops'], ['bottom', 'Bottom', 'a bottom', 'bottoms'],
+             ['shoes', 'Shoes', 'shoes', 'shoes'], ['bag', 'Bag', 'a bag', 'bags']];
+var ICON = { layer: 'shirt', top: 'shirt', bottom: 'trousers', shoes: 'shoe', bag: 'bag' };
+
+var BY = {}; Garments.LIST.forEach(function (g) { BY[g.id] = g; });
+function nm(id) { return BY[id] ? BY[id].name : id; }
+function spots(L) {
+  var s = { bottom: [140, 252, 214, 'h', -2], shoes: [234, 312, 94, 'w', -8], bag: [244, 206, 76, 'w', 8] };
+  if (L.layer) { s.layer = [98, 88, 156, 'h', -7]; s.top = [196, 96, 146, 'h', 5]; }
+  else { s.top = [142, 92, 150, 'h', -3]; }
+  if (L.layer && !L.top) s.layer = [140, 92, 156, 'h', -4];
+  return s;
+}
+var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+function drawn(svg) {
+  var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+  for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+  b = svg.getBBox();
+  for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+  return b;
+}
+function lay(box, L, k) {
+  box.innerHTML = '';
+  var S = spots(L);
+  ORDER.forEach(function (slot) {
+    if (!L[slot]) return;
+    var stk = document.createElement('span'); stk.className = 'stk'; stk.setAttribute('data-slot', slot);
+    stk.innerHTML = '<span class="rot"><span data-garment="' + L[slot] + '"></span></span>';
+    stk.style.width = (120 * k * .9) + 'px';
+    box.appendChild(stk);
+  });
+  Garments.mountAll(box);
+  var list = box.querySelectorAll('.stk');
+  for (var i = 0; i < list.length; i++) {
+    var stk = list[i], sp = S[stk.getAttribute('data-slot')], svg = stk.querySelector('svg');
+    var b = drawn(svg);
+    var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+    var rot = stk.querySelector('.rot');
+    rot.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    rot.style.transform = 'rotate(' + sp[4] + 'deg)';
+  }
+}
+function single(box, id) {
+  box.innerHTML = '<span class="stk"><span class="rot"><span data-garment="' + id + '"></span></span></span>';
+  Garments.mountAll(box);
+  var st = box.querySelector('.stk'), w = box.clientWidth, h = box.clientHeight;
+  st.style.width = '60px';
+  var bb = drawn(st.querySelector('svg')), sc = Math.min((w - 8) / bb.width, (h - 8) / bb.height);
+  st.style.width = (120 * sc) + 'px'; st.style.height = (170 * sc) + 'px';
+  st.style.left = (w / 2 - (bb.x + bb.width / 2) * sc) + 'px'; st.style.top = (h / 2 - (bb.y + bb.height / 2) * sc) + 'px';
+}
+function slug(s) { return s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+(function () {
+  var P = new URLSearchParams(location.search);
+  var isNew = P.get('new') === '1';
+  var src = SOURCE[P.get('source')] ? P.get('source') : 'main';
+  var n = Math.max(1, Math.min(CURRENT[src].length, +P.get('look') || 1));
+  var $ = function (id) { return document.getElementById(id); };
+
+  var base = isNew ? {} : Object.assign({}, CURRENT[src][n - 1]);
+  var name = isNew ? '' : base.name; delete base.name;
+  var look = Object.assign({}, base);
+  var past = [], future = [], savedId = null;
+
+  document.title = isNew ? 'New look' : 'Edit look';
+  $('navtitle').textContent = isNew ? 'New look' : 'Edit look';
+  $('lookname').value = name;
+  $('srcline').textContent = 'Pieces from ' + SOURCE[src].name + ' only';
+  $('back').setAttribute('href', MockTheme.carry(isNew ? 'closet.html' : 'results.html#look-' + n));
+  if (isNew) $('back').innerHTML = '<i data-icon="chevron-left"></i>Closet';
+
+  function complete() { return !!(look.top && look.bottom); }
+  function change(fn, msg) {
+    past.push(Object.assign({}, look)); future = [];
+    fn(); savedId = null; paint(msg);
+  }
+
+  function paint(msg) {
+    var stage = $('stage'), box = $('bundle');
+    var k = Math.min((stage.clientHeight - 10) / 356, .58);
+    box.style.width = (300 * k) + 'px'; box.style.height = (356 * k) + 'px';
+    box.style.left = ((stage.clientWidth - 300 * k) / 2) + 'px'; box.style.top = ((stage.clientHeight - 356 * k) / 2) + 'px';
+    lay(box, look, k);
+    var any = SLOTS.some(function (s) { return look[s[0]]; });
+    $('emptyhint').hidden = any;
+    box.setAttribute('aria-label', any ? 'Preview: ' + SLOTS.filter(function (s) { return look[s[0]]; }).map(function (s) { return nm(look[s[0]]).toLowerCase(); }).join(', ') : 'Preview: no pieces yet');
+    $('undo').disabled = !past.length; $('redo').disabled = !future.length;
+    $('status').textContent = msg || '';
+    rows();
+    var sv = $('save');
+    sv.setAttribute('aria-disabled', complete() ? 'false' : 'true');
+    sv.classList.toggle('is-saved', !!savedId);
+    sv.innerHTML = '<i data-icon="' + (savedId ? 'heart-fill' : 'heart') + '"></i><span>' + (savedId ? 'Saved' : 'Save look') + '</span>';
+    Icons.mountAll(sv);
+    var cap = $('cap');
+    if (savedId) cap.innerHTML = 'Saved in Saved Looks. <a href="' + MockTheme.carry('saved.html') + '">Open Saved Looks</a>';
+    else if (!complete()) cap.textContent = 'A look needs at least a top and a bottom.';
+    else cap.textContent = 'Saved looks work without pictures or credits.';
+  }
+
+  function rows() {
+    var box = $('rows'); box.innerHTML = '';
+    SLOTS.forEach(function (S) {
+      var key = S[0], id = look[key], has = !!id;
+      var ready = SOURCE[src].ready[key] || [];
+      var row = document.createElement('div');
+      row.className = 'slot' + (has ? '' : ' empty');
+      var label = has ? nm(id) : (ready.length ? 'Choose ' + S[2] : 'No ' + S[3] + ' in ' + SOURCE[src].name);
+      row.innerHTML = '<span class="pic">' + (has ? '<span class="bundle"></span>' : '<span class="ph"><i data-icon="' + ICON[key] + '"></i></span>') + '</span>' +
+        '<span class="t"><small>' + S[1] + (key === 'layer' || key === 'bag' ? ' · optional' : '') + '</small><b>' + label + '</b></span>' +
+        (has ? '<button type="button" class="sb ch" aria-label="Change the ' + S[1].toLowerCase() + ', now ' + nm(id) + '">Change</button>' +
+               '<button type="button" class="sb rm" aria-label="Remove the ' + nm(id).toLowerCase() + '"><i data-icon="close"></i></button>'
+             : (ready.length ? '<button type="button" class="sb choose" aria-label="Choose ' + S[2] + '"><i data-icon="plus"></i>Choose</button>' : ''));
+      box.appendChild(row);
+      if (has) single(row.querySelector('.bundle'), id);
+      var ch = row.querySelector('.ch, .choose');
+      if (ch) ch.addEventListener('click', function () { openSheet(key, ch); });
+      var rm = row.querySelector('.rm');
+      if (rm) rm.addEventListener('click', function () {
+        var was = look[key];
+        change(function () { delete look[key]; }, 'Removed the ' + nm(was).toLowerCase() + '.');
+        var c = document.querySelector('#rows .slot:nth-child(' + (SLOTS.indexOf(S) + 1) + ') button');
+        if (c) c.focus();
+      });
+    });
+    Icons.mountAll(box);
+  }
+
+  /* picker sheet: only pieces of this kind from the same source */
+  var opener = null;
+  function openSheet(key, from) {
+    opener = from;
+    var S = SLOTS.filter(function (s) { return s[0] === key; })[0];
+    var ready = SOURCE[src].ready[key] || [], wash = (SOURCE[src].wash || {})[key] || [];
+    $('sheettitle').textContent = 'Choose ' + S[2];
+    $('sheetfrom').textContent = 'From ' + SOURCE[src].name + '. Only the ' + S[1].toLowerCase() + ' changes.';
+    var opts = $('opts'); opts.innerHTML = '';
+    ready.concat(wash).forEach(function (id) {
+      var inWash = wash.indexOf(id) >= 0;
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'opt' + (inWash ? ' wash' : ''); b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', look[key] === id ? 'true' : 'false');
+      if (inWash) { b.setAttribute('aria-disabled', 'true'); b.setAttribute('aria-label', nm(id) + ', in the wash'); }
+      b.innerHTML = '<span class="pic"><span class="bundle"></span></span><span class="n">' + nm(id) + (inWash ? '<br>In the wash' : '') + '</span>';
+      b.addEventListener('click', function () {
+        if (inWash) return;
+        closeSheet();
+        if (look[key] === id) return;
+        change(function () { look[key] = id; }, (look[key] ? 'Changed to ' : 'Added the ') + nm(id).toLowerCase() + '.');
+      });
+      opts.appendChild(b);
+    });
+    $('sheetnote').textContent = wash.length ? wash.length + (wash.length === 1 ? ' piece is' : ' pieces are') + ' in the wash. Mark it clean in Laundry to use it.' : '';
+    $('scrim').hidden = false; $('sheet').hidden = false;
+    var list = opts.querySelectorAll('.bundle');
+    ready.concat(wash).forEach(function (id, i) { single(list[i], id); });
+    (opts.querySelector('[aria-checked="true"]') || opts.querySelector('.opt:not(.wash)') || $('sheetclose')).focus();
+  }
+  function closeSheet() {
+    $('scrim').hidden = true; $('sheet').hidden = true;
+    if (opener && document.body.contains(opener)) opener.focus();
+  }
+  $('sheetclose').addEventListener('click', closeSheet);
+  $('scrim').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !$('sheet').hidden) closeSheet();
+    if (e.key === 'Tab' && !$('sheet').hidden) {           // keep focus inside the sheet
+      var f = $('sheet').querySelectorAll('button'), first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  $('undo').addEventListener('click', function () {
+    if (!past.length) return;
+    future.push(Object.assign({}, look)); look = past.pop(); savedId = null; paint('Undone.');
+  });
+  $('redo').addEventListener('click', function () {
+    if (!future.length) return;
+    past.push(Object.assign({}, look)); look = future.pop(); savedId = null; paint('Redone.');
+  });
+  $('lookname').addEventListener('change', function () { savedId = null; paint(); });
+
+  $('save').addEventListener('click', function (e) {
+    e.preventDefault();
+    if (!complete() || savedId) return;
+    var title = $('lookname').value.trim() || 'My look';
+    $('lookname').value = title;
+    var id = 'm-' + slug(title);
+    var pcs = SLOTS.filter(function (s) { return look[s[0]]; }).map(function (s) { return look[s[0]]; });
+    MockState.update('saved.looks', function (ids) { ids = (ids || []).slice(); if (ids.indexOf(id) < 0) ids.push(id); return ids; });
+    MockState.update('saved.lookData', function (m) { m = m || {}; m[id] = { title: title, source: SOURCE[src].name, pieces: pcs, manual: true }; return m; });
+    savedId = id;
+    paint('Saved.');
+  });
+
+  function start() { paint(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="editor"></script>
+</body>
+</html>

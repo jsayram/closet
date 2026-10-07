@@ -1,0 +1,22 @@
+{
+  "collections": {
+    "notes": {
+      "fields": {
+        "screen_id": { "type": "string", "required": true, "maxLength": 64, "trim": true },
+        "variant": { "type": "string", "required": true, "maxLength": 64, "trim": true },
+        "revision": { "type": "string", "required": true, "maxLength": 16, "trim": true },
+        "liked": { "type": "string", "maxLength": 4000, "trim": true },
+        "change": { "type": "string", "maxLength": 4000, "trim": true },
+        "submitted_at": { "type": "datetime", "required": true },
+        "client_ref": { "type": "string", "maxLength": 64 }
+      },
+      "access": {
+        "read": "public",
+        "insert": "public",
+        "update": "owner",
+        "delete": "owner"
+      },
+      "rateLimit": "120/hour/ip"
+    }
+  }
+}

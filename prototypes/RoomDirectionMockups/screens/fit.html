@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fit and measurements</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* ---- account screens: shared soft layout (same block in every account page) ----
+     The page is one column on the floor colour, under a short wall scene that holds the title and a little art.
+     The scene's art sits in a 390-wide stage centred in the frame, so wider frames (iPad Split View) let it breathe
+     instead of stretching it. The tab bar is fixed at the bottom; the page scrolls vertically when it is long. */
+  html, body { background: var(--floor); }
+  .screen { height: auto; min-height: 100vh; overflow: visible; background: var(--floor); padding-bottom: 124px; }
+  .screen.no-tabs { padding-bottom: 28px; }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; color: inherit; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* wall scene: wall gradient, a floor band at the bottom and the baseboard line */
+  .scene { position: relative; background: linear-gradient(var(--wall), var(--wall-2)); }
+  .scene::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--floor-band, 0px);
+                  background: linear-gradient(var(--floor-line), var(--floor-line)) 0 0/100% 2px no-repeat, var(--floor); }
+  .stage { position: relative; width: 390px; max-width: 100%; margin: 0 auto; z-index: 1; }
+
+  /* nav: back chevron with the parent's name, title in display type */
+  .back { position: absolute; left: 6px; top: 2px; height: 44px; padding: 0 10px 0 2px; display: flex; align-items: center; gap: 1px;
+          color: var(--plum); font-size: 17px; font-weight: 500; border-radius: 12px; }
+  .back i[data-icon] { font-size: 25px; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+  .lede { position: absolute; left: 20px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  /* header in normal flow (title may wrap), with the art placed absolutely around it */
+  .hd { position: relative; z-index: 2; padding: 46px 20px 0; }
+  .hd .lede { position: static; margin-top: 8px; }
+  .hd .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+  /* the column under the scene */
+  .col { max-width: 440px; margin: 0 auto; padding: 8px 16px 0; }
+  .sec-h { margin: 22px 12px 4px; font-size: 13px; font-weight: 700; color: var(--ink-soft); letter-spacing: .1px; }
+  .sec-h:first-child { margin-top: 10px; }
+  .grp { position: relative; }
+  .grp + .grp { margin-top: 26px; }
+  .grp + .grp::before { content: ""; position: absolute; left: 36px; right: 36px; top: -14px; height: 1px; background: var(--soft-divider); }
+  .note { margin: 6px 12px 0; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .note.small { font-size: 12px; line-height: 16px; }
+
+  /* rows: no box, no lines; space and a round tinted icon tell them apart */
+  .item { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 12px; width: 100%;
+          border-radius: 22px; color: var(--ink); }
+  a.item:active, button.item:active { background: var(--soft-tint); }
+  .ic { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; color: var(--plum); }
+  .ic i[data-icon] { font-size: 18px; }
+  .ic.lilac { background: #EADFF8; } .ic.pink { background: #FCE6F2; } .ic.blue { background: #E2EEFB; }
+  .ic.green { background: #E4F3DF; } .ic.butter { background: #FCF1C8; } .ic.cream { background: #FBEEDD; } .ic.mauve { background: #F0E2EA; }
+  .lbl { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .txt small { font-size: 12px; line-height: 16px; color: var(--ink-soft); font-weight: 500; }
+  .end { margin-left: auto; display: flex; align-items: center; gap: 6px; flex: none; }
+  .chev { color: var(--soft-chev); font-size: 14px; display: grid; }
+  .val { font-size: 15px; color: var(--ink-soft); font-weight: 500; }
+  .pill { font-size: 12px; font-weight: 700; color: #355E3C; background: #E2F2DD; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .pill.butter { color: #5E4A0E; background: #FCEFC2; }
+  .pill.mauve { color: var(--ink-soft); background: rgba(255,255,255,.62); font-weight: 600; }
+  .sim { font-size: 11px; }
+
+  /* switch: a real button with role=switch; 44 px tall hit area around the 51 x 31 track */
+  .sw { flex: none; width: 59px; height: 44px; display: grid; place-items: center; border-radius: 22px; }
+  .sw .track { width: 51px; height: 31px; border-radius: 16px; background: #D9CDD5; position: relative; display: block; }
+  .sw .track::after { content: ""; position: absolute; left: 2px; top: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff;
+                      box-shadow: 0 3px 6px -2px rgba(43,27,39,.35); }
+  .sw[aria-checked="true"] .track { background: var(--plum); }
+  .sw[aria-checked="true"] .track::after { left: 22px; }
+
+  /* choice pills: selected is a solid plum pill */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 12px; }
+  .pills button, .pills a { min-height: 44px; padding: 0 16px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
+                  font-size: 14px; font-weight: 600; color: var(--ink); background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .pills [aria-checked="true"], .pills [aria-pressed="true"] { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .pills i[data-icon] { font-size: 16px; }
+
+  /* text links and buttons */
+  .tlink { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 12px; font-size: 15px; font-weight: 600;
+           color: var(--plum); border-radius: 12px; }
+  .tlink i[data-icon] { font-size: 14px; }
+  .btn { width: 100%; }
+  .btn.ghost { color: var(--plum); }
+  .btns { display: flex; flex-direction: column; gap: 10px; padding: 0 4px; }
+
+  /* tab bar: fixed, and centred on wider frames */
+  .tabfade { position: fixed; z-index: 30; }
+  .tabbar { position: fixed; z-index: 31; left: 50%; right: auto; width: calc(100% - 28px); max-width: 430px; transform: translateX(-50%); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* bottom sheet: opened by script (or #id for the plain placeholders), closed by the scrim, Escape or its buttons */
+  .sheet-w { display: none; position: fixed; inset: 0; z-index: 50; }
+  .sheet-w.open, .sheet-w:target { display: block; }
+  .sheet-w .scrim { position: absolute; inset: 0; background: #2B1B2766; }
+  .sheet-w .panel { position: absolute; left: 0; right: 0; bottom: 0; max-width: 520px; margin: 0 auto; padding: 12px 20px 30px;
+                    border-radius: 28px 28px 0 0; background: linear-gradient(var(--wall), var(--wall-2));
+                    box-shadow: 0 -10px 26px -8px rgba(90,42,74,.22); }
+  .sheet-w .grab { width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; margin: 0 auto 14px; }
+  .sheet-w h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.3px; line-height: 1.1; }
+  .sheet-w p { margin-top: 8px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  .sheet-w .sim { margin-top: 10px; }
+  .sheet-w .sim[hidden] { display: none; }
+  .sheet-w .btns { margin-top: 18px; padding: 0; }
+
+  /* toast above the tab bar */
+  .toast { position: fixed; z-index: 40; left: 50%; bottom: 102px; transform: translateX(-50%); width: calc(100% - 40px); max-width: 400px;
+           display: none; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 20px; background: var(--ink); color: #fff;
+           font-size: 14px; line-height: 18px; font-weight: 500; box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast.show { display: flex; }
+  .toast i[data-icon] { font-size: 18px; flex: none; }
+  .no-tabs .toast { bottom: 24px; }
+
+
+  /* Fit and measurements. Everything is optional, private and stays on this iPhone.
+     Scene: a cream wall hook with her navy dress pants (her first fit reference) and a sewing tape measure on the floor.
+     Then: Usual fit (Fitted / Comfortable / Relaxed), Measurements with units and a confirmation state for each,
+     what fit notes use right now, and Fit references shown as her pieces (sticker cutouts) with how they fit.
+     Lily's demo values come from the prototype fixtures: height 4'11" confirmed, inseam 26 in not confirmed,
+     waist, hip and bust not added, weight about 130 lb (approximate, never shared). */
+  .scene { --floor-band: 18px; }
+  .scene .stage { height: 262px; }
+  .hd .lede { max-width: 236px; }
+  .hang { position: absolute; }
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+                 drop-shadow(1.4px 1.4px 0 #fff) drop-shadow(-1.4px -1.4px 0 #fff) drop-shadow(1.4px -1.4px 0 #fff) drop-shadow(-1.4px 1.4px 0 #fff)
+                 drop-shadow(0 6px 7px rgba(110,58,82,.16)); }
+  .stk [data-garment] { width: 100%; }
+
+  .units { display: flex; align-items: center; justify-content: space-between; margin: 22px 12px 4px; }
+  .units .sec-h { margin: 0; }
+  .seg { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: rgba(255,255,255,.5); }
+  .seg button { min-height: 38px; min-width: 64px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--ink); }
+  .seg button[aria-checked="true"] { background: var(--plum); color: #fff; }
+  /* the hit area of the 38 px segments is grown to 44 */
+  .seg button { position: relative; }
+  .seg button::after { content: ""; position: absolute; left: 0; right: 0; top: -3px; bottom: -3px; }
+
+  .m { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 6px 12px; }
+  .m .txt { flex: 1; }
+  .m .v { font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .m .v.none { color: var(--ink-soft); font-weight: 500; }
+  .state { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+  .state i[data-icon] { font-size: 13px; }
+  .state.ok { color: #355E3C; }
+  .mini-btn { min-height: 44px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--plum);
+              background: var(--soft-tint); box-shadow: var(--soft-drop); white-space: nowrap; }
+  .uses { margin: 10px 4px 0; padding: 12px 14px; border-radius: 20px; background: var(--soft-tint); box-shadow: var(--soft-drop);
+          display: flex; gap: 10px; font-size: 13px; line-height: 18px; color: var(--ink); }
+  .uses i[data-icon] { font-size: 18px; color: var(--plum); flex: none; margin-top: 1px; }
+  .uses small { display: block; margin-top: 2px; font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+
+  .ref { display: flex; gap: 14px; align-items: flex-start; padding: 10px 12px; }
+  .ref .pic { position: relative; width: 64px; height: 84px; flex: none; }
+  .ref .txt { gap: 3px; padding-top: 4px; }
+  .ref .meta { font-size: 13px; color: var(--ink-soft); }
+  .ref .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; }
+  .ref .q { font-size: 13px; line-height: 18px; color: var(--ink); margin-top: 3px; }
+  .ref + .ref { margin-top: 4px; }
+  .add { margin: 8px 4px 0; }
+
+  .private { display: flex; gap: 10px; margin: 24px 12px 0; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .private i[data-icon] { font-size: 18px; color: #355E3C; flex: none; }
+
+  /* measurement editor sheet */
+  .field { display: block; margin-top: 16px; }
+  .field > span { display: block; font-size: 13px; font-weight: 700; color: var(--ink-soft); margin: 0 4px 6px; }
+  .field > .inrow { display: flex; align-items: center; gap: 10px; }
+  .inrow input { flex: 1; min-height: 50px; padding: 0 16px; border: 0; border-radius: 18px; font: inherit; font-size: 17px; color: var(--ink);
+                 background: var(--soft-tint-strong); box-shadow: var(--soft-drop); min-width: 0; }
+  .inrow input:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+  .inrow .u { font-size: 15px; font-weight: 600; color: var(--ink-soft); min-width: 28px; }
+  .sheet-w .err { color: #8A2F45; font-size: 13px; margin-top: 8px; min-height: 18px; }
+
+</style>
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body class="">
+<div class="screen">
+
+  <div class="scene">
+    <div class="stage">
+      <a class="back" href="settings.html" aria-label="Back to Profile"><i data-icon="chevron-left"></i>Profile</a>
+      <div class="hd" style="max-width:260px">
+        <h1 class="title-display">Fit and measurements</h1>
+        <p class="lede">Everything here is optional. It stays private, on this iPhone.</p>
+      </div>
+      <!-- wall hook (peg centre 22, 26) with the navy dress pants hanging from it, W 76; then the tape on the floor -->
+      <img class="art" src="../art/closet-hook.svg" alt="" style="left:282px;top:92px;width:44px;height:38px">
+      <span class="art hang" data-garment="g-navy-trousers" data-hanger style="left:266px;top:111.03px;width:76px;height:107.67px"></span>
+      <img class="art" src="../art/acct-tape.svg" alt="" style="left:18px;top:192px;width:160px;height:58px">
+    </div>
+  </div>
+
+  <div class="col">
+    <h2 class="sec-h">Usual fit</h2>
+    <div class="pills" role="radiogroup" aria-label="Usual fit" id="usual">
+      <button type="button" role="radio" aria-checked="false" data-value="fitted">Fitted</button>
+      <button type="button" role="radio" aria-checked="true" data-value="comfortable">Comfortable</button>
+      <button type="button" role="radio" aria-checked="false" data-value="relaxed">Relaxed</button>
+    </div>
+    <p class="note">How you like clothes to sit. Style Me uses it unless you pick something else for one request.</p>
+
+    <div class="units">
+      <h2 class="sec-h" id="m-h">Measurements</h2>
+      <div class="seg" role="radiogroup" aria-label="Units" id="unitseg">
+        <button type="button" role="radio" aria-checked="true" data-value="in">in · lb</button>
+        <button type="button" role="radio" aria-checked="false" data-value="cm">cm · kg</button>
+      </div>
+    </div>
+    <div id="mlist" aria-labelledby="m-h"></div>
+    <div class="uses" id="uses"><i data-icon="info"></i><span><b id="uses-a"></b><small id="uses-b"></small></span></div>
+
+    <h2 class="sec-h">Fit references</h2>
+    <p class="note" style="margin-top:0">Pieces you own and how they fit. A reference never fills in a measurement.</p>
+    <div class="ref">
+      <span class="pic"><span class="stk" style="left:6px;top:4px;width:52px;height:74px"><span data-garment="g-navy-trousers"></span></span></span>
+      <span class="txt">
+        <span class="lbl">Navy dress pants</span>
+        <span class="meta">Demo Brand A · size 2P</span>
+        <span class="tags"><span class="pill">Fits well</span><span class="pill mauve">Waist</span></span>
+        <span class="q">Waist fits; length fine with flats.</span>
+      </span>
+    </div>
+    <div class="ref">
+      <span class="pic"><span class="stk" style="left:0;top:0;width:64px;height:90.67px"><span data-garment="g-gray-blazer"></span></span></span>
+      <span class="txt">
+        <span class="lbl">Gray blazer</span>
+        <span class="meta">Demo Brand B · size S</span>
+        <span class="tags"><span class="pill butter">Too long</span><span class="pill mauve">Jacket length</span><span class="pill mauve">Sleeve</span></span>
+        <span class="q">Looked oversized.</span>
+      </span>
+    </div>
+    <div class="add"><a class="btn ghost small" href="#soon" data-soon="Add a fit reference" data-soon-text="Pick a piece you own, its brand and size as printed, and how it fit. Not part of these mockups.">Add a fit reference</a></div>
+
+    <p class="private"><i data-icon="lock"></i><span>Private. Saved on this iPhone, and in your private iCloud if sync is on. Your weight is never shared, and editing here never restyles a look.</span></p>
+  </div>
+
+  <!-- ============ measurement editor ============ -->
+  <div class="sheet-w" id="m-sheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <a class="scrim" href="#" data-close aria-label="Close"></a>
+    <form class="panel" id="m-form" novalidate>
+      <div class="grab"></div>
+      <h2 id="m-title">Waist</h2>
+      <p id="m-help">Measured on your body. Leave it empty if you don't know.</p>
+      <label class="field"><span id="m-lbl">Waist</span><span class="inrow"><input id="m-input" type="text" inputmode="decimal" autocomplete="off" aria-describedby="m-err"><span class="u" id="m-unit">in</span></span></label>
+      <div class="err" id="m-err" role="alert"></div>
+      <div class="btns"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" id="m-clear">Clear</button><button class="btn ghost" type="button" data-close>Cancel</button></div>
+    </form>
+  </div>
+
+
+  <!-- ============ tab bar: account screens keep Home active ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ============ placeholder sheet for rows that are not mocked (opens on #soon) ============ -->
+  <div class="sheet-w" id="soon" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+    <a class="scrim" href="#" aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="soon-title">Not in this prototype</h2>
+      <p id="soon-text">This page is not part of the mockups yet.</p>
+      <span class="sim" id="soon-sim" hidden>Simulated</span>
+      <div class="btns"><a class="btn" href="#">OK</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+
+  /* Placeholder sheet: fill it from the row that opened it. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#soon"]');
+    if (!a) return;
+    document.getElementById('soon-title').textContent = a.getAttribute('data-soon') || 'Not in this prototype';
+    document.getElementById('soon-text').textContent = a.getAttribute('data-soon-text') || 'This page is not part of the mockups yet.';
+    document.getElementById('soon-sim').hidden = !a.hasAttribute('data-soon-sim');
+  });
+  /* Sheets opened by script: open(id), close on the scrim, [data-close] or Escape, and give focus back. */
+  var Sheet = (function () {
+    var last = null;
+    function open(id) {
+      var w = document.getElementById(id); if (!w) return;
+      last = document.activeElement; w.classList.add('open');
+      var f = w.querySelector('input, textarea, button, a.btn'); if (f) f.focus();
+    }
+    function close(w) { w.classList.remove('open'); if (last && last.focus) last.focus(); }
+    document.addEventListener('click', function (e) {
+      var c = e.target.closest && e.target.closest('[data-close]');
+      if (c) { e.preventDefault(); close(c.closest('.sheet-w')); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var w = document.querySelector('.sheet-w.open'); if (w) close(w);
+      else if (location.hash === '#soon') location.hash = '';
+    });
+    return { open: open, close: close };
+  })();
+  /* Toast: one line, stays 4 s. */
+  function toast(text, icon) {
+    var t = document.getElementById('toast'); if (!t) return;
+    t.innerHTML = '<i data-icon="' + (icon || 'check') + '"></i><span></span>';
+    t.querySelector('span').textContent = text;
+    if (window.Icons) Icons.mountAll(t);
+    t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 4000);
+  }
+  /* Switches: role=switch buttons flip aria-checked and call their handler. */
+  function bindSwitch(btn, onChange) {
+    btn.addEventListener('click', function () {
+      var on = btn.getAttribute('aria-checked') !== 'true';
+      btn.setAttribute('aria-checked', on ? 'true' : 'false');
+      onChange(on);
+    });
+  }
+  /* Radio pills: role=radiogroup of role=radio buttons, arrow keys move. */
+  function bindRadios(group, onChange) {
+    var items = [].slice.call(group.querySelectorAll('[role="radio"]'));
+    function pick(it, focus) {
+      items.forEach(function (x) { var on = x === it; x.setAttribute('aria-checked', on ? 'true' : 'false'); x.tabIndex = on ? 0 : -1; });
+      if (focus) it.focus();
+      onChange(it.getAttribute('data-value'));
+    }
+    items.forEach(function (it, i) {
+      it.tabIndex = it.getAttribute('aria-checked') === 'true' ? 0 : -1;
+      it.addEventListener('click', function () { pick(it); });
+      it.addEventListener('keydown', function (e) {
+        var d = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
+        if (!d) return; e.preventDefault(); pick(items[(i + d + items.length) % items.length], true);
+      });
+    });
+    return function (value) {
+      items.forEach(function (x) { var on = x.getAttribute('data-value') === value;
+        x.setAttribute('aria-checked', on ? 'true' : 'false'); x.tabIndex = on ? 0 : -1; });
+    };
+  }
+  var Q = new URLSearchParams(location.search);
+
+
+  /* Fit state lives in MockState 'fit' so it survives navigating and resizing; Demo controls' reset clears it.
+     Values are kept in inches and pounds and shown in either unit system. */
+  (function () {
+    var START = { usual: 'comfortable', units: 'in',
+      m: { height: { v: 59, ok: true }, waist: null, hip: null, bust: null, inseam: { v: 26, ok: false } },
+      weight: { v: 130, approx: true }, weightEditorVersion: 1 };
+    var st = MockState.get('fit', null) || JSON.parse(JSON.stringify(START));
+    // Before weight was editable, 120 lb was only the fixed demo fixture.
+    if (!st.weightEditorVersion) {
+      if (st.weight && st.weight.v === 120) st.weight.v = 130;
+      st.weightEditorVersion = 1;
+      MockState.set('fit', st);
+    }
+    function save() { MockState.set('fit', st); }
+    var ROWS = [
+      ['height', 'Height', 'Measured on your body.'],
+      ['waist', 'Waist', 'Measured on your body, at your natural waist.'],
+      ['hip', 'Hip / seat', 'Measured on your body, at the fullest part.'],
+      ['bust', 'Bust', 'Measured on your body, at the fullest part.'],
+      ['inseam', 'Inseam', 'The inside leg length you like, from a pair that fits.']
+    ];
+    function fmt(key, v) {
+      if (st.units === 'cm') return Math.round(v * 2.54) + ' cm';
+      if (key === 'height') return Math.floor(v / 12) + '′' + (v % 12) + '″';
+      return (Math.round(v * 2) / 2) + ' in';
+    }
+    function render() {
+      var box = document.getElementById('mlist'); box.innerHTML = '';
+      ROWS.forEach(function (r) {
+        var d = st.m[r[0]], row = document.createElement('div'); row.className = 'm';
+        var state = !d ? '<span class="state">Not added</span>'
+          : d.ok ? '<span class="state ok"><i data-icon="check"></i>Confirmed by Lily</span>'
+                 : '<span class="state">Entered, not confirmed</span>';
+        row.innerHTML = '<span class="txt"><span class="lbl"></span>' + state + '</span>' +
+          '<span class="v' + (d ? '' : ' none') + '">' + (d ? fmt(r[0], d.v) : '') + '</span>';
+        row.querySelector('.lbl').textContent = r[1];
+        if (d && !d.ok) {
+          var c = document.createElement('button'); c.type = 'button'; c.className = 'mini-btn'; c.textContent = 'Confirm';
+          c.setAttribute('aria-label', 'Confirm ' + r[1].toLowerCase());
+          c.addEventListener('click', function () { d.ok = true; save(); render(); toast(r[1] + ' confirmed. It guides fit notes now.'); });
+          row.appendChild(c);
+        }
+        var e = document.createElement('button'); e.type = 'button'; e.className = 'mini-btn';
+        e.textContent = d ? 'Edit' : 'Add'; e.setAttribute('aria-label', (d ? 'Edit ' : 'Add ') + r[1].toLowerCase());
+        e.addEventListener('click', function () { edit(r); });
+        row.appendChild(e);
+        box.appendChild(row);
+      });
+      // weight: optional, approximate, never shared
+      var w = st.weight, wr = document.createElement('div'); wr.className = 'm';
+      var wv = w ? (st.units === 'cm' ? 'about ' + Math.round(w.v * 0.4536) + ' kg' : 'about ' + w.v + ' lb') : '';
+      wr.innerHTML = '<span class="txt"><span class="lbl">Weight (optional)</span><span class="state"><i data-icon="lock"></i>' +
+        (w ? 'Approximate · never shared' : 'Not added · never shared') + '</span></span><span class="v' + (w ? '' : ' none') + '">' + wv + '</span>';
+      var we = document.createElement('button'); we.type = 'button'; we.className = 'mini-btn'; we.textContent = w ? 'Edit' : 'Add';
+      we.setAttribute('aria-label', (w ? 'Edit' : 'Add') + ' weight');
+      we.addEventListener('click', function () { edit(['weight', 'Weight (optional)', 'An approximate number is fine. This stays in your preview and is never shared.']); });
+      wr.appendChild(we); box.appendChild(wr);
+      Icons.mountAll(box);
+      // what fit notes use now
+      var named = ['waist', 'hip', 'bust'].filter(function (k) { return st.m[k] && st.m[k].ok; });
+      var a = document.getElementById('uses-a'), b = document.getElementById('uses-b');
+      if (named.length) {
+        var names = named.map(function (k) { return k === 'hip' ? 'hip' : k; });
+        a.textContent = 'Fit notes use: your ' + (names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] : names[0]) + '.';
+        b.textContent = 'Only confirmed values guide fit. Unknown stays unknown.';
+      } else if (st.weight && st.m.height) {
+        a.textContent = 'Fit notes use: a rough estimate from your height and weight, around M.';
+        b.textContent = 'Adding and confirming your waist, hip or bust replaces it. Nothing else is guessed.';
+      } else {
+        a.textContent = 'No measurements to guide fit yet.';
+        b.textContent = 'You can add them whenever you like.';
+      }
+    }
+    var editing = null;
+    function edit(r) {
+      editing = r; var isWeight = r[0] === 'weight'; var d = isWeight ? st.weight : st.m[r[0]];
+      document.getElementById('m-title').textContent = r[1];
+      document.getElementById('m-lbl').textContent = r[1] + (r[0] === 'height' && st.units === 'in' ? ' in inches' : '');
+      document.getElementById('m-help').textContent = r[2] + ' Leave it empty if you don’t know.';
+      document.getElementById('m-unit').textContent = isWeight ? (st.units === 'cm' ? 'kg' : 'lb') : (st.units === 'cm' ? 'cm' : 'in');
+      document.getElementById('m-input').value = d ? (st.units === 'cm' ? (isWeight ? Math.round(d.v * 0.45359237 * 10) / 10 : Math.round(d.v * 2.54)) : d.v) : '';
+      document.getElementById('m-input').setAttribute('aria-invalid', 'false');
+      document.getElementById('m-err').textContent = '';
+      document.getElementById('m-clear').hidden = !d;
+      Sheet.open('m-sheet');
+    }
+    document.getElementById('m-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var raw = document.getElementById('m-input').value.trim();
+      var isWeight = editing[0] === 'weight';
+      if (!raw) { if (isWeight) st.weight = null; else st.m[editing[0]] = null; }
+      else {
+        var n = Number(raw.replace(',', '.'));
+        if (!Number.isFinite(n) || !(n > 0) || n > (isWeight ? (st.units === 'cm' ? 450 : 1000) : (st.units === 'cm' ? 250 : 100))) {
+          document.getElementById('m-err').textContent = 'Enter a number in ' + (isWeight ? (st.units === 'cm' ? 'kilograms' : 'pounds') : (st.units === 'cm' ? 'centimeters' : 'inches')) + ', or leave it empty.';
+          document.getElementById('m-input').setAttribute('aria-invalid', 'true');
+          return;
+        }
+        var v = st.units === 'cm' ? Math.round(n / 2.54 * 2) / 2 : n;
+        // a new or changed value is entered, not yet confirmed
+        if (isWeight) st.weight = { v: st.units === 'cm' ? Math.round(n / 0.45359237 * 10) / 10 : n, approx: true };
+        else st.m[editing[0]] = { v: v, ok: false };
+      }
+      save(); render(); Sheet.close(document.getElementById('m-sheet'));
+      toast(isWeight ? (raw ? 'Weight saved in this preview.' : 'Weight removed.') : (raw ? editing[1] + ' saved on this iPhone. Confirm it when you’re sure.' : editing[1] + ' cleared. Nothing is estimated in its place.'));
+    });
+    document.getElementById('m-clear').addEventListener('click', function () {
+      if (editing[0] === 'weight') st.weight = null; else st.m[editing[0]] = null;
+      save(); render(); Sheet.close(document.getElementById('m-sheet'));
+      toast(editing[0] === 'weight' ? 'Weight removed.' : editing[1] + ' cleared. Nothing is estimated in its place.');
+    });
+    var setUnits = bindRadios(document.getElementById('unitseg'), function (u) { st.units = u; save(); render(); });
+    var setUsual = bindRadios(document.getElementById('usual'), function (u) { st.usual = u; save(); });
+    setUnits(st.units); setUsual(st.usual);
+    render();
+  })();
+
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+</body>
+</html>

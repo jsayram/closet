@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome home</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* First launch: the front door of the home, seen from the porch on a calm day. Soft style pass (R5).
+     Sky 0..176, roof edge 156..210, siding 174..606, porch floor from 606 (the same floor tokens as the rooms).
+     The sky, siding, roof and porch run the full width of the frame; the door, its props and the text sit in a
+     390-wide stage centred in it, so iPad Split View lets the scene breathe instead of stretching it.
+     The roof edge tiles every 26 px, so it repeats across wider frames. No figure: the door, the wall, a coat on the peg
+     rail and a bench carry the scene. Welcome is the only onboarding step. Get started and the text button go to Home.
+     Footer: primary 712..762, text button 766..810. */
+  html, body { background: var(--floor); }
+  .screen { position: relative; height: max(844px, 100vh); min-height: 0; overflow: hidden; background: var(--floor); }
+  a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  .art { position: absolute; display: block; pointer-events: none; }
+  .band { position: absolute; left: 0; right: 0; }
+  .sky { top: 0; height: 176px; background: linear-gradient(#D2E5F7, #EDF5FD); }
+  .siding { top: 174px; height: 432px;
+    background: repeating-linear-gradient(180deg, #EECBD3 0 1.1px, #F8DAE0 1.1px 3.2px, #FBE4E8 3.2px 22px), linear-gradient(var(--wall), var(--wall-2)); }
+  .skirt { top: 594px; height: 12px; background: var(--cream); border-top: 1.5px solid var(--cream-line);
+    box-shadow: inset 0 1.5px 0 #FFFEFB, inset 0 -3px 0 var(--cream-2); }
+  .porch { top: 606px; bottom: 0; background: linear-gradient(var(--floor-line), var(--floor-line)) 0 0/100% 2px no-repeat, linear-gradient(var(--floor), var(--floor-2)); }
+  .roof { top: 156px; height: 54px; background: url(../art/welcome-roof.svg) center top / 390px 54px repeat-x; }
+  .deck { height: 1.2px; background: var(--floor-line); opacity: .45; }
+  .stage { position: absolute; top: 0; bottom: 0; left: 50%; width: 390px; margin-left: -195px; }
+
+  .hdr-title { position: absolute; left: 20px; top: 46px; white-space: nowrap; }
+  .lede { position: absolute; left: 20px; top: 88px; width: 356px; font-size: 15px; line-height: 21px; color: var(--ink-soft); }
+  .start { position: absolute; left: 20px; right: 20px; top: 712px; }
+  .textbtn { position: absolute; left: 50%; top: 766px; transform: translateX(-50%); height: 44px; padding: 0 16px; display: flex; align-items: center;
+    white-space: nowrap; font-size: 15px; font-weight: 600; color: var(--plum); border-radius: 14px; }
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="screen">
+  <div class="band sky"></div>
+  <div class="band siding"></div>
+  <div class="band skirt"></div>
+  <div class="band porch"></div>
+  <!-- porch deck seams, wider apart as they come forward -->
+  <div class="band deck" style="top:624px"></div><div class="band deck" style="top:646px"></div><div class="band deck" style="top:674px"></div>
+  <!-- roof edge: ridge cap 157..161, shingles to 189, fascia 189..200, eave shadow to 210 -->
+  <div class="band roof" aria-hidden="true"></div>
+
+  <div class="stage">
+    <!-- big cloud x 292..380 / y 51..78 beside the title; small one x 338..384 / y 121..138 -->
+    <img class="art" src="../art/welcome-clouds.svg" alt="" style="left:290px;top:44px;width:96px;height:96px">
+    <!-- front door, 1:1. Leaf x 186..313, y 265..606; threshold top 604; floor line 606 -->
+    <img class="art" src="../art/welcome-door.svg" alt="" style="left:158px;top:226px;width:188px;height:390px">
+    <img class="art" src="../art/welcome-lantern.svg" alt="" style="left:342px;top:300px;width:34px;height:64px">
+    <img class="art" src="../art/welcome-mat.svg" alt="" style="left:188px;top:607px;width:124px;height:22px">
+    <img class="art" src="../art/welcome-pots.svg" alt="" style="left:6px;top:556px;width:48px;height:66px">
+    <img class="art" src="../art/plant-floor.svg" alt="" style="left:318px;top:494px;width:72px;height:124px">
+    <!-- porch corner left of the door: a peg rail with the trench, and a small bench with sneakers under it -->
+    <img class="art" src="../art/travel-hall-hooks.svg" alt="" style="left:58px;top:330px;width:104px;height:90px">
+    <span class="art" data-garment="g-camel-trench" data-hanger style="left:42px;top:332.97px;width:104px;height:147.33px"></span>
+    <img class="art" src="../art/travel-hall-peg.svg" alt="" style="left:88px;top:336.5px;width:12px;height:12px">
+    <img class="art" src="../art/acct-porch-bench.svg" alt="" style="left:58px;top:564px;width:100px;height:46px">
+    <img class="art" src="../art/chat-sneakers.svg" alt="" style="left:85px;top:595.6px;width:46px;height:13px">
+
+    <h1 class="title-display hdr-title">Welcome home</h1>
+    <p class="lede">Style outfits from the clothes you already own.<br>Your closet stays on this iPhone.</p>
+
+    <a class="btn start" href="home.html">Get started</a>
+    <a class="textbtn" href="home.html">I already use My Petite Style</a>
+  </div>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="onboarding"></script>
+</body>
+</html>

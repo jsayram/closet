@@ -2,184 +2,268 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=390">
-<title>Style Me, largest text</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home, largest text</title>
+<script src="../js/theme.js"></script>
 <link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
 <style>
-  /* Style Me at the largest accessibility text size. The room shrinks to a banner and the plates become rows,
-     in the same order and colours. Body text about 1.6x: values 21-22 px, captions 15 px. */
-  body { background: var(--wall); }
-  .screen { background: linear-gradient(var(--wall), #FCEBEE 60%, var(--wall-2)); }
+  /* Home at the largest accessibility text size. The room shrinks to a banner (the wardrobe's edge, her name sign and
+     the weather window) and every control in the room becomes a large row, in the room's order:
+     the suitcase (Source), the calendar (Occasion), the laptop (Style Me), the hamper (Laundry), then the three desk
+     drawers (Help, Send feedback, Privacy and terms). Body text about 1.6x: values 22 px, captions 15 px.
+     The page scrolls; the tab bar stays at the bottom. */
+  html, body { background: var(--wall); }
+  body { min-height: 100vh; }
   a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
   button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
-
+  .page { position: relative; min-height: 100vh; padding: 0 16px 120px; background: linear-gradient(var(--wall), var(--wall-2)); }
   .nav { height: 48px; font-size: 22px; }
   .nav .right { font-size: 30px; }
-  .hdr-title { position: absolute; left: 16px; top: 50px; font-size: 38px; }
+  .hdr-title { padding-top: 50px; font-size: 38px; }
 
-  /* banner: a close-up of the room against the wall (no floor in view), clipped to a card */
-  .banner { position: absolute; left: 12px; top: 98px; width: 366px; height: 186px; border-radius: 22px; overflow: hidden;
-            border: 1.5px solid #F0D3DB; background: linear-gradient(var(--wall), var(--wall-2)); }
+  /* banner: a close-up of the room against the wall, no frame; its bottom fades into the wall */
+  .banner { position: relative; margin: 10px -4px 0; height: 186px; border-radius: 30px; overflow: hidden;
+            background: linear-gradient(var(--wall), var(--wall-2)); }
   .banner .art { position: absolute; display: block; }
   .banner .rail { position: absolute; overflow: hidden; }
   .banner .rail .g { position: absolute; }
-  /* her name sign on the wall: name-sign.svg with the first name as live text over its flat panel */
   .sign { position: absolute; display: block; }
   .sign img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
   .sign .name { position: absolute; display: flex; align-items: center; justify-content: center;
                 font-family: var(--font-display); font-weight: 700; font-style: italic; color: var(--plum); letter-spacing: .2px; }
-  .wxp { position: absolute; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0;
-         min-height: 44px; padding: 5px 9px; border-radius: 14px; background: #fff; border: 1.5px solid var(--plate-line);
-         box-shadow: 0 1px 0 #0000000d, 0 3px 8px #5a2a4a1a; white-space: nowrap; }
+  .wxp { position: absolute; right: 6px; top: 92px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+         min-height: 44px; padding: 6px 10px; border-radius: 18px; background: rgba(255,255,255,.93); box-shadow: var(--soft-drop); white-space: nowrap; }
   .wxp .t { display: flex; align-items: center; gap: 5px; font-size: 21px; font-weight: 700; line-height: 1.15; }
-  .wxp .t i[data-icon] { font-size: 22px; color: var(--plum); }
-  .wxp .t i.chev { font-size: 16px; margin-left: 2px; }
+  .wxp .t .ic { font-size: 22px; color: var(--plum); display: grid; }
+  .wxp .t i.chev { font-size: 16px; margin-left: 2px; color: var(--plum); }
   .wxp small { font-size: 15px; font-weight: 600; line-height: 1.2; color: var(--ink-soft); }
-  .wxp .sim { margin-top: 3px; font-size: 15px; line-height: 18px; padding: 0 8px; border-radius: 8px; background: #F8F2F6; }
-  a:focus-visible, button:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+  .wxp .sim { margin-top: 3px; font-size: 15px; line-height: 18px; padding: 0 8px; background: #F6ECF2; }
+  .ic svg { width: 1em; height: 1em; display: block; }
 
-  /* rows */
-  .rows-ax { position: absolute; left: 16px; right: 16px; top: 294px; display: flex; flex-direction: column; gap: 8px; }
-  .r { display: flex; align-items: center; gap: 12px; padding: 9px 14px; border-radius: 18px; border: 1.5px solid var(--plate-line);
-       background: #fff; box-shadow: 0 1px 0 #0000000a, 0 3px 8px #5a2a4a14; color: var(--ink); width: 100%; }
-  .r > i[data-icon] { font-size: 28px; color: var(--plum); flex: none; align-self: flex-start; margin-top: 4px; }
+  /* rows: soft tinted pills, shadow only below */
+  .rows { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+  .r { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 16px; border-radius: 28px; color: var(--ink);
+       background: rgba(255,255,255,.6); box-shadow: var(--soft-drop-lg); }
+  .r > .ic, .r > i[data-icon] { font-size: 28px; color: var(--plum); flex: none; display: grid; }
   .r .txt { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; flex: 1; }
-  .r small { font-size: 15px; line-height: 1.15; color: var(--ink-soft); font-weight: 500; }
-  .r b { font-size: 22px; line-height: 1.15; font-weight: 700; }
+  .r small { font-size: 15px; line-height: 1.2; color: var(--ink-soft); font-weight: 500; }
+  .r b { font-size: 22px; line-height: 1.2; font-weight: 700; }
   .r .end { margin-left: auto; flex: none; color: var(--plum); font-size: 22px; display: grid; }
-  .r.green { background: #E4F3DF; border-color: #BFDDB8; }
-  .r.butter { background: var(--butter); border-color: var(--butter-line); }
-  .r.pink { background: #FCE6F2; border-color: #F0C4DC; }
-  .pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 3px 10px 3px 8px; border-radius: 999px;
-          background: #E4F3DF; border: 1.5px solid #BFDDB8; font-size: 15px; font-weight: 600; line-height: 1.2; color: #2F5536; white-space: nowrap; }
+  .r.butter { background: #FCF0C6; }
+  .r.quiet b { color: var(--ink-soft); font-weight: 600; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 5px; padding: 3px 11px 3px 9px; border-radius: 999px;
+          background: #E2F2DD; font-size: 15px; font-weight: 600; line-height: 1.25; color: #2F5536; }
   .pill i[data-icon] { font-size: 16px; color: #3E6B45; }
-  .r .chip { min-height: 36px; padding: 0 14px 0 10px; gap: 6px; font-size: 20px; font-weight: 700; flex: none; }
-  .r.one > i[data-icon] { align-self: center; margin-top: 0; }
-  .r .chip i[data-icon] { font-size: 18px; }
-  .r .hint { font-size: 15px; line-height: 1.2; color: var(--ink-soft); font-weight: 500; }
-
-  /* actions */
-  .go { position: absolute; left: 16px; right: 16px; top: 562px; min-height: 60px; border-radius: 18px; font-size: 22px; gap: 10px; }
+  .pill.main { background: rgba(255,255,255,.75); color: var(--ink-soft); }
+  .pill.butter { background: #FCF0C4; color: #5E4A0E; }
+  .pill.butter i[data-icon] { color: #5E4A0E; }
+  .go { min-height: 64px; border-radius: 24px; font-size: 22px; gap: 10px; }
   .go i[data-icon] { font-size: 26px; }
-  .pair { position: absolute; left: 16px; right: 16px; top: 634px; display: flex; gap: 8px; }
-  .sec { display: flex; align-items: center; justify-content: center; gap: 6px; height: 52px; padding: 0 12px; border-radius: 16px;
-         border: 1.5px solid var(--plate-line); background: #fff; font-size: 20px; font-weight: 700; color: var(--ink); white-space: nowrap;
-         box-shadow: 0 1px 0 #0000000a, 0 3px 8px #5a2a4a14; }
-  .sec i[data-icon] { font-size: 22px; color: var(--plum); }
-  .sec.butter { background: var(--butter); border-color: var(--butter-line); }
+  .cap { margin: 10px 4px -4px; font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+  .drawers { display: flex; flex-direction: column; }
+  .drawers .r { background: none; box-shadow: none; border-radius: 22px; padding-left: 12px; }
+  .drawers .r + .r { background: var(--soft-divider) 14px 0/calc(100% - 28px) 1px no-repeat; border-radius: 0; }
 
-  /* weather detail sheet, opened in place by the banner's weather plate (no weather screen yet) */
-  .wxsheet { position: absolute; left: 16px; right: 16px; top: 292px; z-index: 20; padding: 6px 6px 16px 18px;
-             background: #fff; border: 1.5px solid var(--plate-line); border-radius: 20px; box-shadow: 0 10px 28px #5a2a4a38; }
+  /* weather detail sheet, opened in place by the banner's weather plate */
+  .wxsheet { position: fixed; left: 16px; right: 16px; top: 120px; z-index: 30; padding: 6px 6px 18px 18px; background: #fff;
+             border-radius: 28px; box-shadow: 0 26px 34px -18px rgba(90,42,74,.42), 0 2px 30px rgba(90,42,74,.08); }
   .wxsheet[hidden] { display: none; }
   .wxsheet .wh { display: flex; align-items: center; gap: 8px; min-height: 52px; }
-  .wxsheet .wh > i[data-icon] { font-size: 26px; color: var(--plum); }
+  .wxsheet .wh .ic { font-size: 26px; color: var(--plum); display: grid; }
   .wxsheet .wh b { font-size: 22px; }
   .wxsheet .wh .sim { font-size: 15px; line-height: 18px; padding: 1px 8px; }
   .wxsheet .x { margin-left: auto; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 14px; color: var(--ink-soft); font-size: 24px; }
   .wxsheet .big { font-size: 24px; font-weight: 700; line-height: 1.25; }
   .wxsheet .say { margin-top: 6px; padding-right: 12px; font-size: 20px; line-height: 1.35; color: var(--ink-soft); }
+  .wxsheet .say a { color: var(--plum); font-weight: 700; }
 
-  /* bigger tab bar */
-  .tabfade { height: 96px; }
-  .tabbar { height: 76px; bottom: 12px; border-radius: 38px; }
+  /* bigger tab bar, fixed while the rows scroll */
+  .tabfade { position: fixed; height: 110px; z-index: 19; }
+  .tabbar { position: fixed; height: 76px; bottom: 12px; border-radius: 38px; z-index: 20; }
   .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 32px;
                 font-size: 17px; font-weight: 700; color: var(--plum); white-space: nowrap; }
   .tabbar > a i[data-icon] { font-size: 26px; }
   .tabbar > a.on { background: var(--plum); color: #fff; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+
+  /* ---------- dark appearance (tokens from css/dark.css) ---------- */
+  html.theme-dark .page { background: linear-gradient(var(--wall), var(--wall-2)); }
+  html.theme-dark .banner { background: linear-gradient(#3F2E38, #36272F); }
+  html.theme-dark .wxp { background: var(--soft-tint-strong); }
+  html.theme-dark .wxp .sim { background: rgba(255,240,248,.1); }
+  html.theme-dark .sign .name { color: #5A1A4B; }
+  html.theme-dark .r { background: var(--surface); box-shadow: var(--soft-drop-lg); }
+  html.theme-dark .r.butter { background: var(--tint-butter); }
+  html.theme-dark .drawers .r { background: none; box-shadow: none; }
+  html.theme-dark .drawers .r + .r { background: var(--soft-divider) 14px 0/calc(100% - 28px) 1px no-repeat; }
+  html.theme-dark .pill { background: var(--tint-green); color: var(--tint-green-ink); }
+  html.theme-dark .pill i[data-icon] { color: var(--tint-green-ink); }
+  html.theme-dark .pill.main { background: rgba(255,240,248,.1); color: var(--ink-soft); }
+  html.theme-dark .pill.butter { background: var(--tint-butter); color: var(--tint-butter-ink); }
+  html.theme-dark .pill.butter i[data-icon] { color: var(--tint-butter-ink); }
+  html.theme-dark .wxsheet { background: var(--surface); box-shadow: 0 26px 34px -18px rgba(0,0,0,.7); }
+  html.theme-dark .tabfade { background: linear-gradient(rgba(50,36,44,0), var(--wall-2) 42%); }
 </style>
 </head>
 <body>
-<div class="screen">
+<div class="page">
   <div class="nav">Home<a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
-  <div class="title-display hdr-title">My Petite Style</div>
+  <h1 class="title-display hdr-title">My Petite Style</h1>
 
   <!-- ============ banner ============ -->
   <div class="banner">
-    <!-- wardrobe edge on the left: 1:1, shows its right 70 px (svg x 94..164). Its plain upper face (banner y -20..52)
-         stays plain, so the open section starts at banner y 56 -->
-    <img class="art" src="../art/wardrobe.svg" alt="" style="left:-94px;top:-46px;width:164px;height:394px">
-    <!-- rail at banner y 66, opening x -70..56, y 56..162 (clipped to the banner) -->
-    <div class="rail" aria-hidden="true" style="left:0;top:56px;width:56px;height:106px">
-      <span class="g" data-garment="g-lace-top" data-hanger style="left:-34px;top:4.5px;width:60px;height:85px"></span>
-      <span class="g" data-garment="g-pink-blouse" data-hanger style="left:4px;top:4.5px;width:60px;height:85px"></span>
-    </div>
-    <!-- window on the right, 1:1; rod at banner y 11, the whole window, sill and lip (to banner y 181.5) sit on the wall -->
-    <img class="art" src="../art/window-rain.svg" alt="" style="left:262px;top:5px;width:96px;height:184px">
-    <!-- her name sign, name-sign.svg at 1.3 (143 x 83.2), hung on the wall between the wardrobe (to x 70) and the window (from 262).
-         Text area x 17..93, y 27..53 becomes x 22.1..120.9, y 35.1..68.9. Tapping it opens Profile. -->
-    <a class="sign" href="settings.html" aria-label="Name sign: Lily. Opens Profile" style="left:84px;top:40px;width:143px;height:83.2px">
+    <!-- wardrobe edge on the left: 1:1, shows its right 70 px; it opens Closet -->
+    <a href="closet.html" aria-label="Wardrobe. Opens Closet" style="position:absolute;left:0;top:0;width:72px;height:186px;display:block">
+      <img class="art" src="../art/wardrobe.svg" alt="" style="left:-94px;top:-46px;width:164px;height:394px">
+      <span class="rail" aria-hidden="true" style="left:0;top:56px;width:56px;height:106px">
+        <span class="g" data-garment="g-lace-top" data-hanger style="left:-34px;top:4.5px;width:60px;height:85px"></span>
+        <span class="g" data-garment="g-pink-blouse" data-hanger style="left:4px;top:4.5px;width:60px;height:85px"></span>
+      </span>
+    </a>
+    <!-- window on the right, 1:1; it follows the weather -->
+    <img class="art" id="window" src="../art/window-rain.svg" alt="" style="left:262px;top:5px;width:96px;height:184px">
+    <!-- her name sign, name-sign.svg at 1.3 (143 x 83.2); opens Profile -->
+    <a class="sign" href="settings.html" aria-label="Name sign: Lily. Opens Profile" style="left:88px;top:40px;width:143px;height:83.2px">
       <img src="../art/name-sign.svg" alt="">
       <span class="name" style="left:22.1px;top:35.1px;width:98.8px;height:33.8px;font-size:30px">Lily</span>
     </a>
-    <!-- weather plate on the window's lower sash (glass y 23.5..166.5), so the rod, curtains and upper glass stay in view.
-         It opens the weather sheet in place, as on home.html. -->
-    <button class="wxp" type="button" data-wx aria-haspopup="dialog" aria-expanded="false" aria-controls="wx-sheet" aria-label="Weather: 58°F, rain today. Simulated" style="right:6px;top:92px"><span class="t"><i data-icon="rain"></i>58°F<i class="chev" data-icon="chevron-right"></i></span><small>Rain today</small><span class="sim">Simulated</span></button>
+    <button class="wxp" type="button" id="wx" aria-haspopup="dialog" aria-expanded="false" aria-controls="wx-sheet"><span class="t"><span class="ic" id="wx-ic"></span><span id="wx-temp">58°F</span><i class="chev" data-icon="chevron-right"></i></span><small id="wx-words">Rain today</small><span class="sim">Simulated</span></button>
   </div>
 
-  <!-- ============ controls as rows ============ -->
-  <div class="rows-ax">
-    <a class="r" href="suitcases.html">
+  <!-- ============ the room's controls as rows ============ -->
+  <div class="rows">
+    <a class="r" id="row-source" href="suitcases.html">
       <i data-icon="suitcase"></i>
-      <span class="txt"><small>Source</small><b>Jose's house</b>
-        <span class="pill"><i data-icon="lock"></i>5 pieces · Suitcase only</span></span>
-      <span class="end"><i data-icon="chevron-updown"></i></span>
-    </a>
-    <button class="r butter one" type="button" aria-haspopup="listbox" aria-label="Occasion: Office">
-      <i data-icon="calendar"></i>
-      <span class="txt"><b>Occasion</b></span>
-      <span class="chip on"><i data-icon="check"></i>Office</span>
-      <span class="end" style="margin-left:0"><i data-icon="chevron-down"></i></span>
-    </button>
-    <a class="r pink" href="closet.html">
-      <i data-icon="hanger"></i>
-      <span class="txt"><small>Starting piece</small><b>Choose a piece</b><span class="hint">e.g. navy dress pants</span></span>
+      <span class="txt"><small>Source</small><b id="src-name">Jose's house</b>
+        <span class="pill" id="src-pill"><i data-icon="lock"></i><span id="src-scope">5 pieces · Suitcase only</span></span></span>
       <span class="end"><i data-icon="chevron-right"></i></span>
     </a>
-  </div>
+    <a class="r butter" id="row-occ" href="styleme.html?sheet=occasion">
+      <i data-icon="calendar"></i>
+      <span class="txt"><small>Occasion</small><b id="occ">Office</b></span>
+      <span class="end"><i data-icon="chevron-right"></i></span>
+    </a>
+    <a class="btn go" href="styleme.html"><i data-icon="sparkles"></i>Style Me</a>
+    <a class="r" id="row-laundry" href="laundry.html">
+      <i data-icon="basket"></i>
+      <span class="txt"><small>Laundry</small><b id="lau-text">2 to wash</b></span>
+      <span class="end"><i data-icon="chevron-right"></i></span>
+    </a>
 
-  <a class="btn go" href="results.html"><i data-icon="sparkles"></i>Style Me</a>
-  <div class="pair">
-    <button class="sec butter" type="button" aria-expanded="false" style="flex:1">More options<i data-icon="chevron-down" style="color:var(--ink)"></i></button>
+    <p class="cap">In the desk drawers</p>
+    <div class="drawers">
+      <a class="r" href="help.html"><i data-icon="info"></i><span class="txt"><b>Help</b></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+      <a class="r" href="feedback.html"><i data-icon="chat"></i><span class="txt"><b>Send feedback</b></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+      <a class="r" href="privacy.html"><i data-icon="lock"></i><span class="txt"><b>Privacy and terms</b></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+    </div>
   </div>
-
-  <!-- ============ weather detail sheet (closed until the weather plate is tapped) ============ -->
-  <div class="wxsheet" id="wx-sheet" role="dialog" aria-label="Weather" hidden>
-    <div class="wh"><i data-icon="rain"></i><b>Weather</b><span class="sim">Simulated</span>
-      <button class="x" type="button" data-wx-close aria-label="Close weather"><i data-icon="close"></i></button></div>
-    <p class="big">58°F · Rain today</p>
-    <p class="say">Style Me plans for this weather. To plan for other weather, open More options.</p>
-  </div>
-
-  <!-- ============ tab bar ============ -->
-  <div class="tabfade"></div>
-  <nav class="tabbar">
-    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
-    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
-    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
-  </nav>
 </div>
+
+<!-- ============ weather detail sheet (closed until the weather plate is tapped) ============ -->
+<div class="wxsheet" id="wx-sheet" role="dialog" aria-label="Weather" hidden>
+  <div class="wh"><span class="ic" id="wxs-ic"></span><b>Weather</b><span class="sim">Simulated</span>
+    <button class="x" type="button" id="wx-close" aria-label="Close weather"><i data-icon="close"></i></button></div>
+  <p class="big" id="wxs-big">58°F · Rain today</p>
+  <p class="say"><span id="wxs-say">Style Me picks looks for a cool, wet day.</span> To plan for other weather, change it in <a href="styleme.html">Style Me</a>.</p>
+</div>
+
+<!-- ============ tab bar ============ -->
+<div class="tabfade"></div>
+<nav class="tabbar" aria-label="Tabs">
+  <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+  <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+  <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+</nav>
 
 <script src="../js/icons.js"></script>
 <script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
 <script>
+/* ---------- Home state (same rules as home.html) ----------
+   ?weather=rain|sun|cloudy|snow, ?time=night, ?laundry=off|clean override stored state for display.
+   Source from MockState `source` (default Jose's house), Occasion from `occasion` (default Office). */
+var HOME = (function () {
+  var P = new URLSearchParams(location.search);
+  var S = window.MockState || { get: function (k, f) { return f; }, set: function () {} };
+  var SUITCASES = { jose: { name: "Jose's house", n: 5 }, weekend: { name: 'Weekend', n: 8 }, spring: { name: 'Spring trip', n: 0 } };
+  var OCC = { office: 'Office', dateNight: 'Date Night', brunch: 'Brunch', concert: 'Concert', casual: 'Casual', event: 'Event', other: 'Other' };
+  var WX = {
+    rain:   { icon: 'rain',  art: 'window-rain',   t: 58, tn: 54, day: 'Rain today',   night: 'Rain tonight',   say: 'Style Me picks looks for a cool, wet day.' },
+    sun:    { icon: 'sun',   art: 'window-sun',    t: 72, tn: 61, day: 'Sunny today',  night: 'Clear tonight',  say: 'Style Me picks looks for a mild, sunny day.', nicon: 'moon' },
+    cloudy: { icon: 'cloud', art: 'window-cloudy', t: 63, tn: 57, day: 'Cloudy today', night: 'Cloudy tonight', say: 'Style Me picks looks for a mild, cloudy day.' },
+    snow:   { icon: 'snow',  art: 'window-snow',   t: 30, tn: 26, day: 'Snow today',   night: 'Snow tonight',   say: 'Style Me picks warm looks for a cold, snowy day.' }
+  };
+  if (S.get('source', null) === null) S.set('source', { type: 'suitcase', id: 'jose' });
+  var wkey = WX[P.get('weather')] ? P.get('weather') : 'rain';
+  var night = P.get('time') === 'night';
+  var w = WX[wkey];
+  var weather = { key: wkey, night: night, art: night ? 'window-night' : w.art, icon: night && w.nicon ? w.nicon : w.icon,
+    temp: (night ? w.tn : w.t) + '°F', words: night ? w.night : w.day, say: night ? w.say.replace(' day.', ' evening.') : w.say };
+  weather.text = weather.temp + ' · ' + weather.words;
+  var lp = P.get('laundry');
+  var tracking = lp === 'off' ? false : (lp === 'clean' ? true : S.get('laundry.tracking', true) !== false);
+  var dirty = lp === 'clean' ? [] : (S.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) || []);
+  var laundry = !tracking
+    ? { state: 'off', text: 'Off', href: 'laundry-off.html', label: 'Laundry tracking is off. Opens what laundry tracking does' }
+    : dirty.length
+      ? { state: 'dirty', n: dirty.length, text: dirty.length + ' to wash', href: 'laundry.html', label: 'Laundry: ' + dirty.length + ' to wash. Opens Laundry' }
+      : { state: 'clean', text: 'All clean', href: 'laundry.html', label: 'Laundry: all clean. Opens Laundry' };
+  var src = S.get('source', { type: 'suitcase', id: 'jose' }) || {};
+  var sid = String(src.id || '').replace(/^s-/, '');
+  var source = src.type === 'suitcase' && SUITCASES[sid]
+    ? { suitcase: true, name: SUITCASES[sid].name, n: SUITCASES[sid].n }
+    : { suitcase: false, name: 'Main closet', n: 21 };
+  source.count = source.n === 0 ? 'Empty' : source.n + (source.n === 1 ? ' piece' : ' pieces');
+  source.scope = source.suitcase ? 'Suitcase only' : 'Whole closet';
+  source.label = 'Source: ' + source.name + ', ' + (source.n === 0 ? 'empty' : source.count) + ', ' + source.scope.toLowerCase() + '. Opens Suitcases';
+  var ok = S.get('occasion', 'office');
+  var occasion = OCC[ok] || 'Office';
+  var occasionLong = ok === 'other' && S.get('occasionOther', '') ? 'Other: ' + S.get('occasionOther', '') : occasion;
+  var SNOW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.6 4.6 12 6.6l2.4-2M9.6 19.4 12 17.4l2.4 2M4.6 11.1l2.9-.6-.9-2.9M19.4 11.1l-2.9-.6.9-2.9M4.6 12.9l2.9.6-.9 2.9M19.4 12.9l-2.9.6.9 2.9"/></svg>';
+  function icon(name) { return name === 'snow' ? SNOW : (window.Icons ? window.Icons.svg(name) : ''); }
+  function txt(id, t) { var e = document.getElementById(id); if (e) e.textContent = t; }
+  return { weather: weather, laundry: laundry, source: source, occasion: occasion, occasionLong: occasionLong, icon: icon, txt: txt };
+})();
+
+/* ---------- this page ---------- */
+(function () {
+  var H = HOME, w = H.weather, l = H.laundry, s = H.source;
+  document.getElementById('window').src = '../art/' + w.art + '.svg';
+  document.getElementById('wx-ic').innerHTML = H.icon(w.icon);
+  document.getElementById('wxs-ic').innerHTML = H.icon(w.icon);
+  H.txt('wx-temp', w.temp); H.txt('wx-words', w.words); H.txt('wxs-big', w.text); H.txt('wxs-say', w.say);
+  document.getElementById('wx').setAttribute('aria-label', 'Weather: ' + w.text + '. Simulated');
+
+  H.txt('src-name', s.name);
+  H.txt('src-scope', s.count + ' · ' + s.scope);
+  document.getElementById('src-pill').className = 'pill' + (s.suitcase ? (s.n === 0 ? ' butter' : '') : ' main');
+  if (!s.suitcase) document.querySelector('#src-pill i').style.display = 'none';
+  document.getElementById('row-source').setAttribute('aria-label', s.label);
+
+  H.txt('occ', H.occasionLong);
+  document.getElementById('row-occ').setAttribute('aria-label', 'Occasion: ' + H.occasionLong + '. Change');
+
+  var row = document.getElementById('row-laundry');
+  row.setAttribute('href', l.href);
+  row.setAttribute('aria-label', l.label);
+  row.classList.toggle('quiet', l.state === 'off');
+  H.txt('lau-text', l.state === 'off' ? 'Off · tap to learn more' : l.text);
+})();
+
 /* Weather sheet: the weather plate opens it; the close button, Escape or a tap outside closes it. */
 (function () {
-  var sheet = document.getElementById('wx-sheet');
-  var openers = document.querySelectorAll('[data-wx]');
-  if (!sheet) return;
-  function set(open, from) {
+  var sheet = document.getElementById('wx-sheet'), opener = document.getElementById('wx');
+  function set(open, refocus) {
     sheet.hidden = !open;
-    for (var i = 0; i < openers.length; i++) openers[i].setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) sheet.querySelector('[data-wx-close]').focus(); else if (from) from.focus();
+    opener.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) document.getElementById('wx-close').focus(); else if (refocus) opener.focus();
   }
-  for (var i = 0; i < openers.length; i++) openers[i].addEventListener('click', function (e) {
-    e.stopPropagation(); set(sheet.hidden, this);
-  });
-  sheet.querySelector('[data-wx-close]').addEventListener('click', function () { set(false, openers[0]); });
+  opener.addEventListener('click', function (e) { e.stopPropagation(); set(sheet.hidden, true); });
+  document.getElementById('wx-close').addEventListener('click', function () { set(false, true); });
   sheet.addEventListener('click', function (e) { e.stopPropagation(); });
   document.addEventListener('click', function () { if (!sheet.hidden) set(false); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) set(false, openers[0]); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) set(false, true); });
 })();
 </script>
 </body>

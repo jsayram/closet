@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kit B: shelf, calendar, mirror, desk objects</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  html, body { width: 700px; height: 760px; }
+  .screen { width: 700px; height: 760px; }
+  .cap { position: absolute; font-size: 11px; color: var(--ink-soft); font-weight: 600; white-space: nowrap; line-height: 1.35; }
+  .cap code { font-family: ui-monospace, Menlo, monospace; font-weight: 500; }
+  .sheet { position: absolute; left: 0; right: 0; top: 0; height: 36px; display: flex; align-items: center; padding: 0 20px;
+    font-size: 13px; color: var(--ink-soft); }
+  .sheet b { color: var(--ink); margin-right: 8px; }
+
+  /* Saved Looks plate, sized to the shelf-top plate zone x 7..145 y 61..91 (138 x 30) */
+  .plate { width: 138px; height: 30px; gap: 4px; padding: 0 8px; justify-content: center; }
+  .plate > i[data-icon] { font-size: 17px; }
+  .plate b { font-size: 13px; }
+  .plate .end { margin-left: 2px; }
+  .plate .end i[data-icon] { font-size: 13px; }
+
+  /* outfit thumbnails on the frames shelf: one box per card, pieces fitted by the script below */
+  .card-ov { position: absolute; width: 34px; height: 66px; }
+  .card-ov .th { position: absolute; left: 0; top: 0; width: 120px; }
+
+  /* calendar overlay, inside the flat face x 8..82 y 20..65 */
+  .cal-label { position: absolute; width: 74px; height: 45px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .cal-label .t { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: var(--ink); }
+  .cal-label .t i[data-icon] { font-size: 13px; color: var(--ink); }
+  .cal-label .pick { display: flex; align-items: center; gap: 2px; }  /* row measures 74 px, the zone width */
+  .pill { display: inline-flex; align-items: center; gap: 2px; min-height: 22px; padding: 0 7px 0 6px; border-radius: 999px;
+    background: #1F4E7A; color: #fff; font-size: 12px; font-weight: 700; }
+  .pill i[data-icon] { font-size: 10px; }
+  .cal-label .pick i.chev { font-size: 10px; color: var(--ink); }
+
+  /* mirror overlay, inside the glass x 9..71 */
+  .onme { position: absolute; width: 62px; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+  .onme b { font-size: 13px; color: var(--plum); }
+  .onme small { font-size: 11px; color: var(--plum); }
+  .onme .toggle { margin-top: 4px; }
+
+  /* laptop overlay, inside the screen x 6..86 y 5..50 */
+  .styleme { position: absolute; width: 80px; height: 45px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; color: #fff; font-size: 13px; font-weight: 700; }
+  .styleme i[data-icon] { font-size: 18px; }
+
+  /* a sample sage desk top so the desk objects have something to stand on */
+  .desk-top { position: absolute; height: 9px; border-radius: 3px; background: var(--sage); border: 1.3px solid var(--sage-line); }
+  .desk-top::after { content: ""; position: absolute; left: -1.3px; right: -1.3px; top: 7px; height: 3px; background: var(--sage-2); border: 1.3px solid var(--sage-line); border-top: 0; border-radius: 0 0 3px 3px; }
+  .desk-front { position: absolute; background: var(--sage); border: 1.3px solid var(--sage-line); border-top: 0; border-radius: 0 0 4px 4px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room" style="--floor-y: 560px"></div>
+  <div class="sheet"><b>Kit B</b> shelf-top, shelf-frames, calendar, mirror, lamp, laptop, note-stand at 1:1 with sample overlays</div>
+
+  <!-- Saved Looks cluster: plant shelf with the label plate held between its board and ledge, then the frames shelf -->
+  <img class="abs" src="../art/shelf-top.svg" style="left:24px; top:46px; width:152px; height:110px" alt="">
+  <div class="tag pink slim plate" style="left:31px; top:107px">
+    <i data-icon="bookmark"></i><b>Saved Looks</b><span class="end"><i data-icon="chevron-right"></i></span>
+  </div>
+  <img class="abs" src="../art/shelf-frames.svg" style="left:39px; top:164px; width:122px; height:102px" alt="">
+  <!-- one overlay box per card, at the card's own origin (shelf-frames x 4 / 44 / 84, y 6).
+       data-box is x,y,w,h in card px; the card inside is x 2.4..31.6, y 2.4..63.6 and the knob is centred at (17, 1.2). -->
+  <div class="card-ov" style="left:43px; top:170px">
+    <span class="th" data-garment="g-navy-trousers" data-detail="low" data-box="6,26.5,22,26.5"></span>
+    <span class="th" data-garment="g-tan-loafers" data-detail="low" data-box="8,53.9,18,9.5"></span>
+    <span class="th" data-garment="g-gray-blazer" data-detail="low" data-hanger data-box="4,3.9,26,26.4" data-align="top"></span>
+    <span class="th" data-garment="g-burgundy-bag" data-detail="low" data-box="3.2,24.5,8,13"></span>
+  </div>
+  <div class="card-ov" style="left:83px; top:170px">
+    <span class="th" data-garment="g-wide-jeans" data-detail="low" data-box="6,26.5,22,26.5"></span>
+    <span class="th" data-garment="g-nude-flats" data-detail="low" data-box="8,53.9,18,9.5"></span>
+    <span class="th" data-garment="g-pink-blouse" data-detail="low" data-hanger data-box="4,3.9,26,26.4" data-align="top"></span>
+  </div>
+  <div class="card-ov" style="left:123px; top:170px">
+    <span class="th" data-garment="g-tan-loafers" data-detail="low" data-box="8,53.9,18,9.5"></span>
+    <span class="th" data-garment="g-blue-dress" data-detail="low" data-hanger data-box="4,3.9,26,43.4" data-align="top"></span>
+    <span class="th" data-garment="g-burgundy-bag" data-detail="low" data-box="22.8,25.5,8,13"></span>
+  </div>
+  <div class="cap" style="left:24px; top:274px"><code>shelf-top</code> 152x110 &middot; board x 1..151 y 52..63 &middot; plate zone x 7..145 y 61..91 (138 x 30)<br><code>shelf-frames</code> 122x102 &middot; card insides x 6.4..35.6 y 8.4..69.6 (+0 / +40 / +80), knob at (21, 7.2)<br>both boards 11 tall: top face 3, front edge 8 &middot; frames shelf sits centred under the top shelf (+15)</div>
+
+  <!-- Calendar with its label -->
+  <img class="abs" src="../art/calendar.svg" style="left:230px; top:70px; width:90px; height:80px" alt="">
+  <div class="cal-label" style="left:238px; top:90px">
+    <div class="t"><i data-icon="calendar"></i>Occasion</div>
+    <div class="pick"><span class="pill"><i data-icon="check"></i>Office</span><i class="chev" data-icon="chevron-down"></i></div>
+  </div>
+  <div class="cap" style="left:230px; top:158px"><code>calendar</code> 90x80<br>label zone x 8..82 y 20..65</div>
+
+  <!-- Desk objects and the mirror, bare, for a clean look at each -->
+  <img class="abs" src="../art/laptop.svg" style="left:380px; top:80px; width:92px; height:64px" alt="">
+  <img class="abs" src="../art/lamp.svg" style="left:492px; top:80px; width:44px; height:64px" alt="">
+  <img class="abs" src="../art/note-stand.svg" style="left:556px; top:90px; width:42px; height:54px" alt="">
+  <img class="abs" src="../art/mirror.svg" style="left:614px; top:60px; width:80px; height:196px" alt="">
+  <div class="cap" style="left:380px; top:152px">bare, no overlays</div>
+
+  <!-- Plant shelf and calendar again with nothing on them, to judge the art alone -->
+  <img class="abs" src="../art/shelf-top.svg" style="left:24px; top:330px; width:152px; height:110px" alt="">
+  <img class="abs" src="../art/calendar.svg" style="left:40px; top:452px; width:90px; height:80px" alt="">
+  <div class="cap" style="left:140px; top:500px">bare, no overlays</div>
+
+  <!-- Desk objects standing on a sample desk top -->
+  <div class="desk-front" style="left:250px; top:470px; width:270px; height:90px"></div>
+  <div class="desk-top" style="left:244px; top:463px; width:282px"></div>
+  <img class="abs" src="../art/laptop.svg" style="left:262px; top:402px; width:92px; height:64px" alt="">
+  <div class="styleme" style="left:268px; top:407px"><i data-icon="sparkles"></i>Style Me</div>
+  <img class="abs" src="../art/lamp.svg" style="left:372px; top:402px; width:44px; height:64px" alt="">
+  <img class="abs" src="../art/note-stand.svg" style="left:436px; top:412px; width:42px; height:54px" alt="">
+  <div class="cap" style="left:244px; top:600px"><code>laptop</code> 92x64 &middot; screen x 6..86 y 5..50<br><code>lamp</code> 44x64 &middot; <code>note-stand</code> 42x54<br>note card face x 7.5..34.5 y 4..44<br>bottoms: laptop and lamp y 62.4, note-stand y 52.4</div>
+
+  <!-- Mirror standing on the floor with its overlay -->
+  <img class="abs" src="../art/mirror.svg" style="left:560px; top:374px; width:80px; height:196px" alt="">
+  <div class="onme" style="left:569px; top:396px">
+    <b>On Me</b><small>simulated</small><span class="toggle on"></span>
+  </div>
+  <div class="cap" style="left:548px; top:600px"><code>mirror</code> 80x196<br>glass x 9..71 y 9..179<br>frame bottom y 186<br>feet bottom y 192.8</div>
+</div>
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* Outfit thumbnails for the frames-shelf cards.
+   garments.js draws in a 120 x 170 box with outlines of 3 units in its small mode, so at card size (about a fifth
+   of that) outlines would fall to about 0.6 px. Until garments.js has a thumbnail mode, this page fits each piece
+   into its data-box and thickens its strokes so outlines land near 1.1 px, next to the 1.3 px card outlines. */
+(function () {
+  var TARGET = 1.1, OUTLINE = 3;
+  function fit(el) {
+    var svg = el.querySelector('svg');
+    if (!svg || el.getAttribute('data-fitted')) return;
+    var b = svg.getBBox();
+    var box = (el.getAttribute('data-box') || '0,0,34,66').split(',').map(Number);
+    var s = Math.min(box[2] / b.width, box[3] / b.height);
+    var left = box[0] + box[2] / 2 - (b.x + b.width / 2) * s;
+    var top = el.getAttribute('data-align') === 'top' ? box[1] - b.y * s : box[1] + box[3] - (b.y + b.height) * s;
+    el.style.width = (120 * s).toFixed(2) + 'px';
+    el.style.left = left.toFixed(2) + 'px';
+    el.style.top = top.toFixed(2) + 'px';
+    var f = TARGET / (OUTLINE * s);
+    var list = svg.querySelectorAll('[stroke-width]');
+    for (var i = 0; i < list.length; i++) {
+      var el2 = list[i], w = parseFloat(el2.getAttribute('stroke-width')), c = (el2.getAttribute('stroke') || '').toUpperCase();
+      if (!(w > 0)) continue;
+      // the wood hanger is drawn as a wide outline stroke (#B98632) under a core stroke half as wide (#E7BC6E):
+      // grow its core a little and give it a thin wall, so the hook and bar stay slim instead of swelling with f
+      if (c === '#E7BC6E') w = w * 1.25;
+      else if (c === '#B98632' && w >= 4) w = w / 2 * 1.25 + 0.8 * OUTLINE * f;
+      else w = w * f;
+      el2.setAttribute('stroke-width', w.toFixed(2));
+    }
+    el.setAttribute('data-fitted', '1');
+  }
+  function run() { var l = document.querySelectorAll('.card-ov .th'); for (var i = 0; i < l.length; i++) fit(l[i]); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+</script>
+</body>
+</html>

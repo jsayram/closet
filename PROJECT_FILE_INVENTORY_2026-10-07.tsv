@@ -1,0 +1,903 @@
+path	bytes	type	tracked_in_git	area
+.claude/settings.local.json	334	.json	no	Local agent configuration
+.gitignore	713	[no extension]	yes	Root specification, history or repository configuration
+Claude_Code_Mockup_Capabilities.md	3883	.md	yes	Root specification, history or repository configuration
+Claude_Code_iPhone_iPad_Mockup_Prompt.txt	14326	.txt	yes	Root specification, history or repository configuration
+Lilys_Feedback_PRD_Assessment.md	31700	.md	yes	Root specification, history or repository configuration
+Lilys_Wardrobe_App_Feedback.txt	40202	.txt	yes	Root specification, history or repository configuration
+My_Petite_Style_PRD_v0.1.docx	54117	.docx	yes	Root specification, history or repository configuration
+My_Petite_Style_PRD_v0.1.md	285331	.md	yes	Root specification, history or repository configuration
+My_Petite_Style_PRD_v2.md	517430	.md	yes	Root specification, history or repository configuration
+PROJECT_HANDOFF.md	3145	.md	yes	Root specification, history or repository configuration
+Petite_Wardrobe_Review_Requirements.md	1381	.md	yes	Root specification, history or repository configuration
+README.md	2985	.md	yes	Root specification, history or repository configuration
+Simplified_Direction_On_Hold.md	13531	.md	yes	Root specification, history or repository configuration
+Virtual_Try_On_Exploration.md	1531	.md	yes	Root specification, history or repository configuration
+prototypes/LilyStyleMockup/Config/Info.plist	356	.plist	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/CalmScreens.md	6121	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/ColorLanguage.md	11620	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/DesignSystem.md	15378	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/PRD-amendment-body-size.md	17970	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/Purchases.md	5195	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/Traceability.md	22837	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/Verification.md	17366	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/color-language-contrast.md	9602	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Docs/contrast-table.md	1770	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/App/LaunchConfiguration.swift	9039	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/App/LilyStyleMockupApp.swift	2511	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/App/Overlays.swift	8702	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/App/RootView.swift	12603	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/AppModel/AppModel.swift	52802	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/AppModel/Navigation.swift	4279	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/AppModel/PreviewSupport.swift	977	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/AppModel/Sessions.swift	4927	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/AccountAndFeedback.swift	6886	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/BodyFit.swift	10908	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/Garment.swift	12178	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/Outfit.swift	7863	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/Profile.swift	10501	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/Shopping.swift	8364	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/StyleRequest.swift	8917	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/StylistChat.swift	2233	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Models/Wardrobe.swift	4447	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Services/DemoScenario.swift	2863	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Services/MockServices.swift	25509	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Services/MockStylist.swift	30729	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Services/MockStylistChat.swift	23555	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Services/ServiceProtocols.swift	7366	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Store/DemoFixtures.swift	20783	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Store/DemoStore.swift	41981	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Core/Store/StoreSnapshot.swift	3447	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Components/ActionGroup.swift	7342	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Components/Badges.swift	10145	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Components/Buttons.swift	6843	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Components/ChipCarousel.swift	10566	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Components/Containers.swift	19333	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Components/Disclosures.swift	18414	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/GarmentArtwork.swift	14685	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Haptics.swift	815	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Motion.swift	7000	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/OutfitFlatLayView.swift	13029	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/OutfitViews.swift	4269	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/PadLayout.swift	1601	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/ScrollMemory.swift	736	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/DesignSystem/Theme.swift	4260	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/AskStylist/AskStylistCollage.swift	9471	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/AskStylist/AskStylistContent.swift	12621	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/AskStylist/AskStylistFeature.swift	9073	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/AskStylist/AskStylistSections.swift	36672	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Closet/ClosetActions.swift	16760	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Closet/ClosetBrowserView.swift	24659	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Closet/ClosetDetailSections.swift	49296	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Closet/ClosetFeature.swift	11008	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Closet/ClosetGarmentTile.swift	11992	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Closet/GarmentDetailView.swift	11920	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Feedback/FeedbackComposer.swift	19227	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Feedback/FeedbackFeature.swift	16070	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Feedback/FeedbackIdeas.swift	20272	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Feedback/FeedbackIssue.swift	17962	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Feedback/FeedbackSignIn.swift	5477	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Feedback/FeedbackSubmissions.swift	8589	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/FindOneComponents.swift	11561	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/FindOneFeature.swift	12721	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/FindOneLeadCard.swift	25815	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/FindOneResults.swift	25594	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/FindOneSections.swift	33887	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/FindOneSession.swift	18950	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/FindOneStoreSupport.swift	11528	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/PurchaseReviewView.swift	30012	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/SavedProductsView.swift	23592	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/FindOne/StoreHandoffView.swift	11293	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/GarmentEditor/AddGarmentView.swift	41447	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/GarmentEditor/GarmentEditorComponents.swift	19901	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/GarmentEditor/GarmentEditorFeature.swift	30298	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/GarmentEditor/GarmentEditorSuggestions.swift	21519	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/GarmentEditor/GarmentFactsEditor.swift	12890	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/GarmentEditor/GarmentNamingSection.swift	14417	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/GarmentEditor/GarmentPhotoSection.swift	17538	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Laundry/LaundryComponents.swift	10866	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Laundry/LaundryFeature.swift	25724	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Laundry/LaundrySheets.swift	13126	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/OutfitEditor/OutfitEditorFeature.swift	25425	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/OutfitEditor/OutfitEditorModelSupport.swift	7227	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/OutfitEditor/OutfitEditorSections.swift	32581	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/OutfitEditor/OutfitEditorSwapPicker.swift	35116	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfileComponents.swift	14953	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfileFeature.swift	10050	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfileFitReferences.swift	14977	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfileMeasurements.swift	31580	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfileOnMeReference.swift	20481	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfileOnboarding.swift	50431	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfilePermissions.swift	10739	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfilePreferences.swift	12312	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Profile/ProfileShopping.swift	9197	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Purchases/PurchaseSheets.swift	24723	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Saved/SavedCards.swift	20680	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Saved/SavedCollectionDetailView.swift	11435	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Saved/SavedFeature.swift	26225	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Saved/SavedOutfitDetailView.swift	30359	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Saved/SavedPreviewDetailView.swift	18658	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Saved/SavedSupport.swift	28868	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Search/SearchEngine.swift	27420	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Search/SearchFeature.swift	22748	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Search/SearchFilterBar.swift	14511	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Search/SearchIndex.swift	20050	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Search/SearchResultViews.swift	31255	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Search/SearchSelectionPane.swift	34819	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsBackup.swift	25262	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsComponents.swift	8971	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsDeveloper.swift	27225	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsFeature.swift	7484	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsHelp.swift	16142	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsLayoutLab.swift	9265	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsPrivacyData.swift	25937	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsSections.swift	29208	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsStylingAccess.swift	29646	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Settings/SettingsSupport.swift	6607	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StyleMe/StyleMeFeature.swift	11402	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StyleMe/StyleMeForm.swift	38748	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StyleMe/StyleMeMoreOptions.swift	13360	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StyleMe/StyleMeResultCard.swift	22059	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StyleMe/StyleMeResults.swift	35720	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StyleMe/StyleMeStartingItem.swift	28384	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StyleMe/StyleMeSupport.swift	18749	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StyleMe/StyleMeWeatherCard.swift	14057	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/StylistChat/StylistChatView.swift	28789	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Suitcases/SuitcaseDetailView.swift	21131	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Suitcases/SuitcasesComponents.swift	27091	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Suitcases/SuitcasesFeature.swift	22152	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Features/Suitcases/SuitcasesMembershipPicker.swift	15834	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/AccentColor.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/AccentSurface.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png	46390	.png	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json	202	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/Background.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/Contents.json	59	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/ControlBorder.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/Divider.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/Error.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/Figure.colorset/Contents.json	666	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/ImageWell.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/OnPrimaryAction.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/PrimaryAction.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/PrimaryText.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/SecondaryText.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/Success.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/SuccessSurface.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup/Resources/Assets.xcassets/Surface.colorset/Contents.json	665	.json	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup.xcodeproj/project.pbxproj	15584	.pbxproj	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup.xcodeproj/project.xcworkspace/contents.xcworkspacedata	135	.xcworkspacedata	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockup.xcodeproj/xcshareddata/xcschemes/LilyStyleMockup.xcscheme	4545	.xcscheme	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockupUITests/FlowTests.swift	8380	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/LilyStyleMockupUITests/ScreenshotTour.swift	8368	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/README.md	11542	.md	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Tools/capture_screenshots.sh	2522	.sh	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Tools/color_language_check.py	5573	.py	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Tools/contrast_check.py	2679	.py	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/Tools/make_contact_sheet.swift	3665	.swift	yes	Native SwiftUI prototype, docs and tools
+prototypes/LilyStyleMockup/project.yml	2395	.yml	yes	Native SwiftUI prototype, docs and tools
+prototypes/RoomDirectionMockups/ART_DIRECTION.md	18754	.md	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/NEXT_SESSION.md	17168	.md	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/README.md	7310	.md	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/archive/avatar/attempt-a/avatar.js	87709	.js	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/attempt-a/hero.html	626	.html	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/attempt-a/sheet.html	7983	.html	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/attempt-b/avatar.js	66075	.js	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/attempt-b/hero.html	620	.html	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/attempt-b/sheet.html	8322	.html	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/attempt-c/avatar.js	89804	.js	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/attempt-c/hero.html	593	.html	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/attempt-c/sheet.html	9532	.html	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/final/hero.html	638	.html	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/avatar/final/sheet.html	7995	.html	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access/access-final.png	241337	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access/paywall-final.png	241886	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access/settings-final.png	222741	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access2/access-final.png	241337	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access2/paywall-final.png	241886	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access2/settings-final.png	222741	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access3/access-final.png	228290	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access3/paywall-final.png	245156	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access3/settings-final.png	222741	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access4/access-final.png	197126	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access4/paywall-final.png	225267	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/access4/settings-final.png	225580	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ae/c5-skin-sheet.png	102061	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ae/c6-extras-sheet.png	153935	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ae/c6-hair-sheet.png	230154	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ae/final-check-out.png	16641	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-a-hero.png	200622	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-a-sheet.png	865993	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-b-hero.png	178870	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-b-sheet.png	726791	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-c-hero.png	172979	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-c-sheet.png	1109404	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-final-hero.png	217097	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-final-sheet.png	933128	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/avatar-final-small.png	141620	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/b/sheet3-outfits.png	528983	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/b2/kit-b-r1.png	434388	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/b2/kit-b-r2.png	443534	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/b2/kit-b-r3.png	445672	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/b2/note-stand-final.png	4545	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/b2/shelf-frames-final.png	7835	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/c2/kit-deskchair.png	54460	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/c2/kit-lights.png	51590	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/c2/kit-r3-bed.png	82353	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/c2/kit-r3-deskchair.png	119430	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/c2/kit-r3-lights.png	33159	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/c2/kit-r3-rug.png	81097	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/c2/kit-rug.png	75565	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/chat/chat-final-4x.png	371699	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/chat/final-header.png	176303	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/chat3/sheet3.png	293233	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/chat3/sheet4.png	315382	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/closet-before-after.png	669395	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/closet-final.png	320799	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/contact.png	1116792	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/declutter/pair.png	233017	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-access.png	228290	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-avatar-edit.png	280222	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-chat.png	164968	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-closet.png	314013	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/access-desk.png	126806	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/closet-top.png	58499	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/home-mid.png	212327	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/ipc-armoire.png	169644	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/ipc-tiles.png	67658	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/iph-looks.png	273906	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/look-lace.png	310139	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/look-pinkblack.png	305036	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/oa-tiles.png	40599	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/paywall-window.png	66023	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/results-rack.png	48283	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/saved-bottom.png	114630	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-crops/swap-tiles.png	84452	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-garment.png	186776	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-home-ax.png	273357	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-home.png	430901	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-ipad-closet.png	748606	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-ipad-home.png	928653	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-laundry.png	224870	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-look.png	300637	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-onboarding-avatar.png	285303	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-onboarding.png	177461	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-paywall.png	245156	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-results.png	387512	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-saved.png	257487	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-settings.png	222741	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-suitcases.png	252877	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/final-swap.png	360105	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/fl-results-final.png	426893	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/fl-saved-final-pictures.png	209815	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/fl-saved-final.png	332861	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/g/garments-sheet-r1.png	894662	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/gallery-1440x900.png	374701	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/gallery-full.png	2257719	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/gallery.png	890723	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/garment-final-toast.png	202715	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/garment-final.png	187312	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/garments-sheet.png	893916	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/hm/final-rack-mirror.png	200937	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ic3/final-compare.png	257198	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ic3/icons-sheet-r1@4x.png	852876	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/icons-sheet.png	384878	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/icons-sheet@4x.png	852769	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ipad6/final-closet-avatar-sheet.png	333142	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ipad6/final-closet-laundry-pane.png	172956	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ipad6/final-home-chat-sheet.png	334674	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ipad6/final-home-saved-pane.png	445705	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ipad6/final-home-swap-sheet.png	410654	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ipad6/final-ipad-closet.png	776914	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/ipad6/final-ipad-home.png	936724	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-a-crop-rack.png	75652	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-a-crop-wardrobe-top.png	62224	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-a-crop-window.png	49359	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-a-prev.png	336637	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-a-r0.png	361710	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-a.png	399987	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-b.png	519788	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-c-bed.png	68868	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-c-chair.png	29053	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-c-desk.png	16193	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-c-lights.png	54741	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-c-plant.png	46482	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-c-rug.png	57137	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/kit-c.png	464531	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-final-4x.png	31297	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-home-before.png	348212	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-home-final.png	356563	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-home-r1-crop.png	37606	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-home-r1.png	356509	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-home-r2-crop.png	37635	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-home-r2.png	356563	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-ipad-before.png	338497	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-ipad-final.png	343130	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-ipad-r1-crop.png	76007	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-ipad-r1.png	343130	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r1.png	29392	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r2.png	29183	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r3.png	28230	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r4-paw.png	9939	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r4.png	29271	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r5.png	29196	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r6.png	31450	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r7.png	30804	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-r8.png	31297	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya-zzz-r1.png	1625	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-final-4x.png	31513	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-final-with-zzz-4x.png	35635	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-home-crop.png	61697	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-home.png	358861	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-ipad-crop.png	78979	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-ipad.png	344773	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-r1.png	29897	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-r2.png	31079	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-r3.png	31372	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-r4-with-zzz.png	35361	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-r5-with-zzz.png	35635	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya2-r5.png	31513	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-final-4x.png	29808	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-final-with-zzz-4x.png	33726	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-home-crop.png	60752	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-home.png	358227	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-ipad-crop.png	78374	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-ipad.png	344043	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-r1.png	29496	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-r2.png	29598	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-r3.png	29266	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-r4.png	29526	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya3-r5-with-zzz.png	33464	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-final-4x.png	59311	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-home-crop.png	69897	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-home.png	366544	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-ipad-crop.png	81741	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-ipad.png	347642	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-r1.png	58385	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-r2.png	52376	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-r3.png	56036	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-r4.png	59651	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/maya4-r5.png	59311	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/access.png	197126	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/chat.png	164968	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/closet.png	313085	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/editor.png	280222	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/garment.png	193834	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/home-ax.png	275557	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/home.png	434570	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/ipad-closet.png	317740	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/ipad-home.png	386792	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/laundry.png	224870	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/look.png	300637	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/onboarding-avatar.png	280847	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/onboarding.png	178071	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/paywall.png	225267	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/results.png	350190	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/saved.png	257487	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/settings.png	225580	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/sheet1.png	467636	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/sheet2.png	446025	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/sheet3.png	390016	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/sheet4.png	537482	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/suitcases.png	252877	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/me/swap.png	356438	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/name-sign-r1.png	15028	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/name-sign-r2.png	14939	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/portrait-picker.png	268730	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/portrait-presets-round.png	281270	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/portrait-presets-sheet.png	784500	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/crop-swap-r1-sheet.png	76392	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/crop-swap-r2-sheet.png	76247	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/crop-swap-r3-sheet.png	76093	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/f2-sheet-r.png	234746	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/f2-sheet-s.png	196460	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/f2-sheet-x.png	284903	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/f3-l3-sheet.png	73540	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/f3-swap-sheet.png	114360	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/f3-tee-sheet.png	84035	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/final-contact.png	308465	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/final-r-bun.png	346830	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/final-r-look2.png	342729	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/final-results.png	350190	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/final-s-bun.png	356242	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/final-s-look3.png	357527	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/final-swap.png	356441	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/results/g4-s-sheet.png	261031	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rev2/home-ax-final.png	288287	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rev2/home-final.png	425232	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rev2/ipad-final.png	377730	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-avatar-hero.png	213313	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-2x.png	213371	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-6x.png	878524	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-cornice.png	6471	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-plinth.png	7752	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-rack.png	94216	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-rackbase.png	11532	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-rackcollar.png	7805	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-racktop.png	27426	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-rail.png	32259	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-wardrobe.png	105920	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-wbot.png	23174	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-win-night-glass.png	34964	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-win-night-top.png	29778	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-win-rain.png	61097	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-win-sill.png	9195	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-win-sun-glass.png	36428	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-windows.png	130832	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a-wtop.png	58049	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-a.png	361710	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-b.png	462895	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-1x-crop.png	82237	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-1x.png	103310	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-bed.png	82077	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-chair-zoom.png	41150	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-chairdesk.png	22618	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-desk-zoom.png	30025	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-desk.png	66005	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-lights.png	56338	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-plant-zoom.png	43376	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-plant.png	44265	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-rug-zoom.png	29102	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c-rug.png	80883	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/review-kit-c.png	445456	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa-feet.png	159031	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa-picked-head.png	44062	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa-picked-tiles.png	100250	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa-picked.png	285353	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa-picked4.png	675659	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa-sheet.png	265908	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa-top.png	102672	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa-window.png	194709	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa2-br.png	2990	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/oa4.png	686093	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/ob-door.png	162885	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/ob-foot.png	117256	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/ob-left.png	154982	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/ob-right.png	84540	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/ob-top.png	145476	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/ob2-br.png	5134	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rv-welcome/ob4.png	426111	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/rvb2/kit-b-1x.png	115337	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/access-now.png	196086	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/access-soft.png	188226	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/before-after.png	314734	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/closet-now.png	312006	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/closet-soft.png	305967	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/home-ax-now.png	220400	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/home-ax-soft.png	227966	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/laundry-now.png	223821	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/laundry-soft.png	224754	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/settings-now.png	178341	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/settings-soft.png	167851	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/soft/soft-compare.png	404975	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/sv/stage-final-5x.png	36267	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/travel-compare-final.png	352526	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/travel-laundry-final.png	232121	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/travel-suitcases-final.png	248979	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/travel3/laun-final-4x.png	513047	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/travel3/laun-final-washer.png	80414	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/travel3/laun-final.png	224870	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/travel3/sheet-hamper.png	122631	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/travel3/suit-final.png	252877	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/avatar-edit.png	268730	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/home.png	425725	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/look.png	278503	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/onboarding.png	170472	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/results.png	333609	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/s1.png	523124	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/s2.png	396361	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/saved.png	286353	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/settings.png	226644	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/v3/swap.png	340282	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/frames-r1.png	30686	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-check.png	291938	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r1-click.png	290302	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r1-rows.png	104505	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r1-top.png	92075	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r1-wall.png	80470	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r1.png	283407	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r2-foot.png	27224	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r2-tapped.png	276698	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r2.png	283646	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r3-floor.png	137980	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r3-frames.png	61786	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r3-tapped-head.png	78138	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r3-tapped.png	276278	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r3-x3.png	466811	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-r3.png	283449	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s1-a.png	111973	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s1-b.png	115697	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s1.png	283449	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s2-tapped.png	193165	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s2.png	283200	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s3-bun-head.png	80476	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s3-bun.png	280699	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s3-waves-top.png	117271	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s3-waves.png	287263	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s3.png	287646	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s4-feet.png	127520	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s4-plate.png	35481	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/oa-s4-x3.png	472696	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-check.png	183187	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r1-bottom.png	51618	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r1-door.png	33884	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r1-top.png	47606	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r1.png	182730	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r2.png	182730	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r3-left.png	71253	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r3-roof.png	36208	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r3.png	182502	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r4-glass.png	21203	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r4-roof.png	38407	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-r4.png	183187	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s1-a.png	61628	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s1-b.png	79079	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s1-lantern.png	13281	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s1-pot.png	24806	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s1-x4.png	423524	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s1.png	182730	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s2.png	182730	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s3.png	182594	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s4-hdr.png	95355	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/ob-s4-x3.png	295268	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/onboarding-avatar-final-tapped.png	478195	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/onboarding-avatar-final.png	287659	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/onboarding-final.png	182594	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome/roof-r2.png	9910	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome3/door-final.png	39513	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome3/onboarding-avatar-final.png	285303	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/archive/renders/welcome3/onboarding-final.png	177461	.png	yes	Archived room design exploration
+prototypes/RoomDirectionMockups/art/access-card.svg	3668	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/access-desk.svg	5826	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/access-lamp.svg	3973	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/access-note.svg	2348	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/access-pencil.svg	2060	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/access-picture.svg	2808	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/access-plant.svg	4277	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/access-shopfront.svg	16254	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/acct-porch-bench.svg	1871	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/acct-shop-rack.svg	3834	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/bed.svg	5113	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/calendar.svg	2323	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/chair.svg	4198	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/chat-flats.svg	2740	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/chat-heels.svg	2621	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/chat-mini-rail.svg	1049	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/chat-sneakers.svg	2852	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/chat-teacup.svg	2644	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/closet-armoire.svg	13737	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/closet-basket.svg	3060	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/closet-bench.svg	4333	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/closet-hook.svg	2860	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/closet-rail.svg	5907	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/closet-suitcase.svg	2714	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/desk.svg	5530	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/home-flats.svg	2573	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/home-lamp.svg	3211	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/ipad-armoire.svg	9997	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/ipad-wall-rail.svg	1807	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/lamp.svg	3047	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/laptop.svg	2182	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/looks-frame-lg.svg	2998	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/looks-valet.svg	4512	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/maya-zzz.svg	802	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/maya.svg	108645	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/mirror.svg	2716	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/name-sign.svg	3937	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/note-stand.svg	1474	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/plant-floor.svg	8956	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/rack.svg	5503	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/results-alcove-sm.svg	10148	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/results-alcove.svg	11802	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/results-frame.svg	2031	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/results-rail.svg	1237	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/rug.svg	1412	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/saved-console.svg	3330	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/saved-frame.svg	3102	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/saved-stage.svg	2756	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/shelf-frames.svg	2951	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/shelf-top.svg	6127	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/string-lights.svg	10564	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hall-console.svg	7221	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hall-door.svg	6167	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hall-hooks.svg	3462	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hall-mirror.svg	2026	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hall-peg.svg	646	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hall-runner.svg	3886	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hamper-empty.svg	3400	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hamper-lace.svg	5536	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hamper-tee.svg	4716	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-hamper.svg	7049	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-laundry-shelf.svg	6785	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-suitcase-blue.svg	5745	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-suitcase-pink.svg	5745	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-suitcase-sage.svg	5745	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/travel-washer.svg	5831	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/wardrobe.svg	7625	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/welcome-clouds.svg	1933	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/welcome-door.svg	9092	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/welcome-frames.svg	5862	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/welcome-lantern.svg	2720	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/welcome-mat.svg	891	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/welcome-pots.svg	3201	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/welcome-roof.svg	8019	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/window-night.svg	6869	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/window-rain.svg	7326	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/art/window-sun.svg	6315	.svg	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/css/room.css	6017	.css	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/css/soft.css	7179	.css	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/index.html	11526	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/js/avatar.js	124992	.js	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/js/garments.js	56702	.js	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/js/icons.js	13941	.js	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/ref/owner-reference-home.png	1193546	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/_garments-sheet.html	5288	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/_icons-sheet.html	7302	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/_kit-a.html	6971	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/_kit-b.html	10997	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/_kit-c.html	3212	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/access-soft.html	10734	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/access.html	10650	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/chat.html	24071	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/closet-soft.html	15535	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/closet.html	14969	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/garment.html	10644	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/home-ax-soft.html	12444	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/home-ax.html	12349	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/home.html	18224	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/ipad-closet.html	43008	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/ipad-home.html	49130	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/laundry-soft.html	11672	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/laundry.html	11582	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/look.html	26414	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/onboarding.html	5339	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/paywall.html	10562	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/results-flatlay.html	15668	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/results.html	18924	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/saved-flatlay.html	16034	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/saved.html	14026	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/settings-soft.html	11802	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/settings.html	11529	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/suitcases.html	12148	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/screens/swap.html	16680	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/_art-garments.png	893916	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/_art-icons.png	384878	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/_art-kit-a.png	399987	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/_art-kit-b.png	519788	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/_art-kit-c.png	464531	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/_art-maya.png	59311	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/access-soft.png	188226	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/access.png	196086	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/chat.png	164968	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/closet-soft.png	334347	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/closet.png	340726	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/garment.png	192751	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/home-ax-soft.png	227966	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/home-ax.png	220400	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/home.png	366544	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/ipad-closet.png	311639	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/ipad-home.png	347642	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/laundry-soft.png	224754	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/laundry.png	223821	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/look.png	277457	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/onboarding.png	170472	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/paywall.png	222621	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/results-flatlay.png	426893	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/results.png	330871	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/saved-flatlay.png	332861	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/saved.png	285403	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/settings-soft.png	167851	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/settings.png	178341	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/suitcases.png	251791	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/snapshots/swap.png	340282	.png	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/soft-compare.html	7056	.html	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/tools/crop.sh	331	.sh	yes	Current HTML room design and assets
+prototypes/RoomDirectionMockups/tools/shot.sh	1195	.sh	yes	Current HTML room design and assets
+research/Shopping_Discovery_Consumer_Example_2026-10-04.jpg	171030	.jpg	no	Local research / visual concept / supporting evidence
+research/reports/Wardrobe and AI stylist UX patterns.md	10488	.md	no	Local research / visual concept / supporting evidence
+research/research_notes/Fintech onboarding flow patterns/funding_and_first_run.md	34596	.md	no	Local research / visual concept / supporting evidence
+research/research_notes/Fintech onboarding flow patterns/identity_verification.md	52382	.md	no	Local research / visual concept / supporting evidence
+research/research_notes/Fintech onboarding flow patterns/trust_consent_permissions.md	40107	.md	no	Local research / visual concept / supporting evidence
+research/research_notes/Fintech onboarding flow patterns/visual_craft_and_motion.md	44726	.md	no	Local research / visual concept / supporting evidence
+research/research_notes/Fintech onboarding flow patterns/welcome_and_signup.md	51879	.md	no	Local research / visual concept / supporting evidence
+research/visual-direction/Alta_Home_2026-10-05.jpg	37132	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Alta_Stylist_Entry_2026-10-05.jpg	22375	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Breeze_Lilac_Pastel_2026-10-05.jpg	4592	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Flo_Pastels_Full_2026-10-05.jpg	53350	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Flo_Pink_Pastels_2026-10-05.jpg	53140	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Fresha_Selection_2026-10-05.jpg	4662	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Headspace_Neutral_Surfaces_2026-10-05.jpg	4632	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Interview_Notes.md	16373	.md	no	Local research / visual concept / supporting evidence
+research/visual-direction/Muted_Pastel_Mobbin_Comparison_2026-10-05.jpg	261352	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Structured_Pink_2026-10-05.jpg	80829	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Structured_Pink_Full_2026-10-05.jpg	77302	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Bedroom_Concept_v1.png	1645055	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Bedroom_Concept_v1_Prompt.txt	5796	.txt	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Bedroom_Flat_Concept_v2.png	1439869	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Bedroom_Flat_Concept_v2_Prompt.txt	2635	.txt	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Large_Pastel_Surfaces_Concept_v3.png	1186649	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Large_Pastel_Surfaces_Concept_v3_Prompt.txt	4106	.txt	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Pink_Pastel_Concept_v1.png	1185973	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Pink_Pastel_Concept_v1_Prompt.txt	3152	.txt	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Tiimo_Flo_Concept_v2.png	1187985	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/Style_Me_Tiimo_Flo_Concept_v2_Prompt.txt	4431	.txt	no	Local research / visual concept / supporting evidence
+research/visual-direction/Tangerine_Mixed_Colors_2026-10-05.jpg	86825	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Tangerine_Mixed_Full_2026-10-05.jpg	70634	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Tiimo_Explore_Full_2026-10-05.jpg	67365	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Tiimo_Quiet_Pastels_2026-10-05.jpg	66245	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/Tiimo_Today_Full_2026-10-05.jpg	61207	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/My_Petite_Style_Bedroom_Pastel_Preview.mp4	2920197	.mp4	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/My_Petite_Style_Bedroom_Pastel_Walkthrough.mp4	61419454	.mp4	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/Palette_Restyle_Method.md	4157	.md	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/README.md	4041	.md	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-01.jpg	29926	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-02.jpg	27146	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-03.jpg	26081	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-04.jpg	28062	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-05.jpg	28192	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-06.jpg	27945	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-07.jpg	27945	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-08.jpg	22598	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/entry-at-34.png	444613	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/form-source.png	585522	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-001.jpg	23858	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-002.jpg	22091	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-003.jpg	23784	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-004.jpg	19954	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-005.jpg	20800	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-006.jpg	20865	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-007.jpg	24954	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-008.jpg	22338	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-009.jpg	22468	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-010.jpg	22463	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-011.jpg	19861	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-012.jpg	16105	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-013.jpg	18524	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-014.jpg	18179	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-015.jpg	27596	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-016.jpg	25887	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-017.jpg	20294	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-018.jpg	17084	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-019.jpg	25186	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-020.jpg	17897	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-021.jpg	19007	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-022.jpg	25326	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-023.jpg	18758	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-024.jpg	24956	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-025.jpg	21105	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-026.jpg	24856	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-027.jpg	23077	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-028.jpg	28484	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-029.jpg	24762	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-030.jpg	26280	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-031.jpg	22595	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-032.jpg	23245	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-033.jpg	21501	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-034.jpg	14724	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-035.jpg	14159	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-036.jpg	21586	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-037.jpg	16874	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-038.jpg	20071	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-039.jpg	22479	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-040.jpg	29159	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-041.jpg	20439	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-042.jpg	18138	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-043.jpg	19294	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/frames/frame-044.jpg	15948	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/outfit-source.png	653385	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/source-contact-1.jpg	637274	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/source-contact-2.jpg	659016	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/source-contact-3.jpg	451762	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/analysis/styleme-source.png	476008	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/assemble_walkthrough.py	1183	.py	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.hyperframes/hf-ids-stamped.json	44	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.hyperframes/history-id	37	[no extension]	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.hyperframes/preview/a226663c792de1363849a9d43ee35927.html	110201	.html	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.thumbnails/v5_828e4e505d7901ef_8e33f527e016ba19_jpeg_source_index.html_856x1852_856x1852_1791222927328_0.00.jpg	97780	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.thumbnails/v5_v3_828e4e505d7901ef_8e33f527e016ba19_jpeg_preview_index.html_856x1852_62x135_1791222927328_3.00.jpg	3366	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.thumbnails/v5_v3_828e4e505d7901ef_8e33f527e016ba19_jpeg_preview_index.html_856x1852_62x135_1791222927328_3.00_0bf6da63de4fcc3d_0.jpg	813	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.thumbnails/v5_v3_828e4e505d7901ef_8e33f527e016ba19_jpeg_preview_index.html_856x1852_62x135_1791222927328_3.00_ce340b190a269583_0.jpg	761	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.thumbnails/v5_v3_fff6ffd4372066d6_8e33f527e016ba19_jpeg_preview_index.html_856x1852_62x135_1791222927328_3.00.jpg	3366	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.thumbnails/v5_v3_fff6ffd4372066d6_8e33f527e016ba19_jpeg_preview_index.html_856x1852_62x135_1791222927328_3.00_0bf6da63de4fcc3d_0.jpg	813	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/.thumbnails/v5_v3_fff6ffd4372066d6_8e33f527e016ba19_jpeg_preview_index.html_856x1852_62x135_1791222927328_3.00_ce340b190a269583_0.jpg	761	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/AGENTS.md	8390	.md	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/BRIEF.md	2074	.md	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/CLAUDE.md	8390	.md	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/assets/bedroom-main-closet-prompt.txt	1714	.txt	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/assets/bedroom-main-closet.png	1434729	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/assets/gsap.min.js	72779	.js	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/assets/styleme-menu.png	394290	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/design.md	1448	.md	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/hyperframes.json	355	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/index.html	2651	.html	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/meta.json	109	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/package.json	308	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/renders/bedroom-entry.mp4	1914838	.mp4	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/bridge-review/contact-sheet.jpg	524491	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/bridge-review/frame-00-at-1.8s.png	1368523	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/bridge-review/frame-01-at-3.4s.png	1369862	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/bridge-review/frame-02-at-4.3s.png	1087098	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/bridge-review/frame-03-at-5.5s.png	292570	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/frame-00-at-0.0s.png	292570	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/frame-01-at-0.3s.png	1368523	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/frame-02-at-3.3s.png	1369674	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/frame-03-at-4.2s.png	1330173	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/bedroom-walkthrough/snapshots/frame-04-at-5.9s.png	292570	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/make_previews.py	1324	.py	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/palette-encode-final.log	1945	.log	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/palette-encode.log	1939	.log	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/palette_restyle.py	7200	.py	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/pastel-walkthrough-base-final.mp4	61352421	.mp4	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/pastel-walkthrough-base.mp4	61885935	.mp4	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/form-after.png	563541	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/form-before-after.jpg	229298	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/form-before.png	559253	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/latest-preview-check.log	438	.log	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/outfit-after.png	634958	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/outfit-before-after.jpg	211987	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/outfit-before.png	634665	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/preservation-preview-stats.json	438	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/styleme-after.png	464827	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/styleme-before-after.jpg	209083	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/previews/styleme-before.png	462909	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/base-final-035.png	394290	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/base-final-105.png	387353	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/base-final-335.png	291834	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/base-final-415.png	466483	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-005.00.jpg	246926	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-034.75.jpg	198957	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-035.00.jpg	199830	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-055.00.jpg	218417	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-105.00.jpg	200817	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-165.00.jpg	221198	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-225.00.jpg	189763	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-245.00.jpg	193881	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-315.00.jpg	255753	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-325.00.jpg	248724	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-335.00.jpg	151848	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-345.00.jpg	154080	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-355.00.jpg	232206	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-415.00.jpg	200501	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-435.50.jpg	267554	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-alignment.json	2867	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-contact-sheet.jpg	491277	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/delivery-metadata.json	383	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/encoded-color-checks.json	1875	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/final-base-ffprobe.json	419	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/latest-mapper-check.log	7042	.log	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-005.png	439332	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-055.png	396872	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-105.png	388506	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-165.png	423590	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-225.png	342998	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-245.png	376454	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-325.png	490730	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-335.png	241281	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-355.png	453419	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-415.png	448877	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapped-contact-sheet.jpg	320375	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/mapper-preservation-checks.json	7042	.json	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/seam-01.jpg	22050	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/seam-02.jpg	27758	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/seam-03.jpg	40009	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/seam-04.jpg	40083	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/seam-05.jpg	36444	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/seam-06.jpg	23604	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/seam-07.jpg	22883	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/seam-contact-sheet.jpg	300120	.jpg	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-005.png	435443	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-055.png	405734	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-105.png	392512	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-165.png	429120	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-225.png	345913	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-245.png	376452	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-325.png	482050	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-335.png	245662	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-355.png	463597	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/qa/source-415.png	454886	.png	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/render_base.sh	742	.sh	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/token_restyle	38192	[no extension]	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/token_restyle-final	38192	[no extension]	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/token_restyle.cpp	5169	.cpp	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/verify_delivery.py	2934	.py	no	Local research / visual concept / supporting evidence
+research/visual-direction/recording-restyle/verify_samples.py	2164	.py	no	Local research / visual concept / supporting evidence

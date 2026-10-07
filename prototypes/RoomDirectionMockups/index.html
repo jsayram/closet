@@ -2,181 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=1200">
-<title>My Petite Style · room direction</title>
-<style>
-  :root{
-    --bg:#EEE7EA; --panel:#F8F3F5; --rule:#DCCFD6;
-    --ink:#2B1B27; --ink-soft:#6B5563; --plum:#6A1F58; --plum-2:#4F1541; --plum-soft:#F6E3F0;
-    --bezel:#231B21; --bezel-edge:#3A2F37; --wall:#FBE5E8;
-    --phone-w:312px; --phone-h:675.2px;      /* 390 x 844 at 0.8 */
-    --pad-w:740.28px; --pad-h:517.08px;      /* 1194 x 834 at 0.62 */
-    --font-ui:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
-    --font-display:"New York", ui-serif, "Iowan Old Style", Georgia, serif;
-  }
-  *{box-sizing:border-box}
-  html{background:var(--bg)}
-  body{margin:0;min-width:1200px;background:var(--bg);color:var(--ink);font:15px/1.45 var(--font-ui);-webkit-font-smoothing:antialiased}
-
-  /* ---------- page column ---------- */
-  .page{padding:52px 44px 96px 44px}
-  header h1{margin:0;font-family:var(--font-display);font-weight:800;font-size:40px;line-height:1.1;letter-spacing:-.5px}
-  header p{margin:14px 0 0;max-width:720px;font-size:16px;color:var(--ink-soft)}
-  header p span{display:block}
-
-  section{margin-top:60px}
-  section h2{display:flex;align-items:baseline;gap:12px;margin:0 0 26px;padding-bottom:12px;border-bottom:1px solid var(--rule);
-    font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:-.3px}
-  section h2 small{font-family:var(--font-ui);font-weight:500;font-size:13px;color:var(--ink-soft);letter-spacing:0}
-  .row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:44px 26px}
-
-  /* ---------- device frames ---------- */
-  figure{margin:0}
-  .device{position:relative;background:var(--bezel);
-    box-shadow:0 0 0 1px var(--bezel-edge) inset, 0 1px 2px #2B1B271f, 0 14px 30px -8px #2B1B2738}
-  .clip{position:relative;overflow:hidden;background:var(--wall);isolation:isolate}
-  .clip iframe{display:block;border:0;transform-origin:0 0}
-
-  .phone{width:calc(var(--phone-w) + 20px);padding:10px;border-radius:48px}
-  .phone .clip{width:var(--phone-w);height:var(--phone-h);border-radius:38px;clip-path:inset(0 round 38px)}
-  .phone iframe{width:390px;height:844px;transform:scale(.8)}
-  /* side buttons, drawn outside the bezel */
-  .phone::before,.phone::after{content:"";position:absolute;width:3px;background:var(--bezel-edge)}
-  .phone::before{left:-3px;top:150px;height:58px;border-radius:2px 0 0 2px;box-shadow:0 74px 0 var(--bezel-edge)}
-  .phone::after{right:-3px;top:180px;height:84px;border-radius:0 2px 2px 0}
-
-  .tablet{width:calc(var(--pad-w) + 28px);padding:14px;border-radius:32px}
-  .tablet .clip{width:var(--pad-w);height:var(--pad-h);border-radius:18px;clip-path:inset(0 round 18px)}
-  .tablet iframe{width:1194px;height:834px;transform:scale(.62)}
-  .tablet::after{content:"";position:absolute;top:-3px;right:64px;width:44px;height:3px;border-radius:2px 2px 0 0;background:var(--bezel-edge)}
-
-  figcaption{margin-top:16px;padding:0 6px;font-size:14px;color:var(--ink-soft)}
-  .phone + figcaption{max-width:calc(var(--phone-w) + 20px)}
-  .tablet + figcaption{max-width:560px}
-  figcaption b{display:block;margin-bottom:2px;font-size:15px;color:var(--ink)}
-  figcaption b a{color:inherit;text-decoration:none}
-  figcaption b a:hover{text-decoration:underline;text-underline-offset:3px}
-  figcaption b a:focus-visible{outline:2px solid var(--plum);outline-offset:2px;border-radius:3px}
-
-</style>
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your wardrobe app, Lily</title>
+<meta name="description" content="A little preview of your wardrobe app, with room for your ideas.">
+<link rel="stylesheet" href="css/review.css?v=review-later-r1">
 </head>
 <body>
-
-<main class="page">
-  <header>
-    <h1>My Petite Style · room direction</h1>
-    <p>
-      <span>A static exploration. Nothing here is in the app, and every label is live text.</span>
-      <span>There is no avatar and no drawing of her. The room has a small sign with her first name.</span>
-      <span>Clothes are always shown as clothes, drawn here as stand-ins for her own photos.</span>
-      <span>Try-on pictures are simulated placeholders.</span>
-    </p>
+<a class="skip" href="#groups">Skip to the screens</a>
+<main class="wrap">
+  <header class="top">
+    <p class="eyebrow" id="rev">Revision</p>
+    <h1>Your wardrobe app, Lily</h1>
+    <div class="intro">
+      <p>Hey Lily! Have a look at your wardrobe app and tell me what you think. What feels like you? What would you change?</p>
+      <p>This is just a preview. The clothes are drawings for now, and the outfits and shopping are pretend. Nothing here will buy anything or charge you.</p>
+      <ol class="steps">
+        <li>Tap <strong>Take a look</strong> below.</li>
+        <li>Look at the screen, then scroll down to write a note.</li>
+        <li>Tap <strong>Save my notes</strong>, then <strong>Next screen</strong>.</li>
+      </ol>
+      <p>No rush. Tap Come back later on any screen to save it in your later list.</p>
+    </div>
+    <div class="cta">
+      <a class="btn" id="start" href="review.html">Take a look</a>
+      <a class="btn ghost" href="summary.html">Read your notes</a>
+    </div>
+    <p class="meta-row"><span id="count" hidden></span><span id="total"></span></p>
   </header>
 
-  <section aria-labelledby="s-home">
-    <h2 id="s-home">Home <small>2 screens</small></h2>
-    <div class="row">
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/home.html" title="Style Me screen"></iframe></div></div>
-        <figcaption><b><a href="screens/home.html" target="_blank">Style Me</a></b>The bedroom is the Style Me screen: a sign with her name hangs on the wall, the wardrobe picks the source, the calendar sets the occasion and the desk starts styling.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/home-ax.html" title="Style Me at the largest text size"></iframe></div></div>
-        <figcaption><b><a href="screens/home-ax.html" target="_blank">Style Me, largest text</a></b>The same screen at the largest text size, where the room shrinks to a banner with her name sign and each control becomes a full-width row.</figcaption>
-      </figure>
-    </div>
-  </section>
+  <div id="groups"></div>
 
-  <section aria-labelledby="s-closet">
-    <h2 id="s-closet">Closet <small>4 screens</small></h2>
-    <div class="row">
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/closet.html" title="Closet screen"></iframe></div></div>
-        <figcaption><b><a href="screens/closet.html" target="_blank">Closet</a></b>The open wardrobe holds all 21 pieces, with filters for dirty and available pieces and shortcuts to suitcases and laundry.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/garment.html" title="Garment detail screen"></iframe></div></div>
-        <figcaption><b><a href="screens/garment.html" target="_blank">Navy dress pants</a></b>One piece on its hanger with its category, color, status, how often it was worn and the suitcases it is packed in.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/suitcases.html" title="Suitcases screen"></iframe></div></div>
-        <figcaption><b><a href="screens/suitcases.html" target="_blank">Suitcases</a></b>Three suitcases by the front door, with the one Style Me is using marked and the main closet one tap away.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/laundry.html" title="Laundry screen"></iframe></div></div>
-        <figcaption><b><a href="screens/laundry.html" target="_blank">Laundry</a></b>The washer and basket hold the dirty pieces, shown just after the lace top was marked clean, with Undo.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section aria-labelledby="s-looks">
-    <h2 id="s-looks">Looks <small>4 screens</small></h2>
-    <div class="row">
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/results.html" title="Style Me results screen"></iframe></div></div>
-        <figcaption><b><a href="screens/results.html" target="_blank">Your looks</a></b>The first of three looks from one request, shown as its pieces, with Save, Swap a piece and Ask stylist.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/swap.html" title="Swap a piece screen"></iframe></div></div>
-        <figcaption><b><a href="screens/swap.html" target="_blank">Swap a piece</a></b>Choosing a different top for a look, with the new top laid out among the other pieces before you keep it.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/saved.html" title="Saved Looks screen"></iframe></div></div>
-        <figcaption><b><a href="screens/saved.html" target="_blank">Saved Looks</a></b>A gallery wall of saved looks. A look with a try-on picture shows a simulated placeholder frame, and the others show their pieces laid out flat.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/look.html" title="Saved look detail screen"></iframe></div></div>
-        <figcaption><b><a href="screens/look.html" target="_blank">Interview navy &amp; pink</a></b>One saved look with its four pieces laid out, a short note on why it works and Wear today.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section aria-labelledby="s-account">
-    <h2 id="s-account">Account <small>3 screens</small></h2>
-    <div class="row">
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/settings.html" title="Profile and settings screen"></iframe></div></div>
-        <figcaption><b><a href="screens/settings.html" target="_blank">Profile</a></b>Profile and settings, with her name sign on the wall and rows for styling access, the name on your sign, the closet, privacy and help.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/access.html" title="Styling access screen"></iframe></div></div>
-        <figcaption><b><a href="screens/access.html" target="_blank">Styling access</a></b>The demo's sponsored access and what is left of each monthly allowance, all of it simulated.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/paywall.html" title="Plans screen"></iframe></div></div>
-        <figcaption><b><a href="screens/paywall.html" target="_blank">Plans</a></b>A boutique window with clothes on display, a free trial offer with sample pricing, the trial end and first charge dates, and Restore purchases.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section aria-labelledby="s-first">
-    <h2 id="s-first">First run and chat <small>2 screens</small></h2>
-    <div class="row">
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/onboarding.html" title="Welcome screen"></iframe></div></div>
-        <figcaption><b><a href="screens/onboarding.html" target="_blank">Welcome home</a></b>The first screen someone new sees: the front door, a coat on the peg rail and a bench on the porch. Get started goes straight to Style Me.</figcaption>
-      </figure>
-      <figure>
-        <div class="device phone"><div class="clip"><iframe src="screens/chat.html" title="Ask stylist chat screen"></iframe></div></div>
-        <figcaption><b><a href="screens/chat.html" target="_blank">Ask stylist</a></b>A simulated stylist chat about one look, with suggested replies to tap.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section aria-labelledby="s-ipad">
-    <h2 id="s-ipad">iPad <small>2 screens, landscape</small></h2>
-    <div class="row">
-      <figure>
-        <div class="device tablet"><div class="clip"><iframe src="screens/ipad-home.html" title="Style Me on iPad"></iframe></div></div>
-        <figcaption><b><a href="screens/ipad-home.html" target="_blank">Style Me on iPad</a></b>The sidebar, the bedroom with her name sign on the wall, and all three looks side by side as pieces in one landscape view.</figcaption>
-      </figure>
-      <figure>
-        <div class="device tablet"><div class="clip"><iframe src="screens/ipad-closet.html" title="Closet on iPad"></iframe></div></div>
-        <figcaption><b><a href="screens/ipad-closet.html" target="_blank">Closet on iPad</a></b>The whole wardrobe in one wide cabinet, a grid of every piece, and the selected piece's details on the right. The sidebar card opens Profile.</figcaption>
-      </figure>
-    </div>
-  </section>
+  <footer class="foot">
+    <p>Your saved notes can be read by anyone with this link.</p>
+  </footer>
 </main>
-
+<script src="js/registry.js?v=tablet-centered-r11"></script>
+<script src="js/review.js?v=restored-preview-r13"></script>
+<script>Review.gallery();</script>
+<script src="js/review-later.js?v=1"></script>
 </body>
 </html>

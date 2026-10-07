@@ -1,5 +1,7 @@
 # Lily’s wardrobe app planning documents
 
+The client mockup review process is documented in [CLIENT_REVIEW_WORKFLOW.md](CLIENT_REVIEW_WORKFLOW.md), with a reusable Obsidian workflow and checklist for future apps. Agents can contribute useful lessons there; see [AGENTS.md](AGENTS.md).
+
 Start with [My Petite Style — PRD v2](/Users/jramirez/Git/closet/My_Petite_Style_PRD_v2.md). This is the authoritative consolidated specification; maintain future requirements there. Document v2 describes the intended first app release, not an implemented second release.
 
 The v2 specification incorporates Lily’s feedback, proportions-based fit, deliberate shopping choices, closest-source garment/shoe previews, retained preview history and unified offline search. Section 7.7 makes multiple named Suitcases a V1 requirement, with shared garments, a remembered Settings view, strict scoped styling and safe container deletion/recovery. Sections 7.3/7.4 define visible Dirty status, individual/selected/confirmed-all cleaning and retained No longer own history. Section 7.6 defines personal garment names, additive details and confirmed search corrections; Section 8.4 covers named-item resolution and optional separately permissioned photo understanding. Sections 11.10/11.11 define mock development and private history/reuse before paid AI, with current-context checks, explicit fresh ideas and no new image units for matching retained previews. Features, providers and performance still require implementation and evidence; no app or fit quality has been validated.

@@ -1,0 +1,36 @@
+/* Approved Home coach marks, aligned to the room's 390 × 844 stage. */
+.tour-blocker { position: fixed; inset: 0; z-index: 29; }
+.tour-spotlight {
+  position: absolute; border-radius: 22px; pointer-events: none; z-index: 30;
+  box-shadow: 0 0 0 5px rgba(255,255,255,.55), 0 0 26px 8px rgba(255,236,200,.55), 0 0 0 2000px rgba(43,22,38,.58);
+}
+.tour-card {
+  position: absolute; width: 300px; border: 0; z-index: 31;
+  background: rgba(255,250,252,.94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-radius: 26px; padding: 16px 16px 12px 18px;
+  box-shadow: 0 22px 34px -18px rgba(40,10,30,.55);
+}
+.tour-card::after {
+  content: ''; position: absolute; width: 22px; height: 22px; left: var(--tour-tail);
+  background: rgba(255,250,252,.94); transform: rotate(45deg); z-index: -1;
+}
+.tour-card.tail-bottom::after { bottom: -9px; border-bottom-right-radius: 6px; }
+.tour-card.tail-top::after { top: -9px; border-top-left-radius: 6px; }
+.tour-kicker { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--plum); }
+.tour-kicker i[data-icon] { font-size: 12px; }
+.tour-card h2 { margin: 6px 0 0; font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+.tour-body { margin: 4px 0 0; font-size: 14px; line-height: 1.4; color: var(--ink-soft); }
+.tour-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; }
+.tour-dots { display: flex; align-items: center; gap: 5px; }
+.tour-dot { width: 7px; height: 7px; border-radius: 50%; background: #E2CBD9; }
+.tour-dot.active { width: 20px; height: 7px; border-radius: 4px; background: var(--plum); }
+.tour-actions { display: flex; align-items: center; gap: 8px; }
+.tour-skip { min-height: 44px; padding: 0 4px; color: var(--ink-soft); font-size: 15px; font-weight: 600; }
+.tour-next { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 20px;
+  border-radius: 22px; background: var(--plum); color: #fff; font-size: 15px; font-weight: 700; white-space: nowrap; }
+.tour-next i[data-icon] { font-size: 14px; }
+.tour-card button:focus-visible { outline: 3px solid var(--plum); outline-offset: 3px; }
+
+.tour-next [hidden] { display: none; }
+
+.tour-card.tail-left::after { left:-9px; top:var(--tour-tail); border-bottom-left-radius:6px; }

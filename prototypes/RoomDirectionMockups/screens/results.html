@@ -2,148 +2,320 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=390">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Your looks</title>
+<script src="../js/theme.js"></script>
 <link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
 <style>
-  /* Style Me results: the dressing room. swap.html is this same room with the swap sheet up, so the alcove, the rack,
-     the frame, the floor line and the valet stand sit at exactly the same place on both screens.
-     Alcove (art/results-alcove.svg, 1:1) at left 12, top 76: rod y 84, floor line 474.7, rug centre (120, 510), pile to 529.6.
-     The open look hangs as a set on a gold valet stand (art/looks-valet.svg, 1:1) standing on the rug: left 8, top 220,
-     bar y 234, uprights x 22 and 218 (clear x 26..214), feet to y 506. Garments W 112 hang with their tops at 223.7;
-     the shoes stand on the rug between the feet. No figure (STYLE.md, Revision 2).
-     Rack (art/rack.svg at 1.15) at left 256, top 307: bar y 318.5, clear space x 277..363, castors to y 518. */
+  /* Your looks (Style Me results), approved sticker-bundle design, R5.
+     The open look is a sticker bundle: each piece is a cutout of her own garment photo with a thick white sticker edge
+     and a soft shadow below, loosely laid out and overlapping. The drawn garments (no hanger) stand in for the photos.
+     The sticker edge is stacked drop-shadows: four directions, four diagonals, then one soft shadow that falls below.
+     Layout is a single centred column (390 wide on iPhone, up to 440 in iPad Split View). The stage takes whatever
+     height is left, and the script fits the 300 x 356 bundle box into it, so the actions never move off screen.
+     Variants: ?tab=earlier  ?shuffle=1  ?shuffle=1&history=short  ?hint=off
+               ?state=generating (&phase=before)  partial  insufficient  failed  offline   ?from=e1 (an earlier result) */
   body { background: var(--wall); }
   a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
   button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; border-radius: 12px; }
-  .room { --floor-y: 474px; }
-  .art { position: absolute; display: block; pointer-events: none; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 14px; }
+  [hidden] { display: none !important; }
 
-  /* nav: back to Style Me, title, profile; the request on one line under it */
+  .screen { min-height: 100vh; height: auto; overflow: visible; background: linear-gradient(var(--wall), var(--wall-2)) fixed; }
+  .col { position: relative; max-width: 440px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 94px; }
+
+  /* nav */
+  .nav { position: relative; flex: none; }
   .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
                color: var(--plum); font-size: 17px; font-weight: 500; }
   .nav .back i[data-icon] { font-size: 24px; }
-  .ask { position: absolute; left: 0; right: 0; top: 47px; text-align: center; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--ink-soft); }
 
-  /* the open look on the valet stand */
-  .stand { position: absolute; left: 0; top: 0; width: 390px; height: 530px; pointer-events: none; }
-  .stand .p { position: absolute; }
-  .stand .shoesh { position: absolute; left: 92px; top: 501px; width: 56px; height: 6px; border-radius: 50%; background: #8A5A48; opacity: .13; }
+  /* Current / Earlier: a soft track, the selected one a solid plum pill. Each tab is a full 44 px target. */
+  .seg { align-self: center; flex: none; display: flex; border-radius: 22px; background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .seg button { position: relative; min-width: 108px; height: 44px; padding: 0 18px; font-size: 14px; font-weight: 700; color: var(--plum); text-align: center; }
+  .seg button span { position: relative; }
+  .seg button::before { content: ""; position: absolute; inset: 4px; border-radius: 18px; }
+  .seg button[aria-selected="true"] { color: #fff; }
+  .seg button[aria-selected="true"]::before { background: var(--plum); box-shadow: 0 8px 12px -9px rgba(79,21,65,.6); }
 
-  /* hanging sets on the rack */
-  .set { position: absolute; display: block; border-radius: 12px; }
-  .set .g { position: absolute; }
-  .set .tag { position: absolute; min-height: 0; width: 50px; height: 30px; padding: 0; justify-content: center; border-radius: 10px; }
-  .set .tag b { font-size: 13px; }
+  .ask { position: relative; z-index: 2; flex: none; margin-top: 6px; text-align: center; font-size: 13px; line-height: 17px; font-weight: 600; color: var(--ink-soft); padding: 0 16px; }
 
-  /* title row and the look's details: fixed rows, so moving between looks never shifts a button */
-  .look-row { position: absolute; left: 20px; right: 18px; top: 544px; height: 28px; display: flex; align-items: center; justify-content: space-between; }
-  .look-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 28px; letter-spacing: -.2px; color: var(--ink); }
-  .pager { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
-  .pager .dots { display: flex; gap: 5px; }
-  .pager .dots span { width: 7px; height: 7px; border-radius: 50%; background: #E3C9D6; }
-  .pager .dots span.on { background: var(--plum); width: 18px; border-radius: 4px; }
-  /* note card: up to two lines (why it works, and for look 3 the allowed-dirty line), centred in a fixed height */
-  .why { position: absolute; left: 16px; right: 16px; top: 578px; height: 52px; padding: 0 12px; border-radius: 16px;
-         display: flex; flex-direction: column; justify-content: center; gap: 0; }
+  /* honest notes (partial, short shuffle, offline): a soft butter tint, no edge */
+  .banner { position: relative; z-index: 2; flex: none; margin: 8px 16px 0; padding: 9px 12px; border-radius: 18px; background: #FCF0C6; box-shadow: 0 10px 16px -12px rgba(110,84,16,.35);
+            display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 17px; color: var(--ink); }
+  .banner i[data-icon] { font-size: 19px; color: #8A6A12; flex: none; }
+  .banner .t { flex: 1; min-width: 0; }
+  .banner .go { flex: none; min-height: 44px; display: flex; align-items: center; padding: 0 12px; border-radius: 14px; background: rgba(255,255,255,.75);
+                font-weight: 700; color: var(--plum); white-space: nowrap; }
+  .banner.lilac { background: #EEE4FA; box-shadow: 0 10px 16px -12px rgba(90,42,74,.3); }
+  .banner.lilac i[data-icon] { color: var(--plum); }
+
+  /* stage: string lights, the warm patch and the open bundle */
+  .stage { position: relative; flex: 1 1 0; min-height: 250px; }
+  .lights { position: absolute; left: 0; right: 0; top: -2px; width: 100%; height: auto; pointer-events: none; }
+  .mat { position: absolute; left: 50%; top: 50%; width: 370px; height: 370px; margin: -185px 0 0 -185px; pointer-events: none;
+         background: radial-gradient(closest-side, #FDF0E6 0%, #FCEDE3F2 46%, #FBE8E2A8 70%, #FBE5E800 100%); }
+  .from { position: absolute; left: 50%; top: 4px; transform: translateX(-50%); z-index: 3; white-space: nowrap; display: flex; align-items: center; gap: 6px;
+          padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.9); box-shadow: var(--soft-drop);
+          font-size: 12px; line-height: 15px; font-weight: 700; color: var(--plum); }
+  .from i[data-icon] { font-size: 15px; }
+
+  .bundle { position: absolute; pointer-events: none; }
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  .mini .stk { filter: drop-shadow(1.2px 0 0 #fff) drop-shadow(-1.2px 0 0 #fff) drop-shadow(0 1.2px 0 #fff) drop-shadow(0 -1.2px 0 #fff)
+                       drop-shadow(.85px .85px 0 #fff) drop-shadow(-.85px -.85px 0 #fff) drop-shadow(.85px -.85px 0 #fff) drop-shadow(-.85px .85px 0 #fff)
+                       drop-shadow(0 3px 4px rgba(110,58,82,.16)); }
+
+  /* title row: title, pager and Shuffle on the left; the other looks as mini bundles on the right */
+  .head { position: relative; z-index: 2; flex: none; display: flex; align-items: flex-end; gap: 6px; padding: 0 10px 0 20px; }
+  .head .lt { flex: 1; min-width: 0; padding-bottom: 2px; }
+  .look-title, .state h1 { font-variant-ligatures: no-common-ligatures; }
+  .state > * { position: relative; z-index: 2; }
+  .state > .ghosts { z-index: 1; }
+  .look-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 26px; letter-spacing: -.2px; color: var(--ink);
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pager { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin-top: 2px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--ink-soft); }
+  .pager .dots { display: flex; gap: 4px; }
+  .pager .dots span { width: 6px; height: 6px; border-radius: 50%; background: #E3C9D6; }
+  .pager .dots span.on { background: var(--plum); width: 14px; border-radius: 3px; }
+  /* Shuffle: a soft pill; the tap area is 44 tall even though the pill looks 34 */
+  .shuffle { position: relative; display: inline-flex; align-items: center; gap: 5px; height: 44px; padding: 0 2px; margin: -5px 0; font-size: 13px; font-weight: 700; color: var(--plum); white-space: nowrap; }
+  .shuffle::before { content: ""; position: absolute; left: -9px; right: -9px; top: 5px; bottom: 5px; border-radius: 17px; background: var(--soft-tint-strong); box-shadow: var(--soft-drop); }
+  .shuffle > * { position: relative; }
+  .shuffle svg { width: 16px; height: 16px; display: block; }
+  .shuffle-wrap { padding-left: 9px; }
+  .others { flex: none; display: flex; gap: 2px; }
+  .thumb { position: relative; display: block; width: 64px; height: 92px; border-radius: 16px; }
+  .thumb .bundle { left: 3px; top: 1px; width: 58px; height: 70px; }
+  .thumb .lbl { position: absolute; left: 0; right: 0; top: 74px; text-align: center; font-size: 12px; line-height: 15px; font-weight: 700; color: var(--plum); }
+
+  .why { position: relative; z-index: 2; flex: none; margin: 6px 16px 0; padding: 0 12px; min-height: 36px; display: flex; align-items: center; }
   .why .ln { white-space: pre-line; display: grid; grid-template-columns: 17px 1fr; column-gap: 9px; align-items: start; font-size: 13px; line-height: 17px; color: var(--ink); }
   .why .ln i[data-icon] { font-size: 16px; margin-top: .5px; color: var(--plum); }
-  .why .ln.ok { color: var(--ink-soft); }
-  .why .ln.ok i[data-icon] { color: #5C9670; }
-  .why .ln[hidden] { display: none; }
-  /* actions: primary across the width, then the two secondary actions side by side (the home-ax pattern) */
-  .save { position: absolute; left: 16px; width: 214px; top: 638px; min-height: 46px; height: 46px; font-size: 16px; border-radius: 15px; gap: 7px; white-space: nowrap; }
-  .save i[data-icon] { font-size: 19px; }
-  .save .end { display: none; margin-left: 2px; font-size: 16px; }
-  .save.is-saved { background: var(--plum-soft); color: var(--plum); border: 1.5px solid #E7C6DC; box-shadow: none; }
-  .save.is-saved .end { display: grid; }
-  /* Try it on: a quiet secondary next to Save that makes a simulated try-on picture */
-  .tryon { position: absolute; left: 238px; right: 16px; top: 638px; min-height: 46px; height: 46px; padding: 0 10px; border-radius: 15px;
-           gap: 8px; justify-content: center; }
-  .tryon i[data-icon] { font-size: 20px; }
-  .tryon .txt { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; }
-  .tryon .txt b { font-size: 15px; font-weight: 700; line-height: 18px; white-space: nowrap; }
-  .tryon .txt small { font-size: 11px; font-weight: 600; line-height: 13px; color: var(--ink-soft); }
-  .acts { position: absolute; left: 16px; right: 16px; top: 690px; height: 44px; display: flex; gap: 8px; }
-  .acts .btn { flex: 1 1 0; min-width: 0; min-height: 44px; height: 44px; padding: 0 10px; font-size: 15px; border-radius: 14px; gap: 6px; white-space: nowrap; }
-  .acts .btn i[data-icon] { font-size: 18px; }
-  .fine { position: absolute; left: 0; right: 0; top: 740px; text-align: center; font-size: 11px; line-height: 13px; font-weight: 500; color: var(--ink-soft); }
 
-  /* tab bar items are links */
+  /* the pictures-left hint sits over the Try it on column. Option A shows it, Option B (?hint=off) leaves it out. */
+  .hintrow { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 6px 16px 0; min-height: 18px; align-items: center; }
+  .hintrow .h { grid-column: 2; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; line-height: 15px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .hintrow .h.wide { grid-column: 1 / span 2; white-space: normal; text-align: center; }
+  .opt { display: inline-block; padding: 1px 6px; border-radius: 7px; background: #EEE4FA; color: #5B3F86; font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: .1px; }
+
+  /* four equal actions */
+  .grid4 { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 4px 16px 0; }
+  .grid4 .btn { min-height: 48px; height: 48px; padding: 0 10px; font-size: 15px; border-radius: 16px; gap: 7px; white-space: nowrap; min-width: 0; }
+  .grid4 .btn i[data-icon] { font-size: 19px; }
+  .btn.ghost { background: rgba(255,255,255,.7); }
+  .save.is-saved { background: var(--plum-soft); color: var(--plum); box-shadow: 0 10px 16px -12px rgba(79,21,65,.4); }
+  .grid4 .btn[disabled] { opacity: .45; cursor: default; box-shadow: none; }
+  .fine { flex: none; margin-top: 7px; text-align: center; font-size: 11px; line-height: 13px; font-weight: 500; color: var(--ink-soft); }
+
+  /* Earlier tab */
+  .earlier { flex: 1; padding: 6px 16px 0; }
+  .earlier .lead { padding: 8px 6px 6px; font-size: 13px; line-height: 17px; color: var(--ink-soft); text-align: center; }
+  .erow { position: relative; display: flex; align-items: center; gap: 14px; min-height: 96px; padding: 8px 10px 8px 6px; border-radius: 22px; }
+  .erow + .erow::before { content: ""; position: absolute; left: 20px; right: 20px; top: 0; height: 1px; background: var(--soft-divider); }
+  .erow .pic { position: relative; flex: none; width: 70px; height: 82px; }
+  .erow .pic .bundle { left: 1px; top: 0; width: 69px; height: 82px; }
+  .erow .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .erow .t b { font-size: 15px; line-height: 19px; font-weight: 700; color: var(--ink); }
+  .erow .t small { font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .erow .t em { font-style: normal; font-size: 12px; line-height: 15px; font-weight: 600; color: var(--plum); }
+  .erow .end { flex: none; color: var(--soft-chev); font-size: 16px; display: grid; }
+  .earlier .foot { padding: 12px 6px 4px; font-size: 12px; line-height: 16px; color: var(--ink-soft); text-align: center; }
+
+  /* generating, failed, not enough pieces */
+  .state { flex: 1; display: flex; flex-direction: column; padding: 0 20px; }
+  .ghosts { position: relative; flex: none; height: 210px; margin: 0 -20px; }
+  .ghosts .mat { width: 300px; height: 300px; margin: -150px 0 0 -150px; }
+  /* while styling: three blank white sticker shapes where the looks will lie */
+  .ghosts .bundle { top: 40px; width: 105px; height: 125px; }
+  .ghosts .stk [data-garment] svg { filter: brightness(0) invert(1); }
+  .ghosts [data-ghost="0"] { transform: rotate(-5deg); }
+  .ghosts [data-ghost="2"] { transform: rotate(5deg); }
+  .state h1 { text-wrap: balance; font-family: var(--font-display); font-size: 24px; line-height: 30px; font-weight: 800; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .state .sub { margin-top: 6px; font-size: 15px; line-height: 20px; color: var(--ink); }
+  .state .sim { font-family: var(--font-ui); font-size: 12px; letter-spacing: 0; }
+  .steps { margin-top: 14px; display: flex; flex-direction: column; gap: 2px; }
+  .step { display: flex; align-items: center; gap: 12px; min-height: 40px; font-size: 15px; line-height: 19px; color: var(--ink); }
+  .step .dot { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.7); color: var(--ink-soft); font-size: 14px; }
+  .step.done .dot { background: #E2F2DD; color: #3F7A4A; }
+  .step.now .dot { background: var(--plum); color: #fff; }
+  .step.now { font-weight: 700; }
+  .step.wait { color: var(--ink-soft); }
+  .step small { display: block; font-size: 12px; line-height: 15px; color: var(--ink-soft); font-weight: 500; }
+  .state .meter { margin-top: 14px; height: 8px; }
+  .state .acts { margin-top: auto; padding-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .state .acts .btn { min-height: 50px; }
+  .state .cap { text-align: center; font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .state .cap.strong { color: var(--ink); font-weight: 600; }
+  .state .lnk { align-self: center; min-height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 10px; font-size: 14px; font-weight: 700; color: var(--plum); }
+  .has { margin-top: 14px; }
+  .has h2, .miss h2 { font-size: 13px; line-height: 17px; font-weight: 700; color: var(--ink-soft); }
+  .hasrow { display: flex; gap: 6px; margin-top: 8px; }
+  .hp { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .hp .bundle { position: relative; width: 58px; height: 62px; }
+  .hp span.n { font-size: 11px; line-height: 13px; text-align: center; color: var(--ink); }
+  .hp.dirty .bundle { opacity: .5; }
+  .hp.dirty span.n { color: var(--ink-soft); }
+  .miss { margin-top: 16px; }
+  .mrow { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 15px; line-height: 19px; }
+  .mrow i[data-icon] { flex: none; font-size: 20px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.7); color: var(--plum); display: grid; place-items: center; }
+  .mrow i[data-icon] svg { width: 20px; height: 20px; }
+
+  /* tab bar */
+  .tabfade { position: fixed; --tabfade: #F7D6DC; z-index: 8; }
+  .tabbar { position: fixed; z-index: 9; }
   .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
                 font-size: 12px; font-weight: 600; color: var(--plum); }
   .tabbar > a i[data-icon] { font-size: 23px; }
   .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* ---------- largest text size: smaller bundle, one column of actions, nothing clipped ---------- */
+  html.text-xl body { font-size: 19px; }
+  html.text-xl .nav { height: 56px; font-size: 21px; }
+  html.text-xl .nav .back { font-size: 19px; top: 6px; }
+  html.text-xl .nav .right { top: 6px; }
+  html.text-xl .seg button { height: 52px; font-size: 18px; min-width: 130px; }
+  html.text-xl .seg button::before { border-radius: 22px; }
+  html.text-xl .seg { border-radius: 26px; }
+  html.text-xl .ask { font-size: 17px; line-height: 22px; margin-top: 8px; }
+  html.text-xl .banner { font-size: 17px; line-height: 22px; flex-wrap: wrap; }
+  html.text-xl .stage { flex: none; height: 262px; min-height: 0; margin-top: 12px; }
+  html.text-xl .from { font-size: 15px; line-height: 19px; }
+  html.text-xl .head { flex-direction: column; align-items: stretch; gap: 8px; padding: 0 16px 0 20px; }
+  html.text-xl .look-title { font-size: 26px; line-height: 32px; white-space: normal; }
+  html.text-xl .pager { font-size: 17px; line-height: 22px; gap: 10px 14px; }
+  html.text-xl .shuffle { font-size: 17px; }
+  html.text-xl .shuffle svg { width: 20px; height: 20px; }
+  html.text-xl .others { gap: 12px; }
+  html.text-xl .thumb { width: 84px; height: 104px; }
+  html.text-xl .thumb .bundle { left: 13px; }
+  html.text-xl .thumb .lbl { font-size: 16px; line-height: 20px; top: 78px; }
+  html.text-xl .why .ln { font-size: 18px; line-height: 24px; grid-template-columns: 22px 1fr; }
+  html.text-xl .why .ln i[data-icon] { font-size: 20px; margin-top: 2px; }
+  html.text-xl .hintrow { grid-template-columns: 1fr; margin-top: 10px; }
+  html.text-xl .hintrow .h { grid-column: 1; font-size: 16px; line-height: 20px; justify-content: flex-start; white-space: normal; padding-left: 4px; }
+  html.text-xl .opt { font-size: 14px; line-height: 18px; }
+  html.text-xl .grid4 { grid-template-columns: 1fr; gap: 10px; margin-top: 8px; }
+  html.text-xl .grid4 .btn { height: auto; min-height: 58px; font-size: 19px; justify-content: flex-start; padding: 0 20px; }
+  html.text-xl .grid4 .btn i[data-icon] { font-size: 24px; }
+  html.text-xl .fine { font-size: 15px; line-height: 19px; margin-top: 10px; }
+  html.text-xl .erow .t b { font-size: 19px; line-height: 24px; }
+  html.text-xl .erow .t small { font-size: 17px; line-height: 22px; }
+  html.text-xl .erow .t em { font-size: 15px; line-height: 19px; }
+  html.text-xl .earlier .lead, html.text-xl .earlier .foot { font-size: 17px; line-height: 22px; }
+  html.text-xl .state h1 { font-size: 28px; line-height: 34px; }
+  html.text-xl .state .sub, html.text-xl .step, html.text-xl .mrow { font-size: 19px; line-height: 24px; }
+  html.text-xl .step small { font-size: 15px; line-height: 19px; }
+  html.text-xl .state .cap { font-size: 17px; line-height: 22px; }
+  html.text-xl .tabbar { height: 74px; }
+  html.text-xl .tabbar > a { font-size: 14px; }
+  html.text-xl .col { padding-bottom: 104px; }
+
+  /* ---------- dark appearance: tokens from css/dark.css (--plum is the light orchid accent, --plum-fill the solid fill) ---------- */
+  html.theme-dark body { background: var(--wall); }
+  html.theme-dark .nav, html.theme-dark .look-title { color: var(--ink); }
+  html.theme-dark .nav .back, html.theme-dark .nav .right, html.theme-dark .shuffle, html.theme-dark .thumb .lbl, html.theme-dark .why .ln i[data-icon],
+  html.theme-dark .seg button, html.theme-dark .erow .t em, html.theme-dark .state .lnk, html.theme-dark .from, html.theme-dark .mrow i[data-icon] { color: var(--plum); }
+  html.theme-dark .seg button[aria-selected="true"] { color: var(--on-plum); }
+  html.theme-dark .seg button[aria-selected="true"]::before, html.theme-dark .btn, html.theme-dark .step.now .dot, html.theme-dark .meter > span { background: var(--plum-fill); }
+  html.theme-dark .btn { box-shadow: 0 14px 20px -14px rgba(0,0,0,.8); }
+  html.theme-dark .btn.ghost { background: rgba(255,255,255,.09); color: var(--plum); }
+  html.theme-dark .save.is-saved { background: #4A2D43; color: #F6D3EA; }
+  html.theme-dark .mat { background: radial-gradient(closest-side, #4E3A45 0%, #47343FF0 46%, #3F2E38A0 70%, #3A2A3300 100%); }
+  html.theme-dark .from { background: #3A2C37; }
+  html.theme-dark .pager .dots span { background: #5E4857; }
+  html.theme-dark .pager .dots span.on { background: var(--plum); }
+  html.theme-dark .opt { background: #3E3352; color: #DCCBF5; }
+  html.theme-dark .banner { background: #4A3F22; color: var(--ink); }
+  html.theme-dark .banner i[data-icon] { color: #F3D97C; }
+  html.theme-dark .banner .go { background: rgba(255,255,255,.12); color: #F6D3EA; }
+  html.theme-dark .banner.lilac { background: #3B3149; }
+  html.theme-dark .ghosts .bundle { opacity: .16; }
+  html.theme-dark .step .dot, html.theme-dark .mrow i[data-icon] { background: rgba(255,255,255,.1); }
+  html.theme-dark .step.done .dot { background: #2F4A34; color: #B7E0BC; }
+  html.theme-dark .meter { background: rgba(255,255,255,.12); }
+  html.theme-dark .stk { filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 8px 10px rgba(0,0,0,.45)); }
+  html.theme-dark .mini .stk { filter: drop-shadow(1.2px 0 0 #fff) drop-shadow(-1.2px 0 0 #fff) drop-shadow(0 1.2px 0 #fff) drop-shadow(0 -1.2px 0 #fff)
+                       drop-shadow(.85px .85px 0 #fff) drop-shadow(-.85px -.85px 0 #fff) drop-shadow(.85px -.85px 0 #fff) drop-shadow(-.85px .85px 0 #fff)
+                       drop-shadow(0 3px 4px rgba(0,0,0,.45)); }
+  html.theme-dark .tabfade { background: linear-gradient(rgba(50,36,44,0), var(--wall-2) 42%); }
+  html.theme-dark .tabbar { background: rgba(58,44,55,.94); box-shadow: 0 16px 24px -14px rgba(0,0,0,.7); }
+  html.theme-dark .tabbar > a { color: var(--plum); }
+  html.theme-dark .tabbar > a.on { background: var(--plum-fill); color: #fff; }
+  html.theme-dark :focus-visible { outline-color: var(--plum); }
 </style>
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
 </head>
 <body>
 <div class="screen">
-  <div class="room"></div>
-
-  <!-- ============ art, back to front ============ -->
-  <img class="art" src="../art/results-alcove.svg" alt="" style="left:12px;top:76px;width:216px;height:456px">
-  <!-- small framed print on the right wall, centred over the rack (x 320.4) -->
-  <img class="art" src="../art/results-frame.svg" alt="" style="left:294.4px;top:154px;width:52px;height:74px">
-  <!-- rack at 1.15 (128.8 x 216.2): bar centre y 318.5, uprights x 273.3 and 367.6, front castors to y 518 -->
-  <img class="art" src="../art/rack.svg" alt="" style="left:256px;top:307px;width:128.8px;height:216.2px">
-
-  <!-- ============ the open look, hung as a set on the valet stand ============ -->
-  <img class="art" src="../art/looks-valet.svg" alt="" style="left:8px;top:220px;width:224px;height:290px">
-  <!-- placeStand() below hangs the layer behind the top, the bottom to the right, and stands the shoes on the rug -->
-  <div class="stand" id="stand" role="img" aria-label="Look 1 on a valet stand: navy cardigan, cute pink shirt, navy dress pants, nude pointed flats">
-    <span class="p" id="p-layer" data-garment="g-navy-cardigan" data-hanger></span>
-    <span class="p" id="p-bottom" data-garment="g-navy-trousers" data-hanger></span>
-    <span class="p" id="p-top" data-garment="g-pink-blouse" data-hanger></span>
-    <span class="shoesh"></span>
-    <span class="p" id="p-shoes" data-garment="g-nude-flats"></span>
-  </div>
-
-  <!-- ============ looks 2 and 3 on the rack ============ -->
-  <!-- garments W 46 (h 65.2) hang from the bar at y 318.5: top = 318.5 - 11*46/120 = 314.3 (5.3 into the set box).
-       placeSet() below works the hooks out from each piece's drawn half-width so each set's outer edge sits just inside
-       its upright and the back piece peeks outward. Plates 50 wide, 30 tall, 12 px under the trouser hems.
-       Each set box is its tap target; its plate sits inside it. -->
-  <a class="set" id="slot-a" href="#look-2" data-look="2" aria-label="Look 2: Pink and navy" style="left:263px;top:309px;width:56px;height:112px">
-    <span class="g back" data-garment="g-navy-trousers" data-hanger style="left:3.3px;top:5.3px;width:46px;height:65.2px"></span>
-    <span class="g front" data-garment="g-pink-blouse" data-hanger style="left:9.3px;top:5.3px;width:46px;height:65.2px"></span>
-    <span class="tag pink" style="left:2px;top:82px"><b>Look 2</b></span>
-  </a>
-  <a class="set" id="slot-b" href="#look-3" data-look="3" aria-label="Look 3: Lace and navy" style="left:319px;top:309px;width:54px;height:112px">
-    <span class="g back" data-garment="g-navy-cardigan" data-hanger style="left:4px;top:5.3px;width:46px;height:65.2px"></span>
-    <span class="g front" data-garment="g-lace-top" data-hanger style="left:-2px;top:5.3px;width:46px;height:65.2px"></span>
-    <span class="tag pink" style="left:1px;top:82px"><b>Look 3</b></span>
-  </a>
-
-  <!-- ============ labels ============ -->
+<div class="col">
   <div class="nav">Your looks<a class="back" href="home.html"><i data-icon="chevron-left"></i>Home</a><a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
-  <div class="ask">Office · 58°F · Rain · Jose's house</div>
 
-  <div class="look-row">
-    <h1 class="look-title" id="look-name">Calm office</h1>
-    <div class="pager" aria-live="polite"><span class="dots" aria-hidden="true"><span class="on"></span><span></span><span></span></span><span id="look-count">Look 1 of 3</span></div>
+  <div class="seg" role="tablist" aria-label="Which looks">
+    <button type="button" role="tab" id="tab-current" aria-controls="p-current" aria-selected="true"><span>Current</span></button>
+    <button type="button" role="tab" id="tab-earlier" aria-controls="p-earlier" aria-selected="false"><span>Earlier</span></button>
   </div>
-  <div class="card why">
-    <p class="ln"><i data-icon="sparkles"></i><span id="look-note">Polished navy layers.
-Warm enough for 58°F and rain.</span></p>
-    <p class="ln ok" id="look-ok" hidden><i data-icon="check"></i><span>You allowed the lace top for this request.</span></p>
-  </div>
-  <!-- A new look is not saved yet: the plum primary saves it. Once saved, the button opens it in Saved Looks. -->
-  <a class="btn save" id="save" href="#save" aria-label="Save look">
-    <i data-icon="heart"></i><span id="save-txt">Save look</span><span class="end"><i data-icon="chevron-right"></i></span>
-  </a>
-  <a class="btn ghost tryon" id="tryon" href="saved.html#pictures" aria-label="Try it on. Makes a simulated try-on picture of this look">
-    <i data-icon="camera"></i><span class="txt"><b>Try it on</b><small>Simulated</small></span>
-  </a>
-  <div class="acts">
-    <a class="btn ghost" id="swap" href="swap.html?look=1&amp;top=g-pink-blouse"><i data-icon="swap"></i>Swap a piece</a>
-    <a class="btn ghost" href="chat.html"><i data-icon="search"></i>Ask stylist</a>
-  </div>
-  <div class="fine">Try-on pictures are simulated</div>
 
-  <!-- ============ tab bar ============ -->
+  <!-- ============ Current ============ -->
+  <section id="p-current" role="tabpanel" aria-labelledby="tab-current" style="display:contents">
+    <p class="ask" id="ask">Office · 58°F · Rain · Main closet</p>
+    <div class="banner" id="banner" hidden></div>
+
+    <div id="looks" style="display:contents">
+      <div class="stage" id="stage">
+        <img class="lights" src="../art/string-lights.svg" alt="">
+        <div class="mat"></div>
+        <p class="from" id="from" hidden></p>
+        <div class="bundle main" id="bundle" role="img" aria-label=""></div>
+      </div>
+
+      <div class="head">
+        <div class="lt">
+          <h1 class="look-title" id="look-name">Calm office</h1>
+          <div class="pager" aria-live="polite">
+            <span class="dots" id="dots" aria-hidden="true"></span><span id="look-count">Look 1 of 3</span>
+            <span class="shuffle-wrap"><button type="button" class="shuffle" id="shuffle" aria-describedby="shuffle-desc">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.2c2.2 0 3.5 1 4.6 2.8l2.4 4.4c1.1 1.8 2.4 2.8 4.6 2.8H21"/><path d="M3 17h3.2c1.6 0 2.7-.6 3.7-1.6"/><path d="M14.1 8.6C15.1 7.6 16.2 7 17.8 7H21"/><path d="M18.4 4.4 21 7l-2.6 2.6"/><path d="M18.4 14.4 21 17l-2.6 2.6"/></svg>
+              <span>Shuffle</span></button></span>
+          </div>
+          <span id="shuffle-desc" hidden>Shows other looks from your earlier results and saved looks that fit this request. No credits are used.</span>
+        </div>
+        <div class="others" id="others"></div>
+      </div>
+
+      <div class="why"><p class="ln"><i data-icon="sparkles"></i><span id="look-note"></span></p></div>
+
+      <div class="hintrow" id="hintrow"></div>
+      <div class="grid4">
+        <a class="btn save" id="save" href="#save"><i data-icon="heart"></i><span id="save-txt">Save look</span></a>
+        <a class="btn ghost" id="tryon" href="picture.html" aria-label="Try it on. Makes a simulated try-on picture of this look"><i data-icon="camera"></i>Try it on</a>
+        <a class="btn ghost" id="swap" href="swap.html?look=1"><i data-icon="swap"></i>Swap a piece</a>
+        <a class="btn ghost" id="ask-btn" href="chat.html"><i data-icon="chat"></i>Ask stylist</a>
+      </div>
+      <p class="fine">Try-on pictures are simulated</p>
+    </div>
+
+    <div class="state" id="state" hidden></div>
+  </section>
+
+  <!-- ============ Earlier ============ -->
+  <section class="earlier" id="p-earlier" role="tabpanel" aria-labelledby="tab-earlier" hidden>
+    <p class="lead">Your past Style Me results. Opening one uses no credits.</p>
+    <div id="elist"></div>
+    <p class="foot">Saved Looks keeps only the looks you save.</p>
+  </section>
+</div>
+
   <div class="tabfade"></div>
-  <nav class="tabbar">
+  <nav class="tabbar" aria-label="Tabs">
     <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
     <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
     <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
@@ -152,137 +324,428 @@ Warm enough for 58°F and rain.</span></p>
 
 <script src="../js/icons.js"></script>
 <script src="../js/garments.js"></script>
-<script src="../js/avatar.js"></script>
+<script src="../js/mock-state.js"></script>
 <script>
-/* The three looks, all from Jose's house. The copy is the same set the iPad results use. The open look hangs as a set on
-   the valet stand; the rack holds the other two as hanging sets (front piece, back piece). Tapping a set opens that look here (#look-2,
-   #look-3). Swap a piece opens swap.html?look=N&top=<current top>, and swap.html comes back with results.html?look=N&top=<id>,
-   which opens look N with that top. None of the three is saved yet; Save look saves the open one (simulated). */
-(function () {
-  var LOOKS = {
-    1: { name: 'Calm office', fig: { top: 'g-pink-blouse', layer: 'g-navy-cardigan', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
-         set: ['g-navy-cardigan', 'g-pink-blouse'], topAt: 1, note: 'Polished navy layers.\nWarm enough for 58°F and rain.' },
-    2: { name: 'Pink and navy', fig: { top: 'g-pink-blouse', layer: '', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
-         set: ['g-pink-blouse', 'g-navy-trousers'], topAt: 0, note: 'Light and easy. Bring the cardigan if it runs cool.' },
-    3: { name: 'Lace and navy', fig: { top: 'g-lace-top', layer: 'g-navy-cardigan', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
-         set: ['g-lace-top', 'g-navy-cardigan'], topAt: 0, note: 'Soft lace under navy. Warm enough for 58°F.', allowed: 'g-lace-top' }
+/* Fixtures. Every look uses only pieces from the demo closet that are owned, arrived and in the source it came from.
+   Main closet leaves out the archived skirt, the dress at the tailor, the donated gray blazer, the crop top that has not
+   arrived, the wishlisted trench and the trashed leggings; the lace top and black tee are in the wash today. */
+var SOURCES = {
+  main:  { name: 'Main closet', ready: 13 },
+  jose:  { name: "Jose's house", ready: 4, pieces: ['g-navy-trousers', 'g-pink-blouse', 'g-navy-cardigan', 'g-nude-flats', 'g-lace-top'] },
+  weekend: { name: 'Weekend suitcase', ready: 7 }
+};
+var CURRENT = {
+  main: [
+    { name: 'Calm office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+      note: 'Polished navy layers.\nWarm enough for 58°F and rain.' },
+    { name: 'Olive and brick', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+      note: 'Leather over a warm knit for the rain.\nSneakers keep it relaxed.' },
+    { name: 'Cream and navy', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag',
+      note: 'A soft cream knit with navy pants.\nThe burgundy bag adds a little color.' }
+  ],
+  jose: [
+    { name: 'Navy and pink', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+      note: 'The cardigan keeps the pink shirt warm.\nFlats for a wet day.' },
+    { name: 'Just the pink shirt', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+      note: 'The same pieces without the layer,\nfor a warmer office.' }
+  ]
+};
+/* Earlier Style Me results (dates before today, 7 Oct 2026). */
+var EARLIER = [
+  { id: 'e1', date: '30 Sep', occasion: 'Office', source: 'main', looks: [
+    { name: 'Navy and cream', layer: 'g-navy-cardigan', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-tan-loafers',
+      note: 'Cream under navy, with loafers.\nCalm and warm.' },
+    { name: 'Pink and olive', layer: 'g-brown-jacket', top: 'g-pink-blouse', bottom: 'g-olive-trousers', shoes: 'g-nude-flats',
+      note: 'Soft pink with olive and brown.\nA little unexpected.' },
+    { name: 'Brick and navy', top: 'g-brick-top', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag',
+      note: 'Warm brick against navy.\nHeels and the bag dress it up.' } ] },
+  { id: 'e2', date: '21 Sep', occasion: 'Weekend', source: 'weekend', looks: [
+    { name: 'Denim and brick', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-wide-jeans', shoes: 'g-white-sneakers',
+      note: 'Easy jeans and a warm knit.\nThe jacket for later.' },
+    { name: 'Cream and olive', top: 'g-cream-sweater', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers',
+      note: 'Two soft colors that sit well together.' },
+    { name: 'Black tee and jeans', layer: 'g-brown-jacket', top: 'g-black-tee', bottom: 'g-wide-jeans', shoes: 'g-white-sneakers',
+      note: 'A plain tee under leather.\nSimple for errands.' } ] },
+  { id: 'e3', date: '14 Sep', occasion: 'Office', source: 'jose', looks: [
+    { name: 'Pink and navy', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+      note: 'Pink with navy pants.\nFlats keep it comfortable.' },
+    { name: 'Lace and navy', layer: 'g-navy-cardigan', top: 'g-lace-top', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+      note: 'White lace under the navy cardigan.' } ] },
+  { id: 'e4', date: '7 Apr', occasion: 'Date night', source: 'main', looks: [
+    { name: 'Pink & black date night', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag',
+      note: 'Light pink against navy with a burgundy bag.' } ] }
+];
+var BYE = {}; EARLIER.forEach(function (e) { BYE[e.id] = e; });
+/* Shuffle draws from earlier results and saved looks that fit the current source and occasion, are not on screen,
+   and have no piece in the wash. For Office in Main closet that is the 30 Sep set. In Jose's house (5 pieces, the lace top
+   in the wash) only two fit: the saved Interview look and the plain pink-and-navy look from 14 Sep. */
+var SHUFFLE = {
+  main: EARLIER[0].looks.map(function (l) { return Object.assign({ origin: 'From 30 Sep' }, l); }),
+  jose: [
+    { name: 'Interview navy & pink', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats',
+      origin: 'Saved look', note: 'Navy and pink keep it polished.' },
+    Object.assign({ origin: 'From 14 Sep' }, EARLIER[2].looks[0])
+  ]
+};
+
+/* ---------- sticker bundle layout ---------- */
+var BY = {}; Garments.LIST.forEach(function (g) { BY[g.id] = g; });
+function nm(id) { return BY[id] ? BY[id].name : id; }
+/* Where each piece lies in the 300 x 356 bundle box: centre x, centre y, size, 'h' (height) or 'w' (width), rotation. */
+function spots(L) {
+  var s = {
+    bottom: [140, 252, 214, 'h', -2],
+    shoes:  [234, 312, 94, 'w', -8],
+    bag:    [244, 206, 76, 'w', 8]
   };
-  var TOPS = ['g-pink-blouse', 'g-lace-top', 'g-cream-sweater', 'g-brick-top', 'g-black-tee'];
-  /* drawn half-width of each piece on its hanger, in garment units (hook at 60) */
-  var HALF = { 'g-pink-blouse': 47.2, 'g-lace-top': 42.6, 'g-cream-sweater': 44.4, 'g-brick-top': 44.4, 'g-black-tee': 46.4,
-               'g-navy-cardigan': 44.4, 'g-navy-trousers': 32 };
-  var GW = 46, PEEK = 6, IN_L = 277, IN_R = 363;   // garment width, back piece offset, clear space between the uprights
-
-  /* ?look=N&top=<id> (from swap.html) opens look N with that top; #look-N (a rack tap) picks the look shown */
-  var qLook = 0;
-  try {
-    var q = new URLSearchParams(location.search), t = q.get('top');
-    qLook = LOOKS[+q.get('look')] ? +q.get('look') : 0;
-    var S = LOOKS[qLook || 1];
-    if (t && TOPS.indexOf(t) >= 0 && t !== S.fig.top) {
-      S.fig.top = t; S.set[S.topAt] = t;
-      delete S.savedAs;                                   // a swapped look is a new look
-      if (S.allowed && S.allowed !== t) delete S.allowed; // the allowed piece came off
-      if (t === 'g-lace-top' || t === 'g-black-tee') S.allowed = t;
-    }
-  } catch (e) { /* no URL API: open look 1 as drawn */ }
-  var m = /look-([123])/.exec(location.hash || '');
-  var start = m ? +m[1] : (qLook || 1);
-
-  var NAMES = { 'g-lace-top': 'lace top', 'g-black-tee': 'black tee' };
-  var stand = document.getElementById('stand'), swap = document.getElementById('swap');
-  var P = { layer: document.getElementById('p-layer'), top: document.getElementById('p-top'),
-            bottom: document.getElementById('p-bottom'), shoes: document.getElementById('p-shoes') };
-  var BY = {}; (window.Garments ? Garments.LIST : []).forEach(function (g) { BY[g.id] = g.name; });
-  /* Valet stand: garments W 112 hang from the bar at y 234 (top 223.7). With a layer, it hangs behind the top, peeking
-     out to the left; the bottom hangs on its clip hanger to the right. Shoes (W 62) stand on the rug, soles at 505. */
-  var SW = 112, STOP = 234 - 11 * SW / 120;
-  function put(el, cx, top, w) {
-    el.style.left = (cx - w / 2).toFixed(1) + 'px'; el.style.top = top.toFixed(1) + 'px'; el.style.width = w + 'px';
+  if (L.layer) { s.layer = [98, 88, 156, 'h', -7]; s.top = [196, 96, 146, 'h', 5]; }
+  else { s.top = [142, 92, 150, 'h', -3]; }
+  return s;
+}
+var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+function drawn(svg) {
+  var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+  for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+  b = svg.getBBox();
+  for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+  return b;
+}
+function lay(box, L, k) {
+  box.innerHTML = '';
+  var S = spots(L);
+  ORDER.forEach(function (slot) {
+    if (!L[slot]) return;
+    var stk = document.createElement('span'); stk.className = 'stk'; stk.setAttribute('data-slot', slot);
+    stk.innerHTML = '<span class="rot"><span data-garment="' + L[slot] + '"></span></span>';
+    stk.style.width = (120 * k * .9) + 'px';
+    box.appendChild(stk);
+  });
+  Garments.mountAll(box);
+  var list = box.querySelectorAll('.stk');
+  for (var i = 0; i < list.length; i++) {
+    var stk = list[i], sp = S[stk.getAttribute('data-slot')], svg = stk.querySelector('svg');
+    var b = drawn(svg);
+    var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+    var rot = stk.querySelector('.rot');
+    rot.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    rot.style.transform = 'rotate(' + sp[4] + 'deg)';
   }
-  function placeStand(f) {
-    var hasLayer = !!f.layer;
-    P.layer.style.display = hasLayer ? '' : 'none';
-    if (hasLayer) P.layer.setAttribute('data-garment', f.layer);
-    P.top.setAttribute('data-garment', f.top);
-    P.bottom.setAttribute('data-garment', f.bottom);
-    P.shoes.setAttribute('data-garment', f.shoes);
-    put(P.layer, 68, STOP, SW);
-    put(P.top, hasLayer ? 108 : 86, STOP, SW);
-    put(P.bottom, hasLayer ? 182 : 168, STOP, SW);
-    put(P.shoes, 120, 505 - 125 * 62 / 120, 62);
-    if (window.Garments) Garments.mountAll(stand);
-  }
-  var slots = [document.getElementById('slot-a'), document.getElementById('slot-b')];
-  var saveBtn = document.getElementById('save'), ok = document.getElementById('look-ok');
+}
+function pieces(L) { return ['layer', 'top', 'bottom', 'shoes', 'bag'].filter(function (k) { return L[k]; }).map(function (k) { return L[k]; }); }
+function slug(s) { return s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+/* ---------- page ---------- */
+(function () {
+  var P = new URLSearchParams(location.search);
+  var STATE = P.get('state') || '';
+  var FROM = BYE[P.get('from')] || null;
+  var SHORT = P.get('history') === 'short';
+  var HINT = P.get('hint') !== 'off';
+  var hasVariant = !!(STATE || FROM || P.get('shuffle') || P.get('history'));
+  var src = (STATE === 'partial' || STATE === 'insufficient' || SHORT) ? 'jose' : 'main';
+  var occasion = STATE === 'insufficient' ? 'Workout' : 'Office';
+  var offline = STATE === 'offline';
+
+  var shuffled = P.get('shuffle') === '1';
   var current = 1;
+  var set;
+  var $ = function (id) { return document.getElementById(id); };
+  var main = $('bundle'), stage = $('stage');
+  var others = $('others'), saveBtn = $('save');
+
+  function baseSet() {
+    if (FROM) return FROM.looks;
+    var base = CURRENT[src].map(function (l) { return Object.assign({}, l); });
+    if (!hasVariant) {
+      /* a top swapped on Swap a piece comes back here */
+      var sw = MockState.get('results.swap', null);
+      if (sw && sw.set === src && base[sw.look - 1] && sw.slot && sw.id) {
+        base[sw.look - 1][sw.slot] = sw.id;
+        base[sw.look - 1].swapped = sw.slot;
+      }
+    }
+    return base;
+  }
+  function pickSet() { set = shuffled ? SHUFFLE[src] : baseSet(); }
+
+  /* ask line and banners */
+  function header() {
+    var a = $('ask');
+    if (FROM) a.textContent = FROM.occasion + ' · ' + SOURCES[FROM.source].name + ' · ' + FROM.date;
+    else a.textContent = occasion + ' · 58°F · Rain · ' + SOURCES[src].name;
+    var b = $('banner'), html = '';
+    if (offline) {
+      html = '<i data-icon="wifi-off"></i><span class="t">You’re offline. These looks are kept on this iPhone.</span>';
+      b.className = 'banner lilac';
+    } else if (STATE === 'partial' && !shuffled) {
+      html = '<i data-icon="info"></i><span class="t">Only 2 looks fit. Jose’s house has 5 pieces, and the lace top is in the wash.</span>' +
+             '<a class="go" href="styleme.html" data-source="main">Use Main closet</a>';
+      b.className = 'banner';
+    } else if (shuffled && SHUFFLE[src].length < 3) {
+      html = '<i data-icon="info"></i><span class="t">Only ' + SHUFFLE[src].length + ' earlier looks fit ' + SOURCES[src].name + '.</span>' +
+             '<a class="go" href="styleme.html">Style again for more</a>';
+      b.className = 'banner';
+    }
+    b.innerHTML = html; b.hidden = !html;
+    Icons.mountAll(b);
+    var go = b.querySelector('[data-source]');
+    if (go) go.addEventListener('click', function () { MockState.set('source', { type: 'main' }); });
+    var f = $('from');
+    if (shuffled) { f.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3.2c2.2 0 3.5 1 4.6 2.8l2.4 4.4c1.1 1.8 2.4 2.8 4.6 2.8H21"/><path d="M3 17h3.2c1.6 0 2.7-.6 3.7-1.6"/><path d="M14.1 8.6C15.1 7.6 16.2 7 17.8 7H21"/><path d="M18.4 4.4 21 7l-2.6 2.6"/><path d="M18.4 14.4 21 17l-2.6 2.6"/></svg>From your earlier looks · no credits used'; f.hidden = false; }
+    else if (FROM) { f.innerHTML = '<i data-icon="clock"></i>Earlier result · no credits used'; f.hidden = false; Icons.mountAll(f); }
+    else f.hidden = true;
+  }
+
+  function fit() {
+    var h = stage.clientHeight, w = stage.clientWidth;
+    var top = 34;                                   // room for the lights / caption above the bundle
+    var bottom = 20;                                // keeps the shoes clear of the mini bundles below
+    var k = Math.min(1, (h - top - bottom) / 356, (w - 24) / 300);
+    k = Math.max(k, .5);
+    main.style.width = (300 * k) + 'px'; main.style.height = (356 * k) + 'px';
+    main.style.left = ((w - 300 * k) / 2) + 'px';
+    main.style.top = (top + Math.max(0, (h - top - bottom - 356 * k) / 2)) + 'px';
+    return k;
+  }
 
   function show(n) {
-    var L = LOOKS[n]; if (!L) return;
+    var L = set[n - 1]; if (!L) return;
     current = n;
-    placeStand(L.fig);
-    stand.setAttribute('aria-label', 'Look ' + n + ' on a valet stand: ' +
-      ['layer', 'top', 'bottom', 'shoes'].filter(function (k) { return L.fig[k]; })
-        .map(function (k) { return (BY[L.fig[k]] || L.fig[k]).toLowerCase(); }).join(', '));
-    swap.setAttribute('href', 'swap.html?look=' + n + '&top=' + L.fig.top);
-    document.getElementById('look-name').textContent = L.name;
-    document.getElementById('look-count').textContent = 'Look ' + n + ' of 3';
-    document.getElementById('look-note').textContent = L.note;   // a \n breaks after the first sentence (white-space: pre-line)
-    ok.hidden = !L.allowed;
-    if (L.allowed) ok.querySelector('span').textContent = 'You allowed the ' + NAMES[L.allowed] + ' for this request.';
-    var dots = document.querySelectorAll('.pager .dots span');
-    for (var i = 0; i < dots.length; i++) dots[i].className = (i + 1 === n) ? 'on' : '';
-    var others = [1, 2, 3].filter(function (k) { return k !== n; });
-    slots.forEach(function (slot, i) {
-      var k = others[i], O = LOOKS[k];
-      slot.setAttribute('href', '#look-' + k);
-      slot.setAttribute('data-look', k);
-      slot.setAttribute('aria-label', 'Look ' + k + ': ' + O.name);
-      slot.querySelector('.tag b').textContent = 'Look ' + k;
-      slot.querySelector('.front').setAttribute('data-garment', O.set[0]);
-      slot.querySelector('.back').setAttribute('data-garment', O.set[1]);
-      placeSet(slot, O.set, i === 0);
-      if (window.Garments) Garments.mountAll(slot);
+    MockState.set('results.index', n);
+    var k = fit();
+    lay(main, L, k);
+    main.setAttribute('aria-label', 'Look ' + n + ': ' + pieces(L).map(function (id) { return nm(id).toLowerCase(); }).join(', '));
+    $('swap').setAttribute('href', MockTheme.carry('swap.html?look=' + n + '&top=' + L.top + (src !== 'main' ? '&source=' + src : '')));
+    $('look-name').textContent = L.name;
+    $('look-count').textContent = 'Look ' + n + ' of ' + set.length;
+    var note = L.note;
+    if (L.origin) note = L.origin + '. ' + note.replace('\n', ' ');
+    if (L.swapped) note = 'You swapped in the ' + nm(L[L.swapped]).toLowerCase() + '.\nEverything else is as styled.';
+    $('look-note').textContent = note;
+    var dots = $('dots'); dots.innerHTML = '';
+    set.forEach(function (_, i) { var d = document.createElement('span'); if (i + 1 === n) d.className = 'on'; dots.appendChild(d); });
+    others.innerHTML = '';
+    set.forEach(function (O, i) {
+      if (i + 1 === n) return;
+      var a = document.createElement('a');
+      a.className = 'thumb'; a.href = '#look-' + (i + 1);
+      a.setAttribute('aria-label', 'Look ' + (i + 1) + ': ' + O.name);
+      a.innerHTML = '<span class="bundle mini"></span><span class="lbl">Look ' + (i + 1) + '</span>';
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        try { history.replaceState(null, '', location.pathname + location.search + '#look-' + (i + 1)); } catch (err) {}
+        show(i + 1);
+      });
+      others.appendChild(a);
+      var mb = a.querySelector('.bundle');
+      lay(mb, O, mb.clientHeight / 356);
     });
     paintSave();
   }
-  /* Hang a set so its outer edge meets the inner edge of its upright and the back piece peeks outward. */
-  function placeSet(slot, set, left) {
-    var k = GW / 120, hf = (HALF[set[0]] || 47) * k, hb = (HALF[set[1]] || 47) * k;
-    var reach = Math.max(PEEK + hb, hf);
-    var front = left ? IN_L + reach : IN_R - reach, back = left ? front - PEEK : front + PEEK;
-    var x0 = parseFloat(slot.style.left);
-    slot.querySelector('.front').style.left = (front - GW / 2 - x0).toFixed(1) + 'px';
-    slot.querySelector('.back').style.left = (back - GW / 2 - x0).toFixed(1) + 'px';
+
+  /* Saved Looks reads MockState saved.looks: 'calm' and 'olive' are the results looks it knows by id; any other look is
+     stored as a full look object. Try it on adds { look } to MockState pictures and opens the new (simulated) picture. */
+  function storeVal(L) {
+    if (!L.swapped && !L.origin && L.name === 'Calm office') return 'calm';
+    if (!L.swapped && !L.origin && L.name === 'Olive and brick') return 'olive';
+    var o = { id: 'r-' + slug(L.name) + (L.swapped ? '-' + slug(nm(L[L.swapped])) : ''), title: L.name, occasion: FROM ? FROM.occasion : occasion,
+              note: L.note.replace('\n', ' '), saved: 'Today', from: SOURCES[FROM ? FROM.source : src].name, isNew: true };
+    ['layer', 'top', 'bottom', 'shoes', 'bag'].forEach(function (k) { if (L[k]) o[k] = L[k]; });
+    return o;
   }
-  /* Saved: soft plum, names the saved look and opens it. Not saved: the plum primary that saves it. */
+  function keyOf(v) { return typeof v === 'string' ? v : (v && v.id); }
+  function savedIds() { return (MockState.get('saved.looks', []) || []).map(keyOf); }
   function paintSave() {
-    var L = LOOKS[current], on = !!L.savedAs;
+    var L = set[current - 1], on = savedIds().indexOf(keyOf(storeVal(L))) >= 0;
     saveBtn.classList.toggle('is-saved', on);
-    saveBtn.setAttribute('href', on ? (L.savedHref || 'saved.html') : '#save');
-    saveBtn.setAttribute('aria-label', on ? 'Saved as ' + L.savedAs + '. Open it in Saved Looks' : 'Save look');
-    saveBtn.querySelector('i[data-icon]').outerHTML = '<i data-icon="' + (on ? 'heart-fill' : 'heart') + '"></i>';
-    document.getElementById('save-txt').textContent = on ? 'Saved' : 'Save look';
-    if (window.Icons) Icons.mountAll(saveBtn);
+    saveBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    saveBtn.setAttribute('aria-label', on ? 'Saved. Tap to remove from Saved Looks' : 'Save look');
+    saveBtn.innerHTML = '<i data-icon="' + (on ? 'heart-fill' : 'heart') + '"></i><span>' + (on ? 'Saved' : 'Save look') + '</span>';
+    Icons.mountAll(saveBtn);
   }
-  slots.forEach(function (slot) {
-    slot.addEventListener('click', function (e) {
-      e.preventDefault();
-      var k = +slot.getAttribute('data-look');
-      try { history.replaceState(null, '', location.pathname + location.search + '#look-' + k); } catch (err) { /* file URLs may refuse */ }
-      show(k);
-    });
-  });
   saveBtn.addEventListener('click', function (e) {
-    var L = LOOKS[current];
-    if (L.savedAs) return;               // already saved: the link opens it
     e.preventDefault();
-    L.savedAs = L.name;                  // simulated: saved under the look's own name
+    var v = storeVal(set[current - 1]), id = keyOf(v);
+    MockState.update('saved.looks', function (list) {
+      list = (list || []).slice();
+      var i = list.map(keyOf).indexOf(id);
+      if (i >= 0) list.splice(i, 1); else list.push(v);
+      return list;
+    });
     paintSave();
+  });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('a#tryon');
+    if (!t) return;
+    e.preventDefault();
+    var v = storeVal(set[current - 1]);
+    var list = MockState.update('pictures', function (l) { l = (l || []).slice(); l.push({ look: v }); return l; });
+    location.href = MockTheme.carry('picture.html?id=p-new-' + keyOf(v) + '-' + (list.length - 1));
   });
 
-  show(start);
+  $('shuffle').addEventListener('click', function () {
+    shuffled = !shuffled;
+    pickSet(); header();
+    try {
+      var u = new URL(location.href);
+      if (shuffled) u.searchParams.set('shuffle', '1'); else u.searchParams.delete('shuffle');
+      u.hash = '';
+      history.replaceState(null, '', u.pathname + u.search);
+    } catch (err) {}
+    show(1);
+  });
+
+  /* hint row: Option A shows the pictures-left hint near Try it on; Option B (?hint=off) leaves it out. Offline shows why. */
+  function hint() {
+    var r = $('hintrow');
+    if (offline) {
+      r.innerHTML = '<span class="h wide">Try it on and Ask stylist need a connection. Save and Swap work offline.</span>';
+      ['tryon', 'ask-btn'].forEach(function (id) {
+        var a = $(id), b = document.createElement('button');
+        b.type = 'button'; b.className = a.className; b.id = id; b.disabled = true; b.innerHTML = a.innerHTML;
+        b.setAttribute('aria-label', a.textContent.trim() + '. Needs a connection');
+        a.parentNode.replaceChild(b, a);
+      });
+    } else if (HINT) {
+      r.innerHTML = '<span class="h" title="Proposed: show how many try-on pictures are left"><span class="opt">Option A</span>31 pictures left</span>';
+    } else {
+      r.innerHTML = '<span class="h"><span class="opt">Option B · no hint</span></span>';
+    }
+  }
+
+  /* ---------- states that replace the looks ---------- */
+  var CHECK = '<i data-icon="check"></i>';
+  function ghosts() {
+    return '<div class="ghosts" aria-hidden="true"><div class="mat"></div>' +
+      '<span class="bundle mini" data-ghost="0" style="left:calc(50% - 165px)"></span>' +
+      '<span class="bundle mini" data-ghost="1" style="left:calc(50% - 52px);top:26px"></span>' +
+      '<span class="bundle mini" data-ghost="2" style="left:calc(50% + 60px)"></span></div>';
+  }
+  function renderState() {
+    var el = $('state'), h = '';
+    var srcName = SOURCES[src].name;
+    if (STATE === 'generating') {
+      var before = P.get('phase') === 'before';
+      h = ghosts() +
+        (before
+          ? '<h1>Getting ready</h1><p class="sub">Checking ' + srcName + ' for the office. This part happens on this iPhone.</p>'
+          : '<h1>Styling… <span class="sim">Simulated</span></h1><p class="sub">Choosing three looks from ' + srcName + ' for the office.</p>') +
+        '<div class="steps" role="list">' +
+          '<div class="step ' + (before ? 'now' : 'done') + '" role="listitem"><span class="dot">' + (before ? '1' : CHECK) + '</span><span>Check ' + SOURCES[src].ready + ' pieces ready to wear<small>On this iPhone</small></span></div>' +
+          '<div class="step ' + (before ? 'wait' : 'done') + '" role="listitem"><span class="dot">' + (before ? '2' : CHECK) + '</span><span>Send the request<small>Simulated stylist</small></span></div>' +
+          '<div class="step ' + (before ? 'wait' : 'now') + '" role="listitem"><span class="dot">3</span><span>Choose three looks</span></div>' +
+        '</div>' +
+        '<div class="meter" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="3" aria-valuenow="' + (before ? 0 : 2) + '"><span style="width:' + (before ? 12 : 66) + '%"></span></div>' +
+        '<div class="acts">' +
+          (before ? '<p class="cap strong">Nothing has been sent yet.</p>' : '<p class="cap">You can leave this screen. Your looks will wait here.</p>') +
+          '<a class="btn ghost" href="styleme.html">Cancel</a></div>';
+    } else if (STATE === 'failed') {
+      h = ghosts() +
+        '<h1>Styling didn’t finish</h1><p class="sub">The simulated stylist didn’t answer. Nothing was charged, and your request is kept as you left it.</p>' +
+        '<div class="acts">' +
+          '<a class="btn" href="results.html?state=generating"><i data-icon="undo"></i>Try again</a>' +
+          '<a class="btn ghost" href="styleme.html">Back to Style Me</a>' +
+          '<a class="lnk" href="results.html?tab=earlier"><i data-icon="clock"></i>Earlier looks still work</a></div>';
+    } else if (STATE === 'insufficient') {
+      var has = SOURCES.jose.pieces.map(function (id) {
+        var dirty = id === 'g-lace-top';
+        return '<div class="hp' + (dirty ? ' dirty' : '') + '"><span class="bundle mini" data-one="' + id + '"></span><span class="n">' + nm(id) + (dirty ? '<br>In the wash' : '') + '</span></div>';
+      }).join('');
+      h = '<h1 style="margin-top:18px">Not enough pieces for a look</h1>' +
+        '<p class="sub">Nothing was charged, and nothing was made up to fill the gap.</p>' +
+        '<div class="has"><h2>In Jose’s house</h2><div class="hasrow">' + has + '</div></div>' +
+        '<div class="miss"><h2>A workout look needs</h2>' +
+          '<div class="mrow"><i data-icon="shirt"></i>A top you can move in</div>' +
+          '<div class="mrow"><i data-icon="trousers"></i>Leggings or shorts</div>' +
+          '<div class="mrow"><i data-icon="shoe"></i>Sneakers</div></div>' +
+        '<div class="acts">' +
+          '<a class="btn" href="suitcase.html?add=1"><i data-icon="plus"></i>Add pieces to Jose’s house</a>' +
+          '<a class="btn ghost" href="styleme.html"><i data-icon="suitcase"></i>Choose another source</a></div>';
+    }
+    el.innerHTML = h;
+    Icons.mountAll(el);
+    var gs = el.querySelectorAll('[data-ghost]');
+    for (var g = 0; g < gs.length; g++) lay(gs[g], CURRENT.main[+gs[g].getAttribute('data-ghost')], 125 / 356);
+    var ones = el.querySelectorAll('[data-one]');
+    for (var i = 0; i < ones.length; i++) {
+      var b = ones[i], id = b.getAttribute('data-one'), cat = BY[id].category;
+      var L = {}; L[cat === 'layer' ? 'layer' : cat] = id;
+      /* one piece on its own: draw it centred in the small box */
+      lay(b, cat === 'bottom' ? { bottom: id } : cat === 'shoes' ? { shoes: id } : cat === 'layer' ? { top: id } : { top: id }, 1);
+      var st = b.querySelector('.stk'), w = b.clientWidth, hh = b.clientHeight;
+      var svg = st.querySelector('svg'), bb = drawn(svg);
+      var sc = Math.min((w - 8) / bb.width, (hh - 8) / bb.height);
+      st.style.width = (120 * sc) + 'px'; st.style.height = (170 * sc) + 'px';
+      st.style.left = (w / 2 - (bb.x + bb.width / 2) * sc) + 'px'; st.style.top = (hh / 2 - (bb.y + bb.height / 2) * sc) + 'px';
+      st.querySelector('.rot').style.transform = 'none';
+    }
+    MockTheme.dark || MockTheme.xl ? el.querySelectorAll('a[href]').forEach(function (a) { a.setAttribute('href', MockTheme.carry(a.getAttribute('href'))); }) : 0;
+  }
+
+  /* ---------- Earlier tab ---------- */
+  function earlierList() {
+    var box = $('elist'); box.innerHTML = '';
+    EARLIER.forEach(function (E) {
+      var a = document.createElement('a');
+      a.className = 'erow'; a.href = MockTheme.carry('results.html?from=' + E.id);
+      var n = E.looks.length;
+      a.setAttribute('aria-label', E.date + ', ' + E.occasion + ', ' + SOURCES[E.source].name + ', ' + n + (n === 1 ? ' look' : ' looks') + '. Opens it, no credits used');
+      a.innerHTML = '<span class="pic"><span class="bundle mini"></span></span>' +
+        '<span class="t"><b>' + E.occasion + ' · ' + SOURCES[E.source].name + '</b><small>' + E.date + ' · ' + n + (n === 1 ? ' look' : ' looks') + '</small>' +
+        '<em>' + E.looks.map(function (l) { return l.name; }).join(', ') + '</em></span>' +
+        '<span class="end"><i data-icon="chevron-right"></i></span>';
+      box.appendChild(a);
+      var mb = a.querySelector('.bundle');
+      lay(mb, E.looks[0], mb.clientHeight / 356);
+    });
+    Icons.mountAll(box);
+  }
+
+  /* ---------- tabs ---------- */
+  var tabs = [$('tab-current'), $('tab-earlier')];
+  var drawnEarlier = false;
+  function selectTab(which, focus) {
+    var cur = which === 'current';
+    tabs[0].setAttribute('aria-selected', cur); tabs[1].setAttribute('aria-selected', !cur);
+    tabs[0].tabIndex = cur ? 0 : -1; tabs[1].tabIndex = cur ? -1 : 0;
+    $('p-current').hidden = !cur; $('p-earlier').hidden = cur;
+    $('p-current').style.display = cur ? 'contents' : 'none';
+    if (!cur && !drawnEarlier) { earlierList(); drawnEarlier = true; }
+    if (cur && !STATE_ONLY) show(current);
+    if (focus) tabs[cur ? 0 : 1].focus();
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { selectTab(i ? 'earlier' : 'current'); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); selectTab(i ? 'current' : 'earlier', true); }
+    });
+  });
+
+  var STATE_ONLY = STATE === 'generating' || STATE === 'failed' || STATE === 'insufficient';
+  function start() {
+    header();
+    if (STATE_ONLY) {
+      $('looks').hidden = true; $('looks').style.display = 'none';
+      $('state').hidden = false; renderState();
+      if (STATE !== 'failed') $('banner').hidden = true;
+    } else {
+      pickSet();
+      hint();
+      var m = /look-(\d)/.exec(location.hash || '');
+      var stored = MockState.get('results.index', 1);
+      current = m ? +m[1] : (hasVariant ? 1 : stored);
+      if (!set[current - 1]) current = 1;
+    }
+    selectTab(P.get('tab') === 'earlier' ? 'earlier' : 'current');
+    var t;
+    window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(function () { if (!STATE_ONLY && !$('p-current').hidden) show(current); }, 120); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
 </script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
 </body>
 </html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Icons sheet</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  html, body { width: 1000px; height: 900px; }
+  body { background: #fff; }
+  .sheet { position: relative; width: 1000px; height: 900px; overflow: hidden; padding: 14px 24px 0; }
+  h1 { font-size: 15px; font-weight: 700; margin: 0 0 2px; }
+  .cap { font-size: 11px; color: var(--ink-soft); }
+  .sec { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .4px; margin: 12px 0 6px; }
+
+  /* every icon at 28 px in plum, its name under it in 11 px */
+  .grid { display: grid; grid-template-columns: repeat(11, 1fr); row-gap: 6px; }
+  .grid div { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .grid i[data-icon] { font-size: 28px; color: var(--plum); }
+  .grid span { font-size: 11px; color: var(--ink); line-height: 1; white-space: nowrap; }
+
+  /* the same icons at 16 px */
+  .row16 { display: flex; justify-content: space-between; align-items: center; color: var(--plum); height: 22px; padding: 0 2px; }
+  .row16 i[data-icon] { font-size: 16px; }
+
+  /* component samples, on the surfaces they sit on in the room */
+  .samples { display: flex; gap: 14px; margin-top: 2px; align-items: flex-start; }
+  .wardrobe { position: relative; width: 226px; height: 360px; border-radius: 10px;
+    background: var(--blue); border: 1.5px solid var(--blue-line); overflow: hidden; }
+  .wardrobe::after { content: ""; position: absolute; left: 16px; right: 16px; top: 296px; height: 80px;
+    border-radius: 6px 6px 0 0; background: var(--blue-2); border: 1.5px solid var(--blue-line); border-bottom: 0; }
+  .wall { position: relative; width: 300px; height: 360px; border-radius: 10px; overflow: hidden;
+    background: linear-gradient(var(--wall), var(--wall-2)); }
+  .phone { position: relative; width: 390px; height: 360px; border-radius: 10px; overflow: hidden;
+    background: linear-gradient(var(--wall), var(--floor)); }
+  .phone .tabfade { height: 120px; }
+  .phone .card { position: absolute; left: 14px; top: 56px; width: 236px; padding: 0; }
+  .phone .card .row { min-height: 40px; font-size: 13px; font-weight: 600; }
+  .phone .card .row i[data-icon] { font-size: 20px; color: var(--plum); }
+  .phone .card .row .end i[data-icon] { font-size: 16px; color: var(--ink-soft); }
+  .phone .corner { position: absolute; right: 14px; top: 56px; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  .stack { display: flex; flex-direction: column; gap: 9px; padding: 12px; }
+  .line { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .inv { display: inline-flex; align-items: center; gap: 9px; background: var(--plum); color: #fff; border-radius: 12px; padding: 7px 11px; }
+  .inv i[data-icon] { font-size: 22px; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <h1>Icons</h1>
+  <div class="cap">js/icons.js. 24 grid, stroke 1.8, round caps and joins. Every name at 28 px in plum, the same row at 16 px, then inside the shared components from css/room.css.</div>
+
+  <div class="sec">All names at 28 px</div>
+  <div class="grid" id="grid"></div>
+
+  <div class="sec">All names at 16 px</div>
+  <div class="row16" id="small"></div>
+
+  <div class="sec">In components</div>
+  <div class="samples">
+
+    <div class="wardrobe">
+      <div class="tag" style="left:12px;top:12px;width:202px">
+        <i data-icon="suitcase"></i>
+        <div class="txt"><small>Source</small><b>Jose’s house</b></div>
+        <span class="end"><i data-icon="chevron-updown"></i></span>
+      </div>
+      <div class="tag green slim" style="left:12px;top:70px;width:202px">
+        <i data-icon="lock"></i>
+        <div class="txt"><b style="font-size:13px;font-weight:600">5 pieces · Suitcase only</b></div>
+      </div>
+      <div class="tag pink slim" style="left:12px;top:110px">
+        <i data-icon="bookmark"></i>
+        <div class="txt"><b>Saved Looks</b></div>
+        <span class="end"><i data-icon="chevron-right"></i></span>
+      </div>
+      <div class="tag butter" style="left:12px;top:152px;width:202px">
+        <i data-icon="calendar"></i>
+        <div class="txt"><small>Occasion</small><b>Office</b></div>
+        <span class="end"><i data-icon="chevron-down"></i></span>
+      </div>
+      <div class="tag lilac slim" style="left:12px;top:206px">
+        <i data-icon="mirror"></i>
+        <div class="txt"><b>On Me</b></div>
+      </div>
+      <div class="tag slim" style="left:122px;top:206px">
+        <i data-icon="washer"></i>
+        <div class="txt"><b>Wash</b></div>
+      </div>
+    </div>
+
+    <div class="wall">
+      <div class="stack">
+        <div class="line">
+          <span class="chip on"><i data-icon="check"></i>Office</span>
+          <span class="chip"><i data-icon="calendar"></i>Weekend</span>
+          <span class="chip"><i data-icon="rain"></i>Rain</span>
+        </div>
+        <div class="line">
+          <div class="btn" style="width:150px"><i data-icon="sparkles"></i>Style Me</div>
+          <div class="btn ghost small"><i data-icon="hanger"></i>Choose a piece</div>
+        </div>
+        <div class="line">
+          <span class="inv"><i data-icon="sparkles"></i><i data-icon="hanger"></i><i data-icon="bookmark"></i><i data-icon="search"></i><i data-icon="person-circle"></i><i data-icon="gear"></i></span>
+        </div>
+        <div class="line">
+          <span class="tag slim" style="position:static"><i data-icon="rain"></i><div class="txt"><b>58°F · Rain today</b></div></span>
+          <span class="tag lilac slim" style="position:static"><i data-icon="search"></i><div class="txt"><b>Ask stylist</b></div></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="nav"><span class="left"><i data-icon="chevron-left"></i></span>Style Me<span class="right"><i data-icon="person-circle"></i></span></div>
+      <div class="card rows">
+        <div class="row"><i data-icon="shirt"></i>Tops<span class="end"><i data-icon="chevron-right"></i></span></div>
+        <div class="row"><i data-icon="trousers"></i>Bottoms<span class="end"><i data-icon="chevron-right"></i></span></div>
+        <div class="row"><i data-icon="shoe"></i>Shoes<span class="end"><i data-icon="chevron-right"></i></span></div>
+      </div>
+      <div class="corner">
+        <span class="chip on"><i data-icon="heart-fill"></i>Saved</span>
+        <span class="chip"><i data-icon="swap"></i>Swap</span>
+      </div>
+      <div class="tabfade"></div>
+      <div class="tabbar">
+        <div class="on"><i data-icon="sparkles"></i>Style Me</div>
+        <div><i data-icon="hanger"></i>Closet</div>
+        <div><i data-icon="bookmark"></i>Saved Looks</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../js/icons.js"></script>
+<script>
+  (function () {
+    var grid = document.getElementById('grid');
+    var small = document.getElementById('small');
+    var g = '', s = '';
+    Icons.NAMES.forEach(function (n) {
+      g += '<div><i data-icon="' + n + '"></i><span>' + n + '</span></div>';
+      s += '<i data-icon="' + n + '" title="' + n + '"></i>';
+    });
+    grid.innerHTML = g;
+    small.innerHTML = s;
+    Icons.mountAll(grid);
+    Icons.mountAll(small);
+  })();
+</script>
+</body>
+</html>

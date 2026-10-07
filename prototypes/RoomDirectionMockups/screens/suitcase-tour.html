@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suitcase</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* One suitcase. The case itself stands at the right of the title (the hall art at 0.62), on the floor line.
+     Under it: whether Style Me uses it (with the strict "Suitcase only" rule spelled out), then what is packed as the
+     Closet's soft garment grid. A piece packed in more than one suitcase is one and the same piece, so it carries
+     "Also in Weekend" and adding it here never makes a copy. Remove takes only the link away and offers Undo.
+     ?id=jose (default) | weekend | spring (empty) | new&name=... (just created), ?add=1 opens the packing sheet.
+     Column at most 430 wide, centred; the page scrolls and the tab bar stays fixed. */
+  :root { --fy: 196px; }
+  html, body { background: var(--floor-2); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  button:disabled { cursor: default; }
+  body.sheet-open { overflow: hidden; }
+  .screen { height: auto; min-height: 100vh; overflow: visible; padding-bottom: 128px;
+    background: linear-gradient(var(--floor-line), var(--floor-line)) 0 var(--fy) / 100% 2px no-repeat,
+                linear-gradient(var(--floor), var(--floor-2) 520px) 0 var(--fy) / 100% 100% no-repeat,
+                linear-gradient(var(--wall), var(--wall-2)) 0 0 / 100% var(--fy) no-repeat; }
+  .col { position: relative; max-width: 430px; margin: 0 auto; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  .nav { z-index: 5; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 10px 0 4px; display: flex; align-items: center; gap: 2px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .head { position: relative; height: var(--fy); }
+  /* the case: 104 wide art at 0.62, wheels (art y ~178 of 182) on the floor line */
+  .case { position: absolute; right: 22px; width: 64.5px; }
+  .case img { width: 100%; height: auto; display: block; }
+  .hdr { position: absolute; left: 20px; right: 104px; top: 46px; display: flex; flex-direction: column; gap: 4px; }
+  .hdr h1 { overflow-wrap: anywhere; }
+  .hdr .count { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--ink-soft); }
+  .tools { display: flex; gap: 8px; margin-top: 6px; margin-left: -4px; }
+  .tools button { min-height: 44px; display: flex; align-items: center; }
+  .tools .chip { font-size: 14px; color: var(--plum); background: rgba(255,255,255,.7); }
+  .tools .chip i[data-icon] { font-size: 16px; }
+  .tools .fav[aria-pressed="true"] .chip { background: #FCEFC2; color: #6B5410; }
+  .tools .fav[aria-pressed="true"] i[data-icon] { color: #D9A650; }
+  .tools .fav[aria-pressed="true"] i[data-icon] svg path { fill: currentColor; }
+  .rename { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
+  .rename[hidden] { display: none; }
+  .rename input { flex: 1; min-width: 0; height: 46px; border: 0; border-radius: 15px; padding: 0 12px; font: inherit; font-size: 18px; font-weight: 700;
+                  color: var(--ink); background: #fff; box-shadow: var(--soft-drop); outline: 0; }
+  .rename input:focus-visible { box-shadow: var(--soft-drop), inset 0 0 0 2px #6A1F5866; }
+  .rename .btn { min-height: 44px; font-size: 15px; padding: 0 14px; border-radius: 15px; }
+
+  .body { padding: 16px 16px 0; }
+  /* source block: no box, a soft tint that fades out at the bottom */
+  .source { display: grid; grid-template-columns: 36px 1fr; gap: 2px 12px; align-items: start; padding: 12px 12px 12px; border-radius: 24px;
+            background: rgba(255,255,255,.55); box-shadow: var(--soft-drop); }
+  .source .ic { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--plum-soft); color: var(--plum); }
+  .source.on .ic { background: var(--plum); color: #fff; }
+  .source .ic i[data-icon] { font-size: 19px; }
+  .source b { display: block; font-size: 16px; line-height: 21px; }
+  .source p { font-size: 14px; line-height: 19px; color: var(--ink-soft); margin-top: 2px; }
+  .source p strong { color: var(--ink); font-weight: 700; }
+  .source .acts { grid-column: 2; display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 8px; align-items: center; }
+  .source .btn { min-height: 44px; font-size: 15px; padding: 0 16px; border-radius: 15px; }
+  .source .btn:disabled { background: #DCC6D4; box-shadow: none; }
+  .source .lnk { min-height: 44px; display: inline-flex; align-items: center; gap: 3px; padding: 0 6px; color: var(--plum); font-weight: 600; font-size: 14px; }
+  .source .lnk i[data-icon] { font-size: 14px; }
+
+  .sh { display: flex; align-items: center; gap: 8px; margin-top: 22px; padding: 0 4px; }
+  .sh h2 { font-size: 18px; line-height: 23px; font-weight: 800; }
+  .sh .n { font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+  .sh .addb { margin-left: auto; min-height: 44px; display: flex; align-items: center; }
+  .sh .addb .chip { color: var(--plum); background: rgba(255,255,255,.7); font-size: 14px; }
+  .sh .addb .chip i[data-icon] { font-size: 16px; }
+  .lead { margin-top: 2px; padding: 0 4px; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+
+  /* packed grid: closet soft cards, each piece on its own contact shadow */
+  .grid { margin-top: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 8px; }
+  .gcard { position: relative; display: flex; flex-direction: column; align-items: center; padding: 4px 2px 0; text-align: center; }
+  .gcard::before { content: ""; position: absolute; left: 50%; top: 86px; width: 72px; height: 13px; transform: translateX(-50%); border-radius: 50%;
+                   background: radial-gradient(closest-side, rgba(140,70,95,.3), rgba(140,70,95,0)); }
+  .gart { position: relative; width: 70px; height: 92px; flex: none; z-index: 1; display: block; }
+  .gart > span { position: absolute; left: 0; top: -2px; width: 70px; }
+  .gname { margin-top: 4px; font-size: 13px; font-weight: 600; line-height: 16px; color: var(--ink); }
+  .badges { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 4px; }
+  .bdg { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; line-height: 15px; padding: 1px 8px 1px 6px; border-radius: 999px;
+         white-space: nowrap; }
+  .bdg i[data-icon] { font-size: 12px; }
+  .bdg.also { background: #EEE4FA; color: #4E3378; }
+  .bdg.wash { background: #FCEFC2; color: #5E4A0E; }
+  .rm { position: absolute; right: 0; top: -6px; width: 44px; height: 44px; display: grid; place-items: center; z-index: 2; border-radius: 50%; }
+  .rm span { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.92); color: var(--plum); display: grid; place-items: center;
+             box-shadow: 0 6px 9px -6px rgba(90,42,74,.55); }
+  .rm i[data-icon] { font-size: 15px; } .rm i[data-icon] svg { stroke-width: 2.4; }
+  .fine { margin-top: 18px; display: grid; grid-template-columns: 18px 1fr; gap: 8px; font-size: 13px; line-height: 18px; color: var(--ink-soft); padding: 0 4px; }
+  .fine i[data-icon] { font-size: 17px; color: var(--plum); margin-top: 1px; }
+
+  /* empty suitcase */
+  .empty { margin-top: 12px; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 14px 18px 6px; }
+  .empty .ring { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,.6); display: grid; place-items: center; color: var(--plum); box-shadow: var(--soft-drop); }
+  .empty .ring i[data-icon] { font-size: 28px; }
+  .empty b { margin-top: 12px; font-size: 18px; line-height: 23px; }
+  .empty p { margin-top: 6px; font-size: 15px; line-height: 21px; color: var(--ink-soft); max-width: 320px; }
+  .empty .btn { margin-top: 16px; padding: 0 26px; }
+
+  /* toast */
+  .toast { position: fixed; left: max(16px, calc(50% - 199px)); right: max(16px, calc(50% - 199px)); bottom: 96px; z-index: 30; min-height: 54px;
+           display: flex; align-items: center; gap: 9px; padding: 5px 5px 5px 14px; background: var(--ink); color: #fff; border-radius: 20px;
+           box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast[hidden] { display: none; }
+  .toast .msg { font-size: 14px; line-height: 18px; font-weight: 600; flex: 1; min-width: 0; }
+  .toast .undo { height: 44px; padding: 0 12px; display: flex; align-items: center; gap: 5px; border-radius: 14px; color: #F8C6D3; font-size: 15px; font-weight: 700; flex: none; }
+  .toast .undo[hidden] { display: none; }
+  .toast .undo i[data-icon] { font-size: 17px; }
+  .toast .undo:focus-visible { outline-color: #F8C6D3; }
+
+  /* packing sheet */
+  .scrim { position: fixed; inset: 0; z-index: 40; background: rgba(43,27,39,.34); }
+  .scrim[hidden], .sheet[hidden] { display: none; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; top: 64px; z-index: 41; margin: 0 auto; max-width: 507px; display: flex; flex-direction: column;
+           background: #FFF8F5; border-radius: 30px 30px 0 0; box-shadow: 0 -12px 30px -10px rgba(90,42,74,.3); }
+  .sheet .top { padding: 10px 20px 8px; }
+  .sheet .grab { width: 38px; height: 5px; border-radius: 3px; background: #E6D5DE; margin: 0 auto 10px; }
+  .sheet .titlerow { display: flex; align-items: center; gap: 10px; }
+  .sheet h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1.15; flex: 1; min-width: 0; }
+  .sheet .done { min-height: 44px; padding: 0 18px; font-size: 16px; border-radius: 15px; }
+  .sheet .sub { margin-top: 6px; font-size: 14px; line-height: 19px; color: var(--ink-soft); }
+  .sheet .scroll { flex: 1; overflow-y: auto; padding: 4px 14px 24px; }
+  .pgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 4px; }
+  .pc { position: relative; display: flex; flex-direction: column; align-items: center; padding: 6px 2px 4px; border-radius: 18px; text-align: center; min-height: 44px; }
+  .pc[aria-pressed="true"] { background: rgba(106,31,88,.07); }
+  .pc .pa { position: relative; width: 56px; height: 72px; display: block; }
+  .pc .pa > span { position: absolute; left: 0; top: -2px; width: 56px; }
+  .pc .nm { margin-top: 3px; font-size: 12px; line-height: 15px; font-weight: 600; }
+  .pc .in { margin-top: 2px; font-size: 11px; line-height: 14px; font-weight: 700; color: #4E3378; }
+  .pc .tick { position: absolute; right: 4px; top: 4px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: transparent;
+              background: #fff; box-shadow: inset 0 0 0 2px #DCC7D3, 0 5px 7px -5px rgba(90,42,74,.5); }
+  .pc .tick i[data-icon] { font-size: 14px; } .pc .tick i[data-icon] svg { stroke-width: 2.8; }
+  .pc[aria-pressed="true"] .tick { background: var(--plum); color: #fff; box-shadow: 0 5px 7px -5px rgba(79,21,65,.7); }
+  .sheet .foot { padding: 10px 20px 26px; display: flex; align-items: center; gap: 10px; box-shadow: 0 -10px 18px -14px rgba(90,42,74,.3); background: #FFF8F5; }
+  .sheet .foot .cnt { font-size: 15px; font-weight: 700; flex: 1; }
+  .sheet .foot .cnt small { display: block; font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+
+  .tabfade { position: fixed; z-index: 10; --tabfade: var(--floor-2); }
+  .tabbar { position: fixed; z-index: 11; left: max(14px, calc(50% - 181px)); right: max(14px, calc(50% - 181px)); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="screen">
+  <div class="col">
+    <div class="head">
+      <div class="case" id="case" aria-hidden="true"><img id="caseArt" src="../art/travel-suitcase-pink.svg" alt=""></div>
+      <div class="nav">
+        <a class="back" href="suitcases.html"><i data-icon="chevron-left"></i>Suitcases</a>
+        <a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+      </div>
+      <div class="hdr">
+        <h1 class="title-display" id="name">Jose's house</h1>
+        <form class="rename" id="renameForm" hidden>
+          <input id="renameIn" type="text" maxlength="30" aria-label="Suitcase name" autocomplete="off">
+          <button class="btn" type="submit">Save</button>
+        </form>
+        <span class="count" id="count">5 pieces · Used today</span>
+        <div class="tools">
+          <button class="fav" type="button" id="fav" aria-pressed="true"><span class="chip"><i data-icon="star"></i><span id="favTxt">Favourite</span></span></button>
+          <button type="button" id="renameBtn"><span class="chip"><i data-icon="pencil"></i>Rename</span></button>
+        </div>
+      </div>
+    </div>
+
+    <main class="body" id="body"></main>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden>
+    <span class="msg" id="toastMsg"></span>
+    <button class="undo" type="button" id="undo"><i data-icon="undo"></i>Undo</button>
+  </div>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+    <div class="top">
+      <div class="grab" aria-hidden="true"></div>
+      <div class="titlerow"><h2 id="sheetTitle">Pack Jose's house</h2><button class="btn done" type="button" id="done">Done</button></div>
+      <p class="sub">Tick what goes in. A piece can be in more than one suitcase. It is the same piece, so nothing is copied.</p>
+    </div>
+    <div class="scroll"><div class="pgrid" id="pgrid" role="group" aria-label="Your closet"></div></div>
+    <div class="foot"><span class="cnt" id="packedCnt">5 packed<small>From your closet of 21</small></span></div>
+  </div>
+
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a class="on" href="closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+(function () {
+  var P = new URLSearchParams(location.search);
+  var DEFAULT_MEMBERS = {
+    jose: ['g-navy-trousers', 'g-pink-blouse', 'g-navy-cardigan', 'g-nude-flats', 'g-lace-top'],
+    weekend: ['g-navy-trousers', 'g-olive-trousers', 'g-wide-jeans', 'g-brick-top', 'g-cream-sweater', 'g-brown-jacket', 'g-white-sneakers', 'g-black-tee'],
+    spring: []
+  };
+  var INFO = {
+    jose: { name: "Jose's house", art: 'pink', h: 182, used: 'Used today' },
+    weekend: { name: 'Weekend', art: 'sage', h: 172, used: 'Used 2 weeks ago' },
+    spring: { name: 'Spring trip', art: 'blue', h: 164, used: 'Not used yet' },
+    'new': { name: 'New suitcase', art: 'lilac', h: 182, used: 'Just made' }
+  };
+  var G = {}; Garments.LIST.forEach(function (g) { G[g.id] = g; });
+  var ORDER = Garments.LIST.map(function (g) { return g.id; });
+
+  var id = String(P.get('id') || 'jose').replace(/^s-/, '');
+  if (!INFO[id]) id = 'jose';
+  var members = JSON.parse(JSON.stringify(MockState.get('suitcases.members', DEFAULT_MEMBERS)));
+  if (!members[id]) members[id] = [];
+  var names = MockState.get('suitcases.names', {});
+  var info = INFO[id];
+  var name = id === 'new' ? (P.get('name') || 'New suitcase').slice(0, 30) : (names[id] || info.name);
+  function nameOf(k) { return k === id ? name : (names[k] || (INFO[k] || {}).name || k); }
+  var favs = MockState.get('suitcases.favorites', ['jose', 'weekend', 'spring']);
+  var tracking = MockState.get('laundry.tracking', true);
+  var dirty = MockState.get('laundry.dirty', ['g-lace-top', 'g-black-tee']);
+  var src = MockState.get('source', { type: 'suitcase', id: 'jose' });
+  function srcId() { return src && src.type === 'suitcase' ? String(src.id).replace(/^s-/, '') : null; }
+  function srcName() { var s = srcId(); return s && members[s] ? nameOf(s) : 'Main closet'; }
+
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+  function pieces(n) { return n === 1 ? '1 piece' : n + ' pieces'; }
+  function packed() { return members[id]; }
+  function others(g) { return Object.keys(members).filter(function (k) { return k !== id && members[k].indexOf(g) >= 0; }).map(nameOf); }
+  function persist() { if (id !== 'new') MockState.set('suitcases.members', members); }
+
+  // header
+  document.title = name;
+  document.getElementById('caseArt').src = '../art/travel-suitcase-' + info.art + '.svg';
+  var cs = document.getElementById('case'); cs.style.top = (196 - (info.h - 4) * 0.62) + 'px';
+  function header() {
+    var n = packed().length;
+    document.getElementById('name').textContent = name;
+    document.getElementById('count').textContent = (n ? pieces(n) : 'Empty') + ' · ' + (srcId() === id ? 'Style Me source' : info.used);
+    var on = favs.indexOf(id) >= 0, f = document.getElementById('fav');
+    f.setAttribute('aria-pressed', on);
+    document.getElementById('favTxt').textContent = on ? 'Favourite' : 'Add to favourites';
+  }
+
+  // body
+  var body = document.getElementById('body');
+  function render() {
+    header();
+    var list = packed(), n = list.length, isSrc = srcId() === id, h = '';
+    // Style Me source
+    if (isSrc) {
+      h += '<section class="source on"><span class="ic"><i data-icon="check"></i></span><div><b>Style Me is using this suitcase</b>' +
+        '<p><strong>Suitcase only:</strong> Style Me picks from these ' + pieces(n) + ' and nothing else.</p></div>' +
+        '<div class="acts"><a class="btn" href="styleme.html"><i data-icon="sparkle-wand"></i>Style me</a>' +
+        '<button class="lnk" type="button" id="useMain">Use Main closet</button></div></section>';
+    } else if (n) {
+      h += '<section class="source"><span class="ic"><i data-icon="suitcase"></i></span><div><b>Use for Style Me</b>' +
+        '<p><strong>Suitcase only:</strong> Style Me would pick from these ' + pieces(n) + ' and nothing else. Now it uses ' + esc(srcName()) + '.</p></div>' +
+        '<div class="acts"><button class="btn" type="button" id="useThis">Use for Style Me</button></div></section>';
+    } else {
+      h += '<section class="source"><span class="ic"><i data-icon="suitcase"></i></span><div><b>Not ready for Style Me</b>' +
+        '<p>Pack at least one piece first. Style Me keeps using ' + esc(srcName()) + ' until then.</p></div></section>';
+    }
+    if (n) {
+      h += '<div class="sh"><h2>Packed</h2><span class="n">' + n + '</span><a class="addb" href="suitcase.html?id=' + id + '&add=1" data-add><span class="chip"><i data-icon="plus"></i>Add or remove</span></a></div>' +
+        '<p class="lead">Tap a piece for details.</p><ul class="grid" role="list">';
+      list.slice().sort(function (a, b) { return ORDER.indexOf(a) - ORDER.indexOf(b); }).forEach(function (g) {
+        var gg = G[g] || { name: g }, also = others(g), wash = tracking && dirty.indexOf(g) >= 0;
+        h += '<li class="gcard"><a class="gart" href="garment.html" aria-label="' + esc(gg.name) + '"><span data-garment="' + g + '"></span></a>' +
+          '<span class="gname">' + esc(gg.name) + '</span><span class="badges">' +
+          also.map(function (o) { return '<span class="bdg also"><i data-icon="suitcase"></i>Also in ' + esc(o) + '</span>'; }).join('') +
+          (wash ? '<span class="bdg wash"><i data-icon="basket"></i>In the wash</span>' : '') + '</span>' +
+          '<button class="rm" type="button" data-rm="' + g + '" aria-label="Remove ' + esc(gg.name) + ' from ' + esc(name) + '"><span><i data-icon="minus"></i></span></button></li>';
+      });
+      h += '</ul><p class="fine"><i data-icon="info"></i><span>Removing a piece only takes it out of this suitcase. It stays in your closet and in any other suitcase.</span></p>';
+    } else {
+      h += '<div class="empty"><span class="ring"><i data-icon="suitcase"></i></span><b>' + esc(name) + ' is empty</b>' +
+        '<p>Add pieces from your closet. They stay in your closet too, and nothing is copied.</p>' +
+        '<a class="btn" href="suitcase.html?id=' + id + '&add=1" data-add><i data-icon="plus"></i>Add pieces</a></div>';
+    }
+    body.innerHTML = h;
+    Icons.mountAll(body); Garments.mountAll(body);
+    wire();
+  }
+  function wire() {
+    var u = document.getElementById('useThis');
+    if (u) u.addEventListener('click', function () {
+      src = { type: 'suitcase', id: id }; MockState.set('source', src); render();
+      showToast('Style Me now uses ' + name + '. Suitcase only.', null);
+      var b = body.querySelector('.source .btn'); if (b) b.focus();
+    });
+    var m = document.getElementById('useMain');
+    if (m) m.addEventListener('click', function () {
+      var prev = src; src = { type: 'main' }; MockState.set('source', src); render();
+      showToast('Style Me now uses Main closet.', function () { src = prev; MockState.set('source', prev); render(); });
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-rm]'), function (b) {
+      b.addEventListener('click', function () {
+        var g = b.getAttribute('data-rm'), k = members[id].indexOf(g);
+        if (k < 0) return;
+        members[id].splice(k, 1); persist(); render();
+        showToast('Removed ' + (G[g] || {}).name + '. It is still in your closet.', function () {
+          if (members[id].indexOf(g) < 0) members[id].push(g); persist(); render();
+        });
+        var next = body.querySelector('[data-rm]') || body.querySelector('[data-add]'); if (next) next.focus();
+      });
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-add]'), function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); openSheet(false); });
+    });
+  }
+
+  // toast with optional undo
+  var toast = document.getElementById('toast'), undoFn = null;
+  function showToast(text, fn) {
+    document.getElementById('toastMsg').textContent = text; undoFn = fn;
+    document.getElementById('undo').hidden = !fn; toast.hidden = false;
+  }
+  document.getElementById('undo').addEventListener('click', function () { var f = undoFn; undoFn = null; toast.hidden = true; if (f) f(); });
+
+  // favourite and rename
+  document.getElementById('fav').addEventListener('click', function () {
+    var k = favs.indexOf(id);
+    if (k >= 0) { favs.splice(k, 1); showToast(name + ' is no longer a favourite.', null); }
+    else if (favs.length >= 3) { showToast('Three favourites at most. Take the star off one in Suitcases first.', null); return; }
+    else { favs.push(id); showToast(name + ' is a favourite. It stands in the hall.', null); }
+    MockState.set('suitcases.favorites', favs.slice()); header();
+  });
+  var form = document.getElementById('renameForm'), rin = document.getElementById('renameIn');
+  document.getElementById('renameBtn').addEventListener('click', function () {
+    form.hidden = false; document.getElementById('name').hidden = true; rin.value = name; rin.focus(); rin.select();
+  });
+  function endRename(save) {
+    var v = rin.value.trim();
+    if (save && v) { name = v; if (id !== 'new') { names[id] = v; MockState.set('suitcases.names', names); } document.title = name; }
+    form.hidden = true; document.getElementById('name').hidden = false; render(); document.getElementById('renameBtn').focus();
+  }
+  form.addEventListener('submit', function (e) { e.preventDefault(); endRename(true); });
+  rin.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); endRename(false); } });
+
+  // packing sheet
+  var sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim'), grid = document.getElementById('pgrid'), opener;
+  function renderSheet() {
+    document.getElementById('sheetTitle').textContent = 'Pack ' + name;
+    grid.innerHTML = ORDER.map(function (g) {
+      var on = packed().indexOf(g) >= 0, o = others(g), gg = G[g];
+      return '<button class="pc" type="button" aria-pressed="' + on + '" data-g="' + g + '">' +
+        '<span class="pa"><span data-garment="' + g + '"></span></span><span class="nm">' + esc(gg.name) + '</span>' +
+        (o.length ? '<span class="in">' + (on ? 'Also in ' : 'In ') + esc(o.join(', ')) + '</span>' : '') +
+        '<span class="tick"><i data-icon="check"></i></span></button>';
+    }).join('');
+    Icons.mountAll(grid); Garments.mountAll(grid);
+    var n = packed().length;
+    document.getElementById('packedCnt').innerHTML = (n ? pieces(n) + ' packed' : 'Nothing packed yet') + '<small>From your closet of 21</small>';
+    Array.prototype.forEach.call(grid.querySelectorAll('.pc'), function (b) {
+      b.addEventListener('click', function () {
+        var g = b.getAttribute('data-g'), k = members[id].indexOf(g);
+        if (k >= 0) members[id].splice(k, 1); else members[id].push(g);
+        persist(); renderSheet();
+        var again = grid.querySelector('[data-g="' + g + '"]'); if (again) again.focus();
+      });
+    });
+  }
+  function openSheet(quiet) {
+    opener = document.activeElement; renderSheet(); sheet.hidden = false; scrim.hidden = false; document.body.classList.add('sheet-open');
+    if (!quiet) document.getElementById('done').focus();
+  }
+  function closeSheet() {
+    sheet.hidden = true; scrim.hidden = true; document.body.classList.remove('sheet-open'); render();
+    var a = body.querySelector('[data-add]'); if (a) a.focus();
+  }
+  document.getElementById('done').addEventListener('click', closeSheet);
+  scrim.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+
+  render();
+  if (P.get('add') === '1') openSheet(true);
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="suitcase"></script>
+</body>
+</html>

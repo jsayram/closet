@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swap a piece</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* Swap a piece (soft style, R5). Opened from Your looks. The open look lies as its sticker bundle with the slot being
+     swapped lit by a soft plum glow and the other pieces quieter. Under it, the other pieces of that kind from the same
+     source sit on a soft rail: no tiles with edges, each piece on a pale tint, its name below; the chosen one gets a plum
+     name pill. Tapping one shows it in the bundle. "Use this top" stores the swap (MockState results.swap) and goes back
+     to Your looks, which shows the look with the new piece. Only pieces from the request's source are offered.
+     URL: ?look=1..3  &source=main|jose  &slot=top|layer|bottom|shoes (default top) */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 14px; }
+  [hidden] { display: none !important; }
+
+  .screen { min-height: 100vh; height: auto; overflow: visible; background: linear-gradient(var(--wall), var(--wall-2)) fixed; }
+  .col { position: relative; max-width: 440px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 94px; }
+  .nav { position: relative; flex: none; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .sub { flex: none; text-align: center; font-size: 13px; line-height: 17px; font-weight: 600; color: var(--ink-soft); padding: 0 16px; }
+
+  /* which piece to swap: soft chips, the chosen one a solid plum pill */
+  .slots { flex: none; display: flex; justify-content: center; gap: 8px; margin-top: 10px; padding: 0 12px; flex-wrap: wrap; }
+  .slots .chip { min-height: 44px; padding: 0 16px; font-size: 14px; font-weight: 700; color: var(--plum); background: rgba(255,255,255,.6); }
+  .slots .chip[aria-pressed="true"] { background: var(--plum); color: #fff; }
+  .slots .chip i[data-icon] { font-size: 17px; }
+
+  .stage { position: relative; flex: 1 1 0; min-height: 250px; }
+  .mat { position: absolute; left: 50%; top: 50%; width: 340px; height: 340px; margin: -170px 0 0 -170px; pointer-events: none;
+         background: radial-gradient(closest-side, #FDF0E6 0%, #FCEDE3F2 46%, #FBE8E2A8 70%, #FBE5E800 100%); }
+  .bundle { position: absolute; pointer-events: none; }
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(110,58,82,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  /* the slot being swapped: a soft plum glow round its sticker edge; the rest step back */
+  .bundle.focus .stk { opacity: .42; }
+  .bundle.focus .stk.lit { opacity: 1;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 0 7px rgba(106,31,88,.55)) drop-shadow(0 7px 9px rgba(110,58,82,.2)); }
+  .mini .stk { filter: drop-shadow(1.4px 0 0 #fff) drop-shadow(-1.4px 0 0 #fff) drop-shadow(0 1.4px 0 #fff) drop-shadow(0 -1.4px 0 #fff)
+                       drop-shadow(1px 1px 0 #fff) drop-shadow(-1px -1px 0 #fff) drop-shadow(1px -1px 0 #fff) drop-shadow(-1px 1px 0 #fff)
+                       drop-shadow(0 4px 5px rgba(110,58,82,.16)); }
+  .tagline { position: absolute; left: 0; right: 0; bottom: 4px; text-align: center; font-size: 13px; line-height: 17px; font-weight: 600; color: var(--plum); }
+
+  /* the rail of alternatives */
+  .railhead { flex: none; display: flex; align-items: baseline; justify-content: space-between; padding: 0 20px; margin-top: 6px; }
+  .railhead h2 { font-size: 15px; line-height: 20px; font-weight: 700; }
+  .railhead small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .rail { flex: none; position: relative; display: flex; justify-content: center; gap: 4px; padding: 8px 10px 4px; margin: 4px 12px 0; }
+  .rail::before { content: ""; position: absolute; left: 6px; right: 6px; top: 6px; bottom: 34px; border-radius: 30px; background: rgba(255,255,255,.42);
+                  box-shadow: 0 14px 18px -16px rgba(90,42,74,.35); }
+  .alt { position: relative; flex: 0 1 88px; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 4px; border-radius: 18px; }
+  .alt .pic { position: relative; width: 74px; height: 80px; border-radius: 24px; }
+  .alt .pic .bundle { left: 0; top: 0; width: 74px; height: 80px; }
+  .alt .nm { max-width: 100%; min-height: 30px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 3px 9px; border-radius: 15px;
+             font-size: 12px; line-height: 14px; font-weight: 600; color: var(--ink); text-wrap: balance; }
+  .alt .cur { position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 11px; line-height: 14px; font-weight: 700; color: var(--ink-soft);
+              background: rgba(255,255,255,.85); border-radius: 7px; padding: 0 6px; white-space: nowrap; }
+  .alt[aria-checked="true"] .nm { background: var(--plum); color: #fff; }
+  .alt[aria-checked="true"] .pic { background: rgba(255,255,255,.75); box-shadow: 0 12px 16px -12px rgba(90,42,74,.4); }
+
+  .aside { flex: none; display: flex; justify-content: center; gap: 4px 16px; flex-wrap: wrap; margin-top: 2px; padding: 0 16px; }
+  .aside a { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--plum); }
+  .aside a i[data-icon] { font-size: 16px; }
+  .aside .q { min-height: 44px; display: inline-flex; align-items: center; font-size: 13px; color: var(--ink-soft); }
+
+  .acts { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 2px 16px 0; }
+  .acts .btn { min-height: 50px; padding: 0 10px; font-size: 16px; white-space: nowrap; }
+  .acts .btn.ghost { background: rgba(255,255,255,.7); }
+  .acts .btn[aria-disabled="true"] { opacity: .45; box-shadow: none; cursor: default; }
+  .hintline { flex: none; margin-top: 6px; text-align: center; font-size: 12px; line-height: 15px; color: var(--ink-soft); min-height: 15px; }
+
+  .tabfade { position: fixed; --tabfade: #F7D6DC; z-index: 8; }
+  .tabbar { position: fixed; z-index: 9; }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="screen">
+<div class="col">
+  <div class="nav">Swap a piece<a class="back" href="results.html" id="back"><i data-icon="chevron-left"></i>Your looks</a><a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
+  <p class="sub" id="sub">Calm office · Main closet</p>
+
+  <div class="slots" role="group" aria-label="Piece to swap" id="slots"></div>
+
+  <div class="stage" id="stage">
+    <div class="mat"></div>
+    <div class="bundle main focus" id="bundle" role="img" aria-label=""></div>
+    <p class="tagline" id="tagline" aria-live="polite"></p>
+  </div>
+
+  <div class="railhead"><h2 id="railtitle">Tops in Main closet</h2><small id="railcount"></small></div>
+  <div class="rail" role="radiogroup" aria-labelledby="railtitle" id="rail"></div>
+  <div class="aside" id="aside"></div>
+
+  <div class="acts">
+    <a class="btn ghost" id="keep" href="results.html">Keep current</a>
+    <a class="btn" id="use" href="results.html" aria-disabled="true">Use this top</a>
+  </div>
+  <p class="hintline" id="hintline">Tap a top to see it in the look.</p>
+</div>
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* The looks on Your looks (same fixtures as results.html) and what each source holds that can be worn today. */
+var CURRENT = {
+  main: [
+    { name: 'Calm office', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+    { name: 'Olive and brick', layer: 'g-brown-jacket', top: 'g-brick-top', bottom: 'g-olive-trousers', shoes: 'g-white-sneakers' },
+    { name: 'Cream and navy', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag' }
+  ],
+  jose: [
+    { name: 'Navy and pink', layer: 'g-navy-cardigan', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+    { name: 'Just the pink shirt', top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' }
+  ]
+};
+var SOURCE = {
+  main: { name: 'Main closet', ready: {
+            top: ['g-pink-blouse', 'g-cream-sweater', 'g-brick-top'], layer: ['g-navy-cardigan', 'g-brown-jacket'],
+            bottom: ['g-navy-trousers', 'g-olive-trousers', 'g-wide-jeans'], shoes: ['g-nude-flats', 'g-black-heels', 'g-white-sneakers', 'g-tan-loafers'] },
+          wash: { top: ['g-lace-top', 'g-black-tee'] } },
+  jose: { name: "Jose's house", ready: { top: ['g-pink-blouse'], layer: ['g-navy-cardigan'], bottom: ['g-navy-trousers'], shoes: ['g-nude-flats'] },
+          wash: { top: ['g-lace-top'] } }
+};
+var SLOTS = [['layer', 'Layer', 'Layers', 'shirt'], ['top', 'Top', 'Tops', 'shirt'], ['bottom', 'Bottom', 'Bottoms', 'trousers'], ['shoes', 'Shoes', 'Shoes', 'shoe']];
+
+var BY = {}; Garments.LIST.forEach(function (g) { BY[g.id] = g; });
+function nm(id) { return BY[id] ? BY[id].name : id; }
+function spots(L) {
+  var s = { bottom: [140, 252, 214, 'h', -2], shoes: [234, 312, 94, 'w', -8], bag: [244, 206, 76, 'w', 8] };
+  if (L.layer) { s.layer = [98, 88, 156, 'h', -7]; s.top = [196, 96, 146, 'h', 5]; }
+  else { s.top = [142, 92, 150, 'h', -3]; }
+  return s;
+}
+var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+function drawn(svg) {
+  var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+  for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+  b = svg.getBBox();
+  for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+  return b;
+}
+function lay(box, L, k) {
+  box.innerHTML = '';
+  var S = spots(L);
+  ORDER.forEach(function (slot) {
+    if (!L[slot]) return;
+    var stk = document.createElement('span'); stk.className = 'stk'; stk.setAttribute('data-slot', slot);
+    stk.innerHTML = '<span class="rot"><span data-garment="' + L[slot] + '"></span></span>';
+    stk.style.width = (120 * k * .9) + 'px';
+    box.appendChild(stk);
+  });
+  Garments.mountAll(box);
+  var list = box.querySelectorAll('.stk');
+  for (var i = 0; i < list.length; i++) {
+    var stk = list[i], sp = S[stk.getAttribute('data-slot')], svg = stk.querySelector('svg');
+    var b = drawn(svg);
+    var s = (sp[2] * k) / (sp[3] === 'h' ? b.height : b.width);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (sp[0] * k - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] * k - oy).toFixed(2) + 'px';
+    var rot = stk.querySelector('.rot');
+    rot.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    rot.style.transform = 'rotate(' + sp[4] + 'deg)';
+  }
+}
+/* one piece on its own, centred and upright in a small box */
+function single(box, id) {
+  box.innerHTML = '<span class="stk"><span class="rot"><span data-garment="' + id + '"></span></span></span>';
+  Garments.mountAll(box);
+  var st = box.querySelector('.stk'), w = box.clientWidth, h = box.clientHeight;
+  st.style.width = '60px';
+  var bb = drawn(st.querySelector('svg')), sc = Math.min((w - 10) / bb.width, (h - 10) / bb.height);
+  st.style.width = (120 * sc) + 'px'; st.style.height = (170 * sc) + 'px';
+  st.style.left = (w / 2 - (bb.x + bb.width / 2) * sc) + 'px'; st.style.top = (h / 2 - (bb.y + bb.height / 2) * sc) + 'px';
+}
+
+(function () {
+  var P = new URLSearchParams(location.search);
+  var src = SOURCE[P.get('source')] ? P.get('source') : 'main';
+  var n = Math.max(1, Math.min(CURRENT[src].length, +P.get('look') || 1));
+  var look = Object.assign({}, CURRENT[src][n - 1]);
+  var slot = P.get('slot') || 'top';
+  if (!look[slot]) slot = 'top';
+  var picked = look[slot];
+  var $ = function (id) { return document.getElementById(id); };
+  var main = $('bundle'), stage = $('stage');
+  var back = MockTheme.carry('results.html#look-' + n);
+  $('back').setAttribute('href', back); $('keep').setAttribute('href', back);
+  $('sub').textContent = look.name + ' · ' + SOURCE[src].name;
+
+  function label(s) { return SLOTS.filter(function (x) { return x[0] === s; })[0]; }
+
+  function slotsBar() {
+    var bar = $('slots'); bar.innerHTML = '';
+    SLOTS.forEach(function (S) {
+      if (!look[S[0]]) return;
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.textContent = S[1];
+      b.setAttribute('aria-pressed', S[0] === slot ? 'true' : 'false');
+      b.addEventListener('click', function () { slot = S[0]; picked = look[slot]; slotsBar(); rail(); preview(); });
+      bar.appendChild(b);
+    });
+  }
+
+  function fit() {
+    var h = stage.clientHeight, w = stage.clientWidth, cap = 24;
+    var k = Math.max(.5, Math.min(.9, (h - cap - 6) / 356, (w - 24) / 300));
+    main.style.width = (300 * k) + 'px'; main.style.height = (356 * k) + 'px';
+    main.style.left = ((w - 300 * k) / 2) + 'px';
+    main.style.top = Math.max(4, (h - cap - 356 * k) / 2) + 'px';
+    return k;
+  }
+  function preview() {
+    var L = Object.assign({}, look); L[slot] = picked;
+    lay(main, L, fit());
+    var lit = main.querySelector('[data-slot="' + slot + '"]'); if (lit) lit.classList.add('lit');
+    main.setAttribute('aria-label', 'The look with ' + nm(picked).toLowerCase() + ' as the ' + label(slot)[1].toLowerCase());
+    var changed = picked !== look[slot];
+    $('tagline').textContent = changed ? 'Trying the ' + nm(picked).toLowerCase() : label(slot)[1] + ' now: ' + nm(look[slot]).toLowerCase();
+    var use = $('use');
+    use.textContent = 'Use this ' + label(slot)[1].toLowerCase().replace('shoes', 'pair');
+    use.setAttribute('aria-disabled', changed ? 'false' : 'true');
+    $('hintline').textContent = changed ? 'Only the ' + label(slot)[1].toLowerCase() + ' changes. Everything else stays.'
+                                       : 'Tap ' + (slot === 'shoes' ? 'a pair' : 'a ' + label(slot)[1].toLowerCase()) + ' to see it in the look.';
+    var alts = $('rail').querySelectorAll('.alt');
+    for (var i = 0; i < alts.length; i++) alts[i].setAttribute('aria-checked', alts[i].getAttribute('data-id') === picked ? 'true' : 'false');
+  }
+
+  function rail() {
+    var r = $('rail'); r.innerHTML = '';
+    var ready = SOURCE[src].ready[slot] || [], wash = (SOURCE[src].wash || {})[slot] || [];
+    $('railtitle').textContent = label(slot)[2] + ' in ' + SOURCE[src].name;
+    $('railcount').textContent = ready.length === 1 ? 'Only this one' : ready.length + ' to choose from';
+    ready.forEach(function (id) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'alt'; b.setAttribute('role', 'radio'); b.setAttribute('data-id', id);
+      b.innerHTML = '<span class="pic"><span class="bundle mini"></span></span><span class="nm">' + nm(id) + '</span>' +
+                    (id === look[slot] ? '<span class="cur">In the look</span>' : '');
+      b.addEventListener('click', function () { picked = id; preview(); });
+      r.appendChild(b);
+      single(b.querySelector('.bundle'), id);
+    });
+    /* arrow keys move within the radio group */
+    r.addEventListener('keydown', function (e) {
+      var list = Array.prototype.slice.call(r.querySelectorAll('.alt')), i = list.indexOf(document.activeElement);
+      if (i < 0) return;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        var j = (i + (e.key === 'ArrowRight' ? 1 : -1) + list.length) % list.length;
+        list[j].focus(); list[j].click();
+      }
+    });
+    var a = $('aside'), bits = [];
+    if (wash.length) bits.push('<a href="' + MockTheme.carry('laundry.html') + '"><i data-icon="washer"></i>' + wash.length + ' in the wash</a>');
+    if (ready.length === 1 && src !== 'main') bits.push('<a href="' + MockTheme.carry('suitcase.html?add=1') + '"><i data-icon="plus"></i>Add ' + (slot === 'shoes' ? 'shoes' : 'a ' + label(slot)[1].toLowerCase()) + ' to ' + SOURCE[src].name + '</a>');
+    bits.push('<a href="' + MockTheme.carry('editor.html?look=' + n + (src !== 'main' ? '&source=' + src : '')) + '"><i data-icon="pencil"></i>Edit the whole look</a>');
+    a.innerHTML = bits.join('');
+    Icons.mountAll(a);
+  }
+
+  $('use').addEventListener('click', function (e) {
+    e.preventDefault();
+    if (picked === look[slot]) return;
+    MockState.set('results.swap', { set: src, look: n, slot: slot, id: picked });
+    MockState.set('results.index', n);
+    location.href = MockTheme.carry('results.html#look-' + n);
+  });
+  $('keep').addEventListener('click', function () { MockState.set('results.index', n); });
+
+  function start() { slotsBar(); rail(); preview(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(preview, 120); });
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="swap"></script>
+</body>
+</html>

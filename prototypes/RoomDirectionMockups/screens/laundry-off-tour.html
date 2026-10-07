@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laundry is off</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* What the hamper on Home opens while laundry tracking is off. A quiet corner (the empty, faded hamper beside the
+     plant), then three short points about what tracking does, "Turn on" and "Not now", and where the setting lives.
+     It never nags: nothing here repeats, counts down or asks twice. Column at most 430 wide, centred. */
+  :root { --fy: 250px; }
+  html, body { background: var(--floor-2); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  .screen { height: auto; min-height: 100vh; overflow: visible; padding-bottom: 128px;
+    background: linear-gradient(var(--floor-line), var(--floor-line)) 0 var(--fy) / 100% 2px no-repeat,
+                linear-gradient(var(--floor), var(--floor-2) 520px) 0 var(--fy) / 100% 100% no-repeat,
+                linear-gradient(var(--wall), var(--wall-2)) 0 0 / 100% var(--fy) no-repeat; }
+  .col { position: relative; max-width: 430px; margin: 0 auto; }
+  .art { position: absolute; display: block; pointer-events: none; }
+  .nav { z-index: 5; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 10px 0 4px; display: flex; align-items: center; gap: 2px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .head { position: relative; height: var(--fy); }
+  .hdr { position: absolute; left: 20px; top: 46px; display: flex; flex-direction: column; gap: 6px; max-width: 200px; }
+  .hdr .count { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--ink-soft); }
+
+  /* hamper at 1.1 and the floor plant at 1:1, standing on the floor line, at the right of the title */
+  .corner { position: absolute; right: 18px; top: 112px; width: 170px; height: 140px; pointer-events: none; }
+  .corner .hamper { opacity: .6; }
+
+  .body { padding: 18px 20px 0; }
+  .lead { font-size: 17px; line-height: 23px; font-weight: 600; }
+  .points { list-style: none; margin-top: 16px; display: grid; gap: 14px; }
+  .points li { display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; }
+  .points .ic { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.7);
+                color: var(--plum); box-shadow: var(--soft-drop); }
+  .points .ic i[data-icon] { font-size: 19px; }
+  .points b { display: block; font-size: 15px; line-height: 20px; }
+  .points span.t { display: block; font-size: 14px; line-height: 19px; color: var(--ink-soft); margin-top: 1px; }
+
+  .row2 { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row2 .btn { min-height: 52px; font-size: 16px; }
+  .row2 .btn.ghost { background: rgba(255,255,255,.75); }
+  .link-row { margin-top: 10px; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--plum); font-weight: 600; font-size: 15px; }
+  .link-row i[data-icon] { font-size: 15px; }
+  .done { margin-top: 10px; font-size: 14px; color: var(--ink-soft); }
+  .done[hidden] { display: none; }
+
+  .tabfade { position: fixed; z-index: 10; --tabfade: var(--floor-2); }
+  .tabbar { position: fixed; z-index: 11; left: max(14px, calc(50% - 181px)); right: max(14px, calc(50% - 181px)); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="screen">
+  <div class="col">
+    <div class="head">
+      <div class="corner" aria-hidden="true">
+        <!-- hamper at 1.1 (96.8 x 127.6), base (svg y 110) on the floor line: top = 138 - 121 -->
+        <img class="art hamper" src="../art/travel-hamper-empty.svg" alt="" style="left:6px;top:13px;width:96.8px;height:127.6px">
+        <img class="art" src="../art/plant-floor.svg" alt="" style="left:96px;top:10px;width:72px;height:124px">
+      </div>
+      <div class="nav">
+        <a class="back" href="home.html"><i data-icon="chevron-left"></i>Home</a>
+        <a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+      </div>
+      <div class="hdr"><h1 class="title-display">Laundry is off</h1><span class="count">Optional, and off for now</span></div>
+    </div>
+
+    <main class="body">
+      <p class="lead">Laundry tracking keeps note of what's in the wash, so Style Me doesn't suggest it.</p>
+      <ul class="points">
+        <li><span class="ic"><i data-icon="washer"></i></span>
+          <span><b>When it's on</b><span class="t">You mark pieces as in the wash. Style Me skips them unless you allow one.</span></span></li>
+        <li><span class="ic"><i data-icon="check"></i></span>
+          <span><b>While it's off</b><span class="t">Every piece counts as available.</span></span></li>
+        <li><span class="ic"><i data-icon="basket"></i></span>
+          <span><b>Nothing is erased</b><span class="t" id="kept">Your 2 pieces marked as in the wash are kept. Turn it back on and they come back.</span></span></li>
+      </ul>
+      <div class="row2">
+        <button class="btn" type="button" id="turnOn">Turn on</button>
+        <a class="btn ghost" href="home.html">Not now</a>
+      </div>
+      <a class="link-row" href="settings.html?laundry=off">You can change this in Profile<i data-icon="chevron-right"></i></a>
+    </main>
+  </div>
+
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a class="on" href="closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+(function () {
+  // The dirty marks stay in MockState while tracking is off; say how many are kept.
+  var n = (MockState.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) || []).length;
+  document.getElementById('kept').textContent = n === 0
+    ? 'If you had pieces marked as in the wash, they would be kept for when you turn it back on.'
+    : (n === 1 ? 'Your 1 piece marked as in the wash is kept.' : 'Your ' + n + ' pieces marked as in the wash are kept.') +
+      ' Turn it back on and ' + (n === 1 ? 'it comes' : 'they come') + ' back.';
+  document.getElementById('turnOn').addEventListener('click', function () {
+    MockState.set('laundry.tracking', true);
+    location.href = window.MockTheme ? MockTheme.carry('home.html') : 'home.html';
+  });
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="laundry-off"></script>
+</body>
+</html>

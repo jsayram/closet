@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Welcome home</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* First launch: the front door of the home, seen from the porch on a calm day.
+     Sky 0..176, roof edge 156..210, siding 174..606, porch floor from 606 (the same floor tokens as the rooms).
+     Header: display title 33 px at top 46, as on home.html; lede at top 88, about 21 px under the title baseline.
+     No figure: the door, the wall, a coat on the peg rail and a bench carry the scene. Welcome is the only onboarding step
+     (the avatar step is gone), so there is no page indicator. Footer: primary 712..762, text button 766..810. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  .room { --floor-y: 606px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* sky and siding */
+  .sky { position: absolute; left: 0; top: 0; width: 390px; height: 176px; background: linear-gradient(#D2E5F7, #EDF5FD); }
+  .siding { position: absolute; left: 0; top: 174px; width: 390px; height: 432px;
+    background:
+      repeating-linear-gradient(180deg, #EECBD3 0 1.1px, #F8DAE0 1.1px 3.2px, #FBE4E8 3.2px 22px),
+      linear-gradient(var(--wall), var(--wall-2)); }
+  /* water table: the cream board along the foot of the wall */
+  .skirt { position: absolute; left: 0; top: 594px; width: 390px; height: 12px; background: var(--cream);
+    border-top: 1.5px solid var(--cream-line); box-shadow: inset 0 1.5px 0 #FFFEFB, inset 0 -3px 0 var(--cream-2); }
+
+  .deck { position: absolute; left: 0; width: 390px; height: 1.2px; background: var(--floor-line); opacity: .45; }
+
+  /* header */
+  .hdr-title { position: absolute; left: 20px; top: 46px; white-space: nowrap; }
+  .lede { position: absolute; left: 20px; top: 88px; width: 356px; font-size: 15px; line-height: 21px; color: var(--ink-soft); }
+
+  .btn:focus-visible, .textbtn:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+
+  /* footer */
+  .start { position: absolute; left: 20px; right: 20px; top: 712px; }
+  .textbtn { position: absolute; left: 50%; top: 766px; transform: translateX(-50%); height: 44px; padding: 0 14px; display: flex; align-items: center;
+    white-space: nowrap; font-size: 15px; font-weight: 600; color: var(--plum); border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+  <div class="sky"></div>
+  <div class="siding"></div>
+  <div class="skirt"></div>
+  <!-- porch deck seams, wider apart as they come forward -->
+  <div class="deck" style="top:624px"></div><div class="deck" style="top:646px"></div><div class="deck" style="top:674px"></div>
+
+  <!-- big cloud x 292..380 / y 51..78 beside the title, 10 px clear of the lede; small one x 338..384 / y 121..138 -->
+  <img class="art" src="../art/welcome-clouds.svg" alt="" style="left:290px;top:44px;width:96px;height:96px">
+  <!-- roof edge: ridge cap 157..161, shingles to 189, fascia 189..200, eave shadow to 210 -->
+  <img class="art" src="../art/welcome-roof.svg" alt="" style="left:0;top:156px;width:390px;height:54px">
+
+  <!-- front door, 1:1. Leaf x 186..313, y 265..606; threshold top 604; floor line 606 -->
+  <img class="art" src="../art/welcome-door.svg" alt="" style="left:158px;top:226px;width:188px;height:390px">
+  <img class="art" src="../art/welcome-lantern.svg" alt="" style="left:342px;top:300px;width:34px;height:64px">
+  <img class="art" src="../art/welcome-mat.svg" alt="" style="left:188px;top:607px;width:124px;height:22px">
+  <img class="art" src="../art/welcome-pots.svg" alt="" style="left:6px;top:556px;width:48px;height:66px">
+  <img class="art" src="../art/plant-floor.svg" alt="" style="left:318px;top:494px;width:72px;height:124px">
+
+  <!-- porch corner left of the door: a peg rail with the trench and a tote, and a small bench with sneakers under it.
+       Rail board x 60..158, y 336..349, pegs at (94, 342.5) and (138, 342.5), about 1.55 m up against the 2 m door leaf.
+       Trench W 104, hook loop (60, 11) on the left peg: left 94 - 52, top 342.5 - 11 * 104 / 120; hem near y 482. -->
+  <img class="art" src="../art/travel-hall-hooks.svg" alt="" style="left:58px;top:330px;width:104px;height:90px">
+  <span class="art" data-garment="g-camel-trench" data-hanger style="left:42px;top:332.97px;width:104px;height:147.33px"></span>
+  <img class="art" src="../art/travel-hall-peg.svg" alt="" style="left:88px;top:336.5px;width:12px;height:12px">
+  <!-- bench x 58..158, legs on 607 in line with the pot bases; sneakers under it, soles on 607 -->
+  <img class="art" src="../art/acct-porch-bench.svg" alt="" style="left:58px;top:564px;width:100px;height:46px">
+  <img class="art" src="../art/chat-sneakers.svg" alt="" style="left:85px;top:595.6px;width:46px;height:13px">
+
+  <div class="title-display hdr-title">Welcome home</div>
+  <p class="lede">Style outfits from the clothes you already own.<br>Your closet stays on this iPhone.</p>
+
+  <a class="btn start" href="home.html">Get started</a>
+  <a class="textbtn" href="home.html">I already use My Petite Style</a>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+</body>
+</html>

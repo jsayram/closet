@@ -1,0 +1,30 @@
+/* Tablet landscape: navigation, browsing and detail each get their own space. */
+@media (min-width:900px) and (orientation:landscape) {
+  .ipad-wide .side { width:200px; }
+  .ipad-wide .side-name { left:20px; font-size:23px; }
+  .ipad-wide .srow { padding-left:12px; gap:9px; }
+  .ipad-wide .side-me { gap:8px; padding-left:8px; }
+  .ipad-wide .side-me .ic { width:40px; height:40px; }
+  .ipad-closet-wide .app { grid-template-columns:200px minmax(0,1fr) 320px; }
+  .ipad-closet-wide .grid { gap:20px 16px; grid-template-columns:repeat(auto-fill,minmax(125px,1fr)); }
+  .ipad-saved-wide .main { left:200px; right:320px; width:auto; }
+  .ipad-saved-wide .panel { left:auto; width:320px; }
+  .ipad-saved-wide .wall { grid-template-columns:repeat(3,minmax(180px,1fr)); gap:24px 12px; padding:0 16px 40px; }
+  .ipad-saved-wide .cell { width:100%; }
+  .ipad-saved-wide .cell .frame { left:calc(50% - 68px); }
+  .ipad-saved-wide .cell .win { left:calc(50% - 49px); }
+  .ipad-results-wide .main { margin-left:200px; padding-left:28px; padding-right:28px; }
+  .ipad-results-wide .looks { grid-template-columns:repeat(3,minmax(0,1fr)); column-gap:24px; }
+  .ipad-results-wide .look { min-width:0; padding-left:4px; padding-right:4px; }
+  .ipad-results-wide .look .stagebox { width:100%; max-width:262px; }
+  .ipad-results-wide .look .bundle { left:50%; transform:translateX(-50%); }
+  .ipad-results-wide .grid4 { gap:12px; }
+  .ipad-results-wide .egrid { max-width:none; }
+}
+@media (min-width:900px) and (max-width:1099px) and (orientation:landscape) {
+  .ipad-saved-wide .wall { grid-template-columns:repeat(2,minmax(180px,1fr)); }
+  .ipad-results-wide .looks { column-gap:16px; }
+  .ipad-results-wide .look .stagebox { height:275px; }
+  .ipad-results-wide .look .bundle { transform:translateX(-50%) scale(.86); transform-origin:top center; }
+  .ipad-results-wide .grid4 .btn { font-size:13px; gap:4px; padding:0 4px; }
+}

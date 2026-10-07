@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Sample pricing</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Sample pricing, presented as a page sheet over Styling access (no tab bar). The sheet is dressed exactly like
+     Ask stylist (chat.html): the same mauve backdrop, the same stacked peek of the screen behind, the grabber, and a
+     plain plum close glyph top left. Header: a little boutique on the street with clothes on display in its window.
+     Sample pricing only, and the page says so. Sheet top at page y 57; everything inside .sheet is in sheet coordinates. */
+  body { background: #9A878F; }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .screen { background: #9A878F; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* the screen it was presented from, pushed back and dimmed (same as chat.html) */
+  .peek { position: absolute; left: 16px; right: 16px; top: 46px; height: 40px; border-radius: 12px 12px 0 0;
+          background: linear-gradient(#BEACB3, #B8A5AC); box-shadow: inset 0 1px 0 #FFFFFF33; }
+  .sheet { position: absolute; left: 0; right: 0; top: 57px; bottom: 0; border-radius: 12px 12px 0 0; overflow: hidden;
+           background: linear-gradient(var(--wall), var(--wall-2) 200px); }
+  .grabber { position: absolute; left: 177px; top: 5px; width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; }
+  /* plain plum close glyph, top left, as on Ask stylist (page y 68) */
+  .close { position: absolute; left: 8px; top: 11px; width: 44px; height: 44px; display: grid; place-items: center;
+           color: var(--plum); font-size: 22px; }
+
+  /* display window glass: x 87..215, y 48..249 (the awning covers it to about y 56) */
+  .glass { position: absolute; left: 87px; top: 48px; width: 128px; height: 201px; overflow: hidden; }
+  .glass .g { position: absolute; }
+  .glass .sheen { position: absolute; inset: 0; background:
+      linear-gradient(128deg, #FFFFFF00 62%, #FFFFFF4D 62%, #FFFFFF4D 69%, #FFFFFF00 69%, #FFFFFF00 73%, #FFFFFF38 73%, #FFFFFF38 76%, #FFFFFF00 76%),
+      linear-gradient(#EFE8FA1A, #DCD0F22E); }
+
+  /* the text part is one column in normal flow, so spacing holds whatever the font */
+  .flow { position: absolute; left: 16px; right: 16px; top: 289px; display: flex; flex-direction: column; }
+  .title { font-family: var(--font-display); font-weight: 800; font-size: 32px; letter-spacing: -.6px; line-height: 1.02;
+           text-align: center; color: var(--ink); }
+  .center { text-align: center; }
+  .flow .center { margin-top: 6px; display: flex; justify-content: center; }
+  .lead { margin-top: 6px; font-size: 13px; line-height: 17px; letter-spacing: -.15px; color: var(--ink-soft); text-align: center; white-space: nowrap; }
+  .flow .month { margin-top: 9px; }
+  .flow .terms { margin-top: 8px; }
+  .flow .btn { margin-top: 9px; }
+  .flow .links { margin-top: 0; }
+  .month { padding: 10px 16px 8px; }
+  .month .hd, .terms .hd { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .month .hd { margin-bottom: 2px; }
+  .month .ln { display: flex; align-items: center; gap: 11px; min-height: 24px; font-size: 14px; color: var(--ink); }
+  .month .ln b { font-weight: 700; }
+  .month .ln .ic { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; flex: none; color: var(--plum); }
+  .month .ln .ic i[data-icon] { font-size: 14px; }
+  .ic.lilac { background: #EEE4FA; } .ic.pink { background: #FCE6F2; } .ic.butter { background: #FCF1C8; }
+
+  .terms { padding: 11px 16px; }
+  .terms b { display: block; font-size: 16px; font-weight: 700; line-height: 21px; color: var(--ink); }
+  .terms p { font-size: 13px; line-height: 18px; color: var(--ink-soft); margin-top: 3px; }
+
+  .links { display: flex; justify-content: center; gap: 4px; }
+  .links a { height: 44px; padding: 0 7px; display: flex; align-items: center; font-size: 13px; font-weight: 600; color: var(--plum); }
+  .notnow { display: flex; justify-content: center; }
+  .notnow a { height: 44px; padding: 0 18px; display: flex; align-items: center; font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+
+  /* placeholder sheet for actions that are not mocked: opens on #soon, closes back to the page */
+  .soon { display: none; position: absolute; inset: 0; z-index: 20; }
+  .soon:target { display: block; }
+  .soon .scrim { position: absolute; inset: 0; background: #2B1B2766; }
+  .soon .panel { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 20px 34px; border-radius: 24px 24px 0 0;
+                 background: linear-gradient(var(--wall), var(--wall-2)); box-shadow: 0 -6px 20px #5a2a4a26; }
+  .soon .grab { width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; margin: 0 auto 14px; }
+  .soon h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.3px; line-height: 1.1; }
+  .soon p { margin-top: 6px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  .soon .sim { margin-top: 10px; }
+  .soon .sim[hidden] { display: none; }
+  .soon .btn { margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="peek" aria-hidden="true"></div>
+
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pw-title">
+    <!-- ============ the boutique ============ -->
+    <img class="art" src="../art/access-shopfront.svg" alt="" style="left:0;top:0;width:390px;height:283px">
+    <!-- clothes on display, shown as clothes: one piece on each wall rail, and a small wood rack on the rug with two pieces
+         hanging and a folded stack and heels on its low shelf. The sheet is a modal purchase step, so the header art is
+         not a link: the only ways out are close, Start free trial, the text links and Not now. -->
+    <div class="glass" aria-hidden="true">
+      <!-- one piece on each rail (W 40, the low-detail drawing). Rail line sheet y 64 = glass y 16, so top = 16 - 11*40/120.
+           Centred at sheet x 110 and 192 (glass x 23 and 105). -->
+      <span class="g" data-garment="g-pink-blouse" data-hanger style="left:3px;top:12.33px;width:40px;height:56.67px"></span>
+      <span class="g" data-garment="g-blue-dress" data-hanger style="left:85px;top:12.33px;width:40px;height:56.67px"></span>
+      <!-- the rack: centre on the rug (glass x 64), casters on the rug at glass y 195; bar at glass y 91 -->
+      <img class="art" src="../art/acct-shop-rack.svg" alt="" style="left:24px;top:82px;width:80px;height:116px">
+      <!-- two pieces on the rack (W 42): top = 91 - 11*42/120, centred at glass x 50 and 78 -->
+      <span class="g" data-garment="g-camel-trench" data-hanger style="left:29px;top:87.15px;width:42px;height:59.5px"></span>
+      <span class="g" data-garment="g-lace-top" data-hanger style="left:57px;top:87.15px;width:42px;height:59.5px"></span>
+      <div class="sheen"></div>
+    </div>
+    <div class="grabber" aria-hidden="true"></div>
+    <a class="close keep-from" href="access.html" aria-label="Close"><i data-icon="close"></i></a>
+
+    <!-- ============ text ============ -->
+    <div class="flow">
+      <h1 class="title" id="pw-title">Styling help,<br>when you want it</h1>
+      <div class="center"><span class="sim">Sample pricing · demo only</span></div>
+      <p class="lead">Closet, suitcases, saved looks and manual outfits stay free.</p>
+
+      <div class="card month">
+        <div class="hd">Each month</div>
+        <div class="ln"><span class="ic lilac"><i data-icon="sparkles"></i></span><span><b>200</b> styling requests</span></div>
+        <div class="ln"><span class="ic pink"><i data-icon="photo"></i></span><span><b>40</b> outfit pictures</span></div>
+        <div class="ln"><span class="ic butter"><i data-icon="calendar"></i></span><span>Allowances reset on your renewal date</span></div>
+      </div>
+
+      <div class="card terms">
+        <b>Free for 7 days, then $9.99 a month</b>
+        <p>Trial ends 12 Oct. First charge 12 Oct. Renews monthly until you cancel in Settings.</p>
+      </div>
+
+      <a class="btn" href="#soon" data-soon="Start free trial" data-soon-text="Nothing is charged in this demo." data-soon-sim>Start free trial</a>
+
+      <div class="links">
+        <a href="#soon" data-soon="Restore purchases" data-soon-text="There is nothing to restore on this demo account." data-soon-sim>Restore purchases</a>
+        <a href="#soon" data-soon="Redeem code" data-soon-text="Codes cannot be redeemed in this demo." data-soon-sim>Redeem code</a>
+        <a href="#soon" data-soon="Terms">Terms</a>
+        <a href="#soon" data-soon="Privacy">Privacy</a>
+      </div>
+      <div class="notnow"><a class="keep-from" href="access.html">Not now</a></div>
+    </div>
+  </div>
+
+  <!-- ============ placeholder sheet (not shown until something unmocked is tapped) ============ -->
+  <div class="soon" id="soon" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+    <a class="scrim" href="#" aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="soon-title">Not in this prototype</h2>
+      <p id="soon-text">This page is not part of the prototype yet.</p>
+      <span class="sim" id="soon-sim" hidden>Simulated</span>
+      <a class="btn" href="#">OK</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#soon"]');
+    if (!a) return;
+    document.getElementById('soon-title').textContent = a.getAttribute('data-soon') || 'Not in this prototype';
+    document.getElementById('soon-text').textContent = a.getAttribute('data-soon-text') || 'This page is not part of the prototype yet.';
+    document.getElementById('soon-sim').hidden = !a.hasAttribute('data-soon-sim');
+  });
+  /* keep the origin (?from=) when going back to Styling access */
+  (function () {
+    var from = '';
+    try { from = new URLSearchParams(location.search).get('from') || ''; } catch (e) {}
+    if (!/^(home|results|closet|suitcases|laundry|saved)$/.test(from)) return;
+    document.querySelectorAll('.keep-from').forEach(function (a) { a.href = a.getAttribute('href') + '?from=' + from; });
+  })();
+</script>
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+</body>
+</html>

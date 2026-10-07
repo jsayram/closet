@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suitcases</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* Suitcases. The entry hall holds her three favourite suitcases (star on each tag); the one Style Me is using has
+     the plum tag and the caption under it. The hall is drawn at the bedroom scale (one SVG unit per px, the old
+     full-size hall, y 100..550) and shown at 0.7 inside .hall; the luggage tags are live text placed over it at full
+     size so they never shrink. Below, on the floor: the favourites again as a list, See all, Main closet, and Pack a
+     new suitcase. Choosing a suitcase or Main closet sets the Style Me source and offers "Use for Style Me".
+     Variants: ?view=all (every suitcase; the four extra ones are sample data), ?state=empty (none yet).
+     Column at most 430 wide, centred; the page scrolls and the tab bar stays fixed. */
+  :root { --fy: 332px; --s: .74; }
+  html, body { background: var(--floor-2); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  .screen { height: auto; min-height: 100vh; overflow: visible; padding-bottom: 128px;
+    background: linear-gradient(var(--floor-line), var(--floor-line)) 0 var(--fy) / 100% 2px no-repeat,
+                linear-gradient(var(--floor), var(--floor-2) 520px) 0 var(--fy) / 100% 100% no-repeat,
+                linear-gradient(var(--wall), var(--wall-2)) 0 0 / 100% var(--fy) no-repeat; }
+  body.all { --fy: 104px; }
+  .col { position: relative; max-width: 430px; margin: 0 auto; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  .nav { z-index: 5; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 10px 0 4px; display: flex; align-items: center; gap: 2px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .newc { position: absolute; right: 54px; top: 2px; height: 44px; display: flex; align-items: center; z-index: 5; }
+  .newc .chip { min-height: 34px; padding: 6px 13px 6px 10px; font-size: 14px; color: var(--plum); background: var(--soft-tint); }
+  .newc .chip i[data-icon] { font-size: 17px; }
+  .hdr { position: absolute; left: 20px; top: 46px; z-index: 2; }
+  .head { position: relative; height: 92px; }
+  body.all .head { height: 104px; }
+
+  /* the hall */
+  .scene { position: relative; height: 362px; }
+  .hall { position: absolute; left: 50%; top: 0; width: 390px; height: 450px; margin-left: -195px; transform: scale(var(--s)); transform-origin: 50% 0; }
+  .hall .case { position: absolute; display: block; cursor: pointer; pointer-events: auto; }
+  .ltag { position: absolute; width: 88px; height: 46px; margin-left: -44px; display: flex; flex-direction: column; align-items: center;
+          justify-content: flex-start; padding-top: 12px; text-align: center; color: var(--ink); border-radius: 10px;
+          filter: drop-shadow(0 6px 5px rgba(90,42,74,.22));
+          background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 46'%3E%3Cpath d='M8 0H80L88 8V42Q88 46 84 46H4Q0 46 0 42V8Z' fill='%23fff'/%3E%3Cpath d='M44 0V6' stroke='%23B98632' stroke-width='3.8' stroke-linecap='round'/%3E%3Cpath d='M44 0V6' stroke='%23E7BC6E' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='7' r='4' fill='%23F3E6D0'/%3E%3Ccircle cx='44' cy='7' r='2' fill='%23E7BC6E'/%3E%3C/svg%3E") 0 0 / 88px 46px no-repeat; }
+  .ltag.on { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 46'%3E%3Cpath d='M8 0H80L88 8V42Q88 46 84 46H4Q0 46 0 42V8Z' fill='%236A1F58'/%3E%3Cpath d='M44 0V6' stroke='%23B98632' stroke-width='3.8' stroke-linecap='round'/%3E%3Cpath d='M44 0V6' stroke='%23E7BC6E' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='7' r='4' fill='%23F3E6D0'/%3E%3Ccircle cx='44' cy='7' r='2' fill='%23E7BC6E'/%3E%3C/svg%3E"); color: #fff; }
+  .ltag b { font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: -.3px; white-space: nowrap; }
+  .ltag .star { position: absolute; right: -5px; top: -7px; width: 20px; height: 20px; border-radius: 50%; background: #FCEFC2; color: #D9A650;
+                display: grid; place-items: center; box-shadow: 0 4px 5px -3px rgba(110,84,16,.5); }
+  .ltag .star i[data-icon] { font-size: 13px; }
+  .ltag .star i[data-icon] svg path { fill: currentColor; }
+  .ltag > span { font-size: 11px; line-height: 14px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .ltag.on > span { color: #F3D6E8; }
+  .ltag:focus-visible { outline-offset: 2px; }
+  .using { position: absolute; top: 334px; height: 26px; display: flex; align-items: center; gap: 4px; padding: 0 10px 0 8px; border-radius: 13px;
+           background: rgba(255,255,255,.88); box-shadow: var(--soft-drop); font-size: 12px; font-weight: 700; color: var(--plum); white-space: nowrap;
+           transform: translateX(-50%); }
+  .using[hidden] { display: none; }
+  .using i[data-icon] { font-size: 14px; }
+  .using i[data-icon] svg { stroke-width: 2.4; }
+
+  /* lists */
+  .body { padding: 6px 16px 0; }
+  .sh { display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 17px; font-weight: 700; color: var(--ink-soft);
+        letter-spacing: .2px; padding: 8px 4px 2px; }
+  .sh i[data-icon] { font-size: 14px; color: #D9A650; }
+  .sh i[data-icon] svg path { fill: currentColor; }
+  .sh .samp { margin-left: auto; font-weight: 600; font-size: 11px; color: #7A5A12; background: #FCEFC2; border-radius: 999px; padding: 2px 8px; letter-spacing: 0; }
+  .rows { list-style: none; }
+  .srow { position: relative; display: flex; align-items: center; min-height: 60px; border-radius: 22px; }
+  .srow + .srow::before { content: ""; position: absolute; left: 60px; right: 12px; top: 0; height: 1px; background: var(--soft-divider); }
+  .srow.on { background: rgba(255,255,255,.6); box-shadow: var(--soft-drop); }
+  .srow.on::before, .srow.on + .srow::before { display: none; }
+  .pick { flex: 1; min-width: 0; min-height: 60px; display: flex; align-items: center; gap: 10px; padding: 6px 4px 6px 10px; border-radius: 22px; }
+  .radio { width: 24px; height: 24px; border-radius: 50%; flex: none; display: grid; place-items: center; color: transparent;
+           box-shadow: inset 0 0 0 2px #D9C5D1; background: rgba(255,255,255,.7); }
+  .radio i[data-icon] { font-size: 14px; } .radio i[data-icon] svg { stroke-width: 2.8; }
+  .on .radio { background: var(--plum); color: #fff; box-shadow: none; }
+  .mini { position: relative; width: 34px; height: 50px; flex: none; }
+  .mini img { position: absolute; left: 2px; bottom: 0; width: 30px; height: auto; }
+  .mini .ic { position: absolute; inset: 6px 0 4px; border-radius: 12px; background: var(--plum-soft); color: var(--plum); display: grid; place-items: center; }
+  .mini .ic i[data-icon] { font-size: 20px; }
+  .srow .txt { display: flex; flex-direction: column; min-width: 0; }
+  .srow b { font-size: 16px; line-height: 20px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .srow small { font-size: 13px; line-height: 17px; color: var(--ink-soft); }
+  .srow small .src { color: var(--plum); font-weight: 700; }
+  .open, .fav { width: 44px; height: 44px; display: grid; place-items: center; flex: none; border-radius: 14px; color: var(--soft-chev); }
+  .open i[data-icon] { font-size: 18px; }
+  .fav { color: #C9B2BF; }
+  .fav i[data-icon] { font-size: 22px; }
+  .fav[aria-pressed="true"] { color: #D9A650; }
+  .fav[aria-pressed="true"] i[data-icon] svg path { fill: currentColor; }
+  .seeall { display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 12px 0 14px; color: var(--plum); font-weight: 700; font-size: 15px; }
+  .seeall .end { margin-left: auto; display: flex; align-items: center; gap: 4px; color: var(--ink-soft); font-weight: 600; font-size: 13px; }
+  .seeall i[data-icon] { font-size: 16px; }
+  .gap { height: 10px; }
+  .soft-div { margin: 6px 12px; }
+  .pack { margin-top: 14px; width: 100%; background: rgba(255,255,255,.7); }
+  .note { margin-top: 10px; padding: 0 6px; font-size: 13px; line-height: 18px; color: var(--ink-soft); text-align: center; }
+  .warn { margin: 6px 8px 0; font-size: 13px; line-height: 17px; color: #7A5A12; }
+  .warn[hidden] { display: none; }
+
+  /* empty state */
+  .emptyc { padding: 4px 6px 0; }
+  .emptyc h2 { font-size: 20px; line-height: 25px; font-weight: 800; font-family: var(--font-display); }
+  .emptyc p { margin-top: 6px; font-size: 15px; line-height: 21px; }
+  .emptyc .btn { margin-top: 14px; }
+
+  /* offer after choosing: Use for Style Me */
+  .offer { position: fixed; left: max(16px, calc(50% - 199px)); right: max(16px, calc(50% - 199px)); bottom: 96px; z-index: 30;
+           display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; border-radius: 22px; background: rgba(255,255,255,.97);
+           box-shadow: 0 16px 24px -14px rgba(90,42,74,.5), 0 1px 18px rgba(90,42,74,.08); }
+  .offer[hidden] { display: none; }
+  .offer .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .offer b { font-size: 15px; line-height: 19px; }
+  .offer small { font-size: 12px; line-height: 16px; color: var(--ink-soft); }
+  .offer .btn { min-height: 44px; font-size: 15px; padding: 0 14px; border-radius: 15px; white-space: nowrap; flex: none; }
+
+  /* new suitcase sheet */
+  .scrim { position: fixed; inset: 0; z-index: 40; background: rgba(43,27,39,.34); }
+  .scrim[hidden], .sheet[hidden] { display: none; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; margin: 0 auto; max-width: 507px; padding: 10px 20px 30px;
+           background: #FFF8F5; border-radius: 30px 30px 0 0; box-shadow: 0 -12px 30px -10px rgba(90,42,74,.3); }
+  .sheet .grab { width: 38px; height: 5px; border-radius: 3px; background: #E6D5DE; margin: 0 auto 14px; }
+  .sheet h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1.15; }
+  .sheet p { margin-top: 6px; font-size: 14px; line-height: 19px; color: var(--ink-soft); }
+  .field { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .field input { height: 50px; border: 0; border-radius: 16px; padding: 0 14px; font: inherit; font-size: 17px; font-weight: 500; color: var(--ink);
+                 background: #fff; box-shadow: var(--soft-drop); outline: 0; }
+  .field input:focus-visible { box-shadow: var(--soft-drop), inset 0 0 0 2px #6A1F5866; }
+  .sheet .btns { margin-top: 18px; display: grid; gap: 10px; }
+  .sheet .btn.ghost { background: rgba(106,31,88,.07); box-shadow: none; }
+  .sheet .btn:disabled { background: #DCC6D4; box-shadow: none; }
+
+  .tabfade { position: fixed; z-index: 10; --tabfade: var(--floor-2); }
+  .tabbar { position: fixed; z-index: 11; left: max(14px, calc(50% - 181px)); right: max(14px, calc(50% - 181px)); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body>
+<div class="screen">
+  <div class="col">
+    <div class="head">
+      <div class="nav">
+        <a class="back" id="back" href="closet.html"><i data-icon="chevron-left"></i>Closet</a>
+        <a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+      </div>
+      <button class="newc" type="button" id="newTop"><span class="chip"><i data-icon="plus"></i>New suitcase</span></button>
+      <h1 class="title-display hdr" id="title">Suitcases</h1>
+    </div>
+
+    <!-- ============ the hall, back to front (old full-size coordinates, y 100..550 -> 0..450) ============ -->
+    <div class="scene" id="scene">
+      <div class="hall" id="hall">
+        <img class="art" src="../art/travel-hall-door.svg" alt="" style="left:117px;top:11px;width:156px;height:322px">
+        <img class="art" src="../art/travel-hall-hooks.svg" alt="" style="left:12px;top:57.5px;width:104px;height:90px">
+        <span class="art" data-garment="g-camel-trench" data-hanger style="left:-2px;top:60.83px;width:100px;height:141.67px"></span>
+        <img class="art" src="../art/travel-hall-peg.svg" alt="" style="left:42px;top:64px;width:12px;height:12px">
+        <img class="art" src="../art/travel-hall-mirror.svg" alt="" style="left:300px;top:50px;width:64px;height:78px">
+        <img class="art" src="../art/travel-hall-console.svg" alt="" style="left:276px;top:158px;width:112px;height:174px">
+        <img class="art" src="../art/travel-hall-runner.svg" alt="" style="left:9px;top:342px;width:372px;height:108px">
+        <div id="cases"></div>
+      </div>
+      <div id="tags" role="radiogroup" aria-label="Favourite suitcases"></div>
+      <div class="using" id="using" hidden><i data-icon="check"></i>Styling from this one</div>
+    </div>
+
+    <main class="body" id="body"></main>
+  </div>
+
+  <div class="offer" id="offer" role="status" hidden>
+    <span class="txt"><b id="offerTitle">Weekend chosen</b><small id="offerSub">Suitcase only · 8 pieces</small></span>
+    <a class="btn" id="offerGo" href="styleme.html">Use for Style Me</a>
+  </div>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <form class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="newTitle" hidden>
+    <div class="grab" aria-hidden="true"></div>
+    <h2 id="newTitle">Pack a new suitcase</h2>
+    <p>Give it a name, then pick what goes in. Pieces stay in your closet too.</p>
+    <label class="field">Name<input id="newName" type="text" autocomplete="off" placeholder="For example, Beach week" maxlength="30"></label>
+    <div class="btns">
+      <button class="btn" type="submit" id="newGo" disabled><i data-icon="plus"></i>Create and pack</button>
+      <button class="btn ghost" type="button" id="newCancel">Cancel</button>
+    </div>
+  </form>
+
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a class="on" href="closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+(function () {
+  var P = new URLSearchParams(location.search);
+  var VIEW_ALL = P.get('view') === 'all', EMPTY = P.get('state') === 'empty';
+  var S = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--s')) || .7;
+
+  // Fixture suitcases (DemoFixtures.swift) plus four sample ones so See all has something to show.
+  var DEFAULT_MEMBERS = {
+    jose: ['g-navy-trousers', 'g-pink-blouse', 'g-navy-cardigan', 'g-nude-flats', 'g-lace-top'],
+    weekend: ['g-navy-trousers', 'g-olive-trousers', 'g-wide-jeans', 'g-brick-top', 'g-cream-sweater', 'g-brown-jacket', 'g-white-sneakers', 'g-black-tee'],
+    spring: []
+  };
+  var SUITS = [
+    { id: 'jose', name: "Jose's house", art: 'pink', used: 'Used today' },
+    { id: 'weekend', name: 'Weekend', art: 'sage', used: 'Used 2 weeks ago' },
+    { id: 'spring', name: 'Spring trip', art: 'blue', used: 'Not used yet' },
+    { id: 'beach', name: 'Beach week', art: 'butter', count: 6, used: 'Last used in July', sample: true },
+    { id: 'work', name: 'Work trip', art: 'lilac', count: 7, used: 'Last used in August', sample: true },
+    { id: 'moms', name: "Mom's", art: 'peach', count: 4, used: 'Last used in June', sample: true },
+    { id: 'ski', name: 'Ski weekend', art: 'blue', count: 5, used: 'Last used in March', sample: true }
+  ];
+  var ART_H = { pink: 182, sage: 172, blue: 164, butter: 182, lilac: 182, peach: 182 };
+  var members = MockState.get('suitcases.members', DEFAULT_MEMBERS);
+  var names = MockState.get('suitcases.names', {});
+  SUITS.forEach(function (s) { if (names[s.id]) s.name = names[s.id]; });
+  var BY = {}; SUITS.forEach(function (s) { BY[s.id] = s; });
+  function count(s) { return s.count != null ? s.count : (members[s.id] || []).length; }
+  var favs = MockState.get('suitcases.favorites', ['jose', 'weekend', 'spring']).filter(function (id) { return BY[id]; });
+
+  function sid(x) { return String(x || '').replace(/^s-/, ''); }
+  var src = MockState.get('source', { type: 'suitcase', id: 'jose' });
+  var chosen = src && src.type === 'suitcase' && BY[sid(src.id)] ? sid(src.id) : 'main';
+  if (EMPTY) chosen = 'main';
+  var changed = false, emptyPick = null;
+
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+  function pieces(n) { return n === 0 ? 'Empty' : n === 1 ? '1 piece' : n + ' pieces'; }
+
+  var body = document.getElementById('body');
+  if (VIEW_ALL) {
+    document.body.classList.add('all');
+    document.getElementById('scene').style.display = 'none';
+    document.getElementById('title').textContent = 'All suitcases';
+    var back = document.getElementById('back');
+    back.setAttribute('href', 'suitcases.html'); back.innerHTML = '<i data-icon="chevron-left"></i>Suitcases';
+  }
+  if (EMPTY) document.getElementById('newTop').style.display = 'none';
+
+  /* ---------- the hall: favourites stand on the runner, the first one in the middle ---------- */
+  var SLOTS = [{ left: 14, cx: 62 }, { left: 143, cx: 191 }, { left: 272, cx: 320 }];
+  function hallOrder() { var f = favs.slice(0, 3); return [f[1], f[0], f[2]]; }
+  function renderHall() {
+    if (VIEW_ALL) return;
+    var cases = '', tags = '';
+    if (!EMPTY) hallOrder().forEach(function (id, i) {
+      if (!id) return;
+      var s = BY[id], h = ART_H[s.art], top = 415.4 - h, slot = SLOTS[i], n = count(s);
+      cases += '<span class="case" data-id="' + id + '" aria-hidden="true" style="left:' + slot.left + 'px;top:' + top + 'px;width:104px;height:' + h + 'px">' +
+        '<img class="art" src="../art/travel-suitcase-' + s.art + '.svg" alt="" style="left:0;top:0;width:104px;height:' + h + 'px"></span>';
+      var tx = 'calc(50% + ' + ((slot.cx - 195) * S).toFixed(1) + 'px)', ty = ((top + 30) * S).toFixed(1) + 'px';
+      tags += '<button class="ltag' + (chosen === id ? ' on' : '') + '" type="button" role="radio" aria-checked="' + (chosen === id) + '" data-pick="' + id + '" data-x="' +
+        ((slot.cx - 195) * S).toFixed(1) + '" style="left:' + tx + ';top:' + ty + '" aria-label="' + esc(s.name) + ', favourite, ' + pieces(n) + '">' +
+        '<b>' + esc(s.name) + '</b><span>' + pieces(n) + '</span><i class="star" aria-hidden="true"><i data-icon="star"></i></i></button>';
+    });
+    document.getElementById('cases').innerHTML = cases;
+    document.getElementById('tags').innerHTML = tags;
+    var using = document.getElementById('using'), on = document.querySelector('.ltag.on');
+    using.hidden = !on;
+    if (on) using.style.left = 'calc(50% + ' + on.getAttribute('data-x') + 'px)';
+    Array.prototype.forEach.call(document.querySelectorAll('#cases .case'), function (c) {
+      c.addEventListener('click', function () { pick(c.getAttribute('data-id')); });
+    });
+  }
+
+  /* ---------- the list ---------- */
+  function row(s, opts) {
+    var on = chosen === s.id, n = count(s);
+    var meta = pieces(n) + ' · ' + s.used;
+    if (on) meta = '<span class="src">Style Me source</span> · ' + pieces(n);
+    var h = '<li class="srow' + (on ? ' on' : '') + '">' +
+      '<button class="pick" type="button" role="radio" aria-checked="' + on + '" data-pick="' + s.id + '">' +
+      '<span class="radio"><i data-icon="check"></i></span>' +
+      '<span class="mini"><img src="../art/travel-suitcase-' + s.art + '.svg" alt=""></span>' +
+      '<span class="txt"><b>' + esc(s.name) + '</b><small>' + meta + '</small></span></button>';
+    if (opts.star) h += '<button class="fav" type="button" aria-pressed="' + (favs.indexOf(s.id) >= 0) + '" data-fav="' + s.id + '" aria-label="Favourite ' + esc(s.name) + '"><i data-icon="star"></i></button>';
+    if (!s.sample) h += '<a class="open" href="suitcase.html?id=' + s.id + '" aria-label="Open ' + esc(s.name) + '"><i data-icon="chevron-right"></i></a>';
+    else h += '<span class="open" aria-hidden="true"></span>';
+    return h + '</li>';
+  }
+  function mainRow() {
+    var on = chosen === 'main';
+    return '<li class="srow' + (on ? ' on' : '') + '"><button class="pick" type="button" role="radio" aria-checked="' + on + '" data-pick="main">' +
+      '<span class="radio"><i data-icon="check"></i></span><span class="mini"><span class="ic"><i data-icon="hanger"></i></span></span>' +
+      '<span class="txt"><b>Main closet</b><small>' + (on ? '<span class="src">Style Me source</span> · ' : '') + 'All 21 pieces</small></span></button>' +
+      '<a class="open" href="closet.html" aria-label="Open Main closet"><i data-icon="chevron-right"></i></a></li>';
+  }
+  function renderList() {
+    var h = '';
+    if (EMPTY) {
+      h += '<div class="emptyc"><h2>No suitcases yet</h2><p>A suitcase is a smaller set of your pieces, for a trip or a second home. Style Me can then pick from just what is packed.</p>' +
+        '<button class="btn" type="button" data-new><i data-icon="plus"></i>Pack a new suitcase</button></div>' +
+        '<div class="gap"></div><div class="soft-div"></div>' +
+        '<div role="radiogroup" aria-label="Source for Style Me"><ul class="rows">' + mainRow() + '</ul></div>' +
+        '<p class="note">Style Me uses your whole closet until you pack a suitcase.</p>';
+      body.innerHTML = h; return;
+    }
+    var fav = favs.map(function (id) { return BY[id]; });
+    var rest = SUITS.filter(function (s) { return favs.indexOf(s.id) < 0; });
+    h += '<div role="radiogroup" aria-label="Source for Style Me">';
+    h += '<h2 class="sh"><i data-icon="star"></i>Favourites</h2><ul class="rows">' + fav.map(function (s) { return row(s, { star: VIEW_ALL }); }).join('') + '</ul>';
+    h += '<p class="warn" id="favWarn" role="status" hidden>Three favourites at most. Take the star off one first.</p>';
+    if (VIEW_ALL) {
+      var hasSample = rest.some(function (s) { return s.sample; });
+      h += '<div class="gap"></div><h2 class="sh">Other suitcases' + (hasSample ? '<span class="samp">Sample data</span>' : '') + '</h2><ul class="rows">' +
+        rest.map(function (s) { return row(s, { star: true }); }).join('') + '</ul>';
+      if (hasSample) h += '<p class="note">The sample suitcases fill out this list for review. Their detail pages are not mocked.</p>';
+    } else {
+      h += '<a class="seeall" href="suitcases.html?view=all">See all suitcases<span class="end">' + SUITS.length + '<i data-icon="chevron-right"></i></span></a>';
+    }
+    h += '<div class="soft-div"></div><ul class="rows">' + mainRow() + '</ul></div>';
+    h += '<button class="btn ghost pack" type="button" data-new><i data-icon="plus"></i>Pack a new suitcase</button>';
+    h += '<p class="note">Style Me picks only from the suitcase you choose. Main closet uses everything.</p>';
+    body.innerHTML = h;
+  }
+
+  function render() {
+    renderHall(); renderList();
+    Icons.mountAll(document.getElementById('scene')); Icons.mountAll(body); Garments.mountAll(document.getElementById('scene'));
+    Array.prototype.forEach.call(document.querySelectorAll('[data-pick]'), function (b) {
+      b.addEventListener('click', function () { pick(b.getAttribute('data-pick'), b); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-fav]'), function (b) {
+      b.addEventListener('click', function () { toggleFav(b.getAttribute('data-fav')); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-new]'), function (b) { b.addEventListener('click', openNew); });
+    offer();
+  }
+
+  /* ---------- choosing the source ---------- */
+  function pick(id, from) {
+    var focusSel = from ? (from.classList.contains('ltag') ? '.ltag' : '.pick') + '[data-pick="' + id + '"]' : null;
+    if (id !== 'main' && count(BY[id]) === 0) {
+      emptyPick = id; changed = true; render();
+    } else {
+      chosen = id; changed = true; emptyPick = null;
+      MockState.set('source', id === 'main' ? { type: 'main' } : { type: 'suitcase', id: id });
+      render();
+    }
+    if (focusSel) { var f = document.querySelector(focusSel); if (f) f.focus(); }
+  }
+  function offer() {
+    var o = document.getElementById('offer');
+    if (!changed) { o.hidden = true; return; }
+    var go = document.getElementById('offerGo');
+    if (!emptyPick && chosen === 'main') {
+      document.getElementById('offerTitle').textContent = 'Main closet chosen';
+      document.getElementById('offerSub').textContent = 'Style Me can use all 21 pieces';
+      go.textContent = 'Use for Style Me'; go.setAttribute('href', 'styleme.html');
+    } else if (emptyPick) {
+      document.getElementById('offerTitle').textContent = BY[emptyPick].name + ' is empty';
+      document.getElementById('offerSub').textContent = 'Pack something first. Your source stays the same.';
+      go.textContent = 'Pack it'; go.setAttribute('href', 'suitcase.html?id=' + emptyPick + '&add=1');
+    } else {
+      document.getElementById('offerTitle').textContent = BY[chosen].name + ' chosen';
+      document.getElementById('offerSub').textContent = 'Suitcase only · ' + pieces(count(BY[chosen]));
+      go.textContent = 'Use for Style Me'; go.setAttribute('href', 'styleme.html');
+    }
+    if (window.MockTheme) go.setAttribute('href', MockTheme.carry(go.getAttribute('href')));
+    o.hidden = false;
+  }
+
+  function toggleFav(id) {
+    var k = favs.indexOf(id), warn = document.getElementById('favWarn');
+    if (k >= 0) favs.splice(k, 1);
+    else if (favs.length >= 3) { warn.hidden = false; return; }
+    else favs.push(id);
+    MockState.set('suitcases.favorites', favs.slice());
+    render();
+    var b = document.querySelector('[data-fav="' + id + '"]'); if (b) b.focus();
+  }
+
+  /* ---------- new suitcase ---------- */
+  var sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim'), nameIn = document.getElementById('newName'), opener;
+  function openNew() { opener = document.activeElement; sheet.hidden = false; scrim.hidden = false; nameIn.value = ''; document.getElementById('newGo').disabled = true; nameIn.focus(); }
+  function closeNew() { sheet.hidden = true; scrim.hidden = true; if (opener && opener.focus) opener.focus(); }
+  document.getElementById('newTop').addEventListener('click', openNew);
+  document.getElementById('newCancel').addEventListener('click', closeNew);
+  scrim.addEventListener('click', closeNew);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeNew(); });
+  nameIn.addEventListener('input', function () { document.getElementById('newGo').disabled = !nameIn.value.trim(); });
+  sheet.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var n = nameIn.value.trim(); if (!n) return;
+    var href = 'suitcase.html?id=new&name=' + encodeURIComponent(n) + '&add=1';
+    location.href = window.MockTheme ? MockTheme.carry(href) : href;
+  });
+
+  render();
+})();
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="suitcases"></script>
+</body>
+</html>

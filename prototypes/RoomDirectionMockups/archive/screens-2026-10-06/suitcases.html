@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Suitcases</title>
+<link rel="stylesheet" href="../css/room.css">
+<style>
+  /* Suitcases, the entry hall. Same scale as the bedroom (home.html): one SVG unit is one px.
+     Floor line 424. The runner lies on the floor from y 446 to 545; the three cases stand on it with their wheels on y 512. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
+  .room { --floor-y: 424px; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* nav: back to Closet, profile on the right, large title under it like the bedroom */
+  .nav { z-index: 5; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 10px 0 4px; display: flex; align-items: center; gap: 2px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+
+  /* luggage-tag plates: 98 x 48 (x -1..97, centred on the strap at x 48; a dangling tag may overhang the face a little), tapered top corners.
+     The case's strap comes down into the top centre and the plate draws its last few px down to the eyelet, so the tag hangs from the strap. */
+  .case { position: absolute; display: block; border-radius: 16px; }
+  .ltag { position: absolute; left: -1px; top: 30px; width: 98px; height: 48px; display: flex; flex-direction: column; align-items: center;
+          justify-content: flex-start; padding-top: 14px; text-align: center; color: var(--ink);
+          filter: drop-shadow(0 1px 0 #0000000d) drop-shadow(0 3px 5px #5a2a4a1f);
+          background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 98 48'%3E%3Cpath d='M9 0.75H89L97.25 9V43Q97.25 47.25 93 47.25H5Q0.75 47.25 0.75 43V9Z' fill='%23fff' stroke='%23E9D9E2' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M49 0V7' stroke='%23B98632' stroke-width='3.8' stroke-linecap='round'/%3E%3Cpath d='M49 0V7' stroke='%23E7BC6E' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='49' cy='8' r='4.4' fill='%23F3E6D0' stroke='%23D9C6A5' stroke-width='1'/%3E%3Ccircle cx='49' cy='8' r='2.2' fill='%23E7BC6E'/%3E%3C/svg%3E") 0 0 / 98px 48px no-repeat; }
+  .case.on .ltag { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 98 48'%3E%3Cpath d='M9 1.25H89L96.75 9V43Q96.75 46.75 93 46.75H5Q1.25 46.75 1.25 43V9Z' fill='%23fff' stroke='%236A1F58' stroke-width='2.5' stroke-linejoin='round'/%3E%3Cpath d='M49 0V7' stroke='%23B98632' stroke-width='3.8' stroke-linecap='round'/%3E%3Cpath d='M49 0V7' stroke='%23E7BC6E' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='49' cy='8' r='4.4' fill='%23F3E6D0' stroke='%23D9C6A5' stroke-width='1'/%3E%3Ccircle cx='49' cy='8' r='2.2' fill='%23E7BC6E'/%3E%3C/svg%3E"); }
+  .ltag b { font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: -.25px; white-space: nowrap; }
+  .ltag span { font-size: 12px; line-height: 15px; font-weight: 500; color: var(--ink-soft); white-space: nowrap; }
+
+  /* caption pills under the cases: the one Style Me is using, and a hint when an empty case is tapped */
+  .pill { position: absolute; top: 554px; height: 24px; display: flex; align-items: center; gap: 4px; padding: 0 9px 0 7px; border-radius: 12px;
+          background: #FFFFFFE6; border: 1px solid var(--plate-line); font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .pill[hidden] { display: none; }
+  .pill i[data-icon] { font-size: 13px; }
+  .using { color: var(--plum); }
+  .using i[data-icon] svg { stroke-width: 2.4; }
+  .hint { color: var(--ink-soft); }
+
+  /* below the hall */
+  .pack { position: absolute; left: 50%; top: 590px; transform: translateX(-50%); padding: 0 22px 0 18px; white-space: nowrap; }
+  .note { position: absolute; left: 16px; right: 16px; top: 646px; font-size: 13px; line-height: 17px; color: var(--ink-soft); text-align: center; text-wrap: balance; }
+  .main { position: absolute; left: 16px; right: 16px; top: 682px; height: 56px; padding: 0 14px 0 10px; display: flex; align-items: center; gap: 11px;
+          background: #fff; border: 1px solid var(--plate-line); border-radius: 18px; box-shadow: 0 3px 10px #5a2a4a14; }
+  .main .ic { width: 36px; height: 36px; border-radius: 12px; background: var(--plum-soft); color: var(--plum); display: grid; place-items: center; flex: none; }
+  .main .ic i[data-icon] { font-size: 20px; }
+  .main .txt { display: flex; flex-direction: column; min-width: 0; }
+  .main b { font-size: 15px; line-height: 19px; font-weight: 700; }
+  .main small { font-size: 12px; line-height: 15px; color: var(--ink-soft); }
+  .radio { margin-left: auto; width: 24px; height: 24px; border-radius: 50%; border: 1.8px solid #D9CDD5; flex: none; display: grid; place-items: center; color: #fff; }
+  .radio i[data-icon] { font-size: 14px; visibility: hidden; }
+  .radio i[data-icon] svg { stroke-width: 2.8; }
+  .main.on { border: 2px solid var(--plum); }
+  .main.on .radio { background: var(--plum); border-color: var(--plum); }
+  .main.on .radio i[data-icon] { visibility: visible; }
+
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="room"></div>
+
+  <!-- ============ wall, back to front ============ -->
+  <!-- door 1:1, centred on x 195: casing x 122..268, head cap top 112, slab 130..423; threshold front edge at 428 -->
+  <img class="art" src="../art/travel-hall-door.svg" alt="" style="left:117px;top:111px;width:156px;height:322px">
+
+  <!-- peg rail on the left wall: board x 14..112, y 163.5..176.5, pegs at x 48 and 92 (y 170); the tote hangs on the right peg -->
+  <img class="art" src="../art/travel-hall-hooks.svg" alt="" style="left:12px;top:157.5px;width:104px;height:90px">
+  <!-- the trench on a hanger on the left peg, full length (about 1 m against the 2 m door): W 100, hook loop (60, 11)
+       on the peg centre (48, 170), so left 48 - 50 and top 170 - 11 * 100 / 120. The cloth spans x 10..86 and the hem
+       falls near y 299; the coat hangs in front of the tote's left side. -->
+  <span class="art" data-garment="g-camel-trench" data-hanger style="left:-2px;top:160.83px;width:100px;height:141.67px"></span>
+  <img class="art" src="../art/travel-hall-peg.svg" alt="" style="left:42px;top:164px;width:12px;height:12px">
+
+  <!-- round mirror above the console, centred on it (x 332) -->
+  <img class="art" src="../art/travel-hall-mirror.svg" alt="" style="left:300px;top:150px;width:64px;height:78px">
+
+  <!-- console on the right, feet on 428; slab x 278..386, top at 312 -->
+  <img class="art" src="../art/travel-hall-console.svg" alt="" style="left:276px;top:258px;width:112px;height:174px">
+
+  <!-- ============ floor ============ -->
+  <!-- runner: far edge 446, near edge 542, pile to 545 -->
+  <img class="art" src="../art/travel-hall-runner.svg" alt="" style="left:9px;top:442px;width:372px;height:108px">
+
+  <!-- ============ the three suitcases (shells 100 wide, wheels on y 512) ============ -->
+  <div role="radiogroup" aria-label="Source for Style Me">
+    <!-- Weekend, sage: shell x 16..116, face centre x 62 -->
+    <button class="case" type="button" role="radio" aria-checked="false" data-cx="62"
+            style="left:14px;top:343.4px;width:104px;height:172px">
+      <img class="art" src="../art/travel-suitcase-sage.svg" alt="" style="left:0;top:0;width:104px;height:172px">
+      <span class="ltag"><b>Weekend</b><span>8 pieces</span></span>
+    </button>
+    <!-- Jose's house, pink, the one in use: shell x 145..245, face centre x 191 -->
+    <button class="case on" type="button" role="radio" aria-checked="true" data-cx="191"
+            style="left:143px;top:333.4px;width:104px;height:182px">
+      <img class="art" src="../art/travel-suitcase-pink.svg" alt="" style="left:0;top:0;width:104px;height:182px">
+      <span class="ltag"><b>Jose's house</b><span>5 pieces</span></span>
+    </button>
+    <!-- Spring trip, blue, empty: tapping it explains instead of selecting. Shell x 274..374, face centre x 320 -->
+    <button class="case" type="button" role="radio" aria-checked="false" aria-disabled="true" data-cx="320" data-empty
+            aria-describedby="hint" style="left:272px;top:351.4px;width:104px;height:164px">
+      <img class="art" src="../art/travel-suitcase-blue.svg" alt="" style="left:0;top:0;width:104px;height:164px">
+      <span class="ltag"><b>Spring trip</b><span>Empty</span></span>
+    </button>
+  </div>
+  <div class="pill using" id="using" style="left:119px"><i data-icon="check"></i>Styling from this one</div>
+  <div class="pill hint" id="hint" role="status" hidden><i data-icon="info"></i>Pack it first</div>
+
+  <!-- ============ below the hall ============ -->
+  <button class="btn ghost small pack" type="button"><i data-icon="plus"></i>Pack a new suitcase</button>
+  <p class="note">Style Me only uses what's packed in the suitcase you pick.</p>
+  <button class="main" type="button" role="radio" aria-checked="false" id="main">
+    <span class="ic"><i data-icon="hanger"></i></span>
+    <span class="txt"><b>Main closet</b><small>All 21 pieces</small></span>
+    <span class="radio" aria-hidden="true"><i data-icon="check"></i></span>
+  </button>
+
+  <!-- ============ labels ============ -->
+  <div class="nav">
+    <a class="back" href="closet.html"><i data-icon="chevron-left"></i>Closet</a>
+    <a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a>
+  </div>
+  <h1 class="title-display hdr-title">Suitcases</h1>
+
+  <!-- ============ tab bar ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar">
+    <a href="home.html"><i data-icon="home"></i>Home</a>
+    <a class="on" href="closet.html" aria-current="page"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/avatar.js"></script>
+<script>
+/* Picking a source: one suitcase with pieces, or the main closet. The plum ring and the caption follow the pick.
+   An empty case can't be a source, so tapping it keeps the current pick and shows "Pack it first" under it. */
+(function () {
+  var cases = document.querySelectorAll('.case');
+  var main = document.getElementById('main');
+  var using = document.getElementById('using');
+  var hint = document.getElementById('hint');
+  function centre(pill, el) {
+    // centre a caption under a case, but keep it inside the 16 px side gutters
+    var w = pill.offsetWidth, cx = parseFloat(el.getAttribute('data-cx'));
+    pill.style.left = Math.max(16, Math.min(374 - w, cx - w / 2)) + 'px';
+  }
+  function pick(el) {
+    if (el.hasAttribute('data-empty')) { hint.hidden = false; centre(hint, el); return; }
+    hint.hidden = true;
+    for (var i = 0; i < cases.length; i++) {
+      var on = cases[i] === el;
+      cases[i].classList.toggle('on', on);
+      cases[i].setAttribute('aria-checked', on ? 'true' : 'false');
+    }
+    var m = el === main;
+    main.classList.toggle('on', m);
+    main.setAttribute('aria-checked', m ? 'true' : 'false');
+    using.hidden = m;
+    if (!m) centre(using, el);
+  }
+  for (var i = 0; i < cases.length; i++) cases[i].addEventListener('click', function () { pick(this); });
+  main.addEventListener('click', function () { pick(main); });
+  pick(document.querySelector('.case.on'));   // centre the caption under the case in use, whatever the font width
+})();
+</script>
+</body>
+</html>

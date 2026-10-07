@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home, iPad upright</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* iPad portrait (834 x 1194). The sidebar, the bedroom at the same size as on the landscape iPad, and the Style Me
+     request under the room in two columns, with one Style me button that opens the Style Me screen.
+     Built from the same template as ipad-home.html, so the room and the request read the same in both. */
+
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+  .art { position: absolute; display: block; }
+  .ic svg { width: 1em; height: 1em; display: block; }
+  .hit { position: absolute; display: block; border-radius: 12px; }
+  .hit > .tag { position: absolute; }
+  .tag b { letter-spacing: -.1px; }
+
+  /* ---------- sidebar ---------- */
+  .side { position: absolute; left: 0; top: 0; bottom: 0; width: var(--side-w); z-index: 7;
+          background: linear-gradient(rgba(255,255,255,.74), rgba(255,255,255,.74)), linear-gradient(var(--wall), var(--wall-2));
+          box-shadow: 8px 0 22px -14px rgba(90,42,74,.3); }
+  .side-name { position: absolute; left: 24px; top: 58px; font-family: var(--font-display); font-weight: 800; font-size: 26px;
+               letter-spacing: -.5px; line-height: 1.1; color: var(--ink); }
+  .side-rows { position: absolute; left: 12px; right: 12px; top: 112px; display: flex; flex-direction: column; gap: 4px; }
+  .srow { display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 16px; border-radius: 24px; font-size: 16px; font-weight: 600; color: var(--ink); }
+  .srow i[data-icon] { font-size: 22px; color: var(--plum); }
+  .srow.on { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .srow.on i[data-icon] { color: #fff; }
+  .srow .badge { margin-left: auto; min-width: 24px; height: 22px; padding: 0 8px; border-radius: 11px; background: #FCF0C4;
+                 font-size: 12px; font-weight: 700; display: grid; place-items: center; color: #5E4A0E; }
+  .srow .badge.quiet { background: rgba(255,255,255,.8); color: var(--ink-soft); font-weight: 600; }
+  .side-sep { height: 1px; background: var(--soft-divider); margin: 8px 14px; }
+  .side-me { position: absolute; left: 12px; right: 12px; bottom: 20px; height: 76px; display: flex; align-items: center; gap: 12px;
+             padding: 0 14px 0 10px; border-radius: 22px; background: rgba(255,255,255,.8); box-shadow: var(--soft-drop); }
+  .side-me .ic2 { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; flex: none; background: #FCE6F2; color: var(--plum); font-size: 28px; }
+  .side-me .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .side-me b { font-size: 15px; }
+  .side-me small { font-size: 12px; color: var(--ink-soft); }
+  .side-me .end { margin-left: auto; color: var(--soft-chev); font-size: 15px; display: grid; }
+
+  /* ---------- the room ---------- */
+  .roomwrap { position: absolute; top: 0; width: 594px; height: var(--room-h); }
+  .roomwrap > .room { position: absolute; inset: 0; }
+  .roomcut { position: absolute; inset: 0; overflow: hidden; }
+  .hdr-title { position: absolute; left: 24px; top: 50px; font-size: 36px; }
+  .wx { position: absolute; left: 17px; top: 90px; height: 44px; padding: 0 7px; display: flex; align-items: center; gap: 6px; border-radius: 12px;
+        color: var(--plum); font-size: 16px; font-weight: 600; white-space: nowrap; }
+  .wx .ic { font-size: 21px; display: grid; }
+  .wx .chev { font-size: 15px; display: grid; }
+  .pop { position: absolute; left: 17px; top: 136px; width: 300px; padding: 14px 14px 4px 16px; background: #fff; border-radius: 22px; z-index: 5;
+         box-shadow: 0 22px 30px -18px rgba(90,42,74,.42), 0 2px 24px rgba(90,42,74,.08); }
+  .pop[hidden] { display: none; }
+  .pop-h { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; white-space: nowrap; }
+  .pop-h .ic { font-size: 20px; color: var(--plum); display: grid; }
+  .pop-h .sim { margin-left: auto; }
+  .pop p { margin-top: 6px; font-size: 13px; line-height: 1.35; color: var(--ink-soft); }
+  .pop .close { display: block; margin: 4px 0 0 auto; height: 44px; padding: 0 6px; font-size: 15px; font-weight: 600; color: var(--plum); border-radius: 10px; }
+
+  .wardrobe { position: absolute; display: block; border-radius: 10px; }
+  .wardrobe .rail { position: absolute; overflow: hidden; }
+  .wardrobe .rail .g { position: absolute; }
+  .closetp { left: 32px; top: 48px; width: 128px; height: 46px; gap: 8px; padding: 0 12px 0 14px; }
+  .closetp b { font-size: 16px; }
+  .closetp .end i[data-icon] { font-size: 15px; }
+  .sign { position: absolute; display: block; }
+  .sign img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .sign .name { position: absolute; display: flex; align-items: center; justify-content: center;
+                font-family: var(--font-display); font-weight: 700; font-style: italic; color: var(--plum); letter-spacing: .2px; }
+
+  .suit { position: absolute; display: block; }
+  .srcp { left: 6px; top: 38px; width: 124px; height: 50px; padding: 3px 9px 3px 12px; gap: 4px; }
+  .srcp .txt { flex: 1; }
+  .srcp .lbl { display: flex; align-items: center; justify-content: space-between; }
+  .srcp small { font-size: 12px; }
+  .srcp .lbl i[data-icon] { font-size: 14px; color: var(--plum); }
+  .srcp b { font-size: 16px; }
+  .scopep { left: 10px; top: 94px; width: 116px; min-height: 0; height: 46px; padding: 2px 9px 2px 11px; gap: 0; flex-direction: column; align-items: flex-start; justify-content: center; border-radius: 14px; }
+  .scopep .l1 { display: flex; align-items: center; gap: 5px; font-size: 15px; font-weight: 700; line-height: 19px; color: #24452B; }
+  .scopep .l1 i[data-icon] { font-size: 13px; color: #3E6B45; }
+  .scopep .l2 { font-size: 15px; font-weight: 600; line-height: 19px; color: #2F5536; white-space: nowrap; }
+  .scopep.main { background: var(--soft-tint-strong); }
+  .scopep.main .l1, .scopep.main .l2 { color: var(--ink); }
+  .scopep.main .l1 i[data-icon] { color: var(--plum); }
+  .scopep.empty { background: #FCF0C4; }
+  .scopep.empty .l1, .scopep.empty .l2 { color: #5E4A0E; }
+
+  .hamper { position: absolute; display: block; }
+  .hamper.off > .art { filter: saturate(.4) brightness(1.1) contrast(.8); }
+  .laup { left: 12px; top: 50px; width: 88px; min-height: 0; height: 46px; padding: 2px 8px 2px 11px; gap: 0; flex-direction: column; align-items: flex-start; justify-content: center; border-radius: 14px; }
+  .laup small { font-size: 12px; line-height: 15px; }
+  .laup b { font-size: 15px; line-height: 19px; }
+  .hamper.off .laup { background: rgba(255,255,255,.6); box-shadow: none; }
+  .hamper.off .laup b { color: var(--ink-soft); font-weight: 600; }
+
+  .saved { left: 0; top: 5px; width: 152px; height: 34px; min-height: 0; padding: 0 9px; gap: 6px; justify-content: center; border-radius: 13px; }
+  .saved i[data-icon] { font-size: 18px; }
+  .saved b { font-size: 15px; }
+  .saved .end { margin-left: 1px; }
+  .saved .end i[data-icon] { font-size: 14px; }
+  .card-ov { position: absolute; display: block; }
+  .card-ov .th { position: absolute; left: 0; top: 0; width: 40px; }
+
+  .cal { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--ink); border-radius: 8px; }
+  .cal .t { display: flex; align-items: center; gap: 3px; font-size: 15px; font-weight: 700; letter-spacing: -.3px; line-height: 18px; }
+  .cal .t i[data-icon] { font-size: 14px; color: var(--plum); }
+  .cal .pick { display: flex; align-items: center; gap: 1px; max-width: 84px; }
+  .cal .chip { min-height: 26px; padding: 0 7px 0 5px; gap: 2px; font-size: 15px; letter-spacing: -.2px; overflow: hidden; }
+  .cal .chip i[data-icon] { font-size: 11px; }
+  .cal .pick > i[data-icon] { font-size: 12px; color: var(--plum); }
+  .styleme { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+             color: #fff; font-size: 17px; font-weight: 700; border-radius: 3px; }
+  .styleme i[data-icon] { font-size: 21px; }
+  .drawer { position: absolute; left: 475px; width: 92px; height: 48.3px; border-radius: 6px; }
+  .dplate { position: absolute; left: 6px; top: 6px; width: 80px; height: 28px; min-height: 0; padding: 0 4px; justify-content: center;
+            border-radius: 10px; font-size: 15px; font-weight: 700; white-space: nowrap; }
+  .glow { position: absolute; left: 474px; top: 382px; width: 140px; height: 140px; border-radius: 50%; pointer-events: none; display: none;
+          background: radial-gradient(closest-side, rgba(255,228,150,.55), rgba(255,228,150,0)); }
+  html.is-night .glow, html.theme-dark .glow { display: block; }
+  .maya, .maya-zzz { pointer-events: none; }
+  .maya-zzz { animation: mayaZ 7s ease-in-out infinite; }
+  @keyframes mayaZ { 0%, 100% { transform: translate(0, 0); opacity: 1; } 50% { transform: translate(1.5px, -3px); opacity: .8; } }
+  @media (prefers-reduced-motion: reduce) { .maya-zzz { animation: none; } }
+
+  /* ---------- the Style Me request ---------- */
+  .req { position: absolute; display: flex; flex-direction: column; }
+  .title-display.req-h { font-size: 26px; line-height: 1.1; letter-spacing: -.5px; }
+  .req-sub { margin-top: 5px; font-size: 13px; color: var(--ink-soft); }
+  .req-rows { margin-top: 14px; display: grid; gap: 8px; }
+  .rq { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 8px 12px 8px 14px; border-radius: 22px; color: var(--ink);
+        background: rgba(255,255,255,.72); box-shadow: var(--soft-drop); }
+  .rq.butter { background: #FCF0C6; }
+  .rq > i[data-icon] { font-size: 22px; color: var(--plum); flex: none; }
+  .rq .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .rq small { font-size: 12px; line-height: 15px; color: var(--ink-soft); }
+  .rq b { font-size: 16px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rq .end { color: var(--soft-chev); font-size: 14px; display: grid; flex: none; }
+  .pill { display: inline-flex; align-self: flex-start; align-items: center; gap: 4px; margin-top: 4px; padding: 1px 9px 1px 7px; border-radius: 999px;
+          background: #E2F2DD; font-size: 13px; font-weight: 600; line-height: 19px; color: #2F5536; white-space: nowrap; }
+  .pill i[data-icon] { font-size: 12px; color: #3E6B45; }
+  .pill.main { background: rgba(255,255,255,.85); color: var(--ink-soft); }
+  .pill.butter { background: #FCF0C4; color: #5E4A0E; }
+  .req-wx { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .req-wx .ic { font-size: 16px; color: var(--plum); display: grid; }
+  .req-wx .sim { margin-left: 2px; }
+  .go { margin-top: 12px; min-height: 52px; font-size: 17px; }
+  .req-note { margin-top: 8px; text-align: center; font-size: 11px; font-weight: 600; color: var(--ink-soft); }
+
+  /* ---------- dark appearance (tokens from css/dark.css) ---------- */
+  html.theme-dark .side { background: linear-gradient(rgba(42,30,38,.72), rgba(42,30,38,.72)), linear-gradient(var(--wall), var(--wall-2)); box-shadow: 8px 0 22px -14px rgba(0,0,0,.6); }
+  html.theme-dark .srow.on { background: var(--plum-fill); }
+  html.theme-dark .srow .badge { background: var(--tint-butter); color: var(--tint-butter-ink); }
+  html.theme-dark .srow .badge.quiet { background: rgba(255,240,248,.1); color: var(--ink-soft); }
+  html.theme-dark .side-me { background: var(--surface); }
+  html.theme-dark .side-me .ic2 { background: var(--plum-soft); }
+  html.theme-dark .pop { background: var(--surface); box-shadow: 0 22px 30px -18px rgba(0,0,0,.7); }
+  html.theme-dark .req-bg { background: linear-gradient(rgba(42,30,38,.6), rgba(42,30,38,.6)), linear-gradient(var(--wall), var(--wall-2)); }
+  html.theme-dark .rq { background: var(--surface); }
+  html.theme-dark .rq.butter { background: var(--tint-butter); }
+  html.theme-dark .pill { background: var(--tint-green); color: var(--tint-green-ink); }
+  html.theme-dark .pill i[data-icon] { color: var(--tint-green-ink); }
+  html.theme-dark .pill.main { background: rgba(255,240,248,.1); color: var(--ink-soft); }
+  html.theme-dark .pill.butter { background: var(--tint-butter); color: var(--tint-butter-ink); }
+  html.theme-dark .scopep { background: var(--tint-green); }
+  html.theme-dark .scopep .l1, html.theme-dark .scopep .l2, html.theme-dark .scopep .l1 i[data-icon] { color: var(--tint-green-ink); }
+  html.theme-dark .scopep.main { background: var(--soft-tint-strong); }
+  html.theme-dark .scopep.main .l1, html.theme-dark .scopep.main .l2 { color: var(--ink); }
+  html.theme-dark .scopep.empty { background: var(--tint-butter); }
+  html.theme-dark .scopep.empty .l1, html.theme-dark .scopep.empty .l2 { color: var(--tint-butter-ink); }
+  html.theme-dark .hamper.off .laup { background: rgba(74,53,66,.7); }
+  html.theme-dark .hamper.off > .art { filter: brightness(.6) saturate(.4) contrast(.85); }
+  html.theme-dark .cal { color: #2B1B27; }
+  html.theme-dark .cal .t i[data-icon], html.theme-dark .cal .pick > i[data-icon] { color: #6A1F58; }
+  html.theme-dark .cal .chip.on { background: #6A1F58; }
+  html.theme-dark .sign .name { color: #5A1A4B; }
+  html.theme-dark .roomwrap > .room { background:
+      linear-gradient(var(--floor-line), var(--floor-line)) 0 628px/100% 2px no-repeat,
+      linear-gradient(var(--floor), var(--floor-2)) 0 628px/100% 100% no-repeat,
+      radial-gradient(50% 35% at 88% 52%, #4A3540, rgba(74,53,64,0)),
+      linear-gradient(var(--wall), var(--wall-2)); }
+
+  /* iPad portrait (834 x 1194): sidebar 0..240, the bedroom 240..834 at 1.15 (y 0..834), the Style Me request under it. */
+  :root { --side-w: 240px; --room-h: 834px; }
+  .screen { height: 100vh; min-height: 1194px; }
+  .side-name { font-size: 24px; }
+  .roomwrap { left: 240px; }
+  .req-bg { position: absolute; left: 240px; right: 0; top: 834px; bottom: 0;
+            background: linear-gradient(rgba(255,255,255,.62), rgba(255,255,255,.62)), linear-gradient(var(--wall), var(--wall-2));
+            box-shadow: 0 -10px 22px -14px rgba(90,42,74,.3); }
+  .req { left: 262px; right: 22px; top: 850px; bottom: 12px; }
+  .req-rows { grid-template-columns: 1fr 1fr; gap: 8px 10px; margin-top: 10px; }
+  .req-head { display: flex; align-items: baseline; gap: 12px; }
+  .req-sub { margin-top: 0; }
+  .req-sub { display: none; }
+  .req-wx { position: absolute; right: 2px; top: 4px; margin: 0; }
+  .rq { min-height: 56px; }
+  .go { margin-top: 12px; }
+</style>
+</head>
+<body class="pad">
+<div class="screen">
+  <div class="req-bg"></div>
+  <div class="roomwrap" style="pointer-events:none"><div class="room" style="--floor-y:628px"></div></div>
+
+  <!-- ============ the bedroom at 1.15, floor line 628 (coordinates are inside .roomwrap) ============ -->
+  <div class="roomwrap">
+    <div class="roomcut">
+      <img class="art" id="window" src="../art/window-rain.svg" alt="" style="left:220px;top:72px;width:110.4px;height:211.6px">
+      <img class="art" src="../art/shelf-top.svg" alt="" style="left:408px;top:52px;width:167.2px;height:121px">
+      <img class="art" src="../art/shelf-frames.svg" alt="" style="left:426px;top:180.3px;width:131.3px;height:109.8px">
+      <img class="art" src="../art/calendar.svg" alt="" style="left:362.5px;top:310.1px;width:103.5px;height:92px">
+
+      <!-- wardrobe at 1.15: one link to Closet; its label zone (x 23..175, y 30..113 inside) carries the Closet plate -->
+      <a class="wardrobe" href="ipad-closet.html" aria-label="Wardrobe. Opens Closet" style="left:16px;top:174.6px;width:188.6px;height:453.1px">
+        <img class="art" src="../art/wardrobe.svg" alt="" style="left:0;top:0;width:188.6px;height:453.1px">
+        <span class="rail" aria-hidden="true" style="left:30px;top:117.3px;width:142px;height:111.5px">
+          <span class="g" data-garment="g-pink-blouse" data-hanger style="left:90px;top:4.96px;width:71.3px;height:101px"></span>
+          <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:-6px;top:4.96px;width:71.3px;height:101px"></span>
+          <span class="g" data-garment="g-lace-top" data-hanger style="left:58px;top:4.96px;width:71.3px;height:101px"></span>
+          <span class="g" data-garment="g-navy-trousers" data-hanger style="left:25px;top:4.96px;width:71.3px;height:101px"></span>
+        </span>
+        <img class="art" src="../art/home-flats.svg" alt="" style="left:56px;top:223.9px;width:39.1px;height:11.5px">
+        <span class="tag closetp"><i data-icon="hanger"></i><b>Closet</b><span class="end"><i data-icon="chevron-right"></i></span></span>
+      </a>
+
+      <a class="sign" href="settings.html" aria-label="Name sign: Lily. Opens Profile" style="left:213px;top:328px;width:126.5px;height:73.6px">
+        <img src="../art/name-sign.svg" alt="">
+        <span class="name" style="left:19.6px;top:31.1px;width:87.4px;height:29.9px;font-size:26px">Lily</span>
+      </a>
+
+      <img class="art" src="../art/rug.svg" alt="" style="left:96px;top:642px;width:358.8px;height:174.8px">
+      <div class="glow" aria-hidden="true"></div>
+      <!-- desk (home-desk.svg at 1.15): slab top 502.3, drawer fronts x 475..567 at y 518.4, 571.3, 624.2 (48.3 tall); feet 684 -->
+      <img class="art" src="../art/home-desk.svg" alt="" style="left:352px;top:500px;width:225.4px;height:184px">
+      <img class="art" src="../art/laptop.svg" alt="" style="left:393px;top:431px;width:105.8px;height:73.6px">
+      <img class="art" src="../art/home-lamp.svg" alt="" style="left:518px;top:414.4px;width:50.6px;height:92px">
+      <img class="art" src="../art/chair.svg" alt="" style="left:361.2px;top:560px;width:108.1px;height:128.8px">
+      <img class="art" src="../art/bed.svg" alt="" style="left:466px;top:692px;width:135.7px;height:312.8px">
+
+      <img class="art maya" src="../art/maya.svg" alt="" aria-hidden="true" style="left:236px;top:706px;width:126.5px;height:69px">
+      <img class="art maya-zzz" src="../art/maya-zzz.svg" alt="" aria-hidden="true" style="left:268px;top:678px;width:46px;height:46px">
+
+      <!-- suitcase at 1.15 where the rack stood: the Source control -->
+      <a class="suit" id="suit" href="suitcases.html" style="left:26px;top:496px;width:128px;height:216px">
+        <img class="art" src="../art/home-suitcase.svg" alt="" style="left:4px;top:4px;width:119.6px;height:209.3px">
+        <span class="tag srcp"><span class="txt"><span class="lbl"><small>Source</small><i data-icon="chevron-updown"></i></span><b id="src-name">Jose's house</b></span></span>
+        <span class="tag scopep" id="scope"><span class="l1"><i data-icon="lock"></i><span id="scope-1">5 pieces</span></span><span class="l2" id="scope-2">Suitcase only</span></span>
+      </a>
+      <!-- hamper at 1.15 in front of it, at the rug's edge -->
+      <a class="hamper" id="hamper" href="laundry.html" style="left:16px;top:708px;width:110px;height:118px">
+        <img class="art" id="hamper-art" src="../art/home-hamper-dirty.svg" alt="" style="left:4px;top:4px;width:101.2px;height:110.4px">
+        <span class="tag laup"><small>Laundry</small><b id="lau-text">2 to wash</b></span>
+      </a>
+    </div>
+
+    <!-- plates on the wall and desk -->
+    <h1 class="title-display hdr-title">Home</h1>
+    <button class="wx" type="button" id="wx" aria-haspopup="dialog" aria-expanded="false" aria-controls="wxpop"><span class="ic" id="wx-ic"></span><span id="wx-text">58°F · Rain today</span><span class="chev"><i data-icon="chevron-right"></i></span></button>
+
+    <a class="hit" href="ipad-saved.html" style="left:415.6px;top:117.6px;width:152px;height:44px">
+      <span class="tag pink saved"><i data-icon="bookmark"></i><b>Saved Looks</b><span class="end"><i data-icon="chevron-right"></i></span></span>
+    </a>
+    <a class="abs" href="ipad-saved.html" aria-label="Saved looks: Interview navy and pink, Weekend olive and brick, Lace date night" style="left:428px;top:186px;width:128px;height:73px">
+      <span class="card-ov" style="left:3.9px;top:2.9px;width:33px;height:67.3px">
+        <span class="th fit" data-garment="g-pink-blouse" data-detail="low" data-box="2.4,2.4,28.1,25.7"></span>
+        <span class="th fit" data-garment="g-navy-trousers" data-detail="low" data-box="6.1,26.9,20.8,37.9"></span>
+      </span>
+      <span class="card-ov" style="left:46.9px;top:2.9px;width:33px;height:67.3px">
+        <span class="th fit" data-garment="g-brick-top" data-detail="low" data-box="2.4,2.4,28.1,25.7"></span>
+        <span class="th fit" data-garment="g-olive-trousers" data-detail="low" data-box="6.1,26.9,20.8,37.9"></span>
+      </span>
+      <span class="card-ov" style="left:89.9px;top:2.9px;width:33px;height:67.3px">
+        <span class="th fit" data-garment="g-lace-top" data-detail="low" data-box="2.4,2.4,28.1,25.7"></span>
+        <span class="th fit" data-garment="g-black-skirt" data-detail="low" data-box="4.9,26.9,23.2,35.5"></span>
+      </span>
+    </a>
+
+    <a class="cal" id="cal" href="styleme.html?sheet=occasion" style="left:371.7px;top:333.1px;width:85.1px;height:51.8px">
+      <span class="t"><i data-icon="calendar"></i>Occasion</span>
+      <span class="pick"><span class="chip on"><i data-icon="check"></i><span id="occ">Office</span></span><i data-icon="chevron-down"></i></span>
+    </a>
+    <a class="styleme" href="styleme.html" aria-label="Laptop: Style Me. Opens your request" style="left:399.9px;top:436.8px;width:92px;height:51.7px"><i data-icon="sparkles"></i>Style Me</a>
+
+    <a class="drawer" href="help.html" aria-label="Help (top drawer)" style="top:518.4px"><span class="tag dplate">Help</span></a>
+    <a class="drawer" href="feedback.html" aria-label="Send feedback (middle drawer)" style="top:571.3px"><span class="tag dplate">Feedback</span></a>
+    <a class="drawer" href="privacy.html" aria-label="Privacy and terms (bottom drawer)" style="top:624.2px"><span class="tag dplate">Privacy</span></a>
+
+    <div class="pop" id="wxpop" role="dialog" aria-label="Weather" hidden>
+      <div class="pop-h"><span class="ic" id="wxs-ic"></span><span id="wxs-big">58°F · Rain today</span><span class="sim">Simulated</span></div>
+      <p><span id="wxs-say">Style Me picks looks for a cool, wet day.</span> To plan for other weather, change it in Style Me.</p>
+      <button class="close" type="button" id="wx-close">Done</button>
+    </div>
+  </div>
+
+  <!-- ============ sidebar ============ -->
+  <nav class="side" aria-label="My Petite Style">
+    <div class="side-name">My Petite Style</div>
+    <div class="side-rows">
+      <a class="srow on" href="ipad-home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+      <a class="srow" href="ipad-closet.html"><i data-icon="hanger"></i>Closet</a>
+      <a class="srow" href="ipad-saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+      <a class="srow" href="suitcases.html"><i data-icon="suitcase"></i>Suitcases</a>
+      <a class="srow" id="side-laundry" href="laundry.html"><i data-icon="basket"></i>Laundry<span class="badge" id="side-badge">2</span></a>
+      <div class="side-sep"></div>
+      <a class="srow" href="settings.html"><i data-icon="person-circle"></i>Profile</a>
+    </div>
+    <a class="side-me" href="settings.html" aria-label="Lily. Profile">
+      <span class="ic2"><i data-icon="person-circle"></i></span>
+      <span class="txt"><b>Lily</b><small>Profile</small></span>
+      <span class="end"><i data-icon="chevron-right"></i></span>
+    </a>
+  </nav>
+
+  <!-- ============ the Style Me request beside the room ============ -->
+  <section class="req" aria-labelledby="req-h">
+    <div class="req-head"><h2 class="title-display req-h" id="req-h">Style Me</h2>
+    <p class="req-sub">Your request. Change anything, then style.</p></div>
+    <div class="req-rows">
+      <a class="rq" id="rq-source" href="suitcases.html"><i data-icon="suitcase"></i><span class="txt"><small>Source</small><b id="rq-src">Jose's house</b><span class="pill" id="rq-pill"><i data-icon="lock"></i><span id="rq-scope">5 pieces · Suitcase only</span></span></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+      <a class="rq butter" id="rq-occ" href="styleme.html?sheet=occasion"><i data-icon="calendar"></i><span class="txt"><small>Occasion</small><b id="rq-occv">Office</b></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+      <a class="rq" id="rq-start" href="styleme.html?sheet=start"><i data-icon="hanger"></i><span class="txt"><small>Starting piece</small><b id="rq-startv">Any piece</b></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+      <a class="rq" id="rq-comfort" href="styleme.html?sheet=comfort"><i data-icon="sliders"></i><span class="txt"><small>Comfort</small><b id="rq-comfortv">Usual fit</b></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+      <a class="rq" id="rq-color" href="styleme.html?sheet=color"><i data-icon="palette"></i><span class="txt"><small>Color</small><b id="rq-colorv">Any</b></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+      <a class="rq" id="rq-mode" href="styleme.html?sheet=mode"><i data-icon="sparkle-wand"></i><span class="txt"><small>Mode</small><b id="rq-modev">Suitcase only</b></span><span class="end"><i data-icon="chevron-right"></i></span></a>
+    </div>
+    <p class="req-wx"><span class="ic" id="rq-wx-ic"></span><span id="rq-wx">58°F · Rain today</span><span class="sim">Simulated</span></p>
+    <a class="btn go" href="styleme.html"><i data-icon="sparkles"></i>Style me</a>
+    <p class="req-note">Looks come from a simulated stylist</p>
+  </section>
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+/* ---------- Home state (same rules as home.html) ----------
+   ?weather=rain|sun|cloudy|snow, ?time=night, ?laundry=off|clean override stored state for display.
+   Source from MockState `source` (default Jose's house), Occasion from `occasion` (default Office);
+   the request panel also reads start, comfort, color, mode and newPieceIdea. */
+var HOME = (function () {
+  var P = new URLSearchParams(location.search);
+  var S = window.MockState || { get: function (k, f) { return f; }, set: function () {} };
+  var SUITCASES = { jose: { name: "Jose's house", n: 5 }, weekend: { name: 'Weekend', n: 8 }, spring: { name: 'Spring trip', n: 0 } };
+  var OCC = { office: 'Office', dateNight: 'Date Night', brunch: 'Brunch', concert: 'Concert', casual: 'Casual', event: 'Event', other: 'Other' };
+  var WX = {
+    rain:   { icon: 'rain',  art: 'window-rain',   t: 58, tn: 54, day: 'Rain today',   night: 'Rain tonight',   say: 'Style Me picks looks for a cool, wet day.' },
+    sun:    { icon: 'sun',   art: 'window-sun',    t: 72, tn: 61, day: 'Sunny today',  night: 'Clear tonight',  say: 'Style Me picks looks for a mild, sunny day.', nicon: 'moon' },
+    cloudy: { icon: 'cloud', art: 'window-cloudy', t: 63, tn: 57, day: 'Cloudy today', night: 'Cloudy tonight', say: 'Style Me picks looks for a mild, cloudy day.' },
+    snow:   { icon: 'snow',  art: 'window-snow',   t: 30, tn: 26, day: 'Snow today',   night: 'Snow tonight',   say: 'Style Me picks warm looks for a cold, snowy day.' }
+  };
+  if (S.get('source', null) === null) S.set('source', { type: 'suitcase', id: 'jose' });
+  var wkey = WX[P.get('weather')] ? P.get('weather') : 'rain';
+  var night = P.get('time') === 'night';
+  var w = WX[wkey];
+  var weather = { key: wkey, night: night, art: night ? 'window-night' : w.art, icon: night && w.nicon ? w.nicon : w.icon,
+    temp: (night ? w.tn : w.t) + '°F', words: night ? w.night : w.day, say: night ? w.say.replace(' day.', ' evening.') : w.say };
+  weather.text = weather.temp + ' · ' + weather.words;
+  if (night) document.documentElement.classList.add('is-night');
+  var lp = P.get('laundry');
+  var tracking = lp === 'off' ? false : (lp === 'clean' ? true : S.get('laundry.tracking', true) !== false);
+  var dirty = lp === 'clean' ? [] : (S.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) || []);
+  var laundry = !tracking
+    ? { state: 'off', text: 'Off', href: 'laundry-off.html', label: 'Laundry tracking is off. Opens what laundry tracking does' }
+    : dirty.length
+      ? { state: 'dirty', n: dirty.length, text: dirty.length + ' to wash', href: 'laundry.html', label: 'Laundry: ' + dirty.length + ' to wash. Opens Laundry' }
+      : { state: 'clean', text: 'All clean', href: 'laundry.html', label: 'Laundry: all clean. Opens Laundry' };
+  var src = S.get('source', { type: 'suitcase', id: 'jose' }) || {};
+  var sid = String(src.id || '').replace(/^s-/, '');
+  var source = src.type === 'suitcase' && SUITCASES[sid]
+    ? { suitcase: true, name: SUITCASES[sid].name, n: SUITCASES[sid].n }
+    : { suitcase: false, name: 'Main closet', n: 21 };
+  source.count = source.n === 0 ? 'Empty' : source.n + (source.n === 1 ? ' piece' : ' pieces');
+  source.scope = source.suitcase ? 'Suitcase only' : 'Whole closet';
+  source.label = 'Source: ' + source.name + ', ' + (source.n === 0 ? 'empty' : source.count) + ', ' + source.scope.toLowerCase() + '. Opens Suitcases';
+  var ok = S.get('occasion', 'office');
+  var occasion = OCC[ok] || 'Office';
+  var occasionLong = ok === 'other' && S.get('occasionOther', '') ? 'Other: ' + S.get('occasionOther', '') : occasion;
+  var SNOW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.6 4.6 12 6.6l2.4-2M9.6 19.4 12 17.4l2.4 2M4.6 11.1l2.9-.6-.9-2.9M19.4 11.1l-2.9-.6.9-2.9M4.6 12.9l2.9.6-.9 2.9M19.4 12.9l-2.9.6.9 2.9"/></svg>';
+  function icon(name) { return name === 'snow' ? SNOW : (window.Icons ? window.Icons.svg(name) : ''); }
+  function txt(id, t) { var e = document.getElementById(id); if (e) e.textContent = t; }
+  return { weather: weather, laundry: laundry, source: source, occasion: occasion, occasionLong: occasionLong, icon: icon, txt: txt };
+})();
+
+
+/* ---------- this page ---------- */
+(function () {
+  var H = HOME, w = H.weather, l = H.laundry, s = H.source;
+  var S = window.MockState || { get: function (k, f) { return f; } };
+  if (w.night) document.documentElement.classList.add('is-night');
+  document.getElementById('window').src = '../art/' + w.art + '.svg';
+  ['wx-ic', 'wxs-ic', 'rq-wx-ic'].forEach(function (id) { document.getElementById(id).innerHTML = H.icon(w.icon); });
+  H.txt('wx-text', w.text); H.txt('wxs-big', w.text); H.txt('wxs-say', w.say); H.txt('rq-wx', w.text);
+  document.getElementById('wx').setAttribute('aria-label', 'Weather: ' + w.text + '. Simulated');
+
+  /* room */
+  H.txt('src-name', s.name); H.txt('scope-1', s.count); H.txt('scope-2', s.scope);
+  document.getElementById('scope').className = 'tag scopep' + (s.suitcase ? (s.n === 0 ? ' empty' : '') : ' main');
+  document.getElementById('suit').setAttribute('aria-label', s.label);
+  var ham = document.getElementById('hamper');
+  ham.className = 'hamper ' + l.state; ham.setAttribute('href', l.href); ham.setAttribute('aria-label', l.label);
+  document.getElementById('hamper-art').src = '../art/' + (l.state === 'dirty' ? 'home-hamper-dirty' : 'home-hamper') + '.svg';
+  H.txt('lau-text', l.text);
+  H.txt('occ', H.occasion);
+  document.getElementById('cal').setAttribute('aria-label', 'Occasion: ' + H.occasionLong + '. Change');
+
+  /* sidebar laundry row */
+  var sl = document.getElementById('side-laundry'), badge = document.getElementById('side-badge');
+  sl.setAttribute('href', l.href);
+  if (l.state === 'dirty') { badge.textContent = l.n; sl.setAttribute('aria-label', 'Laundry, ' + l.n + ' to wash'); }
+  else if (l.state === 'clean') { badge.remove(); sl.setAttribute('aria-label', 'Laundry, all clean'); }
+  else { badge.textContent = 'Off'; badge.className = 'badge quiet'; sl.setAttribute('aria-label', 'Laundry, tracking off'); }
+
+  /* the request summary (same wording as the Style Me screen) */
+  var NAMES = {}; (window.Garments ? window.Garments.LIST : []).forEach(function (g) { NAMES[g.id] = g.name; });
+  var COMFORT = { close: 'Fitted', comfortable: 'Comfortable', relaxed: 'Relaxed' };
+  var FAM = { navy: 'Navy', blue: 'Blue', denim: 'Denim', pink: 'Pink', red: 'Red', brick: 'Brick', burgundy: 'Burgundy', white: 'White',
+              cream: 'Cream', beige: 'Beige', tan: 'Tan', brown: 'Brown', olive: 'Olive', green: 'Green', gray: 'Gray', black: 'Black', multi: 'Multicolor' };
+  var start = S.get('start', null), comfort = S.get('comfort', null), color = S.get('color', null), mode = S.get('mode', 'suggestions');
+  var startText = start && NAMES[start] ? NAMES[start] : 'Any piece';
+  var comfortText = COMFORT[comfort] || 'Usual fit';
+  var colorText = color && FAM[color.family] ? FAM[color.family] + (color.strength === 'required' ? ' · required' : '') : 'Any';
+  var modeText = s.suitcase ? 'Suitcase only' : (mode === 'owned' ? 'Only my wardrobe' : 'Suggestions') + (!s.suitcase && S.get('newPieceIdea', false) ? ' · 1 new idea' : '');
+  H.txt('rq-src', s.name); H.txt('rq-scope', s.count + ' · ' + s.scope);
+  document.getElementById('rq-pill').className = 'pill' + (s.suitcase ? (s.n === 0 ? ' butter' : '') : ' main');
+  if (!s.suitcase) document.querySelector('#rq-pill i').style.display = 'none';
+  H.txt('rq-occv', H.occasionLong); H.txt('rq-startv', startText); H.txt('rq-comfortv', comfortText);
+  H.txt('rq-colorv', colorText); H.txt('rq-modev', modeText);
+  var labels = { 'rq-source': s.label, 'rq-occ': 'Occasion: ' + H.occasionLong + '. Change', 'rq-start': 'Starting piece: ' + startText + '. Change',
+                 'rq-comfort': 'Comfort: ' + comfortText + '. Change', 'rq-color': 'Color: ' + colorText + '. Change', 'rq-mode': 'Mode: ' + modeText + '. Change' };
+  Object.keys(labels).forEach(function (id) { document.getElementById(id).setAttribute('aria-label', labels[id]); });
+})();
+
+/* Fit small garment drawings into a box (data-box = x,y,w,h in the parent's px) by their drawn bounds, and thicken
+   their outlines so they land near 1.1 px. */
+(function () {
+  var TARGET = 1.1, OUTLINE = 3;
+  function fit(el) {
+    var svg = el.querySelector('svg');
+    if (!svg || el.getAttribute('data-fitted')) return;
+    var b = svg.getBBox();
+    var box = el.getAttribute('data-box').split(',').map(Number);
+    var s = Math.min(box[2] / b.width, box[3] / b.height);
+    el.style.width = (120 * s).toFixed(2) + 'px';
+    el.style.left = (box[0] + box[2] / 2 - (b.x + b.width / 2) * s).toFixed(2) + 'px';
+    el.style.top = (box[1] + box[3] - (b.y + b.height) * s).toFixed(2) + 'px';
+    var f = TARGET / (OUTLINE * s);
+    var list = svg.querySelectorAll('[stroke-width]');
+    for (var i = 0; i < list.length; i++) {
+      var w = parseFloat(list[i].getAttribute('stroke-width'));
+      if (w > 0) list[i].setAttribute('stroke-width', (w * f).toFixed(2));
+    }
+    el.setAttribute('data-fitted', '1');
+  }
+  function run() { var l = document.querySelectorAll('.fit'); for (var i = 0; i < l.length; i++) fit(l[i]); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+
+/* Weather popover: the weather link opens it; Done, Escape or a tap outside closes it. */
+(function () {
+  var pop = document.getElementById('wxpop'), opener = document.getElementById('wx');
+  function set(open, refocus) {
+    pop.hidden = !open;
+    opener.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) document.getElementById('wx-close').focus(); else if (refocus) opener.focus();
+  }
+  opener.addEventListener('click', function (e) { e.stopPropagation(); set(pop.hidden, true); });
+  document.getElementById('wx-close').addEventListener('click', function () { set(false, true); });
+  pop.addEventListener('click', function (e) { e.stopPropagation(); });
+  document.addEventListener('click', function () { if (!pop.hidden) set(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) set(false, true); });
+})();
+</script>
+</body>
+</html>

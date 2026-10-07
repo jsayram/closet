@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Styling access</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* ---- account screens: shared soft layout (same block in every account page) ----
+     The page is one column on the floor colour, under a short wall scene that holds the title and a little art.
+     The scene's art sits in a 390-wide stage centred in the frame, so wider frames (iPad Split View) let it breathe
+     instead of stretching it. The tab bar is fixed at the bottom; the page scrolls vertically when it is long. */
+  html, body { background: var(--floor); }
+  .screen { height: auto; min-height: 100vh; overflow: visible; background: var(--floor); padding-bottom: 124px; }
+  .screen.no-tabs { padding-bottom: 28px; }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; color: inherit; }
+  .art { position: absolute; display: block; pointer-events: none; }
+
+  /* wall scene: wall gradient, a floor band at the bottom and the baseboard line */
+  .scene { position: relative; background: linear-gradient(var(--wall), var(--wall-2)); }
+  .scene::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--floor-band, 0px);
+                  background: linear-gradient(var(--floor-line), var(--floor-line)) 0 0/100% 2px no-repeat, var(--floor); }
+  .stage { position: relative; width: 390px; max-width: 100%; margin: 0 auto; z-index: 1; }
+
+  /* nav: back chevron with the parent's name, title in display type */
+  .back { position: absolute; left: 6px; top: 2px; height: 44px; padding: 0 10px 0 2px; display: flex; align-items: center; gap: 1px;
+          color: var(--plum); font-size: 17px; font-weight: 500; border-radius: 12px; }
+  .back i[data-icon] { font-size: 25px; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; }
+  .lede { position: absolute; left: 20px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  /* header in normal flow (title may wrap), with the art placed absolutely around it */
+  .hd { position: relative; z-index: 2; padding: 46px 20px 0; }
+  .hd .lede { position: static; margin-top: 8px; }
+  .hd .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+  /* the column under the scene */
+  .col { max-width: 440px; margin: 0 auto; padding: 8px 16px 0; }
+  .sec-h { margin: 22px 12px 4px; font-size: 13px; font-weight: 700; color: var(--ink-soft); letter-spacing: .1px; }
+  .sec-h:first-child { margin-top: 10px; }
+  .grp { position: relative; }
+  .grp + .grp { margin-top: 26px; }
+  .grp + .grp::before { content: ""; position: absolute; left: 36px; right: 36px; top: -14px; height: 1px; background: var(--soft-divider); }
+  .note { margin: 6px 12px 0; font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .note.small { font-size: 12px; line-height: 16px; }
+
+  /* rows: no box, no lines; space and a round tinted icon tell them apart */
+  .item { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 12px; width: 100%;
+          border-radius: 22px; color: var(--ink); }
+  a.item:active, button.item:active { background: var(--soft-tint); }
+  .ic { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; color: var(--plum); }
+  .ic i[data-icon] { font-size: 18px; }
+  .ic.lilac { background: #EADFF8; } .ic.pink { background: #FCE6F2; } .ic.blue { background: #E2EEFB; }
+  .ic.green { background: #E4F3DF; } .ic.butter { background: #FCF1C8; } .ic.cream { background: #FBEEDD; } .ic.mauve { background: #F0E2EA; }
+  .lbl { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .txt small { font-size: 12px; line-height: 16px; color: var(--ink-soft); font-weight: 500; }
+  .end { margin-left: auto; display: flex; align-items: center; gap: 6px; flex: none; }
+  .chev { color: var(--soft-chev); font-size: 14px; display: grid; }
+  .val { font-size: 15px; color: var(--ink-soft); font-weight: 500; }
+  .pill { font-size: 12px; font-weight: 700; color: #355E3C; background: #E2F2DD; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .pill.butter { color: #5E4A0E; background: #FCEFC2; }
+  .pill.mauve { color: var(--ink-soft); background: rgba(255,255,255,.62); font-weight: 600; }
+  .sim { font-size: 11px; }
+
+  /* switch: a real button with role=switch; 44 px tall hit area around the 51 x 31 track */
+  .sw { flex: none; width: 59px; height: 44px; display: grid; place-items: center; border-radius: 22px; }
+  .sw .track { width: 51px; height: 31px; border-radius: 16px; background: #D9CDD5; position: relative; display: block; }
+  .sw .track::after { content: ""; position: absolute; left: 2px; top: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff;
+                      box-shadow: 0 3px 6px -2px rgba(43,27,39,.35); }
+  .sw[aria-checked="true"] .track { background: var(--plum); }
+  .sw[aria-checked="true"] .track::after { left: 22px; }
+
+  /* choice pills: selected is a solid plum pill */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 12px; }
+  .pills button, .pills a { min-height: 44px; padding: 0 16px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
+                  font-size: 14px; font-weight: 600; color: var(--ink); background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .pills [aria-checked="true"], .pills [aria-pressed="true"] { background: var(--plum); color: #fff; box-shadow: 0 10px 16px -12px rgba(79,21,65,.6); }
+  .pills i[data-icon] { font-size: 16px; }
+
+  /* text links and buttons */
+  .tlink { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 12px; font-size: 15px; font-weight: 600;
+           color: var(--plum); border-radius: 12px; }
+  .tlink i[data-icon] { font-size: 14px; }
+  .btn { width: 100%; }
+  .btn.ghost { color: var(--plum); }
+  .btns { display: flex; flex-direction: column; gap: 10px; padding: 0 4px; }
+
+  /* tab bar: fixed, and centred on wider frames */
+  .tabfade { position: fixed; z-index: 30; }
+  .tabbar { position: fixed; z-index: 31; left: 50%; right: auto; width: calc(100% - 28px); max-width: 430px; transform: translateX(-50%); }
+  .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
+                font-size: 12px; font-weight: 600; color: var(--plum); }
+  .tabbar > a i[data-icon] { font-size: 23px; }
+  .tabbar > a.on { background: var(--plum); color: #fff; }
+
+  /* bottom sheet: opened by script (or #id for the plain placeholders), closed by the scrim, Escape or its buttons */
+  .sheet-w { display: none; position: fixed; inset: 0; z-index: 50; }
+  .sheet-w.open, .sheet-w:target { display: block; }
+  .sheet-w .scrim { position: absolute; inset: 0; background: #2B1B2766; }
+  .sheet-w .panel { position: absolute; left: 0; right: 0; bottom: 0; max-width: 520px; margin: 0 auto; padding: 12px 20px 30px;
+                    border-radius: 28px 28px 0 0; background: linear-gradient(var(--wall), var(--wall-2));
+                    box-shadow: 0 -10px 26px -8px rgba(90,42,74,.22); }
+  .sheet-w .grab { width: 36px; height: 5px; border-radius: 3px; background: #DDBFC8; margin: 0 auto 14px; }
+  .sheet-w h2 { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.3px; line-height: 1.1; }
+  .sheet-w p { margin-top: 8px; font-size: 15px; line-height: 20px; color: var(--ink-soft); }
+  .sheet-w .sim { margin-top: 10px; }
+  .sheet-w .sim[hidden] { display: none; }
+  .sheet-w .btns { margin-top: 18px; padding: 0; }
+
+  /* toast above the tab bar */
+  .toast { position: fixed; z-index: 40; left: 50%; bottom: 102px; transform: translateX(-50%); width: calc(100% - 40px); max-width: 400px;
+           display: none; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 20px; background: var(--ink); color: #fff;
+           font-size: 14px; line-height: 18px; font-weight: 500; box-shadow: 0 16px 22px -14px rgba(43,27,39,.6); }
+  .toast.show { display: flex; }
+  .toast i[data-icon] { font-size: 18px; flex: none; }
+  .no-tabs .toast { bottom: 24px; }
+
+
+  /* Styling access: a writing nook in the same home, seen straight on. A long sage desk stands against the wall (feet
+     just below the floor line at 330), the kit lamp and a small plant on its left end, the pink chair tucked in, and the
+     access card pinned above the drawers. The card is cream with a sage spine and seal: green marks sponsored access
+     (the green pill on Profile). Plum stays for actions.
+     Variants: default sponsored; ?plan=trial (free month active, with its dates); ?plan=out (this month's pictures are
+     used up: picture-based actions are paused, styling keeps working, packs are a demo link). Without ?plan the page
+     follows the plan picked in Demo controls (MockState 'access.plan'), which also offers 'none' (not subscribed).
+     Allowances are separate, each with its own reset: requests and swaps reset daily, pictures on the renewal date. */
+  .scene { --floor-band: 14px; }
+  .scene .stage { height: 344px; }
+  .member { position: absolute; left: 146px; top: 115px; width: 216px; }
+  .member b { display: block; font-size: 17px; font-weight: 700; line-height: 20px; letter-spacing: -.1px; color: var(--ink); white-space: nowrap; }
+  .member p { font-size: 13px; line-height: 17px; color: var(--ink-soft); margin-top: 3px; white-space: nowrap; }
+  .member .sim { margin-top: 10px; }
+
+  .caprow { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 0; }
+  .caprow .sec-h { margin: 0 12px; }
+  .caprow .tlink { font-size: 13px; padding: 0 6px 0 12px; }
+
+  .allow { padding: 10px 14px 12px; }
+  .allow + .allow { background: var(--soft-divider) 0 0/100% 1px no-repeat; }
+  .allow .top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .allow .name { font-size: 15px; font-weight: 600; }
+  .allow .v { font-size: 14px; color: var(--ink-soft); font-weight: 500; white-space: nowrap; }
+  .allow .v b { color: var(--ink); font-weight: 700; }
+  .allow .meter { margin-top: 7px; }
+  .allow .meter.pink > span { background: var(--pink-2); }
+  .allow .meter.lilac > span { background: var(--lilac-line); }
+  .allow .reset { display: flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 12px; color: var(--ink-soft); font-weight: 500; }
+  .allow .reset i[data-icon] { font-size: 13px; }
+  .allow.used .v b { color: #8A2F45; }
+
+  /* notice for the out-of-pictures plan */
+  .notice { display: flex; gap: 12px; margin: 10px 4px 0; padding: 14px 16px; border-radius: 22px; background: #FCF0C6; box-shadow: var(--soft-drop); }
+  .notice .ic { background: #FFF8DA; }
+  .notice b { display: block; font-size: 15px; line-height: 20px; }
+  .notice p { margin-top: 3px; font-size: 13px; line-height: 18px; color: #5E4A0E; }
+
+  /* what still works */
+  .works .item { min-height: 46px; }
+  .works .st { font-size: 13px; font-weight: 600; color: #355E3C; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .works .st.paused { color: #8A2F45; }
+  .works .st i[data-icon] { font-size: 14px; }
+  .works .item.off .lbl { color: var(--ink-soft); }
+
+  /* trial timeline: dated steps on a soft line */
+  .tl { position: relative; margin: 4px 12px 0; padding-left: 26px; }
+  .tl::before { content: ""; position: absolute; left: 7px; top: 12px; bottom: 14px; width: 2px; border-radius: 1px; background: rgba(169,120,145,.35); }
+  .tl li { list-style: none; position: relative; padding: 7px 0; }
+  .tl li::before { content: ""; position: absolute; left: -24px; top: 11px; width: 12px; height: 12px; border-radius: 50%; background: #E2F2DD;
+                   box-shadow: 0 0 0 3px var(--floor); }
+  .tl li.now::before { background: var(--plum); }
+  .tl b { display: block; font-size: 14px; }
+  .tl span { font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+  .item .act { color: var(--plum); }
+  .start { margin: 14px 4px 0; }
+  [hidden] { display: none !important; }
+
+</style>
+<link rel="stylesheet" href="../css/home-tour.css">
+<link rel="stylesheet" href="../css/screen-tour.css">
+<link rel="stylesheet" href="../css/tablet-layout.css?v=centered-r11">
+</head>
+<body class="">
+<div class="screen">
+
+  <div class="scene">
+    <div class="stage">
+      <a class="back" href="settings.html" aria-label="Back to Profile"><i data-icon="chevron-left"></i>Profile</a>
+      <h1 class="title-display hdr-title">Styling access</h1>
+      <!-- desk: top face at 214..218, objects stand at 216; feet end at 336.6, 6.6 below the floor line -->
+      <img class="art" src="../art/access-desk.svg" alt="" style="left:16px;top:212px;width:358px;height:128px">
+      <img class="art" src="../art/lamp.svg" alt="" style="left:20px;top:153.6px;width:44px;height:64px">
+      <img class="art" src="../art/access-plant.svg" alt="" style="left:60px;top:145.4px;width:54px;height:72px">
+      <img class="art" src="../art/chair.svg" alt="" style="left:150px;top:231px;width:94px;height:112px">
+      <!-- access card pinned on the wall above the drawers; its text is live -->
+      <img class="art" src="../art/access-card.svg" alt="" style="left:120px;top:102px;width:256px;height:98px">
+      <div class="member">
+        <b id="card-b">Sponsored access</b>
+        <p id="card-p">No charge. Granted to this account.</p>
+        <span class="sim" id="card-sim">Simulated</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="notice" data-show="out">
+      <span class="ic"><i data-icon="photo"></i></span>
+      <span><b>This month's pictures are used up</b>
+        <p>Try it on is paused until 1 Nov. Style Me, swaps and Ask stylist keep working, and earlier pictures stay free to reopen.</p></span>
+    </div>
+
+    <div class="caprow" data-show="sponsored trial out" style="display:none">
+      <h2 class="sec-h">Allowances</h2>
+      <a class="tlink" href="paywall.html" data-show="sponsored trial">See sample pricing<i data-icon="chevron-right"></i></a>
+    </div>
+    <div id="allow" data-show="sponsored trial out"></div>
+    <p class="note small" id="allow-note" data-show="sponsored trial out"></p>
+
+    <div data-show="trial">
+      <h2 class="sec-h">Your free month</h2>
+      <ul class="tl">
+        <li><b>3 Oct · Started</b><span>Styling access began. Nothing was charged.</span></li>
+        <li class="now"><b>Today, 7 Oct</b><span>27 days left in the free month.</span></li>
+        <li><b>1 Nov · Reminder</b><span>We remind you the free month is ending.</span></li>
+        <li><b>3 Nov · First charge</b><span>$9.99 a month (sample), renewing monthly until you cancel.</span></li>
+      </ul>
+    </div>
+
+    <div class="works" data-show="out">
+      <h2 class="sec-h">What works now</h2>
+      <div class="item"><span class="ic lilac"><i data-icon="sparkles"></i></span><span class="lbl">Style Me</span><span class="end"><span class="st"><i data-icon="check"></i>Works</span></span></div>
+      <div class="item"><span class="ic blue"><i data-icon="swap"></i></span><span class="lbl">Swap a piece and Ask stylist</span><span class="end"><span class="st"><i data-icon="check"></i>Works</span></span></div>
+      <div class="item"><span class="ic cream"><i data-icon="photo"></i></span><span class="lbl">Reopen earlier pictures</span><span class="end"><span class="st"><i data-icon="check"></i>Free</span></span></div>
+      <div class="item off"><span class="ic pink"><i data-icon="camera"></i></span><span class="lbl">Try it on</span><span class="end"><span class="st paused"><i data-icon="lock"></i>Until 1 Nov</span></span></div>
+      <div class="item off"><span class="ic pink"><i data-icon="mirror"></i></span><span class="lbl">Update a try-on picture</span><span class="end"><span class="st paused"><i data-icon="lock"></i>Until 1 Nov</span></span></div>
+      <a class="item" href="packs.html" style="margin-top:6px">
+        <span class="ic butter"><i data-icon="plus"></i></span>
+        <span class="txt"><span class="lbl act">Get more pictures</span><small>Picture packs, behind the purchases demo switch</small></span>
+        <span class="end"><span class="pill mauve">Demo</span><span class="chev"><i data-icon="chevron-right"></i></span></span>
+      </a>
+    </div>
+
+    <div data-show="none">
+      <h2 class="sec-h">Not subscribed</h2>
+      <p class="note" style="margin-top:2px">Style Me, swaps, Ask stylist and Try it on need styling access. Your closet, laundry, suitcases, saved looks and search stay free.</p>
+      <div class="start"><a class="btn" href="paywall.html">See the free month</a></div>
+    </div>
+
+    <div class="grp" style="margin-top:22px">
+      <a class="item" href="#soon" data-soon="How access works" data-soon-text="Style Me, swaps, Ask stylist and Try it on use styling access. Each has its own allowance and reset. Your closet, saved looks and search are always free.">
+        <span class="txt"><span class="lbl">How access works</span></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+      <a class="item" href="#soon" data-show="trial out" data-soon="Manage subscription" data-soon-text="The App Store's subscription settings would open here. Nothing is charged in this prototype." data-soon-sim>
+        <span class="txt"><span class="lbl">Manage subscription</span></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+      <a class="item" href="#soon" data-soon="Restore purchases" data-soon-text="There is nothing to restore on this demo account." data-soon-sim>
+        <span class="txt"><span class="lbl act">Restore purchases</span></span></a>
+      <a class="item" href="#soon" data-soon="Redeem code" data-soon-text="The App Store's code sheet would open here. Codes can't be redeemed in this demo." data-soon-sim>
+        <span class="txt"><span class="lbl act">Redeem code</span></span></a>
+      <a class="item" href="privacy.html#terms">
+        <span class="txt"><span class="lbl">Terms</span></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+      <a class="item" href="privacy.html">
+        <span class="txt"><span class="lbl">Privacy</span></span><span class="end"><span class="chev"><i data-icon="chevron-right"></i></span></span></a>
+    </div>
+  </div>
+
+
+  <!-- ============ tab bar: account screens keep Home active ============ -->
+  <div class="tabfade"></div>
+  <nav class="tabbar" aria-label="Tabs">
+    <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
+    <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
+    <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ============ placeholder sheet for rows that are not mocked (opens on #soon) ============ -->
+  <div class="sheet-w" id="soon" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+    <a class="scrim" href="#" aria-label="Close"></a>
+    <div class="panel">
+      <div class="grab"></div>
+      <h2 id="soon-title">Not in this prototype</h2>
+      <p id="soon-text">This page is not part of the mockups yet.</p>
+      <span class="sim" id="soon-sim" hidden>Simulated</span>
+      <div class="btns"><a class="btn" href="#">OK</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
+<script>
+
+  /* Placeholder sheet: fill it from the row that opened it. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#soon"]');
+    if (!a) return;
+    document.getElementById('soon-title').textContent = a.getAttribute('data-soon') || 'Not in this prototype';
+    document.getElementById('soon-text').textContent = a.getAttribute('data-soon-text') || 'This page is not part of the mockups yet.';
+    document.getElementById('soon-sim').hidden = !a.hasAttribute('data-soon-sim');
+  });
+  /* Sheets opened by script: open(id), close on the scrim, [data-close] or Escape, and give focus back. */
+  var Sheet = (function () {
+    var last = null;
+    function open(id) {
+      var w = document.getElementById(id); if (!w) return;
+      last = document.activeElement; w.classList.add('open');
+      var f = w.querySelector('input, textarea, button, a.btn'); if (f) f.focus();
+    }
+    function close(w) { w.classList.remove('open'); if (last && last.focus) last.focus(); }
+    document.addEventListener('click', function (e) {
+      var c = e.target.closest && e.target.closest('[data-close]');
+      if (c) { e.preventDefault(); close(c.closest('.sheet-w')); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var w = document.querySelector('.sheet-w.open'); if (w) close(w);
+      else if (location.hash === '#soon') location.hash = '';
+    });
+    return { open: open, close: close };
+  })();
+  /* Toast: one line, stays 4 s. */
+  function toast(text, icon) {
+    var t = document.getElementById('toast'); if (!t) return;
+    t.innerHTML = '<i data-icon="' + (icon || 'check') + '"></i><span></span>';
+    t.querySelector('span').textContent = text;
+    if (window.Icons) Icons.mountAll(t);
+    t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 4000);
+  }
+  /* Switches: role=switch buttons flip aria-checked and call their handler. */
+  function bindSwitch(btn, onChange) {
+    btn.addEventListener('click', function () {
+      var on = btn.getAttribute('aria-checked') !== 'true';
+      btn.setAttribute('aria-checked', on ? 'true' : 'false');
+      onChange(on);
+    });
+  }
+  /* Radio pills: role=radiogroup of role=radio buttons, arrow keys move. */
+  function bindRadios(group, onChange) {
+    var items = [].slice.call(group.querySelectorAll('[role="radio"]'));
+    function pick(it, focus) {
+      items.forEach(function (x) { var on = x === it; x.setAttribute('aria-checked', on ? 'true' : 'false'); x.tabIndex = on ? 0 : -1; });
+      if (focus) it.focus();
+      onChange(it.getAttribute('data-value'));
+    }
+    items.forEach(function (it, i) {
+      it.tabIndex = it.getAttribute('aria-checked') === 'true' ? 0 : -1;
+      it.addEventListener('click', function () { pick(it); });
+      it.addEventListener('keydown', function (e) {
+        var d = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
+        if (!d) return; e.preventDefault(); pick(items[(i + d + items.length) % items.length], true);
+      });
+    });
+    return function (value) {
+      items.forEach(function (x) { var on = x.getAttribute('data-value') === value;
+        x.setAttribute('aria-checked', on ? 'true' : 'false'); x.tabIndex = on ? 0 : -1; });
+    };
+  }
+  var Q = new URLSearchParams(location.search);
+
+
+  (function () {
+    var PLANS = {
+      sponsored: { b: 'Sponsored access', p: 'No charge. Granted to this account.', sim: 'Simulated',
+                   pics: [31, 'Resets 1 Nov'], note: 'Sample allowances. Sponsored access is never charged.' },
+      trial: { b: 'Free month', p: 'Until 3 Nov, then $9.99 a month.', sim: 'Sample terms · simulated',
+               pics: [31, 'Resets 3 Nov'], note: 'Sample allowances. Pictures reset on your renewal date.' },
+      out: { b: 'Monthly styling access', p: '$9.99 a month · renews 1 Nov', sim: 'Sample terms · simulated',
+             pics: [0, 'More arrive 1 Nov'], note: 'Sample allowances. Nothing is charged automatically when one runs out.' },
+      none: { b: 'No styling access', p: 'Your closet and looks stay free.', sim: 'Simulated', pics: [0, ''], note: '' }
+    };
+    var q = Q.get('plan');
+    var plan = PLANS[q] ? q : (PLANS[MockState.get('access.plan', '')] ? MockState.get('access.plan') : 'sponsored');
+    var P = PLANS[plan];
+    document.getElementById('card-b').textContent = P.b;
+    document.getElementById('card-p').textContent = P.p;
+    document.getElementById('card-sim').textContent = P.sim;
+    document.querySelectorAll('[data-show]').forEach(function (el) {
+      var on = el.getAttribute('data-show').split(' ').indexOf(plan) >= 0;
+      el.hidden = !on; el.style.display = '';
+    });
+    var rows = [
+      ['Style Me requests', 7, 10, 'left today', 'Resets tomorrow', ''],
+      ['Swaps and Ask stylist', 36, 40, 'left today', 'Resets tomorrow', 'lilac'],
+      ['Try-on pictures', P.pics[0], 40, 'left this month', P.pics[1], 'pink']
+    ];
+    var box = document.getElementById('allow');
+    rows.forEach(function (r) {
+      var d = document.createElement('div'); d.className = 'allow' + (r[1] === 0 ? ' used' : '');
+      d.innerHTML = '<div class="top"><span class="name"></span><span class="v"><b>' + r[1] + '</b> of ' + r[2] + ' ' + r[3] + '</span></div>' +
+        '<div class="meter ' + r[5] + '" role="meter" aria-valuemin="0" aria-valuemax="' + r[2] + '" aria-valuenow="' + r[1] + '"><span style="width:' +
+        (100 * r[1] / r[2]) + '%"></span></div><div class="reset"><i data-icon="clock"></i><span></span></div>';
+      d.querySelector('.name').textContent = r[0];
+      d.querySelector('.meter').setAttribute('aria-label', r[0] + ' left');
+      d.querySelector('.reset span').textContent = r[4];
+      box.appendChild(d);
+    });
+    document.getElementById('allow-note').textContent = P.note;
+    Icons.mountAll(box);
+  })();
+
+</script>
+<script src="../js/tablet-layout.js?v=centered-r11"></script>
+<script src="../js/screen-tours.js"></script>
+<script src="../js/screen-tour.js?v=centered-r11" data-screen-tour="access"></script>
+</body>
+</html>

@@ -2,47 +2,80 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=390">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Home</title>
+<script src="../js/theme.js"></script>
 <link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
 <style>
-  /* Style Me tab, the bedroom. Built from ref/home.png at 0.3988 px per reference px.
-     Floor line 550. The wardrobe is shown at 1.08 so its label zone can hold both plates. */
+  /* Home, the bedroom. Every object leads somewhere:
+       wardrobe -> Closet, suitcase -> Suitcases (and shows the Style Me source), laptop -> Style Me,
+       calendar -> the occasion sheet in Style Me, hamper -> Laundry, desk drawers -> Help / Send feedback / Privacy,
+       shelf -> Saved Looks, name sign -> Profile, window -> the weather (simulated).
+     The room is drawn in a 390 x 844 stage at 1 SVG unit per px. On a wider frame (iPad Split View, 507 x 834) the
+     stage is centred, the wall and floor run to both edges, the wardrobe shows whole and the bed stays in the corner.
+     Floor line 550. */
   body { background: var(--wall); }
   a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
   button { font: inherit; background: none; border: 0; padding: 0; text-align: inherit; cursor: pointer; }
+  .screen { height: 100vh; min-height: 640px; }
   .room { --floor-y: 550px; }
+  .stage { position: absolute; left: 50%; top: 0; width: 390px; height: 844px; margin-left: -195px; }
   .art { position: absolute; display: block; }
+  .hit { position: absolute; display: block; border-radius: 14px; }
+  .hit > .tag { position: absolute; }
+  .tag b { letter-spacing: -.1px; }
 
-  /* header */
-  .hdr-title { position: absolute; left: 20px; top: 46px; }
-  /* the Simulated label for the weather lives in the weather sheet, so the header line stays plain */
-  .wx { position: absolute; left: 14px; top: 81px; height: 44px; padding: 0 4px 0 6px; display: flex; align-items: center; gap: 4px;
-        color: var(--plum); font-size: 15px; font-weight: 600; letter-spacing: -.2px; white-space: nowrap; }
-  .wx > i[data-icon] { font-size: 18px; margin-right: 1px; }
+  /* header (screen-left, like a large title) */
+  .hdr-title { position: absolute; left: 20px; top: 46px; z-index: 2; }
+  .wx { position: absolute; left: 14px; top: 81px; height: 44px; padding: 0 4px 0 6px; display: flex; align-items: center; gap: 4px; z-index: 2;
+        color: var(--plum); font-size: 15px; font-weight: 600; letter-spacing: -.2px; white-space: nowrap; border-radius: 12px; }
+  .wx .ic { font-size: 18px; margin-right: 1px; display: grid; }
   .wx .chev { display: grid; }
   .wx .chev i[data-icon] { font-size: 13px; }
+  .ic svg { width: 1em; height: 1em; display: block; }
 
-  /* shared plate tweaks */
-  .tag b { letter-spacing: -.1px; }
-  .hit { position: absolute; display: block; }
-  .hit > .tag { position: absolute; }
+  /* wardrobe: the whole thing is the Closet link; its label zone (x 9.6..152, y 152..230) carries one plate */
+  .wardrobe { position: absolute; left: -12px; top: 124px; width: 177px; height: 426px; border-radius: 10px; }
+  .wardrobe > .art { left: 0; top: 0; width: 177.1px; height: 425.5px; }
+  .wardrobe:focus-visible { outline-offset: -4px; }  /* the wardrobe runs off the left edge at 390, so its focus ring sits inside */
+  .wardrobe .rail { position: absolute; left: 26px; top: 110px; width: 136px; height: 114px; overflow: hidden; }
+  .wardrobe .rail .g { position: absolute; }
+  .closetp { left: 37px; top: 45px; width: 112px; height: 44px; gap: 7px; padding: 0 10px 0 12px; }
+  .closetp b { font-size: 15px; }
+  .closetp .end i[data-icon] { font-size: 14px; }
 
-  /* wardrobe plates: label zone at page x 9.6..152, y 152..230. Both plates run 4..156, a few px onto the stiles,
-     so the suitcase line fits on one line with its lock icon at 11 px. */
-  .src { left: 4px; top: 153px; width: 152px; height: 44px; padding: 4px 10px 4px 11px; gap: 8px; }
-  .src i[data-icon] { font-size: 20px; }
-  .src .txt { flex: 1; }
-  .src .lbl { display: flex; align-items: center; justify-content: space-between; }
-  .src .lbl i[data-icon] { font-size: 13px; color: var(--plum); }
-  .lockp { left: 3px; top: 201px; width: 159px; height: 27px; min-height: 0; padding: 0 4px 0 6px; gap: 3px; border-radius: 9px;
-           white-space: nowrap; font-size: 12px; font-weight: 600; letter-spacing: -.3px; color: #2F5536; }
-  .lockp i[data-icon] { font-size: 12px; color: #3E6B45; }
-  .rail { position: absolute; left: 14px; top: 234px; width: 136px; height: 114px; overflow: hidden; }
-  .rail .g { position: absolute; }
+  /* suitcase where the rack was: the Source control. Label zone (art x 4..92, y 30..78) takes the Source plate,
+     the ribs below take the scope plate. The whole case links to Suitcases. */
+  .suit { position: absolute; left: 4px; top: 430px; width: 112px; height: 190px; }
+  .suit > .art { left: 4px; top: 6px; width: 104px; height: 182px; }
+  .srcp { left: 4px; top: 36px; width: 104px; height: 46px; padding: 3px 7px 3px 9px; gap: 4px; }
+  .srcp .txt { flex: 1; }
+  .srcp .lbl { display: flex; align-items: center; justify-content: space-between; }
+  .srcp .lbl i[data-icon] { font-size: 13px; color: var(--plum); }
+  .srcp b { font-size: 14px; }
+  .scopep { left: 6px; top: 87px; width: 100px; min-height: 0; height: 40px; padding: 2px 8px 2px 9px; gap: 0; flex-direction: column; align-items: flex-start; justify-content: center; border-radius: 13px; }
+  .scopep .l1 { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; line-height: 16px; color: #24452B; }
+  .scopep .l1 i[data-icon] { font-size: 12px; color: #3E6B45; }
+  .scopep .l2 { font-size: 13px; font-weight: 600; line-height: 16px; color: #2F5536; white-space: nowrap; }
+  .scopep.main { background: var(--soft-tint-strong); }
+  .scopep.main .l1, .scopep.main .l2 { color: var(--ink); }
+  .scopep.main .l1 i[data-icon] { color: var(--plum); }
+  .scopep.empty { background: #FCF0C4; }
+  .scopep.empty .l1, .scopep.empty .l2 { color: #5E4A0E; }
+
+  /* hamper on the floor in front of the suitcase, at the rug's edge (home-hamper*.svg at 1:1, rim y 646, base 727) */
+  .hamper { position: absolute; left: 12px; top: 632px; width: 92px; height: 100px; }
+  .hamper > .art { left: 2px; top: 4px; width: 88px; height: 96px; }
+  .hamper.off > .art { filter: saturate(.4) brightness(1.1) contrast(.8); }
+  .laup { left: 8px; top: 44px; width: 76px; min-height: 0; height: 40px; padding: 2px 6px 2px 9px; gap: 0; flex-direction: column; align-items: flex-start; justify-content: center; border-radius: 13px; }
+  .laup small { font-size: 11px; line-height: 14px; }
+  .laup b { font-size: 13px; line-height: 17px; }
+  .hamper.off .laup { background: rgba(255,255,255,.6); box-shadow: none; }
+  .hamper.off .laup b { color: var(--ink-soft); font-weight: 600; }
 
   /* Saved Looks plate under the plant shelf */
-  .saved { left: 0; top: 7px; width: 132px; height: 30px; min-height: 0; padding: 0 8px; gap: 5px; justify-content: center; border-radius: 10px; }
+  .saved { left: 0; top: 7px; width: 132px; height: 30px; min-height: 0; padding: 0 8px; gap: 5px; justify-content: center; border-radius: 12px; }
   .saved i[data-icon] { font-size: 17px; }
   .saved b { font-size: 13px; }
   .saved .end { margin-left: 1px; }
@@ -50,179 +83,203 @@
   .card-ov { position: absolute; display: block; }
   .card-ov .th { position: absolute; left: 0; top: 0; width: 40px; }
 
-  /* calendar label, inside the flat face x 8..82, y 20..65 */
-  .cal { position: absolute; display: flex; color: var(--ink); flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  /* calendar label, inside the flat face x 8..82, y 20..65: it opens the Occasion sheet in Style Me */
+  .cal { position: absolute; display: flex; color: var(--ink); flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 8px; }
   .cal .t { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; }
   .cal .t i[data-icon] { font-size: 14px; color: var(--plum); }
-  .cal .pick { display: flex; align-items: center; gap: 1px; }
-  .cal .chip { min-height: 24px; padding: 0 7px 0 5px; gap: 2px; font-size: 13px; }
+  .cal .pick { display: flex; align-items: center; gap: 1px; max-width: 78px; }
+  .cal .chip { min-height: 24px; padding: 0 7px 0 5px; gap: 2px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; }
   .cal .chip i[data-icon] { font-size: 11px; }
   .cal .pick > i[data-icon] { font-size: 12px; color: var(--plum); }
-
 
   /* her name sign on the wall: name-sign.svg with the profile's first name as live text over its flat panel */
   .sign { position: absolute; display: block; }
   .sign img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
   .sign .name { position: absolute; display: flex; align-items: center; justify-content: center;
                 font-family: var(--font-display); font-weight: 700; font-style: italic; color: var(--plum); letter-spacing: .2px; }
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
 
-  /* laptop screen button */
+  /* laptop screen: opens the Style Me request screen */
   .styleme { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
              color: #fff; font-size: 15px; font-weight: 700; border-radius: 3px; }
   .styleme i[data-icon] { font-size: 19px; }
 
-  /* desk drawer plate */
-  .more { left: 0; top: 4px; width: 94px; height: 36px; min-height: 0; padding: 2px 4px; gap: 0; flex-direction: column; justify-content: center; border-radius: 9px; }
-  .more b { font-size: 13px; font-weight: 600; }
-  .more i[data-icon] { font-size: 13px; color: var(--ink); }
+  /* desk drawers: a small plate on each drawer front, the pull below it; each drawer is a 80 x 44 control */
+  .drawer { position: absolute; left: 297px; width: 80px; height: 44px; border-radius: 6px; }
+  .dplate { position: absolute; left: 5px; top: 5px; width: 70px; height: 24px; min-height: 0; padding: 0 4px; justify-content: center;
+            border-radius: 9px; font-size: 13px; font-weight: 700; white-space: nowrap; }
 
-  /* rack plates */
-  .start { left: 0; top: 0; width: 122px; height: 44px; padding: 3px 4px 3px 8px; gap: 1px; flex-direction: column; align-items: flex-start; justify-content: center; }
-  .start > b { display: flex; align-items: center; gap: 4px; font-size: 13px; line-height: 16px; }
-  .start > b i[data-icon] { font-size: 14px; }
-  .start .act { display: flex; align-items: center; gap: 1px; width: 100%; font-size: 13px; font-weight: 600; line-height: 16px; color: var(--plum); white-space: nowrap; letter-spacing: -.25px; }
-  .start .act .chev { margin-left: auto; font-size: 11px; display: grid; }
+  /* lamp light at night */
+  .glow { position: absolute; left: 296px; top: 340px; width: 120px; height: 120px; border-radius: 50%; pointer-events: none; display: none;
+          background: radial-gradient(closest-side, rgba(255,228,150,.55), rgba(255,228,150,0)); }
+  html.is-night .glow { display: block; }
 
-  /* weather detail: a small sheet that the two weather controls open in place (no separate screen yet) */
-  .wxsheet { position: absolute; left: 14px; top: 124px; width: 244px; z-index: 20; padding: 4px 4px 12px 14px;
-             background: #fff; border: 1.5px solid var(--plate-line); border-radius: 16px; box-shadow: 0 8px 24px #5a2a4a33; }
+  /* weather detail: a small sheet that the weather link opens in place */
+  .wxsheet { position: absolute; left: 14px; top: 124px; width: 262px; z-index: 20; padding: 4px 4px 14px 16px;
+             background: #fff; border-radius: 22px; box-shadow: 0 22px 30px -18px rgba(90,42,74,.42), 0 2px 24px rgba(90,42,74,.08); }
   .wxsheet[hidden] { display: none; }
   .wxsheet .wh { display: flex; align-items: center; gap: 6px; min-height: 44px; }
-  .wxsheet .wh > i[data-icon] { font-size: 19px; color: var(--plum); }
+  .wxsheet .wh .ic { font-size: 19px; color: var(--plum); display: grid; }
   .wxsheet .wh b { font-size: 15px; }
   .wxsheet .x { margin-left: auto; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; color: var(--ink-soft); font-size: 17px; }
   .wxsheet .big { font-size: 17px; font-weight: 700; line-height: 1.25; }
   .wxsheet .say { margin-top: 4px; padding-right: 10px; font-size: 13px; line-height: 1.35; color: var(--ink-soft); }
+  .wxsheet .say a { color: var(--plum); font-weight: 600; }
 
   /* tab bar items are links */
+  .tabbar { z-index: 10; }
+  .tabfade { z-index: 9; }
   .tabbar > a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 27px;
                 font-size: 12px; font-weight: 600; color: var(--plum); }
   .tabbar > a i[data-icon] { font-size: 23px; }
   .tabbar > a.on { background: var(--plum); color: #fff; }
+
   /* Maya, the sleeping poodle: decoration only. Her z's float very slowly; still under reduced motion. */
   .maya, .maya-zzz { pointer-events: none; }
   .maya-zzz { animation: mayaZ 7s ease-in-out infinite; }
   @keyframes mayaZ { 0%, 100% { transform: translate(0, 0); opacity: 1; } 50% { transform: translate(1.5px, -3px); opacity: .8; } }
   @media (prefers-reduced-motion: reduce) { .maya-zzz { animation: none; } }
+
+  /* bed: anchored to the screen's bottom-right corner, so it stays a corner piece on any width */
+  .bed { right: 0; bottom: 0; width: 118px; height: 272px; }
+
+  /* ---------- dark appearance: the same room at night (tokens from css/dark.css) ---------- */
+  html.theme-dark .room { background:
+      linear-gradient(var(--floor-line), var(--floor-line)) 0 var(--floor-y)/100% 2px no-repeat,
+      linear-gradient(var(--floor), var(--floor-2)) 0 var(--floor-y)/100% 100% no-repeat,
+      radial-gradient(60% 40% at 82% 50%, #4A3540, rgba(74,53,64,0)),
+      linear-gradient(var(--wall), var(--wall-2)); }
+  html.theme-dark .glow { display: block; background: radial-gradient(closest-side, rgba(255,214,140,.32), rgba(255,214,140,0)); }
+  html.theme-dark .scopep { background: var(--tint-green); }
+  html.theme-dark .scopep .l1, html.theme-dark .scopep .l2, html.theme-dark .scopep .l1 i[data-icon] { color: var(--tint-green-ink); }
+  html.theme-dark .scopep.main { background: var(--soft-tint-strong); }
+  html.theme-dark .scopep.main .l1, html.theme-dark .scopep.main .l2 { color: var(--ink); }
+  html.theme-dark .scopep.empty { background: var(--tint-butter); }
+  html.theme-dark .scopep.empty .l1, html.theme-dark .scopep.empty .l2 { color: var(--tint-butter-ink); }
+  html.theme-dark .hamper.off .laup { background: rgba(74,53,66,.7); }
+  html.theme-dark .wxsheet { background: var(--surface); box-shadow: 0 22px 30px -18px rgba(0,0,0,.7); }
+  /* text laid straight on drawn surfaces (the calendar face, the sign's panel, the laptop screen) keeps dark ink,
+     since the art is dimmed, not inverted */
+  html.theme-dark .cal { color: #2B1B27; }
+  html.theme-dark .cal .t i[data-icon], html.theme-dark .cal .pick > i[data-icon] { color: #6A1F58; }
+  html.theme-dark .cal .chip.on { background: #6A1F58; }
+  html.theme-dark .sign .name { color: #5A1A4B; }
+  html.theme-dark .hamper.off > .art { filter: brightness(.6) saturate(.4) contrast(.85); }
 </style>
+<link rel="stylesheet" href="../css/home-wide.css">
 </head>
 <body>
 <div class="screen">
   <div class="room"></div>
 
-  <!-- ============ wall, back to front ============ -->
-  <!-- window, 0.85 scale (81.6 x 156.4). Glass x 188.3..233.3, y 149.7..271.3; mullion 229..233; sill lip to 284.
-       Moved 10 px right of the reference so a strip of wall shows between the wardrobe cornice and the rod finial. -->
-  <img class="art" src="../art/window-rain.svg" alt="" style="left:170px;top:134px;width:81.6px;height:156.4px">
+  <div class="stage">
+    <!-- ============ wall, back to front ============ -->
+    <!-- window, 0.85 scale (81.6 x 156.4). The art follows the weather (?weather=rain|sun|cloudy|snow, ?time=night). -->
+    <img class="art" id="window" src="../art/window-rain.svg" alt="" style="left:170px;top:134px;width:81.6px;height:156.4px">
 
-  <!-- plant shelf, 0.9 scale (136.8 x 99): board y 92.8..102.7, plate zone x 256..380.5 y 100.9..128 -->
-  <img class="art" src="../art/shelf-top.svg" alt="" style="left:250px;top:46px;width:136.8px;height:99px">
-  <!-- frames shelf, 0.88 scale (107.4 x 89.8), centred under the plant shelf -->
-  <img class="art" src="../art/shelf-frames.svg" alt="" style="left:264.7px;top:151px;width:107.4px;height:89.8px">
+    <!-- plant shelf, 0.9 scale (136.8 x 99): plate zone x 256..380.5 y 100.9..128 -->
+    <img class="art" src="../art/shelf-top.svg" alt="" style="left:250px;top:46px;width:136.8px;height:99px">
+    <img class="art" src="../art/shelf-frames.svg" alt="" style="left:264.7px;top:151px;width:107.4px;height:89.8px">
 
-  <!-- calendar, 1:1, under the window and left of her name sign; label face x 207..281, y 305..350 -->
-  <img class="art" src="../art/calendar.svg" alt="" style="left:203px;top:293px;width:90px;height:80px">
+    <!-- calendar, 1:1, label face x 211..285, y 313..358 -->
+    <img class="art" src="../art/calendar.svg" alt="" style="left:203px;top:293px;width:90px;height:80px">
 
-  <!-- ============ wardrobe ============ -->
-  <img class="art" src="../art/wardrobe.svg" alt="" style="left:-12px;top:124px;width:177.1px;height:425.5px">
-  <!-- rail at page y 245; opening x 14..150, y 234..348.6; floor board top 339 -->
-  <div class="rail" aria-hidden="true">
-    <!-- W 62: top = 245 - 5.7 - 234 = 5.3 (rail box local) -->
-    <span class="g" data-garment="g-pink-blouse" data-hanger style="left:81px;top:5.3px;width:62px;height:87.8px"></span>
-    <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:-4px;top:5.3px;width:62px;height:87.8px"></span>
-    <span class="g" data-garment="g-lace-top" data-hanger style="left:52px;top:5.3px;width:62px;height:87.8px"></span>
-    <span class="g" data-garment="g-navy-trousers" data-hanger style="left:23px;top:5.3px;width:62px;height:87.8px"></span>
+    <!-- ============ wardrobe: one link to Closet ============ -->
+    <a class="wardrobe" href="closet.html" aria-label="Wardrobe. Opens Closet">
+      <img class="art" src="../art/wardrobe.svg" alt="">
+      <!-- rail at page y 245; opening x 14..150, y 234..348.6 -->
+      <span class="rail" aria-hidden="true">
+        <span class="g" data-garment="g-pink-blouse" data-hanger style="left:81px;top:5.3px;width:62px;height:87.8px"></span>
+        <span class="g" data-garment="g-navy-cardigan" data-hanger style="left:-4px;top:5.3px;width:62px;height:87.8px"></span>
+        <span class="g" data-garment="g-lace-top" data-hanger style="left:52px;top:5.3px;width:62px;height:87.8px"></span>
+        <span class="g" data-garment="g-navy-trousers" data-hanger style="left:23px;top:5.3px;width:62px;height:87.8px"></span>
+      </span>
+      <img class="art" src="../art/home-flats.svg" alt="" style="left:32px;top:211px;width:34px;height:10px">
+      <span class="tag closetp"><i data-icon="hanger"></i><b>Closet</b><span class="end"><i data-icon="chevron-right"></i></span></span>
+    </a>
+
+    <!-- ============ her name sign: opens Profile ============ -->
+    <a class="sign" href="settings.html" aria-label="Name sign: Lily. Opens Profile" style="left:291px;top:247px;width:96.8px;height:56.3px">
+      <img src="../art/name-sign.svg" alt="">
+      <span class="name" style="left:15px;top:23.8px;width:66.8px;height:22.8px;font-size:21px">Lily</span>
+    </a>
+
+    <!-- ============ floor, back to front ============ -->
+    <img class="art" src="../art/rug.svg" alt="" style="left:14px;top:566px;width:312px;height:152px">
+    <div class="glow" aria-hidden="true"></div>
+
+    <!-- desk with three drawers (home-desk.svg, 196 x 160): slab top 442, drawer fronts x 297..377 at y 456, 502, 548; feet 600 -->
+    <img class="art" src="../art/home-desk.svg" alt="" style="left:190px;top:440px;width:196px;height:160px">
+    <img class="art" src="../art/laptop.svg" alt="" style="left:226px;top:381.6px;width:92px;height:64px">
+    <img class="art" src="../art/home-lamp.svg" alt="" style="left:334px;top:365.6px;width:44px;height:80px">
+    <img class="art" src="../art/chair.svg" alt="" style="left:198px;top:493px;width:94px;height:112px">
+
+    <!-- Maya, the toy poodle, asleep on the rug. Decoration only. -->
+    <img class="art maya" src="../art/maya.svg" alt="" aria-hidden="true" style="left:142px;top:630px;width:110px;height:60px">
+    <img class="art maya-zzz" src="../art/maya-zzz.svg" alt="" aria-hidden="true" style="left:170px;top:604px;width:40px;height:40px">
+
+    <!-- suitcase where the rack stood: the Source control, opens Suitcases -->
+    <a class="suit" id="suit" href="suitcases.html" aria-label="Source: Jose's house, 5 pieces, suitcase only. Opens Suitcases">
+      <img class="art" src="../art/home-suitcase.svg" alt="">
+      <span class="tag srcp"><span class="txt"><span class="lbl"><small>Source</small><i data-icon="chevron-updown"></i></span><b id="src-name">Jose's house</b></span></span>
+      <span class="tag scopep" id="scope"><span class="l1"><i data-icon="lock"></i><span id="scope-1">5 pieces</span></span><span class="l2" id="scope-2">Suitcase only</span></span>
+    </a>
+
+    <!-- laundry hamper: its state comes from ?laundry=off|clean or MockState (laundry.tracking, laundry.dirty) -->
+    <a class="hamper" id="hamper" href="laundry.html" aria-label="Laundry: 2 to wash. Opens Laundry">
+      <img class="art" id="hamper-art" src="../art/home-hamper-dirty.svg" alt="">
+      <span class="tag laup"><small>Laundry</small><b id="lau-text">2 to wash</b></span>
+    </a>
+
+    <!-- ============ plates on the wall and desk ============ -->
+    <a class="hit" href="saved.html" style="left:252.4px;top:94px;width:132px;height:44px">
+      <span class="tag pink saved"><i data-icon="bookmark"></i><b>Saved Looks</b><span class="end"><i data-icon="chevron-right"></i></span></span>
+    </a>
+    <!-- saved looks in the three frames (0.88): x 270.3 / 305.5 / 340.7, y 158.4 -->
+    <a class="abs" href="saved.html" aria-label="Saved looks: Interview navy and pink, Weekend olive and brick, Lace date night" style="left:266px;top:154px;width:104px;height:62px">
+      <span class="card-ov" style="left:3.5px;top:4px;width:27px;height:55px">
+        <span class="th fit" data-garment="g-pink-blouse" data-detail="low" data-box="2,2,23,21"></span>
+        <span class="th fit" data-garment="g-navy-trousers" data-detail="low" data-box="5,22,17,31"></span>
+      </span>
+      <span class="card-ov" style="left:38.7px;top:4px;width:27px;height:55px">
+        <span class="th fit" data-garment="g-brick-top" data-detail="low" data-box="2,2,23,21"></span>
+        <span class="th fit" data-garment="g-olive-trousers" data-detail="low" data-box="5,22,17,31"></span>
+      </span>
+      <span class="card-ov" style="left:73.9px;top:4px;width:27px;height:55px">
+        <span class="th fit" data-garment="g-lace-top" data-detail="low" data-box="2,2,23,21"></span>
+        <span class="th fit" data-garment="g-black-skirt" data-detail="low" data-box="4,22,19,29"></span>
+      </span>
+    </a>
+
+    <a class="cal" id="cal" href="styleme.html?sheet=occasion" aria-label="Occasion: Office. Change" style="left:208px;top:313px;width:80px;height:45px">
+      <span class="t"><i data-icon="calendar"></i>Occasion</span>
+      <span class="pick"><span class="chip on"><i data-icon="check"></i><span id="occ">Office</span></span><i data-icon="chevron-down"></i></span>
+    </a>
+
+    <a class="styleme" href="styleme.html" aria-label="Style Me. Opens your request" style="left:232px;top:386.6px;width:80px;height:45px"><i data-icon="sparkles"></i>Style Me</a>
+
+    <a class="drawer" href="help.html" aria-label="Help (top drawer)" style="top:455px"><span class="tag dplate">Help</span></a>
+    <a class="drawer" href="feedback.html" aria-label="Send feedback (middle drawer)" style="top:501px"><span class="tag dplate">Feedback</span></a>
+    <a class="drawer" href="privacy.html" aria-label="Privacy and terms (bottom drawer)" style="top:547px"><span class="tag dplate">Privacy</span></a>
   </div>
-  <!-- the flats, side by side on the interior floor board (board y 339..348.6), under the cardigan, clear of the Edit plate -->
-  <img class="art" src="../art/home-flats.svg" alt="" style="left:20px;top:335px;width:34px;height:10px">
 
-  <!-- ============ her name sign, hung above the desk's right end, between the calendar and the wall's edge ============ -->
-  <!-- name-sign.svg at 0.88 (96.8 x 56.3). Text area x 17..93, y 27..53 becomes x 15..81.8, y 23.8..46.6. Tapping it opens Profile. -->
-  <a class="sign" href="settings.html" aria-label="Name sign: Lily. Opens Profile" style="left:291px;top:247px;width:96.8px;height:56.3px">
-    <img src="../art/name-sign.svg" alt="">
-    <span class="name" style="left:15px;top:23.8px;width:66.8px;height:22.8px;font-size:21px">Lily</span>
-  </a>
+  <img class="art bed" src="../art/bed.svg" alt="">
 
-  <!-- ============ desk and what stands on it ============ -->
-  <img class="art" src="../art/desk.svg" alt="" style="left:190px;top:446px;width:196px;height:134px">
-  <!-- laptop left of centre, tall lamp (base on the desk top at 450) on its own at the desk's right end -->
-  <img class="art" src="../art/laptop.svg" alt="" style="left:226px;top:387.6px;width:92px;height:64px">
-  <img class="art" src="../art/home-lamp.svg" alt="" style="left:334px;top:371.6px;width:44px;height:80px">
-  <img class="art" src="../art/chair.svg" alt="" style="left:198px;top:479px;width:94px;height:112px">
-
-  <!-- ============ floor ============ -->
-  <img class="art" src="../art/rug.svg" alt="" style="left:14px;top:566px;width:312px;height:152px">
-  <!-- Maya, the toy poodle, curled up asleep on the rug. Decoration only. -->
-  <img class="art maya" src="../art/maya.svg" alt="" aria-hidden="true" style="left:118px;top:612px;width:110px;height:60px">
-  <img class="art maya-zzz" src="../art/maya-zzz.svg" alt="" aria-hidden="true" style="left:148px;top:588px;width:40px;height:40px">
-  <img class="art" src="../art/bed.svg" alt="" style="right:0;bottom:0;width:118px;height:272px">
-
-  <!-- rack in front of the wardrobe: top bar centre at page y 444. The trousers hook on the bar (W 76: top = 10 - 11*76/120).
-       The Starting piece plate sits above the bar, so the bar, the hook and the waistband all show under it. -->
-  <img class="art" src="../art/rack.svg" alt="" style="left:7px;top:434px;width:112px;height:188px">
-  <div class="abs" aria-hidden="true" style="left:7px;top:434px;width:112px;height:188px">
-    <span class="g" data-garment="g-navy-trousers" data-hanger style="position:absolute;left:18px;top:3.03px;width:76px;height:107.7px"></span>
-  </div>
-
-  <!-- ============ labels ============ -->
+  <!-- ============ header ============ -->
   <div class="nav">Home<a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
   <div class="title-display hdr-title">My Petite Style</div>
-  <!-- the weather controls open a small detail sheet in place; there is no weather screen in this prototype yet -->
-  <button class="wx" type="button" data-wx aria-haspopup="dialog" aria-expanded="false" aria-controls="wx-sheet" aria-label="Weather: 58°F, rain today. Simulated"><i data-icon="rain"></i>58°F · Rain today<span class="chev"><i data-icon="chevron-right"></i></span></button>
+  <button class="wx" type="button" id="wx" aria-haspopup="dialog" aria-expanded="false" aria-controls="wx-sheet"><span class="ic" id="wx-ic"></span><span id="wx-text">58°F · Rain today</span><span class="chev"><i data-icon="chevron-right"></i></span></button>
 
-  <a class="tag src" href="suitcases.html">
-    <i data-icon="suitcase"></i>
-    <span class="txt"><span class="lbl"><small>Source</small><i data-icon="chevron-updown"></i></span><b>Jose's house</b></span>
-  </a>
-  <div class="tag green lockp"><i data-icon="lock"></i>5 pieces · Suitcase only</div>
-
-  <a class="hit" href="saved.html" style="left:252.4px;top:94px;width:132px;height:44px">
-    <span class="tag pink saved"><i data-icon="bookmark"></i><b>Saved Looks</b><span class="end"><i data-icon="chevron-right"></i></span></span>
-  </a>
-  <!-- saved looks in the three cards. Card insides (0.88): x 270.3 / 305.5 / 340.7, y 158.4, 25.7 x 53.9 -->
-  <a class="abs" href="saved.html" aria-label="Saved looks: Interview navy and pink, Weekend olive and brick, Lace date night" style="left:266px;top:154px;width:104px;height:62px">
-    <span class="card-ov" style="left:3.5px;top:4px;width:27px;height:55px">
-      <span class="th fit" data-garment="g-pink-blouse" data-detail="low" data-box="2,2,23,21"></span>
-      <span class="th fit" data-garment="g-navy-trousers" data-detail="low" data-box="5,22,17,31"></span>
-    </span>
-    <span class="card-ov" style="left:38.7px;top:4px;width:27px;height:55px">
-      <span class="th fit" data-garment="g-brick-top" data-detail="low" data-box="2,2,23,21"></span>
-      <span class="th fit" data-garment="g-olive-trousers" data-detail="low" data-box="5,22,17,31"></span>
-    </span>
-    <span class="card-ov" style="left:73.9px;top:4px;width:27px;height:55px">
-      <span class="th fit" data-garment="g-lace-top" data-detail="low" data-box="2,2,23,21"></span>
-      <span class="th fit" data-garment="g-black-skirt" data-detail="low" data-box="4,22,19,29"></span>
-    </span>
-  </a>
-
-  <button class="cal" type="button" aria-haspopup="listbox" aria-label="Occasion: Office" style="left:208px;top:313px;width:80px;height:45px">
-    <span class="t"><i data-icon="calendar"></i>Occasion</span>
-    <span class="pick"><span class="chip on"><i data-icon="check"></i>Office</span><i data-icon="chevron-down"></i></span>
-  </button>
-
-  <a class="styleme" href="results.html" style="left:232px;top:392.6px;width:80px;height:45px"><i data-icon="sparkles"></i>Style Me</a>
-
-  <button class="hit" type="button" aria-expanded="false" style="left:290px;top:462px;width:94px;height:44px">
-    <span class="tag butter more"><b>More options</b><i data-icon="chevron-down"></i></span>
-  </button>
-
-  <!-- Starting piece plate sits above the rack's top bar (bar centre 444), bottom edge at 438 -->
-  <a class="hit" href="closet.html" style="left:2px;top:394px;width:122px;height:44px">
-    <span class="tag pink start"><b><i data-icon="hanger"></i>Starting piece</b><span class="act">Choose a piece<span class="chev"><i data-icon="chevron-right"></i></span></span></span>
-  </a>
-
-  <!-- ============ weather detail sheet (closed until a weather control is tapped) ============ -->
+  <!-- ============ weather detail sheet (closed until the weather link is tapped) ============ -->
   <div class="wxsheet" id="wx-sheet" role="dialog" aria-label="Weather" hidden>
-    <div class="wh"><i data-icon="rain"></i><b>Weather</b><span class="sim">Simulated</span>
-      <button class="x" type="button" data-wx-close aria-label="Close weather"><i data-icon="close"></i></button></div>
-    <p class="big">58°F · Rain today</p>
-    <p class="say">Style Me plans for this weather. To plan for other weather, open More options.</p>
+    <div class="wh"><span class="ic" id="wxs-ic"></span><b>Weather</b><span class="sim">Simulated</span>
+      <button class="x" type="button" id="wx-close" aria-label="Close weather"><i data-icon="close"></i></button></div>
+    <p class="big" id="wxs-big">58°F · Rain today</p>
+    <p class="say"><span id="wxs-say">Style Me picks looks for a cool, wet day.</span> To plan for other weather, change it in <a href="styleme.html">Style Me</a>.</p>
   </div>
 
   <!-- ============ tab bar ============ -->
   <div class="tabfade"></div>
-  <nav class="tabbar">
+  <nav class="tabbar" aria-label="Tabs">
     <a class="on" href="home.html" aria-current="page"><i data-icon="home"></i>Home</a>
     <a href="closet.html"><i data-icon="hanger"></i>Closet</a>
     <a href="saved.html"><i data-icon="bookmark"></i>Saved Looks</a>
@@ -231,9 +288,94 @@
 
 <script src="../js/icons.js"></script>
 <script src="../js/garments.js"></script>
+<script src="../js/mock-state.js"></script>
 <script>
+/* ---------- Home state, shared by home, home-ax, home-landscape and both iPad homes ----------
+   URL variant parameters override stored state for display and are not written back:
+     ?weather=rain|sun|cloudy|snow (default rain, the 58°F fixture)   ?time=night (night window, "tonight" wording)
+     ?laundry=off|clean (otherwise MockState laundry.tracking, default true, and laundry.dirty, default 2 pieces)
+   Source comes from MockState `source` (default Jose's house) and Occasion from `occasion` (default Office). */
+var HOME = (function () {
+  var P = new URLSearchParams(location.search);
+  var S = window.MockState || { get: function (k, f) { return f; }, set: function () {} };
+  var SUITCASES = { jose: { name: "Jose's house", n: 5 }, weekend: { name: 'Weekend', n: 8 }, spring: { name: 'Spring trip', n: 0 } };
+  var OCC = { office: 'Office', dateNight: 'Date Night', brunch: 'Brunch', concert: 'Concert', casual: 'Casual', event: 'Event', other: 'Other' };
+  var WX = {
+    rain:   { icon: 'rain',  art: 'window-rain',   t: 58, tn: 54, day: 'Rain today',   night: 'Rain tonight',   say: 'Style Me picks looks for a cool, wet day.' },
+    sun:    { icon: 'sun',   art: 'window-sun',    t: 72, tn: 61, day: 'Sunny today',  night: 'Clear tonight',  say: 'Style Me picks looks for a mild, sunny day.', nicon: 'moon' },
+    cloudy: { icon: 'cloud', art: 'window-cloudy', t: 63, tn: 57, day: 'Cloudy today', night: 'Cloudy tonight', say: 'Style Me picks looks for a mild, cloudy day.' },
+    snow:   { icon: 'snow',  art: 'window-snow',   t: 30, tn: 26, day: 'Snow today',   night: 'Snow tonight',   say: 'Style Me picks warm looks for a cold, snowy day.' }
+  };
+  /* the first visit remembers the prototype's default source, so Style Me shows the same source as Home */
+  if (S.get('source', null) === null) S.set('source', { type: 'suitcase', id: 'jose' });
+
+  var wkey = WX[P.get('weather')] ? P.get('weather') : 'rain';
+  var night = P.get('time') === 'night';
+  var w = WX[wkey];
+  var weather = {
+    key: wkey, night: night, art: night ? 'window-night' : w.art, icon: night && w.nicon ? w.nicon : w.icon,
+    temp: (night ? w.tn : w.t) + '°F', words: night ? w.night : w.day,
+    say: night ? w.say.replace(' day.', ' evening.') : w.say
+  };
+  weather.text = weather.temp + ' · ' + weather.words;
+  if (night) document.documentElement.classList.add('is-night');
+
+  var lp = P.get('laundry');
+  var tracking = lp === 'off' ? false : (lp === 'clean' ? true : S.get('laundry.tracking', true) !== false);
+  var dirty = lp === 'clean' ? [] : (S.get('laundry.dirty', ['g-lace-top', 'g-black-tee']) || []);
+  var laundry = !tracking
+    ? { state: 'off', text: 'Off', href: 'laundry-off.html', label: 'Laundry tracking is off. Opens what laundry tracking does' }
+    : dirty.length
+      ? { state: 'dirty', n: dirty.length, text: dirty.length + ' to wash', href: 'laundry.html', label: 'Laundry: ' + dirty.length + ' to wash. Opens Laundry' }
+      : { state: 'clean', text: 'All clean', href: 'laundry.html', label: 'Laundry: all clean. Opens Laundry' };
+
+  var src = S.get('source', { type: 'suitcase', id: 'jose' }) || {};
+  var sid = String(src.id || '').replace(/^s-/, '');
+  var source = src.type === 'suitcase' && SUITCASES[sid]
+    ? { suitcase: true, name: SUITCASES[sid].name, n: SUITCASES[sid].n }
+    : { suitcase: false, name: 'Main closet', n: 21 };
+  source.count = source.n === 0 ? 'Empty' : source.n + (source.n === 1 ? ' piece' : ' pieces');
+  source.scope = source.suitcase ? 'Suitcase only' : 'Whole closet';
+  source.label = 'Source: ' + source.name + ', ' + (source.n === 0 ? 'empty' : source.count) + ', ' + source.scope.toLowerCase() + '. Opens Suitcases';
+
+  var ok = S.get('occasion', 'office');
+  var occasion = OCC[ok] || 'Office';
+  var occasionLong = ok === 'other' && S.get('occasionOther', '') ? 'Other: ' + S.get('occasionOther', '') : occasion;
+
+  var SNOW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.6 4.6 12 6.6l2.4-2M9.6 19.4 12 17.4l2.4 2M4.6 11.1l2.9-.6-.9-2.9M19.4 11.1l-2.9-.6.9-2.9M4.6 12.9l2.9.6-.9 2.9M19.4 12.9l-2.9.6.9 2.9"/></svg>';
+  function icon(name) { return name === 'snow' ? SNOW : (window.Icons ? window.Icons.svg(name) : ''); }
+  function txt(id, t) { var e = document.getElementById(id); if (e) e.textContent = t; }
+
+  return { weather: weather, laundry: laundry, source: source, occasion: occasion, occasionLong: occasionLong, icon: icon, txt: txt };
+})();
+
+/* ---------- this page ---------- */
+(function () {
+  var H = HOME, w = H.weather, l = H.laundry, s = H.source;
+  document.getElementById('window').src = '../art/' + w.art + '.svg';
+  document.getElementById('wx-ic').innerHTML = H.icon(w.icon);
+  document.getElementById('wxs-ic').innerHTML = H.icon(w.icon);
+  H.txt('wx-text', w.text); H.txt('wxs-big', w.text); H.txt('wxs-say', w.say);
+  document.getElementById('wx').setAttribute('aria-label', 'Weather: ' + w.text + '. Simulated');
+
+  var ham = document.getElementById('hamper');
+  ham.className = 'hamper ' + l.state;
+  ham.setAttribute('href', l.href);
+  ham.setAttribute('aria-label', l.label);
+  document.getElementById('hamper-art').src = '../art/' + (l.state === 'dirty' ? 'home-hamper-dirty' : 'home-hamper') + '.svg';
+  H.txt('lau-text', l.text);
+
+  H.txt('src-name', s.name);
+  H.txt('scope-1', s.count); H.txt('scope-2', s.scope);
+  document.getElementById('scope').className = 'tag scopep' + (s.suitcase ? (s.n === 0 ? ' empty' : '') : ' main');
+  document.getElementById('suit').setAttribute('aria-label', s.label);
+
+  H.txt('occ', H.occasion);
+  document.getElementById('cal').setAttribute('aria-label', 'Occasion: ' + H.occasionLong + '. Change');
+})();
+
 /* Fit small garment drawings into a box (data-box = x,y,w,h in the parent's px) by their drawn bounds, and thicken
-   their outlines so they land near 1.1 px, like the card outlines around them. Same method as the kit sheet. */
+   their outlines so they land near 1.1 px, like the frame outlines around them. */
 (function () {
   var TARGET = 1.1, OUTLINE = 3;
   function fit(el) {
@@ -256,23 +398,20 @@
   function run() { var l = document.querySelectorAll('.fit'); for (var i = 0; i < l.length; i++) fit(l[i]); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
-/* Weather sheet: either weather control opens it; the close button, Escape or a tap outside closes it. */
+
+/* Weather sheet: the weather link opens it; the close button, Escape or a tap outside closes it. */
 (function () {
-  var sheet = document.getElementById('wx-sheet');
-  var openers = document.querySelectorAll('[data-wx]');
-  if (!sheet) return;
-  function set(open, from) {
+  var sheet = document.getElementById('wx-sheet'), opener = document.getElementById('wx');
+  function set(open, refocus) {
     sheet.hidden = !open;
-    for (var i = 0; i < openers.length; i++) openers[i].setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) sheet.querySelector('[data-wx-close]').focus(); else if (from) from.focus();
+    opener.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) document.getElementById('wx-close').focus(); else if (refocus) opener.focus();
   }
-  for (var i = 0; i < openers.length; i++) openers[i].addEventListener('click', function (e) {
-    e.stopPropagation(); set(sheet.hidden, this);
-  });
-  sheet.querySelector('[data-wx-close]').addEventListener('click', function () { set(false, openers[0]); });
+  opener.addEventListener('click', function (e) { e.stopPropagation(); set(sheet.hidden, true); });
+  document.getElementById('wx-close').addEventListener('click', function () { set(false, true); });
   sheet.addEventListener('click', function (e) { e.stopPropagation(); });
   document.addEventListener('click', function () { if (!sheet.hidden) set(false); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) set(false, openers[0]); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) set(false, true); });
 })();
 </script>
 </body>
