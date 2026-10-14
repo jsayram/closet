@@ -181,7 +181,7 @@ Everything here runs on mock data behind protocols. No accounts, network or real
 
 ### Phase 10b: Style Me results
 
-- Results with Current/Earlier and Shuffle, and the partial, insufficient, generating, failed and offline states, all driven by a mock stylist.
+- Results as one outfit in three versions with Today and Saved tabs and Try a different outfit, no Shuffle ([PRD amendment](PRD_Amendment_Room_Direction.md) LR-05a, LR-05b, LR-06), and the partial, insufficient, generating, failed and offline states, all driven by a mock stylist.
 - Try it on and Ask stylist entries on results.
 
 **Checkpoint:** a full styling run with each state forced.
