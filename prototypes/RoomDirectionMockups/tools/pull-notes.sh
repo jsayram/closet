@@ -65,7 +65,8 @@ md += `Notes are quoted exactly as written. Anyone with the link can add a note,
 
 for (const id of ids) {
   const s = R.screens.find(x => x.id === id);
-  md += `\n## ${s ? s.title : 'Unknown screen'} (\`${id}\`)\n\n`;
+  const SHOWCASE = { 'showcase-palette': 'Showcase: palette pick', 'showcase-mode': 'Showcase: name for Mode', 'showcase-comments': 'Showcase: comments' };
+  md += `\n## ${s ? s.title : (SHOWCASE[id] || 'Unknown screen')} (\`${id}\`)\n\n`;
   if (s) md += `File: \`screens/${s.file}\`\n`;
   for (const r of byScreen[id]) {
     const d = r.data;
@@ -76,7 +77,7 @@ for (const id of ids) {
       md += `- Screen: \`screens/${s.file}${v.query}\`\n`;
       md += `- Review: ${site}/review.html?s=${encodeURIComponent(id)}&v=${encodeURIComponent(v.key)}\n`;
     } else {
-      md += `- Version \`${d.variant}\` is not in the registry any more.\n`;
+      md += SHOWCASE[id] ? `- Showcase card: \`${d.variant}\` (showcase.html)\n` : `- Version \`${d.variant}\` is not in the registry any more.\n`;
     }
     md += `- Record: \`${r.id}\`\n\n`;
     md += `**What I like**\n\n${(d.liked || '').trim() ? quote(d.liked) : '_(empty)_'}\n\n`;

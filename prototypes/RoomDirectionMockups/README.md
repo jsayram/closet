@@ -42,7 +42,7 @@ Owner requested a lightweight generic person in every simulated try-on portrait,
 
 Owner requested an editable optional weight in the HTML mockups, starting at **130 lb**. `screens/fit.html` now uses the measurement sheet for weight with Save, Clear and Cancel, pounds/kilograms, number validation and preview-session persistence. The former fixed 120 lb demo fixture migrates to 130 lb; subsequent edited values are preserved. No weight is posted to the shared notes service. The Fit screen alone is marked R6 in the registry; other screens remain R5. Verified locally: default, editing/save and refresh, invalid input, cancellation, unit display and clearing. Native code and PRD were not changed.
 
-Static HTML mockups of the "home as rooms" direction for My Petite Style, made 5–7 October 2026 (current revision R5, 7 Oct). They are a design reference for bringing the new look into the SwiftUI prototype (`prototypes/LilyStyleMockup`). None of this is in the app yet, and other mockup proposals do not change the PRD. The owner accepted tours into master PRD Section 7.8 on 7 October 2026.
+Static HTML mockups of the "home as rooms" direction for Nifty Outfit Nook, made 5–7 October 2026 (current revision R5, 7 Oct). They are a design reference for bringing the new look into the SwiftUI prototype (`prototypes/LilyStyleMockup`). None of this is in the app yet, and other mockup proposals do not change the PRD. The owner accepted tours into master PRD Section 7.8 on 7 October 2026.
 
 All data is fictional and matches the prototype's demo fixtures. Prices are sample values. Try-on pictures are simulated placeholders.
 

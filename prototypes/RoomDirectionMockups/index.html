@@ -7,6 +7,10 @@
 <title>Your wardrobe app, Lily</title>
 <meta name="description" content="A little preview of your wardrobe app, with room for your ideas.">
 <link rel="stylesheet" href="css/review.css?v=edit-notes-r14">
+<style>
+  .new-from-notes{max-width:760px;margin:22px 0 0;padding:16px 18px;border-radius:24px;background:var(--tint-strong);box-shadow:var(--drop-lg)}
+  .new-from-notes p{margin:0 0 12px;font-size:17px}
+</style>
 </head>
 <body>
 <a class="skip" href="#groups">Skip to the screens</a>
@@ -24,8 +28,12 @@
       </ol>
       <p>No rush. Tap Come back later on any screen to save it in your later list.</p>
     </div>
+    <div class="new-from-notes">
+      <p><strong>New:</strong> what’s changing from your notes, with two quick choices for you.</p>
+      <a class="btn" href="showcase.html">See what’s changing</a>
+    </div>
     <div class="cta">
-      <a class="btn" id="start" href="review.html">Take a look</a>
+      <a class="btn ghost" id="start" href="review.html">Take a look</a>
       <a class="btn ghost" href="summary.html">Read your notes</a>
     </div>
     <p class="meta-row"><span id="count" hidden></span><span id="total"></span></p>

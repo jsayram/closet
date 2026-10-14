@@ -14,6 +14,8 @@ Primary design partner: Lily
 
 This workspace contains planning documents, not an implemented app. Documentation review does not establish feature quality, fit accuracy, wallet recovery, App Store approval or release readiness. All application acceptance and RV/TO checks are **Not run**. Current counts are 73 functional requirements, 103 acceptance criteria, 29 core RV checks and eight conditional TO checks.
 
+**Name, October 13, 2026:** the app is named **Nifty Outfit Nook** (home-screen name “Outfit Nook”), replacing the working title My Petite Style. See the naming row in Section 20 (Risks and Open Decisions).
+
 **V2 decisions, October 3, 2026:** incorporate Lily's interview priorities and the owner's latest clarification. Petite means evidence-based suitability for her proportions, rather than a mandatory retailer label. Shopping aims for the closest documented fit/style match and preserves her choice and explicit refinement. Garments and shoes should resemble her real pieces as closely as the available source evidence and tested rendering allow; unknown details remain labeled. Every technically valid, permitted delivered preview is automatically retained in searchable private history, independent of Favorites. Ordinary swaps/reference replacement, dislike or subscription expiry do not delete that history. Explicit user-directed privacy/content deletion still applies. On Me is Lily's preferred, opt-in result mode and an early fidelity/cost feasibility target, not a claim of working full-outfit generation.
 
 | Read for | Master sections |
@@ -45,7 +47,7 @@ Help petite women decide what to wear, confidently use what they already own, di
 
 ## 1. Executive Summary
 
-My Petite Style is a free-to-download iOS app with monthly subscription access to its AI stylist, designed as a petite-first personal stylist. A user chooses an occasion, reviews editable weather and season, sets optional today-only clothing comfort and required/preferred colors, and optionally names a starting piece. The normal target is three useful directions: Safe / Simple using her clothes, Stylish / Elevated using her clothes, and another Elevated owned look. When she explicitly enables a new-piece idea, the third direction may instead include a clearly unowned purchasable piece. A verified small wardrobe may yield one or two complete valid owned looks with an honest partial-result label; the app never fabricates clothing to fill three slots.
+Nifty Outfit Nook is a free-to-download iOS app with monthly subscription access to its AI stylist, designed as a petite-first personal stylist. A user chooses an occasion, reviews editable weather and season, sets optional today-only clothing comfort and required/preferred colors, and optionally names a starting piece. The normal target is three useful directions: Safe / Simple using her clothes, Stylish / Elevated using her clothes, and another Elevated owned look. When she explicitly enables a new-piece idea, the third direction may instead include a clearly unowned purchasable piece. A verified small wardrobe may yield one or two complete valid owned looks with an honest partial-result label; the app never fabricates clothing to fill three slots.
 
 V1 is a universal iPhone and iPad application. iPad gets a styling workspace with comparative outfit views, a closet grid, and contextual editing panes that adapt to the actual window size. A moderated feedback board and optional, privacy-conscious improvement analytics support product development. App Store compliance, consent, entitlement validation, and server-enforced usage and spending controls are release requirements.
 
@@ -548,7 +550,7 @@ Use the following provider-neutral policy for GenerateOutfits, SuggestSwap, Expl
 
 ```text
 SYSTEM — stylist-policy/1
-You are My Petite Style, a personal stylist helping this user make useful,
+You are Nifty Outfit Nook, a personal stylist helping this user make useful,
 cohesive outfits from her clothes and deliberately evaluate a missing piece.
 Be concrete, kind, practical and editable. Use supplied confirmed facts and
 evidence. A fashion rule is a suggestion, never a fact about this user's body.
@@ -1655,7 +1657,7 @@ References checked October 3, 2026: [App Review privacy requirements](https://de
 | Retailer checkout and external-AI handoff | Preserve local context across web/app return; require manual ownership confirmation. Amazon-specific access/media/browser rules must be verified before integration. Native sharing receivers vary; retain save/upload/paste, exportable imagery, and explicit personal-data preview. Local sharing invokes no AI API but does not promise the chosen service is free. |
 | Preferred On Me feasibility and economics | Early Section 9.2 prototype must establish separate garments/layers/shoes, source/body fidelity, 1–3-preview wait/readiness, named permission, durable retained history/search and cost per useful look. Current Google single-product input/lifecycle does not establish the whole workflow. No pixel-preservation or physical-fit guarantee; approved image budgets/unit policy and provider fallback are required. |
 | Retained-history growth and search quality | Every valid permitted delivered preview persists independently of Favorites, provider/cache expiry or subscription. Preflight storage, incremental indexing and truthful low-disk/pending states; do not silently trim history. Validate metadata-based retrieval and relevance on the mixed fixture before claiming performance; later visual/semantic retrieval needs separate evidence. |
-| Naming / trademark | “My Petite Style” is a working title; perform App Store and trademark availability checks before publication. |
+| Naming / trademark | The app name is “Nifty Outfit Nook” (owner decision, 13 October 2026; formerly the working title “My Petite Style”). Store name “Nifty Outfit Nook” (17 characters), home-screen name “Outfit Nook”. A quick screening on 13 October 2026 found no exact App Store, GitHub or trademark match and the main domains apparently unregistered; a proper trademark search and legal review are still required before publication. |
 | Pricing | One-month introductory trial for eligible users retained; previous fixed US$4.99 assumption reopened, with US$9.99/month a candidate. Finalize localized price, included image allowance and optional pack terms using experience/cost measurements; no profitability promise. |
 | Cloud privacy | Require named-recipient consent and approved processor terms, minimize context, and block dispatch after withdrawal or unapproved recipient changes. |
 | Optional ChatGPT plan usage | Exploration only under Section 24.5. Commercial/native/backend eligibility, permitted credential routing, payment classification and enforceable bounds remain unconfirmed; published preview caps/capabilities differ from ordinary API access. Existing developer-funded services remain the specified release path. |
@@ -2040,9 +2042,9 @@ The workspace contains no implemented application. No application/model/fit/reco
 
 ### 26.2 Working name and screening limits
 
-The supplied report calls the project MyPetiteCloset and proposes Smart Petite Wardrobe; neither is a confirmed rename. The main PRD retains My Petite Style as a working title. The report says exact/concatenated searches found no exact use, Apple's U.S. search returned 181 apps without an exact title, and Verisign RDAP returned HTTP 404 for smartpetitewardrobe.com. These are supplied screening results, not independently rechecked here. Registrar availability and trademark clearance remain unconfirmed. Smart Wardrobe: Style & Try-On and multiple Smart Wardrobe titles make similar-name screening necessary.
+The supplied report calls the project MyPetiteCloset and proposes Smart Petite Wardrobe; neither was adopted. At the time, the main PRD kept My Petite Style as a working title; on 13 October 2026 the owner chose Nifty Outfit Nook instead. The report says exact/concatenated searches found no exact use, Apple's U.S. search returned 181 apps without an exact title, and Verisign RDAP returned HTTP 404 for smartpetitewardrobe.com. These are supplied screening results, not independently rechecked here. Registrar availability and trademark clearance remain unconfirmed. Smart Wardrobe: Style & Try-On and multiple Smart Wardrobe titles make similar-name screening necessary.
 
-The source links and supplied access-date qualifications are retained in Section 25.7. Keep My Petite Style as the working title until an explicit naming decision and appropriate similar-name/trademark screening; no rename or domain purchase is implied.
+The source links and supplied access-date qualifications are retained in Section 25.7. This historical screening concerned earlier candidate names. The owner's naming decision (Nifty Outfit Nook, 13 October 2026) still needs appropriate similar-name/trademark screening; no domain purchase is implied.
 
 ### 26.3 Open implementation decisions
 

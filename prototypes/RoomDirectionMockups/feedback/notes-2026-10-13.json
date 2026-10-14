@@ -1,0 +1,380 @@
+[
+  {
+    "id": "rec_01M4BRF1FDHP3HFVB0Q4R45NWZ",
+    "data": {
+      "screen_id": "home",
+      "variant": "default",
+      "revision": "R5",
+      "liked": "Maya is sleeping there",
+      "submitted_at": "2026-10-07T18:01:59.739Z",
+      "client_ref": "207171a6-87d7-42cd-b8b4-bb1c2a8b55b4"
+    },
+    "createdAt": "2026-10-07T18:02:00.045Z",
+    "updatedAt": "2026-10-07T18:02:00.045Z"
+  },
+  {
+    "id": "rec_01M4CJ3ZEVCTRG08FK0W0RMA4E",
+    "data": {
+      "screen_id": "styleme-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "i like the option of comfort.",
+      "change": "Maybe change the option \"mode\" to a clearer word because i didnt know what that was until i clicked on it. Maybe something like \"preferences\" or something.",
+      "submitted_at": "2026-10-08T01:30:10.691Z",
+      "client_ref": "6361d00d-4b01-4216-8afe-83ed48aa5c97"
+    },
+    "createdAt": "2026-10-08T01:30:20.507Z",
+    "updatedAt": "2026-10-08T01:30:20.507Z"
+  },
+  {
+    "id": "rec_01M4CK6HWT1WETWN1XCV9KPXSA",
+    "data": {
+      "screen_id": "suitcases-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "i like the idea of having different suitcases based on location or theme.",
+      "change": "There should be a feature or somewhere that tells me if a specific item is in a specific suitcase so im not looking through everything.",
+      "submitted_at": "2026-10-08T01:49:03.681Z",
+      "client_ref": "b427651e-448f-433d-ae31-a6b9ab56bf25"
+    },
+    "createdAt": "2026-10-08T01:49:13.498Z",
+    "updatedAt": "2026-10-08T01:49:13.498Z"
+  },
+  {
+    "id": "rec_01M4CKBS6D4P9H9V8XD54WN8EX",
+    "data": {
+      "screen_id": "settings-tour",
+      "variant": "ipad-landscape",
+      "revision": "R11",
+      "liked": "Love the fit and measurements.",
+      "submitted_at": "2026-10-08T01:51:55.031Z",
+      "client_ref": "0bb25cf2-abea-4131-9a75-816c101ed4bd"
+    },
+    "createdAt": "2026-10-08T01:52:04.813Z",
+    "updatedAt": "2026-10-08T01:52:04.813Z"
+  },
+  {
+    "id": "rec_01M4CKG0ZCG494WXSKD09D0VHE",
+    "data": {
+      "screen_id": "fit-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "",
+      "change": "What does \"add a fit reference mean\"? is this a reference for the app to know more info about me?",
+      "submitted_at": "2026-10-08T01:54:14.080Z",
+      "client_ref": "42794664-2bd2-49a3-9290-96e9d0769c9d",
+      "edited_at": "2026-10-14T00:35:56.722Z"
+    },
+    "createdAt": "2026-10-08T01:54:23.852Z",
+    "updatedAt": "2026-10-14T00:36:18.937Z"
+  },
+  {
+    "id": "rec_01M4CKJ15A3SQ5KVHH1QG8XGV5",
+    "data": {
+      "screen_id": "access-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "",
+      "change": "idk what sponsored access means. Is this the features that come with the app that you dont need to pay for?",
+      "submitted_at": "2026-10-08T01:55:19.787Z",
+      "client_ref": "77506e95-d7ac-4830-9be2-ae6ae0789403",
+      "edited_at": "2026-10-14T00:36:39.907Z"
+    },
+    "createdAt": "2026-10-08T01:55:29.578Z",
+    "updatedAt": "2026-10-14T00:37:02.207Z"
+  },
+  {
+    "id": "rec_01M4CKSRRDSJTQB9RCZ3W4HC1H",
+    "data": {
+      "screen_id": "chat-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "Love this feature. i didnt think about it.",
+      "submitted_at": "2026-10-08T01:59:33.302Z",
+      "client_ref": "c6adbea0-dcec-4874-91a5-d2ed162c9120"
+    },
+    "createdAt": "2026-10-08T01:59:43.117Z",
+    "updatedAt": "2026-10-08T01:59:43.117Z"
+  },
+  {
+    "id": "rec_01M4CM56792GNW1QJ7M8ZBFGY7",
+    "data": {
+      "screen_id": "ipad-closet-tour",
+      "variant": "default",
+      "revision": "R9",
+      "change": "is there an option to remove an item? like for example if an item has been discarded because its old or ripped can i remove it from my closet?",
+      "submitted_at": "2026-10-08T02:05:47.571Z",
+      "client_ref": "5681b912-fd18-4215-9389-cbf52d27d553"
+    },
+    "createdAt": "2026-10-08T02:05:57.353Z",
+    "updatedAt": "2026-10-08T02:05:57.353Z"
+  },
+  {
+    "id": "rec_01M4CMA6J17SXAWXSVGN1H4Q6W",
+    "data": {
+      "screen_id": "suitcases",
+      "variant": "default",
+      "revision": "R11",
+      "change": "is there an option to only have one suitcase and then add another one? or is it always 3 there?",
+      "submitted_at": "2026-10-08T02:08:31.738Z",
+      "client_ref": "a75d1e43-b5d2-405e-a29a-298dfdaab9ef"
+    },
+    "createdAt": "2026-10-08T02:08:41.537Z",
+    "updatedAt": "2026-10-08T02:08:41.537Z"
+  },
+  {
+    "id": "rec_01M4CMBZHES5CV9YEA1DHAHFHY",
+    "data": {
+      "screen_id": "fit",
+      "variant": "default",
+      "revision": "R11",
+      "change": "if i change the fit to something else how long are the suggestions adapted to that selection? until i change it or does it default back after some time?",
+      "submitted_at": "2026-10-08T02:09:30.107Z",
+      "client_ref": "77194839-f997-4d46-94a2-55c24d9283cc"
+    },
+    "createdAt": "2026-10-08T02:09:39.886Z",
+    "updatedAt": "2026-10-08T02:09:39.886Z"
+  },
+  {
+    "id": "rec_01M4CMDWE6XAWNF6KPQAMCQZXA",
+    "data": {
+      "screen_id": "packs",
+      "variant": "default",
+      "revision": "R11",
+      "change": "You should also charge per clothing items for example someone can have up to 100 free and anything above that they have to pay. no?",
+      "submitted_at": "2026-10-08T02:10:32.438Z",
+      "client_ref": "4d96bd7d-ed5f-4e9c-a1da-6a817a5809c2"
+    },
+    "createdAt": "2026-10-08T02:10:42.246Z",
+    "updatedAt": "2026-10-08T02:10:42.246Z"
+  },
+  {
+    "id": "rec_01M4VSRW6WQMHE463AAW7K6TJV",
+    "data": {
+      "screen_id": "home-tour",
+      "variant": "default",
+      "revision": "R9",
+      "liked": "I love how Maya is included lol",
+      "change": "You should make a feature that the user can add their own pet but this is last option to add; not too important just cute to personalize. Also if you could make the app less colorful like make it more adult like maybe use more beige/neutral/black and white colors.",
+      "submitted_at": "2026-10-13T23:32:19.154Z",
+      "client_ref": "58bc4933-6729-4646-9bdb-f080e3bae9ff"
+    },
+    "createdAt": "2026-10-13T23:32:41.820Z",
+    "updatedAt": "2026-10-13T23:32:41.820Z"
+  },
+  {
+    "id": "rec_01M4VV4PD5766RYSMTK151RZ2J",
+    "data": {
+      "screen_id": "styleme-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "I like how all 3 questions (source, occassion and starting piece) are in like a list. makes it easier to click and select. Not much thinking.",
+      "change": "I see this page has the temperature on the top right corner. Does this mean the outfit will be curated based on the weather automatically?",
+      "submitted_at": "2026-10-13T23:56:15.301Z",
+      "client_ref": "874aaff1-dfe8-46b6-9ace-f924c4afdf42"
+    },
+    "createdAt": "2026-10-13T23:56:37.669Z",
+    "updatedAt": "2026-10-13T23:56:37.669Z"
+  },
+  {
+    "id": "rec_01M4VVCSQB003DMA7ZFJN997JP",
+    "data": {
+      "screen_id": "results-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "i like the options on the botttom. Again very user friendly cant get it wrong.",
+      "change": "so initially i wanted for look 1, 2 and 3 to be the same just tweaked to be 1) simple/safe option and 2) to be a classier version same pieces from option 1 and 3) to be the same outfit with an item i dont currently own. in the example above it shows as option 1 and 2 and 3 as three completely different options.",
+      "submitted_at": "2026-10-14T00:00:40.718Z",
+      "client_ref": "157bff7a-c1ad-42ce-b906-cffd5f07ee86"
+    },
+    "createdAt": "2026-10-14T00:01:03.211Z",
+    "updatedAt": "2026-10-14T00:01:03.211Z"
+  },
+  {
+    "id": "rec_01M4VVGW5KGXGQJ4XRETBFWC9D",
+    "data": {
+      "screen_id": "results-tour",
+      "variant": "default",
+      "revision": "R11",
+      "change": "Also for the option \"earlier\" i am not sure if you mean previously used outfits or intentionally saved. I would like to be intentionally saved outfits; not just random outfits ive worn.",
+      "submitted_at": "2026-10-14T00:02:54.399Z",
+      "client_ref": "16e6b5ba-e765-4cc4-ac52-80506a2f6ddd"
+    },
+    "createdAt": "2026-10-14T00:03:16.787Z",
+    "updatedAt": "2026-10-14T00:03:16.787Z"
+  },
+  {
+    "id": "rec_01M4VVQRVZWGJJ3GQTKRZDA888",
+    "data": {
+      "screen_id": "swap-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "i like the option to be able to select a piece and change it.",
+      "change": "in this example if i want to change the top and i get 3 options how are those options selected? is it the tops the app thinks would look good? also if i dont like any of the 3 how can i refresh to get 3 more?",
+      "submitted_at": "2026-10-14T00:06:40.276Z",
+      "client_ref": "de924b96-e0d5-4e6f-bd90-4dfcc7b1dfc6"
+    },
+    "createdAt": "2026-10-14T00:07:02.783Z",
+    "updatedAt": "2026-10-14T00:07:02.783Z"
+  },
+  {
+    "id": "rec_01M4VW5N1KSY4C8MXK1H5MFHBM",
+    "data": {
+      "screen_id": "swap-tour",
+      "variant": "default",
+      "revision": "R11",
+      "change": "This screen i think has the same function as the next one i thinkkkkk. they both give you the option to change a piece.",
+      "submitted_at": "2026-10-14T00:14:15.087Z",
+      "client_ref": "75caa6e1-ea3a-4d1d-9981-15a51c3d21ec"
+    },
+    "createdAt": "2026-10-14T00:14:37.619Z",
+    "updatedAt": "2026-10-14T00:14:37.619Z"
+  },
+  {
+    "id": "rec_01M4VW6VN22V27154R1GEP8198",
+    "data": {
+      "screen_id": "editor-tour",
+      "variant": "default",
+      "revision": "R11",
+      "change": "This screen has the same function as the previous one. Can you please explain the difference?",
+      "submitted_at": "2026-10-14T00:14:54.696Z",
+      "client_ref": "9d38d9a1-53ad-4ead-ac6a-40e1ce6bd89a"
+    },
+    "createdAt": "2026-10-14T00:15:17.154Z",
+    "updatedAt": "2026-10-14T00:15:17.154Z"
+  },
+  {
+    "id": "rec_01M4VWA6CDBHQTAENDT093Z8FP",
+    "data": {
+      "screen_id": "saved-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "I like the feature to search an outfit. if you can please make it so we can search by type of piece and color.",
+      "submitted_at": "2026-10-14T00:16:44.060Z",
+      "client_ref": "84a205a8-0588-4cca-874e-3c59ff249364"
+    },
+    "createdAt": "2026-10-14T00:17:06.445Z",
+    "updatedAt": "2026-10-14T00:17:06.445Z"
+  },
+  {
+    "id": "rec_01M4VWF22840C19T7HR59QX0HX",
+    "data": {
+      "screen_id": "look-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "I like the feature to select wear today i assume the app will keep track of when something is worn so its not repeated too closely right?",
+      "submitted_at": "2026-10-14T00:19:23.515Z",
+      "client_ref": "b03e2e33-4cd6-479e-ab53-aa51fe680c3e"
+    },
+    "createdAt": "2026-10-14T00:19:45.864Z",
+    "updatedAt": "2026-10-14T00:19:45.864Z"
+  },
+  {
+    "id": "rec_01M4VXA7V65HT4TBARV2T6JS2K",
+    "data": {
+      "screen_id": "settings-tour",
+      "variant": "default",
+      "revision": "R11",
+      "change": "I am not sure if i missed it but could you please add a feature where if i want to see how a specific style fits on me it can show me. For example if i want to see if a specific type of jeans would fit me and look good on me can i see how it would look. This item is not in my closet; just something i want to see before buying.",
+      "submitted_at": "2026-10-14T00:34:14.181Z",
+      "client_ref": "9fc83bb9-60b9-47e7-aeb5-98b5b574b033"
+    },
+    "createdAt": "2026-10-14T00:34:36.518Z",
+    "updatedAt": "2026-10-14T00:34:36.518Z"
+  },
+  {
+    "id": "rec_01M4VXBP4BQ00ERZZ6T0TPVK6H",
+    "data": {
+      "screen_id": "laundry-off-tour",
+      "variant": "default",
+      "revision": "R11",
+      "liked": "i like the feature to turn on and off.",
+      "submitted_at": "2026-10-14T00:35:01.593Z",
+      "client_ref": "153a49ee-28d9-46f8-a69f-32e110ae29d2"
+    },
+    "createdAt": "2026-10-14T00:35:23.915Z",
+    "updatedAt": "2026-10-14T00:35:23.915Z"
+  },
+  {
+    "id": "rec_01M4VXK8RSTSJ11CMEJNW31R91",
+    "data": {
+      "screen_id": "developer-tour",
+      "variant": "default",
+      "revision": "R11",
+      "change": "I like the option to change the weather. Its cute!!",
+      "submitted_at": "2026-10-14T00:39:10.040Z",
+      "client_ref": "b0b944e9-5b35-495b-940b-e194b16ae0f8"
+    },
+    "createdAt": "2026-10-14T00:39:32.377Z",
+    "updatedAt": "2026-10-14T00:39:32.377Z"
+  },
+  {
+    "id": "rec_01M4VXVQTMN40WJFSCD5Q62EPY",
+    "data": {
+      "screen_id": "ipad-home-portrait-tour",
+      "variant": "default",
+      "revision": "R6",
+      "liked": "I like this layout too; i like the options on the left and bottom.",
+      "submitted_at": "2026-10-14T00:43:47.631Z",
+      "client_ref": "e920ca55-697b-4ae7-98d0-e4a4f02f493c"
+    },
+    "createdAt": "2026-10-14T00:44:09.940Z",
+    "updatedAt": "2026-10-14T00:44:09.940Z"
+  },
+  {
+    "id": "rec_01M4W2H1JXZGBKBCQADZAH06AH",
+    "data": {
+      "screen_id": "showcase-palette",
+      "variant": "warm",
+      "revision": "S1",
+      "liked": "Picked: Warm neutral",
+      "change": "",
+      "submitted_at": "2026-10-14T02:05:42.021Z",
+      "client_ref": "sc-mv7gx24l-xunnl0hr"
+    },
+    "createdAt": "2026-10-14T02:05:42.365Z",
+    "updatedAt": "2026-10-14T02:05:42.365Z"
+  },
+  {
+    "id": "rec_01M4W2KVVQGDKZF6B78MZNAAWV",
+    "data": {
+      "screen_id": "showcase-comments",
+      "variant": "looks",
+      "revision": "S1",
+      "liked": "",
+      "change": "Perfect.",
+      "submitted_at": "2026-10-14T02:07:14.433Z",
+      "client_ref": "sc-mv7gz1fl-9jdl2apq"
+    },
+    "createdAt": "2026-10-14T02:07:14.807Z",
+    "updatedAt": "2026-10-14T02:07:14.807Z"
+  },
+  {
+    "id": "rec_01M4W2MT07BT619KSJG0MEEDEF",
+    "data": {
+      "screen_id": "showcase-mode",
+      "variant": "preferences",
+      "revision": "S1",
+      "liked": "Picked: Preferences",
+      "change": "",
+      "submitted_at": "2026-10-14T02:07:45.245Z",
+      "client_ref": "sc-mv7gzp7h-wae2gsnr"
+    },
+    "createdAt": "2026-10-14T02:07:45.671Z",
+    "updatedAt": "2026-10-14T02:07:45.671Z"
+  },
+  {
+    "id": "rec_01M4W2XZDQGS2SGZGEYN0FKKNK",
+    "data": {
+      "screen_id": "showcase-comments",
+      "variant": "answers",
+      "revision": "S1",
+      "liked": "",
+      "change": "All questions have been answered. Thank you!",
+      "submitted_at": "2026-10-14T02:12:44.386Z",
+      "client_ref": "sc-mv7h640y-ts9f0a0l"
+    },
+    "createdAt": "2026-10-14T02:12:46.135Z",
+    "updatedAt": "2026-10-14T02:12:46.135Z"
+  }
+]

@@ -1,6 +1,6 @@
 # Screen and flow traceability
 
-This maps each destination in the mockup prompt to the PRD v2 sections it implements, where the code lives, and what is real, simulated, conditional or deferred. Requirement IDs refer to [My_Petite_Style_PRD_v2.md](../../../My_Petite_Style_PRD_v2.md). "Native check" points at the evidence in [Verification.md](Verification.md).
+This maps each destination in the mockup prompt to the PRD v2 sections it implements, where the code lives, and what is real, simulated, conditional or deferred. Requirement IDs refer to [Nifty_Outfit_Nook_PRD_v2.md](../../../Nifty_Outfit_Nook_PRD_v2.md). "Native check" points at the evidence in [Verification.md](Verification.md).
 
 Status meanings:
 

@@ -1,0 +1,60 @@
+/* Palette study (Lily's note L2, 13 October 2026): three calmer, more grown-up palettes to compare with the current one.
+   theme.js loads this file and adds html.palette-<name> when the URL has ?palette=warm | mono | mauve.
+     warm   Warm neutral: cream, sand and taupe, with an espresso accent
+     mono   Monochrome: off-white, soft greys, with a charcoal accent
+     mauve  Soft mauve: a beige base, with the plum muted to a dusty mauve
+   Only the room and the interface change. Garments keep their real colours, because they stand for her real clothes.
+   The drawn room art is toned down with a filter for the study; if she picks a palette, the art gets recoloured for real.
+   Rules are scoped under html.palette-* so they win on specificity, not order. Light appearance only. */
+
+html.palette-warm{
+  --wall:#F4EEE6; --wall-2:#EBE2D6; --floor:#E5D7C5; --floor-2:#DACAB4; --floor-line:#C6B097;
+  --plum:#4B3628; --plum-2:#35261B; --plum-soft:#EFE6DB;
+  --ink:#2A211B; --ink-soft:#6B5E54;
+  --plate:#FFFDF9; --plate-line:#E6DCCD;
+  --sage:#C9CDB4; --sage-2:#B6BB9E; --sage-line:#959A7C;
+  --pink:#E3D3C6; --lilac:#DCD3CA; --butter:#EFE3C8; --butter-line:#CDB98F;
+  --soft-drop: 0 10px 16px -12px rgba(60,42,28,.26);
+  --soft-drop-lg: 0 16px 22px -16px rgba(60,42,28,.32);
+  --soft-divider: linear-gradient(90deg, rgba(150,125,100,0), rgba(150,125,100,.30) 22%, rgba(150,125,100,.30) 78%, rgba(150,125,100,0));
+  --soft-chev:#9A8B7E;
+}
+html.palette-mono{
+  --wall:#F5F4F2; --wall-2:#EAE9E6; --floor:#E1DFDB; --floor-2:#D5D2CD; --floor-line:#BAB6B0;
+  --plum:#1F1F1F; --plum-2:#000000; --plum-soft:#ECEBE8;
+  --ink:#1A1A1A; --ink-soft:#5C5C5C;
+  --plate:#FFFFFF; --plate-line:#E1DFDC;
+  --sage:#D3D6D0; --sage-2:#BEC2BB; --sage-line:#9A9E96;
+  --pink:#E2E0DD; --lilac:#E0DFDD; --butter:#ECEAE4; --butter-line:#BDB8AC;
+  --soft-drop: 0 10px 16px -12px rgba(0,0,0,.22);
+  --soft-drop-lg: 0 16px 22px -16px rgba(0,0,0,.28);
+  --soft-divider: linear-gradient(90deg, rgba(120,120,120,0), rgba(120,120,120,.28) 22%, rgba(120,120,120,.28) 78%, rgba(120,120,120,0));
+  --soft-chev:#8C8C8C;
+}
+html.palette-mauve{
+  --wall:#F3EBE7; --wall-2:#EADFDA; --floor:#E6D8CE; --floor-2:#DBCABE; --floor-line:#C6B0A4;
+  --plum:#76525F; --plum-2:#5B3E49; --plum-soft:#F0E5E8;
+  --ink:#2D2228; --ink-soft:#6A5B62;
+  --plate:#FFFCFB; --plate-line:#E7D9DB;
+  --sage:#C8D0BF; --sage-2:#B4BEA9; --sage-line:#8F9A84;
+  --pink:#E8D3D6; --lilac:#DED3DA; --butter:#F0E4CB; --butter-line:#CFBB92;
+  --soft-drop: 0 10px 16px -12px rgba(70,45,55,.26);
+  --soft-drop-lg: 0 16px 22px -16px rgba(70,45,55,.32);
+  --soft-divider: linear-gradient(90deg, rgba(150,115,125,0), rgba(150,115,125,.30) 22%, rgba(150,115,125,.30) 78%, rgba(150,115,125,0));
+  --soft-chev:#9A8790;
+}
+
+/* Drawn room art: toned down per palette. Garments ([data-garment]) are inline SVG, not affected. */
+html.palette-warm img[src*="art/"]{filter:saturate(.16) sepia(.3) brightness(1.03)}
+html.palette-mono img[src*="art/"]{filter:grayscale(1) contrast(1.02) brightness(1.04)}
+html.palette-mauve img[src*="art/"]{filter:saturate(.26) sepia(.2) brightness(1.02)}
+
+/* Shared pieces with fixed colours in room.css and soft.css */
+html[class*="palette-"] .chip.on{box-shadow:var(--soft-drop)}
+html[class*="palette-"] .btn{box-shadow:var(--soft-drop-lg)}
+html[class*="palette-"] .rows > .row{border-bottom-color:var(--plate-line)}
+html[class*="palette-"] .meter{background:var(--plate-line)}
+html[class*="palette-"] .toggle{background:var(--floor-2)}
+html.palette-warm .tag.green, html.palette-warm .tag.pink, html.palette-warm .tag.lilac{background:var(--plum-soft);border-color:var(--plate-line)}
+html.palette-mono .tag.green, html.palette-mono .tag.pink, html.palette-mono .tag.lilac{background:var(--plum-soft);border-color:var(--plate-line)}
+html.palette-mauve .tag.green, html.palette-mauve .tag.pink, html.palette-mauve .tag.lilac{background:var(--plum-soft);border-color:var(--plate-line)}

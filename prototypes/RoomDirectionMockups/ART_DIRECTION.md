@@ -4,7 +4,7 @@ Read this whole file before drawing or building anything. Everyone working on th
 
 ## What this is
 
-A design exploration for the iOS app "My Petite Style" (a wardrobe styling app). The owner wants to see the app's screens presented as rooms of a home: an illustrated bedroom where each object is a real control. These are static HTML mockups in a scratch folder. They are not the app. Do not touch anything under `/Users/jramirez/Git/closet`. Do not publish anything, do not install anything, do not use the network.
+A design exploration for the iOS app "Nifty Outfit Nook" (a wardrobe styling app). The owner wants to see the app's screens presented as rooms of a home: an illustrated bedroom where each object is a real control. These are static HTML mockups in a scratch folder. They are not the app. Do not touch anything under `/Users/jramirez/Git/closet`. Do not publish anything, do not install anything, do not use the network.
 
 Root folder (called ROOT below):
 `<this folder>`
@@ -165,7 +165,7 @@ Tokens and the shared UI pieces: `.screen` (the 390 x 844 canvas), `.room` (wall
 
 Use these so the mockups show the same data as the working prototype. Do not invent other people, prices or features.
 
-- **App name:** My Petite Style. Tabs: Style Me, Closet, Saved Looks. Profile button top right opens Profile and Settings.
+- **App name:** Nifty Outfit Nook. Tabs: Style Me, Closet, Saved Looks. Profile button top right opens Profile and Settings.
 - **Weather (simulated):** 58°F, rain today. Tap opens a weather detail.
 - **Style Me inputs:** Source (Main closet, or a suitcase), Occasion (Office, Date Night, Brunch, Concert, Casual, Event, Other), Starting piece (optional, "Choose a piece", hint "e.g. navy dress pants"), On Me (a simulated preview of looks on the person; labelled "Simulated"), More options (weather override, pieces to avoid, notes). Primary action: Style Me. Secondary: Ask stylist (opens a chat with a simulated stylist).
 - **Suitcases:** "Jose's house" (5 pieces: g-navy-trousers, g-pink-blouse, g-navy-cardigan, g-nude-flats, g-lace-top), "Weekend" (8 pieces: g-navy-trousers, g-olive-trousers, g-wide-jeans, g-brick-top, g-cream-sweater, g-brown-jacket, g-white-sneakers, g-black-tee), "Spring trip" (empty). When a suitcase is the source, a green plate says "5 pieces · Suitcase only".

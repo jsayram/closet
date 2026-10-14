@@ -6,7 +6,7 @@ Research checked October 4, 2026. This is a design handoff aid, not a revision t
 
 Use a runnable universal SwiftUI prototype with fictional data and simulated services. Its views and components can carry forward into the real application; production storage, provider integration and release validation remain separate work.
 
-Give Claude Code the current [master PRD](/Users/jramirez/Git/closet/My_Petite_Style_PRD_v2.md) and paste the complete [mockup prompt](/Users/jramirez/Git/closet/Claude_Code_iPhone_iPad_Mockup_Prompt.txt). Use a local Mac session for native execution. The prompt requests a frontend prototype, preserves the master and identifies conditional features.
+Give Claude Code the current [master PRD](/Users/jramirez/Git/closet/Nifty_Outfit_Nook_PRD_v2.md) and paste the complete [mockup prompt](/Users/jramirez/Git/closet/Claude_Code_iPhone_iPad_Mockup_Prompt.txt). Use a local Mac session for native execution. The prompt requests a frontend prototype, preserves the master and identifies conditional features.
 
 ## Current capabilities and limits
 

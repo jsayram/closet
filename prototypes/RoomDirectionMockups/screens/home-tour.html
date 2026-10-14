@@ -27,7 +27,7 @@
   .tag b { letter-spacing: -.1px; }
 
   /* header (screen-left, like a large title) */
-  .hdr-title { position: absolute; left: 20px; top: 46px; z-index: 2; }
+  .hdr-title { position: absolute; left: 20px; top: 46px; z-index: 2; font-size: 30px; }  /* "Nifty Outfit Nook" clears the shelf plant at 390 */
   .wx { position: absolute; left: 14px; top: 81px; height: 44px; padding: 0 4px 0 6px; display: flex; align-items: center; gap: 4px; z-index: 2;
         color: var(--plum); font-size: 15px; font-weight: 600; letter-spacing: -.2px; white-space: nowrap; border-radius: 12px; }
   .wx .ic { font-size: 18px; margin-right: 1px; display: grid; }
@@ -267,7 +267,7 @@
 
   <!-- ============ header ============ -->
   <div class="nav">Home<a class="right" href="settings.html" aria-label="Profile and settings"><i data-icon="person-circle"></i></a></div>
-  <div class="title-display hdr-title">My Petite Style</div>
+  <div class="title-display hdr-title">Nifty Outfit Nook</div>
   <button class="wx" type="button" id="wx" aria-haspopup="dialog" aria-expanded="false" aria-controls="wx-sheet"><span class="ic" id="wx-ic"></span><span id="wx-text">58°F · Rain today</span><span class="chev"><i data-icon="chevron-right"></i></span></button>
 
   <!-- ============ weather detail sheet (closed until the weather link is tapped) ============ -->

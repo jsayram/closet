@@ -1,7 +1,7 @@
 #!/bin/bash
 # Build the review site into ROOT/site/ (deleted and recreated every time), ready to publish on here.now.
 #   tools/build-site.sh
-# Copies: index.html, review.html, summary.html, screens/*.html (not files starting with "_"), css/, js/
+# Copies: index.html, review.html, summary.html, showcase.html, screens/*.html (not files starting with "_"), css/, js/
 # (not avatar.js), art/*.svg, snapshots/*.png, and site-data.json as site/.herenow/data.json (the Site Data
 # manifest). Leaves out archive/, ref/, tools/, Markdown, research, any .herenow/state.json and credentials.
 # Publish from ROOT (not from inside site/) so here.now's state file stays in ROOT/.herenow/.
@@ -14,7 +14,7 @@ case "$OUT" in "$ROOT"/site) ;; *) echo "refusing to clear $OUT" >&2; exit 1 ;; 
 rm -rf "$OUT"
 mkdir -p "$OUT/screens" "$OUT/css" "$OUT/js" "$OUT/art" "$OUT/snapshots" "$OUT/.herenow"
 
-for f in index.html review.html summary.html; do
+for f in index.html review.html summary.html showcase.html; do
   [ -f "$f" ] || { echo "missing $f" >&2; exit 1; }
   cp "$f" "$OUT/$f"
 done

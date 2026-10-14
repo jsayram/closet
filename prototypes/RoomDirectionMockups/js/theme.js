@@ -18,6 +18,16 @@
     link.href = here ? here.replace(/js\/theme\.js.*$/, 'css/dark.css') : '../css/dark.css';
     document.head.appendChild(link);
   }
+  // ?palette=warm|mono|mauve: the palette study (feedback L2). Light appearance only.
+  var palette = params.get('palette');
+  if (/^(warm|mono|mauve)$/.test(palette || '') && theme !== 'dark') {
+    root.classList.add('palette-' + palette);
+    var src = document.currentScript && document.currentScript.src;
+    var pl = document.createElement('link');
+    pl.rel = 'stylesheet';
+    pl.href = src ? src.replace(/js\/theme\.js.*$/, 'css/palette.css') : '../css/palette.css';
+    document.head.appendChild(pl);
+  }
   if (params.get('text') === 'xl') root.classList.add('text-xl');
   var reduce = params.get('motion') === 'reduce' ||
     (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -28,7 +38,7 @@
     reduceMotion: !!reduce,
     /* Keep theme/text/motion when linking to another screen. */
     carry: function (href) {
-      var keep = ['theme', 'text', 'motion'].filter(function (k) { return params.get(k); });
+      var keep = ['theme', 'text', 'motion', 'palette'].filter(function (k) { return params.get(k); });
       if (!keep.length || /^(https?:|#|mailto:)/.test(href)) return href;
       var u = new URL(href, location.href);
       keep.forEach(function (k) { if (!u.searchParams.get(k)) u.searchParams.set(k, params.get(k)); });
@@ -36,7 +46,7 @@
     }
   };
   document.addEventListener('DOMContentLoaded', function () {
-    if (!window.MockTheme.dark && !window.MockTheme.xl && params.get('motion') !== 'reduce') return;
+    if (!window.MockTheme.dark && !window.MockTheme.xl && params.get('motion') !== 'reduce' && !params.get('palette')) return;
     document.querySelectorAll('a[href]').forEach(function (a) {
       var h = a.getAttribute('href');
       if (h && /\.html/.test(h)) a.setAttribute('href', window.MockTheme.carry(h));

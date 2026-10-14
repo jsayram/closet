@@ -1,6 +1,6 @@
 # Project handoff — consolidated
 
-Updated for PRD v2, October 4, 2026. This file is a navigation pointer, not a separate specification. Maintain requirements in the [master Markdown specification](/Users/jramirez/Git/closet/My_Petite_Style_PRD_v2.md). The v0.1 Markdown is a preserved historical snapshot.
+Updated for PRD v2, October 4, 2026. This file is a navigation pointer, not a separate specification. Maintain requirements in the [master Markdown specification](/Users/jramirez/Git/closet/Nifty_Outfit_Nook_PRD_v2.md). The v0.1 Markdown is a preserved historical snapshot.
 
 Start with the master’s **Document authority and navigation** table. Current status, naming limits, open decisions, v2 changes and implementation sequence are in **Section 26**. Lily-first fit/expansion protection is in **3.3/10.2**; Dirty badges/confirmed laundry and retained No longer own history in **7.3/7.4**; unified offline search in **7.5/11.9**; personal names/additive details/search correction in **7.6**; required multiple Suitcases/remembered source/strict scoped styling in **7.7** with recovery/laundry in **RV-27**; named-item resolution and optional photo understanding in **8.4**; mock development and revalidated private history/reuse in **11.10/11.11**; billing/sponsorship in **14**; opt-in On Me and retained preview history in **9.2**; recovery/review checks in **25**, including six-month reuse/per-miss image admission in **RV-24**, personal vocabulary in **RV-25** and laundry/ownership in **RV-26**.
 

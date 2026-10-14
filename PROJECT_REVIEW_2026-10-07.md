@@ -16,7 +16,7 @@ Native build/UI-test results and video-render results below are existing recorde
 
 | Files / area | What has been done | How to use it now |
 |---|---|---|
-| `My_Petite_Style_PRD_v2.md` | Consolidated specification: 72 functional requirements, 102 acceptance criteria, 29 RV checks and eight conditional try-on checks. Includes scoped Suitcases, history/reuse, personal names, genuine web discovery, fit-first ranking and release safeguards. | Baseline product specification, with later owner decisions kept separately. Its implementation-status prose predates the prototype. |
+| `Nifty_Outfit_Nook_PRD_v2.md` | Consolidated specification: 72 functional requirements, 102 acceptance criteria, 29 RV checks and eight conditional try-on checks. Includes scoped Suitcases, history/reuse, personal names, genuine web discovery, fit-first ranking and release safeguards. | Baseline product specification, with later owner decisions kept separately. Its implementation-status prose predates the prototype. |
 | `My_Petite_Style_PRD_v0.1.md` and `.docx` | Earlier specification and original Word draft preserved. | Historical evidence; do not treat old requirements as a second current backlog. |
 | `Lilys_Wardrobe_App_Feedback.txt` | Original interview evidence and examples. | Preserve Lily's intent and use the real scenarios for usability/quality evaluation. |
 | `Lilys_Feedback_PRD_Assessment.md` | Read-only assessment of the earlier specification, feasibility, costs, missing requirements and proposed validation. | Explains the evolution into v2; many listed decisions were subsequently resolved. |

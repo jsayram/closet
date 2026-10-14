@@ -1,5 +1,11 @@
 # Picking up the room direction
 
+## Showcase for Lily, 13 October 2026
+
+Lily's 24 notes were pulled and decided item by item with Jose; see `feedback/signoff-2026-10-13.md` (decisions summary at the top). A new **What's changing** page (`showcase.html`, linked from the gallery) shows her the palette study on Home and Closet (pick one of warm neutral, monochrome, soft mauve or current), the new Your looks (one outfit in three versions: Simple, Dressed up, With something new), a choice between "Preferences" and "Which pieces" to replace "Mode", and a reply to every note. Published to the same slug; her notes are intact.
+
+Next: when Lily is done, "Pull Lily notes" collects her picks (`showcase-*` records). Then apply the approved items once, in her palette, and settle the design before the native build (SWIFT_BUILD_PLAN.md: Phase 2a waits for her palette). Decisions that replace earlier ones: Shuffle is removed (L6), Swap a piece handles every piece change and the editor is only "Make your own look" (L8), and shopping sits on Look 3's new piece (L5b).
+
 ## Review preview restored, 7 October 2026
 
 Owner clarified that only full-screen “See it bigger” links should be removed. Those links are removed from gallery and review pages; the screen URL initialization required by the preview availability check is preserved. The embedded screen remains above the feedback form. Verify an actual rendered iframe when changing review navigation; presence of the notes button alone is insufficient.
@@ -55,6 +61,10 @@ Written 6 October 2026 at the end of a long session, so the next session can con
 ## Status, 7 October 2026 (R5)
 
 The mockup update described below is done. Every screen in the checklist is built in the soft style, with its versions listed in `js/registry.js`. The review site is live at https://turbo-gazebo-e3jy.here.now/ (notes summary at `summary.html`). Lily's notes are saved there and kept across updates. To update it, run `tools/build-site.sh` and publish `site/` to the same slug (`turbo-gazebo-e3jy`). Next step: Lily's notes go through the sign-off process in README.md ("Lily's notes: pull, sign off, run"). "Pull Lily notes" only pulls and writes a sign-off sheet. "Run Lily notes" makes only the items the owner approved. After that, wait for the go-ahead before the SwiftUI work or the PRD amendment.
+
+## Waiting on Lily, 7 October 2026
+
+Jose handed the review site (https://turbo-gazebo-e3jy.here.now/) to Lily and is waiting on her notes. Since that handoff, Lily can edit or delete her saved notes. Delete asks first, and an edited note shows "Edited" with the date. To allow this, the notes collection in `site-data.json` is open to public update and delete (`"publicMutation": "open"`), so anyone with the link can change notes. Pull a copy of her notes before running them. Next step is unchanged: "Pull Lily notes" pulls the notes and writes a sign-off sheet only.
 
 ## First-use tours (owner request, 7 Oct)
 
@@ -202,7 +212,7 @@ The room design itself (illustrations, Maya, the name sign) raises no guideline 
 - Whether PRD changes go in a v3 file or a separate amendment.
 - Whether Supabase is the backend (`Simplified_Direction_On_Hold.md`).
 - Who writes the privacy policy and terms.
-- Whether "My Petite Style" is available as an App Store name and a trademark.
+- Whether "Nifty Outfit Nook" is available as an App Store name and a trademark.
 
 After that, the wider visual work (soft no-box style across all screens, Home tab rename, name sign, illustrated rooms, Maya) can follow, in whatever order the owner picks.
 

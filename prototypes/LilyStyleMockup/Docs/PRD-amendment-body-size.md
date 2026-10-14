@@ -1,6 +1,6 @@
 # PRD amendment proposal: body size as a fit input
 
-Status: proposal for the owner, 5 October 2026. The master spec, [My_Petite_Style_PRD_v2.md](../../../My_Petite_Style_PRD_v2.md), was left unchanged. Nothing in this file takes effect in the PRD until the owner accepts it and edits the PRD.
+Status: proposal for the owner, 5 October 2026. The master spec, [Nifty_Outfit_Nook_PRD_v2.md](../../../Nifty_Outfit_Nook_PRD_v2.md), was left unchanged. Nothing in this file takes effect in the PRD until the owner accepts it and edits the PRD.
 
 Line numbers below refer to the PRD as it stands on 5 October 2026. Each item quotes the passage that conflicts with the decision and gives replacement text that can be pasted in. Where only part of a paragraph changes, the quote covers just that part and the rest of the paragraph stays as written.
 

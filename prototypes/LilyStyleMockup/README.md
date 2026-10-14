@@ -1,6 +1,6 @@
 # My Petite Style: iPhone and iPad prototype
 
-This folder holds an interactive SwiftUI prototype of My Petite Style (working title), built from the master spec [My_Petite_Style_PRD_v2.md](../../My_Petite_Style_PRD_v2.md) and the [mockup prompt](../../Claude_Code_iPhone_iPad_Mockup_Prompt.txt). It lets Lily tap through the intended experience on an iPhone or iPad simulator before any real AI, image, search, sync or billing service is connected.
+This folder holds an interactive SwiftUI prototype of My Petite Style (working title), built from the master spec [Nifty_Outfit_Nook_PRD_v2.md](../../Nifty_Outfit_Nook_PRD_v2.md) and the [mockup prompt](../../Claude_Code_iPhone_iPad_Mockup_Prompt.txt). It lets Lily tap through the intended experience on an iPhone or iPad simulator before any real AI, image, search, sync or billing service is connected.
 
 It is a front-end prototype. All data is fictional, every external service is a mock, and nothing leaves the device. It doesn't prove production storage, iCloud sync, StoreKit billing, real AI or fit quality, or App Store approval. The PRD's release checks are still Not run.
 

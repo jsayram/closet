@@ -720,7 +720,7 @@
       shown.forEach(function (n) { (by[n.screen_id] = by[n.screen_id] || []).push(n); });
       var withNotes = 0;
       var order = R.screens.slice();
-      Object.keys(by).forEach(function (id) { if (!screenById[id]) order.push({ id: id, title: 'Unknown screen (' + id + ')', variants: [], group: '' }); });
+      Object.keys(by).forEach(function (id) { if (!screenById[id]) order.push({ id: id, title: ({ 'showcase-palette': 'What’s changing: your colours', 'showcase-mode': 'What’s changing: the name for Mode', 'showcase-comments': 'What’s changing: your comments' })[id] || 'Unknown screen (' + id + ')', variants: [], group: '' }); });
       order.forEach(function (s) {
         var list = by[s.id];
         if (!list) return;

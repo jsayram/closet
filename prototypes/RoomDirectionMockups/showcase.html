@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What changed from your notes</title>
+<meta name="description" content="The changes coming from Lily's notes, two quick choices, and an answer to every question.">
+<link rel="stylesheet" href="css/review.css?v=edit-notes-r14">
+<style>
+  /* Showcase of proposed changes and answered questions (sign-off sheet feedback/signoff-2026-10-13.md).
+     Her picks and comments are saved in the same notes collection as her review notes, under screen ids starting
+     with "showcase-", so tools/pull-notes.sh pulls them with everything else. One record per choice card, updated
+     when she changes her mind. */
+  .sc-card{margin-top:44px;padding:22px 18px 24px;border-radius:28px;background:var(--tint);box-shadow:var(--drop-lg)}
+  @media (min-width:700px){.sc-card{padding:28px 30px 30px}}
+  .sc-card h2{margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3.4vw,30px);letter-spacing:-.3px}
+  .sc-card .lead{margin:6px 0 0;color:var(--ink-soft);font-size:17px;max-width:720px}
+  .num{display:inline-grid;place-items:center;width:30px;height:30px;margin-right:8px;border-radius:50%;background:var(--plum);color:#fff;
+    font:700 15px/1 var(--font-ui);vertical-align:4px}
+
+  /* her note and the reply */
+  .sc-note{margin:18px 0 0;max-width:760px}
+  .sc-note blockquote{margin:0;padding:12px 16px;border-radius:18px;background:var(--bg-2);font-size:16px;color:var(--ink)}
+  .sc-note blockquote::before{content:"You wrote";display:block;margin-bottom:2px;font-size:13px;font-weight:700;color:var(--ink-soft);letter-spacing:.2px}
+  .sc-note .reply{display:flex;gap:10px;align-items:flex-start;margin:10px 0 0 6px;font-size:16px}
+  .sc-note .reply p{margin:0}
+  .st{flex:none;margin-top:2px;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap}
+  .st.coming{background:var(--sage);color:var(--sage-ink)}
+  .st.answered{background:var(--plum-soft);color:var(--plum)}
+  .st.later{background:var(--butter);color:var(--butter-ink)}
+
+  /* phone previews: real screens, scaled to fit */
+  .opts{display:grid;gap:18px;margin-top:20px}
+  @media (min-width:900px){.opts.four{grid-template-columns:repeat(2,1fr)}}
+  .opt{padding:16px;border-radius:24px;background:var(--tint-strong);box-shadow:var(--drop)}
+  .opt.picked{box-shadow:0 0 0 3px var(--plum),var(--drop)}
+  .opt h3{margin:0;font-size:19px}
+  .opt .sub{margin:2px 0 0;color:var(--ink-soft);font-size:15px}
+  .phones{display:flex;gap:10px;margin-top:12px}
+  .phones.three{gap:8px}
+  .phones.three .frame{border-radius:14px;box-shadow:0 0 0 3px var(--bezel),var(--drop)}
+  .phone figcaption a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;line-height:1.2}
+  .phone{flex:1 1 0;min-width:0}
+  .phone .frame{position:relative;width:100%;aspect-ratio:390/844;border-radius:22px;overflow:hidden;background:var(--bg-2);
+    box-shadow:0 0 0 5px var(--bezel),var(--drop)}
+  .phone iframe{position:absolute;left:0;top:0;width:390px;height:844px;border:0;transform-origin:0 0;pointer-events:none}
+  .phone figcaption{margin-top:9px;text-align:center;font-size:14px;font-weight:600;color:var(--ink-soft)}
+  @media (min-width:700px){.phones.three{gap:16px;max-width:900px}}
+  .pick{margin-top:14px;width:100%}
+  .opt.picked .pick{background:var(--plum-2)}
+
+  .names{display:grid;gap:12px;margin-top:18px;max-width:640px}
+  @media (min-width:640px){.names{grid-template-columns:1fr 1fr}}
+  .name-opt{padding:16px;border-radius:22px;background:var(--tint-strong);box-shadow:var(--drop)}
+  .name-opt.picked{box-shadow:0 0 0 3px var(--plum),var(--drop)}
+  .row-demo{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:0 14px;border-radius:16px;background:var(--bg);font-size:16px}
+  .row-demo b{font-weight:600}
+  .row-demo span{color:var(--plum);font-weight:600}
+
+  /* comment box */
+  .say{margin-top:18px;max-width:760px}
+  .say label{display:block;font-weight:700;font-size:16px}
+  .say textarea{display:block;width:100%;min-height:88px;margin-top:6px;padding:12px 14px;border:0;border-radius:18px;background:var(--tint-strong);
+    box-shadow:var(--drop);font:16px/1.45 var(--font-ui);color:var(--ink);resize:vertical}
+  .say .acts{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:10px}
+  .sc-msg{font-size:15px;color:var(--ink-soft)}
+  .sc-msg.err{color:#8A2B2B}
+
+  .area{margin-top:26px}
+  .area h3{margin:0;font-size:20px}
+  .area .sc-note{margin-top:12px}
+  .area .sc-note + .sc-note{margin-top:18px}
+  .sc-back{display:inline-flex;margin-top:28px}
+</style>
+</head>
+<body>
+<a class="skip" href="#choices">Skip to the choices</a>
+<main class="wrap">
+  <header class="top">
+    <p class="eyebrow">From your notes</p>
+    <h1>What’s changing, Lily</h1>
+    <div class="intro">
+      <p>Thank you for all your notes! Every one of them is answered on this page. Most are already on the way.</p>
+      <p>Two things need you: <strong>pick your colours</strong> and <strong>pick a name</strong>. Everything else you can just read. Each section has a box if you want to say something.</p>
+    </div>
+    <div class="cta"><a class="btn ghost" href="index.html">Back to all screens</a></div>
+  </header>
+
+  <div id="choices">
+
+  <!-- 1. Palette -->
+  <section class="sc-card" id="palette" aria-labelledby="palette-h">
+    <h2 id="palette-h"><span class="num">1</span>Pick your colours</h2>
+    <p class="lead">Your Home and Closet in three calmer palettes, plus the current colours to compare.</p>
+    <div class="sc-note">
+      <blockquote>Also if you could make the app less colorful like make it more adult like maybe use more beige/neutral/black and white colors.</blockquote>
+      <div class="reply"><span class="st coming">Your choice</span><p>We made three calmer palettes. Pick the one that feels most like you. The room drawings are only toned down for this preview; once you pick, they get properly redrawn in your colours. Your clothes always keep their real colours.</p></div>
+    </div>
+    <div class="opts four" id="palette-opts"></div>
+    <div class="say" data-card="palette"></div>
+  </section>
+
+  <!-- 2. Your looks -->
+  <section class="sc-card" id="looks" aria-labelledby="looks-h">
+    <h2 id="looks-h"><span class="num">2</span>Your three looks</h2>
+    <p class="lead">One outfit in three versions, the way you described it. Tap a name to see it full size.</p>
+    <div class="phones three" id="looks-phones"></div>
+    <div class="sc-note">
+      <blockquote>so initially i wanted for look 1, 2 and 3 to be the same just tweaked to be 1) simple/safe option and 2) to be a classier version same pieces from option 1 and 3) to be the same outfit with an item i dont currently own. in the example above it shows as option 1 and 2 and 3 as three completely different options.</blockquote>
+      <div class="reply"><span class="st coming">Coming</span><p>Done, exactly as you described: <strong>Simple</strong>, <strong>Dressed up</strong> (same outfit, classier) and <strong>Something new</strong> (the same outfit plus one piece you don’t have, with “Find one”). The pieces that changed are marked. If you don’t like the outfit at all, “Try a different outfit” starts a new one.</p></div>
+    </div>
+    <div class="sc-note">
+      <blockquote>Also for the option "earlier" i am not sure if you mean previously used outfits or intentionally saved. I would like to be intentionally saved outfits; not just random outfits ive worn.</blockquote>
+      <div class="reply"><span class="st coming">Coming</span><p>Now called <strong>Saved</strong>, and it only shows looks you saved. Shuffle is gone, so nothing random shows up.</p></div>
+    </div>
+    <div class="say" data-card="looks"></div>
+  </section>
+
+  <!-- 3. Mode name -->
+  <section class="sc-card" id="mode" aria-labelledby="mode-h">
+    <h2 id="mode-h"><span class="num">3</span>Pick a name</h2>
+    <p class="lead">This is the Style Me option for which clothes the stylist can use: only yours, or yours plus one new-piece idea.</p>
+    <div class="sc-note">
+      <blockquote>Maybe change the option "mode" to a clearer word because i didnt know what that was until i clicked on it. Maybe something like "preferences" or something.</blockquote>
+      <div class="reply"><span class="st coming">Your choice</span><p>Good catch, “Mode” is going away. Which of these is clearer to you?</p></div>
+    </div>
+    <div class="names" id="mode-opts"></div>
+    <div class="say" data-card="mode"></div>
+  </section>
+
+  <!-- 4. Everything else -->
+  <section class="sc-card" id="answers" aria-labelledby="answers-h">
+    <h2 id="answers-h"><span class="num">4</span>Your other notes, answered</h2>
+    <p class="lead"><span class="st coming">Coming</span> means it’s being added. <span class="st answered">Answered</span> means no change was needed. <span class="st later">Later</span> means a future version.</p>
+    <div id="answer-list"></div>
+    <div class="say" data-card="answers"></div>
+  </section>
+
+  </div>
+  <a class="btn ghost sc-back" href="index.html">Back to all screens</a>
+  <footer class="foot"><p>Your picks and comments can be read by anyone with this link.</p></footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var REV = 'S1';
+  var DATA_URL = './.herenow/data/notes';
+  var preview = location.protocol === 'file:';
+  function $(id) { return document.getElementById(id); }
+  function el(tag, attrs, html) {
+    var e = document.createElement(tag);
+    for (var k in attrs || {}) e.setAttribute(k, attrs[k]);
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } }
+  function key() { return 'sc-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10); }
+
+  /* Save: create once, then update the same record when she changes her mind. */
+  function save(screen, variant, fields, slot) {
+    if (preview) return Promise.reject(new Error('This is a local preview, so nothing is saved.'));
+    var known = store(slot);
+    var body = Object.assign({ screen_id: screen, variant: variant, revision: REV, submitted_at: new Date().toISOString() }, fields);
+    if (known && known.id) {
+      return fetch(DATA_URL + '/' + encodeURIComponent(known.id), {
+        method: 'PATCH', headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify(Object.assign({ variant: variant, edited_at: new Date().toISOString() }, fields))
+      }).then(function (r) {
+        if (r.status === 404) { store(slot, null); return save(screen, variant, fields, slot); }
+        if (!r.ok) throw new Error('Not saved. Please try again.');
+        return known;
+      });
+    }
+    var k = (known && known.key) || key();
+    store(slot, { key: k });
+    body.client_ref = k;
+    return fetch(DATA_URL, {
+      method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json', 'Idempotency-Key': k },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('Not saved. Please try again.');
+      return r.json();
+    }).then(function (b) {
+      var rec = { key: k, id: b && b.record && b.record.id };
+      store(slot, rec);
+      return rec;
+    });
+  }
+  function failText(e) { return (e && e.message && /local preview|try again/.test(e.message)) ? e.message : 'Couldn’t reach the site. Check your connection and try again.'; }
+
+  /* phone previews */
+  function phone(src, caption, open) {
+    var f = el('figure', { class: 'phone' });
+    f.style.margin = '0';
+    var fr = el('div', { class: 'frame' });
+    var i = el('iframe', { src: src, title: caption, loading: 'lazy', tabindex: '-1', 'aria-hidden': 'true' });
+    fr.appendChild(i); f.appendChild(fr);
+    f.appendChild(el('figcaption', null, open ? '<a href="' + src + '">' + esc(caption) + '</a>' : esc(caption)));
+    return f;
+  }
+  function fit() {
+    document.querySelectorAll('.phone .frame').forEach(function (fr) {
+      var i = fr.querySelector('iframe');
+      i.style.transform = 'scale(' + (fr.clientWidth / 390) + ')';
+    });
+  }
+  window.addEventListener('resize', fit);
+
+  /* choice cards */
+  function choiceCard(opts, box, slot, screen, render) {
+    var current = store(slot + ':pick');
+    var cards = [];
+    opts.forEach(function (o) {
+      var c = render(o);
+      var btn = el('button', { class: 'btn pick', type: 'button', 'aria-pressed': 'false' }, 'This one');
+      var msg = el('p', { class: 'sc-msg', role: 'status' });
+      btn.addEventListener('click', function () {
+        btn.disabled = true; msg.className = 'sc-msg'; msg.textContent = 'Saving…';
+        save(screen, o.key, { liked: 'Picked: ' + o.title, change: '' }, slot).then(function () {
+          store(slot + ':pick', o.key); mark(o.key); msg.textContent = 'Saved. You can change your mind any time.';
+        }).catch(function (e) { msg.className = 'sc-msg err'; msg.textContent = failText(e); })
+          .then(function () { btn.disabled = false; });
+      });
+      c.appendChild(btn); c.appendChild(msg);
+      cards.push({ key: o.key, card: c, btn: btn });
+      box.appendChild(c);
+    });
+    function mark(k) {
+      cards.forEach(function (x) {
+        var on = x.key === k;
+        x.card.classList.toggle('picked', on);
+        x.btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        x.btn.textContent = on ? 'Your pick' : 'This one';
+        if (!on) x.card.querySelector('.sc-msg').textContent = '';
+      });
+    }
+    if (current) mark(current);
+  }
+
+  var PALETTES = [
+    { key: 'warm',    title: 'Warm neutral', sub: 'Cream, sand and taupe, with espresso brown' },
+    { key: 'mono',    title: 'Monochrome',   sub: 'Off-white and soft greys, with charcoal' },
+    { key: 'mauve',   title: 'Soft mauve',   sub: 'Beige, with a dusty mauve' },
+    { key: 'current', title: 'Keep the current colours', sub: 'Pink room and plum, as it is now' }
+  ];
+  choiceCard(PALETTES, $('palette-opts'), 'showcase:palette', 'showcase-palette', function (p) {
+    var q = p.key === 'current' ? '' : '?palette=' + p.key;
+    var c = el('div', { class: 'opt' });
+    c.appendChild(el('h3', null, esc(p.title)));
+    c.appendChild(el('p', { class: 'sub' }, esc(p.sub)));
+    var ph = el('div', { class: 'phones' });
+    ph.appendChild(phone('screens/home.html' + q, 'Home'));
+    ph.appendChild(phone('screens/closet.html' + q, 'Closet'));
+    c.appendChild(ph);
+    return c;
+  });
+
+  [['1', 'Simple'], ['2', 'Dressed up'], ['3', 'Something new']].forEach(function (v) {
+    $('looks-phones').appendChild(phone('screens/results-versions.html?v=' + v[0], v[1], true));
+  });
+
+  var NAMES = [
+    { key: 'preferences', title: 'Preferences', note: 'Your word' },
+    { key: 'which-pieces', title: 'Which pieces', note: 'Says what it does' }
+  ];
+  choiceCard(NAMES, $('mode-opts'), 'showcase:mode', 'showcase-mode', function (n) {
+    var c = el('div', { class: 'name-opt' });
+    c.appendChild(el('p', { class: 'sub', style: 'margin:0 0 8px' }, esc(n.note)));
+    c.appendChild(el('div', { class: 'row-demo' }, '<b>' + esc(n.title) + '</b><span>Mine + one idea ›</span>'));
+    return c;
+  });
+
+  /* every other note, with her words and the reply */
+  var AREAS = [
+    { title: 'Style Me', items: [
+      { said: 'I see this page has the temperature on the top right corner. Does this mean the outfit will be curated based on the weather automatically?', st: 'coming',
+        reply: 'Yes! Style Me uses today’s weather where you are. To make that clear, the weather becomes its own row in Style Me, with a line saying your looks are picked for it. Tap it to choose “I’ll be indoors” or “Ignore the weather”.' },
+      { said: 'if i change the fit to something else how long are the suggestions adapted to that selection? until i change it or does it default back after some time?', st: 'coming',
+        reply: 'Your fit profile stays until you change it. Comfort on Style Me is just for that one outfit. Both screens will say so, and when they’re different, Style Me shows something like “Today: fitted (you usually like relaxed)”.' }
+    ] },
+    { title: 'Changing a piece', items: [
+      { said: 'in this example if i want to change the top and i get 3 options how are those options selected? is it the tops the app thinks would look good? also if i dont like any of the 3 how can i refresh to get 3 more?', st: 'coming',
+        reply: 'They’re your own tops from the closet or suitcase you picked, that suit the occasion, the weather, your fit and the rest of the outfit. No credits used. A “Show 3 more” button is coming, and when you’ve seen them all, “See all tops”. If you allow new-piece ideas, the end of the list also offers “Not in your closet? Find one”.' },
+      { said: 'This screen i think has the same function as the next one i thinkkkkk. they both give you the option to change a piece.', also: 'This screen has the same function as the previous one. Can you please explain the difference?', st: 'coming',
+        reply: 'You’re right, they overlapped. Now there’s one way to change a piece: Swap a piece, which can also remove a piece and undo. The other screen becomes “Make your own look”, only for building an outfit from scratch.' }
+    ] },
+    { title: 'Saved looks', items: [
+      { said: 'I like the feature to search an outfit. if you can please make it so we can search by type of piece and color.', st: 'coming',
+        reply: 'Coming: filters for type of piece (tops, bottoms, dresses, layers, shoes, bags) and colour, in Saved Looks and in your Closet too.' },
+      { said: 'I like the feature to select wear today i assume the app will keep track of when something is worn so its not repeated too closely right?', st: 'coming',
+        reply: 'Right! When you tap Wear today, the app remembers the date. Saved looks will show “Last worn”, Your looks will mention when you wore something recently, and in Profile you can choose how long to avoid repeating an outfit: 1 week, 2 weeks, or I don’t mind. Favourite single pieces can still come back sooner.' }
+    ] },
+    { title: 'Closet and suitcases', items: [
+      { said: 'There should be a feature or somewhere that tells me if a specific item is in a specific suitcase so im not looking through everything.', st: 'coming',
+        reply: 'Coming: a tiny suitcase icon on packed pieces in your Closet, a Suitcase filter (for example “What’s in Weekend?”), and the suitcase names near the top of each piece’s page. Searching a suitcase name works too.' },
+      { said: 'is there an option to remove an item? like for example if an item has been discarded because its old or ripped can i remove it from my closet?', st: 'coming',
+        reply: 'Yes. Each piece gets “Remove from closet” with two choices: “I don’t have it any more” (it leaves your closet, but old looks still make sense) or “Delete it” (kept in Recently deleted for 30 days in case you change your mind).' },
+      { said: 'is there an option to only have one suitcase and then add another one? or is it always 3 there?', st: 'answered',
+        reply: 'You can start with just one and add more whenever you like. Three is only how many show in the room before “See all”. “+ Add a suitcase” will always be visible, so that’s clearer.' }
+    ] },
+    { title: 'Fit and shopping', items: [
+      { said: 'What does "add a fit reference mean"? is this a reference for the app to know more info about me?', st: 'coming',
+        reply: 'Yes, exactly. It’s a piece you own that fits you just right, with its brand and size, so the app can suggest sizes for you. It’s being renamed “Add a piece that fits you well”, with an example.' },
+      { said: 'I am not sure if i missed it but could you please add a feature where if i want to see how a specific style fits on me it can show me. For example if i want to see if a specific type of jeans would fit me and look good on me can i see how it would look. This item is not in my closet; just something i want to see before buying.', st: 'coming',
+        reply: 'Great idea. It’s coming as “Thinking of buying?”: add the piece (a photo, a screenshot or something you found), and the app checks the fit against your measurements and the pieces that fit you well. It can also make a simulated picture of you wearing it with your own clothes. One honest note: pictures show the style, not the exact fit, so the fit check is the part to trust on size.' }
+    ] },
+    { title: 'Everything else', items: [
+      { said: 'You should make a feature that the user can add their own pet but this is last option to add; not too important just cute to personalize.', st: 'later',
+        reply: 'Love this. It’s saved for a later version: choosing your own pet for the room.' },
+      { said: 'I like the option to change the weather. Its cute!!', st: 'answered',
+        reply: 'Thank you! In the real app, the window follows the real weather.' },
+      { said: 'idk what sponsored access means. Is this the features that come with the app that you dont need to pay for?', st: 'answered',
+        reply: 'That screen is just for the demo. You won’t see it in the app.' },
+      { said: 'You should also charge per clothing items for example someone can have up to 100 free and anything above that they have to pay. no?', st: 'answered',
+        reply: 'Good thought. Jose is still working out pricing.' }
+    ] }
+  ];
+  var LABEL = { coming: 'Coming', answered: 'Answered', later: 'Later' };
+  AREAS.forEach(function (a) {
+    var s = el('div', { class: 'area' });
+    s.appendChild(el('h3', null, esc(a.title)));
+    a.items.forEach(function (it) {
+      var n = el('div', { class: 'sc-note' });
+      n.appendChild(el('blockquote', null, esc(it.said)));
+      if (it.also) n.appendChild(el('blockquote', { style: 'margin-top:8px' }, esc(it.also)));
+      n.appendChild(el('div', { class: 'reply' }, '<span class="st ' + it.st + '">' + LABEL[it.st] + '</span><p>' + esc(it.reply) + '</p>'));
+      s.appendChild(n);
+    });
+    $('answer-list').appendChild(s);
+  });
+
+  /* comment boxes, one per section; saving again updates the same comment */
+  document.querySelectorAll('.say[data-card]').forEach(function (box) {
+    var card = box.getAttribute('data-card'), slot = 'showcase:say:' + card, id = 'say-' + card;
+    box.innerHTML = '<label for="' + id + '">Anything to add? <span style="font-weight:500;color:var(--ink-soft)">(optional)</span></label>' +
+      '<textarea id="' + id + '" maxlength="4000"></textarea>' +
+      '<div class="acts"><button class="btn ghost" type="button">Save comment</button><p class="sc-msg" role="status"></p></div>';
+    var ta = box.querySelector('textarea'), btn = box.querySelector('button'), msg = box.querySelector('.sc-msg');
+    var draft = store(slot + ':text'); if (draft) ta.value = draft;
+    ta.addEventListener('input', function () { store(slot + ':text', ta.value); });
+    btn.addEventListener('click', function () {
+      var text = ta.value.trim();
+      if (!text) { msg.className = 'sc-msg'; msg.textContent = 'Write something first.'; return; }
+      btn.disabled = true; msg.className = 'sc-msg'; msg.textContent = 'Saving…';
+      save('showcase-comments', card, { liked: '', change: text }, slot).then(function () {
+        msg.textContent = 'Saved. Edit and save again to update it.';
+      }).catch(function (e) { msg.className = 'sc-msg err'; msg.textContent = failText(e); })
+        .then(function () { btn.disabled = false; });
+    });
+  });
+
+  fit();
+  window.addEventListener('load', fit);
+})();
+</script>
+</body>
+</html>

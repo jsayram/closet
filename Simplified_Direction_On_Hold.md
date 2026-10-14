@@ -1,12 +1,12 @@
 # Simplified first-release direction (on hold)
 
-Status: recorded 5 October 2026, not started. The owner asked to hold this and keep it on file. Nothing in `My_Petite_Style_PRD_v2.md` or the prototype has been changed for it.
+Status: recorded 5 October 2026, not started. The owner asked to hold this and keep it on file. Nothing in `Nifty_Outfit_Nook_PRD_v2.md` or the prototype has been changed for it.
 
 This file holds two things as the owner gave them: the rationale for a simpler first release, and the brief describing the changes. The last section lists what has to be decided before work starts and what in today's prototype it would affect.
 
 ## Rationale
 
-We are simplifying My Petite Style's first release to reduce implementation risk, operational complexity and unpredictable AI spending while preserving the app's core value: helping users create useful outfits from their own wardrobe.
+We are simplifying Nifty Outfit Nook's first release to reduce implementation risk, operational complexity and unpredictable AI spending while preserving the app's core value: helping users create useful outfits from their own wardrobe.
 
 The original PRD combines several substantial systems: local wardrobe management, iCloud recovery, AI styling, personal-image generation, shopping, subscriptions, purchased credits and community feedback. Each is manageable individually, but their interactions create many failure cases and testing obligations. The goal is a smaller, dependable release, not weaker security or recovery.
 
@@ -66,7 +66,7 @@ Use this rationale to guide PRD and implementation decisions. Distinguish genuin
 
 ## The brief
 
-Update My Petite Style's PRD and existing iOS/iPadOS prototype to reflect the simplified architecture below. Read the authoritative PRD and inspect the existing screens, navigation, storage and service interfaces before editing. Implement the changes, not just a proposal.
+Update Nifty Outfit Nook's PRD and existing iOS/iPadOS prototype to reflect the simplified architecture below. Read the authoritative PRD and inspect the existing screens, navigation, storage and service interfaces before editing. Implement the changes, not just a proposal.
 
 ### Product and backend
 
@@ -149,7 +149,7 @@ Update My Petite Style's PRD and existing iOS/iPadOS prototype to reflect the si
 
 Two decisions are open, because the brief conflicts with earlier standing instructions for the prototype work:
 
-1. **How the PRD changes.** The standing rule has been to leave `My_Petite_Style_PRD_v2.md` untouched and write changes as separate amendment proposals. The brief asks for the PRD itself to be updated. One option that satisfies both is a new v3 file that carries the changes, with v2 kept as it is.
+1. **How the PRD changes.** The standing rule has been to leave `Nifty_Outfit_Nook_PRD_v2.md` untouched and write changes as separate amendment proposals. The brief asks for the PRD itself to be updated. One option that satisfies both is a new v3 file that carries the changes, with v2 kept as it is.
 2. **Supabase as the backend.** The standing rule has been not to select production providers. The brief names Supabase. The text and image AI providers stay unnamed behind adapters either way.
 
 The prototype would stay fully simulated in any case. No credentials or backend exist in this repo.

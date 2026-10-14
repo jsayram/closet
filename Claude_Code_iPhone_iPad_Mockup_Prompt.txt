@@ -1,7 +1,7 @@
-Act as an experienced Apple-platform product designer and SwiftUI engineer. Create a polished, interactive native iPhone and iPad UI prototype for My Petite Style, following the attached master PRD. The purpose is to review the actual screens and interactions with Lily and retain reusable native UI code for the real application.
+Act as an experienced Apple-platform product designer and SwiftUI engineer. Create a polished, interactive native iPhone and iPad UI prototype for Nifty Outfit Nook, following the attached master PRD. The purpose is to review the actual screens and interactions with Lily and retain reusable native UI code for the real application.
 
 SOURCE OF TRUTH
-Read My_Petite_Style_PRD_v2.md completely before building. In the original workspace it is /Users/jramirez/Git/closet/My_Petite_Style_PRD_v2.md; elsewhere use the attached copy. Read README.md and PROJECT_HANDOFF.md if available. The v2 master overrides historical drafts. Prioritize sections 3, 5–10, 11.10–11.11, 12–15 and 24.5. Treat the PRD's open decisions and conditional capabilities as such.
+Read Nifty_Outfit_Nook_PRD_v2.md completely before building. In the original workspace it is /Users/jramirez/Git/closet/Nifty_Outfit_Nook_PRD_v2.md; elsewhere use the attached copy. Read README.md and PROJECT_HANDOFF.md if available. The v2 master overrides historical drafts. Prioritize sections 3, 5–10, 11.10–11.11, 12–15 and 24.5. Treat the PRD's open decisions and conditional capabilities as such.
 Preserve the master and original feedback. Do not update requirements, finalize pricing, select production providers or implement production infrastructure. If the master is missing, request it before inventing product requirements. Resolve ordinary layout choices yourself; ask only if an unresolved decision would materially change the product.
 
 DELIVERABLE AND ENVIRONMENT
@@ -10,7 +10,7 @@ First inspect the available macOS/Xcode SDKs, simulator runtimes, Claude Code to
 Do not install tools, enable integrations, change global Xcode settings or require API credentials. If native execution is unavailable, still deliver the SwiftUI source and clear setup instructions; label native rendering checks Not run. An optional local HTML storyboard may illustrate the design but cannot substitute for the native deliverable or count as native verification. Do not claim automatic SwiftUI export from Claude Design. Do not publish or share hosted artifacts without my explicit request.
 
 DESIGN DIRECTION
-Use the PRD's warm editorial personal-styling-notebook theme: calm, polished, approachable and garment-led, with familiar Apple interactions. My Petite Style is a working title.
+Use the PRD's warm editorial personal-styling-notebook theme: calm, polished, approachable and garment-led, with familiar Apple interactions. Nifty Outfit Nook is a working title.
 Implement semantic color assets with these Light / Dark values:
 Background #FAF7F2 / #1C191B
 Surface #FFFFFF / #292529

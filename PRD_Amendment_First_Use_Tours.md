@@ -1,6 +1,6 @@
 # First-use tours amendment — accepted and integrated
 
-**Accepted by Jose and integrated into the master PRD on 7 October 2026.** His instruction was: “make sure to add that to the PRD as that will be on the real app”. The authoritative requirements are now [Section 7.8](My_Petite_Style_PRD_v2.md#78-first-use-quick-tours-and-replay), FR-73, TourProgress / TourPreferences and AC-103. Coverage expanded to every shipped user-facing screen; iPad/landscape/large-text layouts share a logical tour ID. All 38 HTML tour pages are mocked, including 102 tips beyond Home, and Profile replay links work. Native first-use behavior remains unimplemented and native acceptance is Not run.
+**Accepted by Jose and integrated into the master PRD on 7 October 2026.** His instruction was: “make sure to add that to the PRD as that will be on the real app”. The authoritative requirements are now [Section 7.8](Nifty_Outfit_Nook_PRD_v2.md#78-first-use-quick-tours-and-replay), FR-73, TourProgress / TourPreferences and AC-103. Coverage expanded to every shipped user-facing screen; iPad/landscape/large-text layouts share a logical tour ID. All 38 HTML tour pages are mocked, including 102 tips beyond Home, and Profile replay links work. Native first-use behavior remains unimplemented and native acceptance is Not run.
 
 ## Historical proposal (superseded)
 

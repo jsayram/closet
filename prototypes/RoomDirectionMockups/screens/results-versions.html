@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your looks</title>
+<script src="../js/theme.js"></script>
+<link rel="stylesheet" href="../css/room.css">
+<link rel="stylesheet" href="../css/soft.css">
+<style>
+  /* Your looks, proposed (Lily's note L5, approved 13 October 2026): one outfit in three versions.
+       Simple (safe), Dressed up (the same base with one or two pieces swapped for dressier ones), and
+       With something new (the simple outfit plus one piece she doesn't own, tagged, with Find one).
+     Changed pieces are marked in the piece list. "Saved" replaces Earlier (L6); Shuffle is gone.
+     URL: ?v=1|2|3 picks the version (default 1). Works with ?palette= for the palette study. */
+  body { background: var(--wall); }
+  a, button { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; border-radius: 14px; }
+  .screen { min-height: 100vh; background: linear-gradient(var(--wall), var(--wall-2)); }
+  .col { max-width: 440px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding: 0 0 24px; }
+
+  .nav { position: relative; height: 48px; flex: none; }
+  .nav .back { position: absolute; left: 4px; top: 2px; height: 44px; padding: 0 8px 0 2px; display: flex; align-items: center; gap: 1px;
+               color: var(--plum); font-size: 17px; font-weight: 500; }
+  .nav .back i[data-icon] { font-size: 24px; }
+  .nav h1 { position: absolute; left: 0; right: 0; top: 13px; text-align: center; font-size: 17px; font-weight: 700; pointer-events: none; }
+  .tabs { width: max-content; margin: 2px auto 0; display: flex; gap: 2px; border-radius: 18px; background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .tabs span { height: 36px; display: grid; place-items: center; padding: 0 12px; font-size: 13px; font-weight: 700; color: var(--plum); border-radius: 16px; }
+  .tabs span.on { background: var(--plum); color: #fff; }
+
+  .req { margin: 8px 16px 0; font-size: 13px; line-height: 17px; color: var(--ink-soft); text-align: center; }
+
+  /* the three versions: one soft track, the selected one solid */
+  .vers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 12px 16px 0; padding: 4px; border-radius: 22px;
+          background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .vers a { min-height: 44px; border-radius: 18px; display: flex; align-items: center; justify-content: center; text-align: center;
+            padding: 0 6px; color: var(--plum); font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .vsub { margin: 8px 16px 0; text-align: center; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .vers a[aria-current="true"] { background: var(--plum); color: #fff; box-shadow: var(--soft-drop); }
+
+  .stage { position: relative; height: 352px; margin-top: 4px; }
+  .bundle { position: absolute; left: 50%; top: 4px; width: 300px; height: 330px; margin-left: -150px; }
+  .stk { position: absolute; display: block;
+         filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+                 drop-shadow(1.8px 1.8px 0 #fff) drop-shadow(-1.8px -1.8px 0 #fff) drop-shadow(1.8px -1.8px 0 #fff) drop-shadow(-1.8px 1.8px 0 #fff)
+                 drop-shadow(0 7px 9px rgba(60,40,40,.16)); }
+  .stk .rot { position: absolute; inset: 0; display: block; }
+  .stk [data-garment] { width: 100%; }
+  .stk.camel [data-garment] svg { filter: sepia(1) saturate(1.5) hue-rotate(-12deg) brightness(.98); }
+  .newtag { position: absolute; z-index: 3; display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+            background: var(--plate); box-shadow: var(--soft-drop); font-size: 12px; font-weight: 700; color: var(--plum); white-space: nowrap; }
+  .newtag i[data-icon] { font-size: 14px; }
+
+  .why { margin: 0 20px; font-size: 14px; line-height: 19px; text-align: center; color: var(--ink); }
+
+  /* the pieces in this version; changed and new ones are marked */
+  .pcs { margin: 12px 16px 0; padding: 4px 14px; border-radius: 22px; background: var(--soft-tint); box-shadow: var(--soft-drop); }
+  .pc { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; }
+  .pc + .pc { background: var(--soft-divider) top / 100% 1px no-repeat; }
+  .pc .nm { flex: 1; min-width: 0; }
+  .pc .mk { flex: none; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--plum-soft); color: var(--plum); }
+  .pc .mk.same { background: none; color: var(--ink-soft); font-weight: 600; padding: 0; }
+  .pc .find { flex: none; min-height: 36px; display: flex; align-items: center; gap: 4px; padding: 0 12px; border-radius: 14px; background: var(--plate);
+              box-shadow: var(--soft-drop); font-size: 13px; font-weight: 700; color: var(--plum); }
+  .pc .find i[data-icon] { font-size: 14px; }
+
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 16px 0; }
+  .grid4 .btn { min-height: 48px; height: 48px; padding: 0 10px; font-size: 15px; border-radius: 16px; gap: 7px; white-space: nowrap; min-width: 0; }
+  .grid4 .btn i[data-icon] { font-size: 19px; }
+  .fine { margin: 8px 16px 0; text-align: center; font-size: 12px; color: var(--ink-soft); }
+  .diff { margin: 14px auto 0; min-height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 16px;
+          font-size: 15px; font-weight: 700; color: var(--plum); }
+  .diff i[data-icon] { font-size: 18px; }
+  .diff small { font-weight: 500; color: var(--ink-soft); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="screen">
+<div class="col">
+  <div class="nav">
+    <a class="back" href="styleme.html"><i data-icon="chevron-left"></i>Style Me</a>
+    <h1>Your looks</h1>
+  </div>
+  <div class="tabs" aria-hidden="true"><span class="on">Today</span><span>Saved</span></div>
+  <p class="req">Office · Main closet · 58° and rain</p>
+
+  <nav class="vers" aria-label="Versions of this outfit" id="vers"></nav>
+  <p class="vsub" id="sub"></p>
+
+  <div class="stage"><div class="bundle" id="bundle"></div></div>
+  <p class="why" id="why"></p>
+
+  <div class="pcs" id="pcs"></div>
+
+  <div class="grid4">
+    <a class="btn" href="#save"><i data-icon="heart"></i>Save look</a>
+    <a class="btn ghost" href="#tryon"><i data-icon="camera"></i>Try it on</a>
+    <a class="btn ghost" href="#swap"><i data-icon="swap"></i>Swap a piece</a>
+    <a class="btn ghost" href="#ask"><i data-icon="chat"></i>Ask stylist</a>
+  </div>
+  <p class="fine">Try-on pictures are simulated</p>
+  <a class="diff" href="#different"><i data-icon="undo"></i>Try a different outfit <small>· uses 1 styling</small></a>
+</div>
+</div>
+<script src="../js/icons.js"></script>
+<script src="../js/garments.js"></script>
+<script>
+(function () {
+  var BASE = { top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' };
+  var V = [
+    { key: 1, name: 'Simple', sub: 'Easy and safe',
+      look: BASE, changed: {},
+      why: 'Your navy dress pants with a soft cream knit and flats. Comfortable for a rainy office day.' },
+    { key: 2, name: 'Dressed up', sub: 'The same outfit, a little classier',
+      look: { top: 'g-pink-blouse', bottom: 'g-navy-trousers', shoes: 'g-black-heels', bag: 'g-burgundy-bag' },
+      changed: { top: 'Swapped', shoes: 'Swapped', bag: 'Added' },
+      why: 'The same navy pants, dressed up: the pink blouse instead of the knit, block heels and your burgundy bag.' },
+    { key: 3, name: 'Something new', sub: 'The same outfit, plus one piece you don’t have',
+      look: { layer: 'x-camel-blazer', top: 'g-cream-sweater', bottom: 'g-navy-trousers', shoes: 'g-nude-flats' },
+      changed: { layer: 'New' },
+      why: 'The simple outfit with a camel blazer you don’t have yet. It would work with lots of your pieces.' }
+  ];
+  var NAMES = { 'x-camel-blazer': 'Camel blazer' };
+  var BY = {}; Garments.LIST.forEach(function (g) { BY[g.id] = g; });
+  function nm(id) { return NAMES[id] || (BY[id] ? BY[id].name : id); }
+
+  var P = new URLSearchParams(location.search);
+  var cur = Math.min(3, Math.max(1, parseInt(P.get('v') || '1', 10) || 1));
+  var keep = P.get('palette') ? '&palette=' + P.get('palette') : '';
+
+  var vers = document.getElementById('vers');
+  V.forEach(function (v) {
+    var a = document.createElement('a');
+    a.href = 'results-versions.html?v=' + v.key + keep;
+    if (v.key === cur) a.setAttribute('aria-current', 'true');
+    a.textContent = v.name;
+    vers.appendChild(a);
+  });
+
+  var L = V[cur - 1];
+  document.getElementById('sub').textContent = L.sub;
+  document.getElementById('why').textContent = L.why;
+
+  /* sticker bundle: same layout rules as Your looks */
+  function spots(look) {
+    var s = { bottom: [140, 236, 200, 'h', -2], shoes: [236, 296, 90, 'w', -8], bag: [244, 196, 74, 'w', 8] };
+    if (look.layer) { s.layer = [98, 86, 150, 'h', -7]; s.top = [196, 94, 138, 'h', 5]; }
+    else { s.top = [142, 90, 146, 'h', -3]; }
+    return s;
+  }
+  var ORDER = ['bottom', 'layer', 'top', 'bag', 'shoes'];
+  function drawn(svg) {
+    var hid = svg.querySelectorAll('rect[width="120"][height="170"]'), i, b;
+    for (i = 0; i < hid.length; i++) hid[i].style.display = 'none';
+    b = svg.getBBox();
+    for (i = 0; i < hid.length; i++) hid[i].style.display = '';
+    return b;
+  }
+  var box = document.getElementById('bundle');
+  var look = L.look;
+  ORDER.forEach(function (slot) {
+    if (!look[slot]) return;
+    var id = look[slot] === 'x-camel-blazer' ? 'g-gray-blazer' : look[slot];
+    var stk = document.createElement('span');
+    stk.className = 'stk' + (look[slot] === 'x-camel-blazer' ? ' camel' : '');
+    stk.setAttribute('data-slot', slot);
+    stk.innerHTML = '<span class="rot"><span data-garment="' + id + '"></span></span>';
+    stk.style.width = '108px';
+    box.appendChild(stk);
+  });
+  Garments.mountAll(box);
+  var S = spots(look);
+  box.querySelectorAll('.stk').forEach(function (stk) {
+    var sp = S[stk.getAttribute('data-slot')], svg = stk.querySelector('svg'), b = drawn(svg);
+    var s = sp[2] / (sp[3] === 'h' ? b.height : b.width);
+    var ox = (b.x + b.width / 2) * s, oy = (b.y + b.height / 2) * s;
+    stk.style.width = (120 * s).toFixed(2) + 'px'; stk.style.height = (170 * s).toFixed(2) + 'px';
+    stk.style.left = (sp[0] - ox).toFixed(2) + 'px'; stk.style.top = (sp[1] - oy).toFixed(2) + 'px';
+    var rot = stk.querySelector('.rot');
+    rot.style.transformOrigin = ox.toFixed(2) + 'px ' + oy.toFixed(2) + 'px';
+    rot.style.transform = 'rotate(' + sp[4] + 'deg)';
+  });
+  if (look.layer === 'x-camel-blazer') {
+    var t = document.createElement('span');
+    t.className = 'newtag'; t.style.left = '8px'; t.style.top = '150px';
+    t.innerHTML = '<i data-icon="tag"></i>Not in your closet';
+    box.appendChild(t);
+  }
+
+  var pcs = document.getElementById('pcs');
+  ['layer', 'top', 'bottom', 'shoes', 'bag'].forEach(function (slot) {
+    if (!look[slot]) return;
+    var row = document.createElement('div'); row.className = 'pc';
+    var mark = L.changed[slot];
+    var html = '<span class="nm">' + nm(look[slot]) + '</span>';
+    if (mark === 'New') html += '<a class="find" href="#find"><i data-icon="search"></i>Find one</a>';
+    else if (mark) html += '<span class="mk">' + mark + '</span>';
+    else if (cur !== 1) html += '<span class="mk same">Same as Simple</span>';
+    row.innerHTML = html;
+    pcs.appendChild(row);
+  });
+  if (window.Icons) Icons.mountAll(document);
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
+})();
+</script>
+</body>
+</html>

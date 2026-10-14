@@ -1,6 +1,6 @@
 # Virtual try-on exploration — consolidated
 
-Updated for PRD v2, October 4, 2026. This file is a navigation pointer, not a separate specification. Maintain requirements in the [master Markdown specification](/Users/jramirez/Git/closet/My_Petite_Style_PRD_v2.md).
+Updated for PRD v2, October 4, 2026. This file is a navigation pointer, not a separate specification. Maintain requirements in the [master Markdown specification](/Users/jramirez/Git/closet/Nifty_Outfit_Nook_PRD_v2.md).
 
 The preferred opt-in On Me flow, closest-source garment/shoe fidelity targets, retained searchable preview history, provider capabilities/lifecycle, image costs, private-media/jobs and TO-01–TO-08 checks are in **master Section 9.2**. Subscription, sponsorship and conditional image credits are in **14.4**; local history search is in **7.5/11.9**. The Suitcases audit in **26.6** adds working-source provenance and stale-result fencing without changing exact picture identity or per-miss accounting; see **RV-24/27 and TO-06**. No provider, demonstrated full-outfit quality, allowance or launch inclusion is committed. All TO checks remain **Not run**. The preserved v0.1 master is historical.
 

@@ -1,0 +1,455 @@
+# Swift build plan
+
+Drafted 7 October 2026, revised the same day. This is the phase list for building Nifty Outfit Nook as a real iOS app from the room-direction mockups. It's a working plan and not part of the PRD. Where the PRD already sets a rule (security, cost protection, persistence, image handling), the PRD wins and this plan points to it.
+
+There is no deadline. The project has two goals of equal weight: an app Lily can rely on every day, and a proven playbook ([IOS_APP_PLAYBOOK.md](IOS_APP_PLAYBOOK.md)) for building reliable, compliant, safe and cost-effective iOS apps in the future. Security, cost control and data safety are designed in from the start, and every phase should leave behind something reusable as well as working code.
+
+## How we work
+
+- **One short phase at a time.** Each phase fits in one sitting and ends with something Jose can run or read. Nothing starts on the next phase until he says go.
+- **Every phase has a checkpoint.** Jose decides there whether the direction is right. If it isn't, we fix it before building on top of it.
+- **Structure before speed.** Small files, clear module boundaries, protocols at every service edge, and tests for logic. Nothing gets built on a shortcut we plan to "clean up later".
+- **The mockups are the visual reference.** Where they disagree with the decisions list in [the mockup README](prototypes/RoomDirectionMockups/README.md), the list wins. Each UI phase starts by checking for newer approved Lily feedback.
+- **The old prototype is a reference, not a base.** [LilyStyleMockup](prototypes/LilyStyleMockup) has useful logic (models, mock stylist, flat-lay layout, iPad helpers). We bring pieces over on purpose, one at a time, and review each one as new code.
+- **No commits unless Jose asks.** After each phase, a dated entry goes in the progress log at the bottom, and anything reusable goes in [IOS_APP_PLAYBOOK.md](IOS_APP_PLAYBOOK.md).
+- **Security is not negotiable.** [SECURITY_STANDARD.md](SECURITY_STANDARD.md) is a requirement for every phase, not a later clean-up. This app holds sensitive personal data, so no corners get cut. Any exception needs Jose's written approval in the progress log, with a reason and a review date.
+
+## Repositories and branching
+
+Decided 7 October 2026.
+
+- **`closet` (this repo)** is the design and planning repo: PRD, research, mockups, Lily's review site, the old prototype, this plan, the playbook, the security standard and agent files. It uses `main` plus the occasional branch. `closet/mock` merges into `main` after Lily's review.
+- **The app repo, `nifty-outfit-nook` (new, private)** holds only the shipping iOS app: Xcode project, packages, tests, CI and the art assets the app uses. It has its own README and a short AGENTS.md that points back to `closet` for the spec.
+- **The backend repo (private, decided in Phase 23)** holds the gateway, prompts, fit rules and infrastructure config. Prompts and business rules never go in the app repo.
+
+The app and backend repos use Git Flow:
+
+| Branch | Role |
+|---|---|
+| `main` | Release-ready only. Tagged with the app version (`v1.0.0`) when a build ships to the App Store. |
+| `develop` | Where approved phases land. TestFlight builds come from here. |
+| `feature/<phase>-<name>` | One per phase, for example `feature/02a-design-tokens`. Branched off `develop`, merged back by PR after the checkpoint. |
+| `release/<version>` | Cut from `develop` to prepare an App Store version (final fixes, version and build numbers, store listing). Merged into `main` and back into `develop`. |
+| `hotfix/<name>` | Off `main` for urgent fixes after launch. Merged into `main` and `develop`. |
+
+Rules:
+- Nothing is pushed directly to `main` or `develop`. Everything goes through a PR with CI passing.
+- Phase branches are not stacked. Each one starts from the latest `develop`.
+- Before 1.0, `develop` is promoted to `main` only at milestones (end of Phase 3, before Phase 18, after 21, after 30, and at release). Every promotion runs the full test suite and the security review gate.
+- Dev, staging and production are build configurations and backend environments, not branches.
+
+## Definition of done (every phase)
+
+A phase isn't finished until all of these hold, or Jose has agreed in the log to an exception:
+
+1. **No regressions.** The whole test suite passes, not only the new tests.
+2. **Tests where they make sense.** Unit tests for logic and rules. Integration tests where services meet (store, network, purchases). UI tests for the main flows. Snapshot tests for key screens once the design system exists.
+3. **Mock data covers every case.** Empty, one item, typical, and very large data sets (a closet of 2,000+ garments), plus failure and offline cases. Every screen has a defined empty, loading and error state.
+4. **Accessibility.** Dynamic Type up to the largest size, VoiceOver labels and order, Reduce Motion, dark appearance, and sufficient contrast.
+5. **iPhone and iPad.** Checked on a small iPhone, a large iPhone and iPad in both orientations.
+6. **Security and privacy.** The PR's security checklist is complete for every section of [SECURITY_STANDARD.md](SECURITY_STANDARD.md) the phase touches. New data is classified and added to the data map. No secrets in the app or repo, no personal data in logs, URLs or analytics, and only the permissions the phase needs. Security tests are added alongside the feature.
+7. **Performance.** No main-thread stalls, and images are downsampled and cached. Lists stay smooth with the large data set.
+8. **Apple guidelines.** Anything that touches App Review rules (payments, privacy, permissions, account deletion, AI content) is checked against the current App Store Review Guidelines and Human Interface Guidelines.
+9. **Documented.** Progress log entry, plus any reusable lesson in the playbook.
+
+## Stage A: the app with sample data
+
+Everything here runs on mock data behind protocols. No accounts, network or real storage yet. The goal is an app Lily can hold and react to.
+
+### Phase 0a: Technical decisions (no app code)
+
+- New production project rather than evolving the prototype.
+- iOS floor (iOS 17 covers on-device subject lifting and runs on Lily's iPhone 12; check her current version).
+- Code layout: an app target plus local Swift packages (likely DesignSystem, Models, Fixtures, Features).
+- Swift 6 language mode with strict concurrency, Swift Testing, XCUITest, a snapshot-testing approach, and a lint/format setup.
+- Rules for third-party dependencies: what's allowed, and how each one gets vetted.
+
+**Checkpoint:** Jose approves a one-page decisions note.
+
+### Phase 0b: PRD amendment draft
+
+- Amendment proposal for the room-direction changes: Home tab, On Me moved to results, Saved Looks tabs, sticker bundles, favorite suitcases.
+- Lily's approved review changes from `prototypes/RoomDirectionMockups/feedback/signoff-2026-10-13.md`: warm neutral palette, "Preferences" instead of "Mode", one outfit in three versions (Simple, Dressed up, Something new) with "Try a different outfit", Saved tab instead of Earlier and no Shuffle, Swap for every piece change with the editor only for "Make your own look", plus the smaller items (weather row, swap "Show 3 more", filters, suitcase icons, last worn and repeat setting, fit wording, removing a piece, "Thinking of buying?"). The mockups weren't updated for these, so the sheet is the spec.
+
+**Checkpoint:** Jose approves or edits the amendment.
+
+### Phase 0c: Data classification and threat model
+
+- Classify every kind of data the PRD describes using the tiers in the security standard.
+- First data map and threat model for the whole system: what could go wrong for Lily, for Jose and for the services, and which controls cover each risk.
+- Account inventory: every service account, who owns it, and whether two-factor authentication is on.
+
+**Checkpoint:** Jose reviews the top risks and confirms two-factor authentication on every account.
+
+### Phase 1a: Project skeleton
+
+- Xcode project generated from `project.yml`, the local packages, build and test scripts, and separate Debug/Release configurations.
+- Secure defaults from the first commit: App Transport Security with no exceptions, Data Protection set, no third-party dependencies yet, and an empty privacy manifest ready to fill.
+- App launches to the tab bar with placeholder tabs.
+
+**Checkpoint:** it runs on the simulator and Jose reviews the folder structure.
+
+### Phase 1b: Repo and CI hardening
+
+- Create `develop`, then rulesets on `main` and `develop` (PRs and CI required, signed commits, no force pushes, administrators included).
+- Secret scanning with push protection, gitleaks in a pre-commit hook and in CI, Dependabot alerts and security updates.
+- CI choice (Xcode Cloud or GitHub Actions) with actions pinned to commit SHAs and a read-only token by default.
+- CODEOWNERS, a PR template with the security checklist, and the all-rights-reserved README notice.
+
+**Checkpoint:** Jose tries to push to `develop` directly and to commit a fake key; both get blocked.
+
+### Phase 2a: Design tokens
+
+- Color, type, spacing, corner and shadow tokens from `css/room.css` and `css/soft.css`, with dark mode and Dynamic Type built in.
+
+**Checkpoint:** token values reviewed against the mockups.
+
+### Phase 2b: Components and catalog
+
+- Buttons, plum pill chips, soft rows and cards, search field, bottom sheet, and the empty, loading and error state views.
+- A debug-only catalog screen showing every component in light, dark and the largest text size, with the first snapshot tests.
+
+**Checkpoint:** catalog side by side with `screens/results.html`. Nothing should look boxy.
+
+### Phase 3: Models and mock data
+
+- Garment, Outfit (look), Suitcase, Profile, StyleRequest and laundry state.
+- An in-memory store behind protocols, with fixture sets: empty, the 21 demo garments, and a generated large closet.
+- Unit tests for the model rules.
+
+**Checkpoint:** Jose reads the models and the store protocol before any screen depends on them.
+
+### Phase 4: Home room, phone portrait
+
+- Room art as vector assets, the name sign as live text, and tappable furniture leading to stub screens.
+
+**Checkpoint:** Home on an iPhone simulator next to `screens/home.html`.
+
+### Phase 5a: Home weather and life
+
+- Weather windows, hamper states, and Maya with her z's (still under Reduce Motion).
+
+**Checkpoint:** each window and hamper state.
+
+### Phase 5b: Home appearance and size variants
+
+- Dark appearance, the large-text banner layout (`home-ax.html`), and sideways phone.
+
+**Checkpoint:** each variant with the accessibility settings switched on.
+
+### Phase 6: Closet browsing
+
+- Small wardrobe header, search, filter chips, Suitcases and Laundry entries, and the garment grid.
+
+**Checkpoint:** browse and filter the empty, demo and large closets.
+
+### Phase 7a: Garment detail
+
+- Viewing a garment and its details.
+
+**Checkpoint:** detail screens for several fixture garments.
+
+### Phase 7b: Adding and editing garments
+
+- Adding or editing by photo or by words, with the photo step stubbed. Draft recovery if the app is closed mid-edit.
+
+**Checkpoint:** add and edit a garment end to end, including abandoning and resuming a draft.
+
+### Phase 8a: Cutout feasibility
+
+- On-device subject lifting on real clothing photos. Measure speed, memory and quality on Lily's iPhone 12.
+
+**Checkpoint:** go or no-go on cutouts as the main garment look.
+
+### Phase 8b: Sticker styling and fallback
+
+- The thick white sticker outline, and the rounded-tile fallback for photos without a clean cutout.
+
+**Checkpoint:** a set of real garments as stickers and fallbacks.
+
+### Phase 9: Look bundles
+
+- The sticker bundle view (tilted, overlapping, no tiles or hangers), used wherever a look appears.
+
+**Checkpoint:** bundles of 2 to 6 pieces at phone and iPad sizes.
+
+### Phase 10a: Style Me request
+
+- Request form and option sheets.
+
+**Checkpoint:** build several requests and check what gets produced.
+
+### Phase 10b: Style Me results
+
+- Results with Current/Earlier and Shuffle, and the partial, insufficient, generating, failed and offline states, all driven by a mock stylist.
+- Try it on and Ask stylist entries on results.
+
+**Checkpoint:** a full styling run with each state forced.
+
+### Phase 11: Swap and editor
+
+- Swapping a piece and editing a look.
+
+**Checkpoint:** swap and edit flows.
+
+### Phase 12a: Saved Looks, Looks tab
+
+- Looks tab, search, and look detail.
+
+**Checkpoint:** save a look from results and find it again.
+
+### Phase 12b: Saved Looks, Pictures tab
+
+- Pictures tab and picture detail with the simulated placeholder, linked back to its look.
+
+**Checkpoint:** move between pictures and their looks.
+
+### Phase 13: Suitcases and Laundry
+
+- Three favorite suitcases with See all, suitcase detail, and opt-in laundry tracking.
+
+**Checkpoint:** pack a suitcase and mark items dirty and clean.
+
+### Phase 14a: Profile essentials
+
+- Name on your sign, fit and weight, and the try-on photo sheet.
+
+**Checkpoint:** changing the name updates the sign; fit values save and validate.
+
+### Phase 14b: Remaining settings
+
+- Accessibility, privacy, help and feedback screens, and account/data deletion entry points (required by Apple once accounts exist).
+
+**Checkpoint:** every Profile row works.
+
+### Phase 15a: iPad, Home and Closet
+
+- The wide Home room, the Closet sidebar and wide grid, and Split View.
+
+**Checkpoint:** both screens on iPad in both orientations and in Split View.
+
+### Phase 15b: iPad, Style Me and Saved
+
+- Results and Saved Looks with side-by-side detail and centered panes.
+
+**Checkpoint:** every main screen on iPad.
+
+### Phase 16a: Coach-mark system and Home tour
+
+- One reusable tour system (spotlight, card, focus, Skip, Escape) and the Home tour.
+
+**Checkpoint:** Home tour with VoiceOver and large text.
+
+### Phase 16b: Remaining tours
+
+- The other screen tours, first-use tracking, and replay from Profile.
+
+**Checkpoint:** fresh install, then replaying tours.
+
+### Phase 17: Onboarding
+
+- First-run flow into the Home room.
+
+**Checkpoint:** delete, reinstall, and go from first launch to the first look.
+
+### Phase 18: Lily's first TestFlight
+
+- Internal TestFlight build with sample data only.
+
+**Checkpoint:** Lily uses it on her phone. Her notes go through the usual sign-off before anything changes.
+
+## Stage B: making it real
+
+These phases swap mock data for real services behind the same protocols. Mocks stay in place for tests and previews. Several phases depend on choices PRD section 11.4 still lists as open, so they start with a decision step and may be split further when we reach them.
+
+### Phase 19a: Threat model for real data
+
+- Revisit the Phase 0c threat model now that real storage, photos, a backend and payments are about to arrive. Add the concrete data flows and the controls each one needs.
+
+**Checkpoint:** Jose reviews the updated data map and the top risks.
+
+### Phase 19b: Privacy and compliance baseline
+
+- Draft privacy manifest, App Store privacy labels, the permission list with reasons, the privacy policy outline, and an App Review checklist we keep updating until release.
+- List the legal questions for a lawyer, for example whether weight and measurements count as health data under US state law.
+
+**Checkpoint:** Jose approves the baseline and decides when to get the legal review.
+
+### Phase 20a: Persistence spike
+
+- The PRD 11.7 recovery prototype: versioned fixtures, images, migrations, interrupted migrations, and two offline devices.
+
+**Checkpoint:** go or no-go on SwiftData.
+
+### Phase 20b: Backup and recovery design
+
+- Local backups, optional private iCloud sync, export and restore, and what happens after a failed migration or a lost device.
+
+**Checkpoint:** Jose approves the recovery design.
+
+### Phase 21a: Real local storage
+
+- Wire the chosen store in behind the existing protocols, with migrations from day one.
+
+**Checkpoint:** data survives relaunches and a schema change.
+
+### Phase 21b: Export, restore and recovery tests
+
+- Export and restore working, plus automated tests for corruption, failed migrations and restore.
+
+**Checkpoint:** wipe the app and restore a closet from a backup.
+
+### Phase 22a: Photo intake
+
+- PhotosUI and the camera, with permission flows.
+
+**Checkpoint:** add real garments from the library and the camera.
+
+### Phase 22b: Image storage and caching
+
+- Originals next to cutouts, thumbnails, the image cache, and disk-space handling.
+
+**Checkpoint:** a large real-photo closet stays smooth and the storage footprint is reasonable.
+
+### Phase 23a: Backend options
+
+- Compare hosting options, including Supabase, for the gateway, auth, the usage ledger and feedback, against the PRD's requirements.
+
+**Checkpoint:** Jose reads the comparison.
+
+### Phase 23b: Backend decision
+
+- Choose the stack, the environments (dev, staging, production) and the costs at expected usage.
+
+**Checkpoint:** Jose approves the stack and the monthly cost estimate.
+
+### Phase 24a: Gateway and identity
+
+- Gateway skeleton, user identity (Sign in with Apple where needed), device attestation, and request validation.
+
+**Checkpoint:** an authenticated request round-trips; bad requests are rejected.
+
+### Phase 24b: Limits and cost protection
+
+- Rate limits, the atomic usage ledger, cost reservations before any paid call, and a kill switch (PRD 11.6).
+
+**Checkpoint:** limits hold under deliberate abuse in a test.
+
+### Phase 24c: Authorization and account deletion
+
+- Row-level access rules with default deny, tests proving one user can't read another's data, and in-app account deletion that removes server data.
+
+**Checkpoint:** a cross-user access test fails as it should, and a deleted account leaves nothing behind.
+
+### Phase 25a: Secrets and credentials
+
+- AI provider keys only on the server, separate secrets per environment, rotation schedule, and least-privilege access for every service account.
+
+**Checkpoint:** a secrets review; nothing sensitive in the app bundle or any repo.
+
+### Phase 25b: Incident response
+
+- Written plan for a leaked key, a data exposure or a cost spike: who acts, how every key gets rotated, how paid features get switched off, and how users are told.
+
+**Checkpoint:** a rehearsal. Rotate one key and flip one kill switch, following the plan.
+
+### Phase 26: Network resilience
+
+- Timeouts, cancellation, bounded retries, offline mode, and handling of 401, 429 and 5xx responses (PRD 11.7).
+
+**Checkpoint:** every failure case forced against a test server.
+
+### Phase 27a: Cloud stylist
+
+- Provider adapter on the server, typed response validation, and server-side model configuration.
+
+**Checkpoint:** styling quality on Lily's saved scenarios.
+
+### Phase 27b: Token and cost efficiency
+
+- Prompt size budgets, caching safe repeat results, and cost tracking per request.
+
+**Checkpoint:** measured cost per styling request against the budget.
+
+### Phase 28: On-device stylist
+
+- Apple's on-device model on eligible devices, with the same response contract.
+
+**Checkpoint:** same scenarios on an eligible device and on the iPhone 12 fallback.
+
+### Phase 29: Weather
+
+- WeatherKit feeding the request and the Home windows.
+
+**Checkpoint:** live weather shows in the room and shapes suggestions.
+
+### Phase 30a: Subscription and paywall
+
+- StoreKit 2 subscription, free trial and the paywall, following Apple's rules for subscription wording.
+
+**Checkpoint:** sandbox purchase, restore, renewal and expiry.
+
+### Phase 30b: Complimentary unlock and credit packs
+
+- Offer-code unlock and consumable image-credit packs.
+
+**Checkpoint:** each purchase type in sandbox.
+
+### Phase 30c: Server-side verification and credit ledger
+
+- App Store Server Notifications, entitlement checks on the server, and the credit balance that the gateway enforces.
+
+**Checkpoint:** refunds, expiry and revoked purchases correctly remove access and credits.
+
+### Phase 31: Monitoring and analytics
+
+- Crash reporting, cost and usage alerts, and opt-in analytics only if they earn their place.
+
+**Checkpoint:** a forced crash and a forced cost spike both reach Jose.
+
+### Phase 32a: Scale and load testing
+
+- Load tests on the gateway, many concurrent users, and very large closets and histories on the device.
+
+**Checkpoint:** results against agreed limits.
+
+### Phase 32b: Security testing
+
+- Work through the OWASP MASVS (app) and ASVS (backend) checklists, run abuse tests at scale, and inspect the release build for secrets and sensitive data at rest.
+
+**Checkpoint:** every finding fixed or recorded as an approved exception.
+
+### Phase 33: Try-on pictures (gated)
+
+- Only after the PRD 9.2 checks pass and a provider is chosen. Will be split when we get here.
+
+**Checkpoint:** the PRD's go/no-go gates.
+
+### Phase 34: Find One (open question)
+
+- Only after the shopping direction is settled.
+
+### Phase 35a: Release audit
+
+- Full App Store Review Guidelines pass, accessibility audit, and privacy labels checked against what the app actually does.
+- Independent security review or penetration test of the app and backend, with findings fixed.
+- Legal review complete for privacy policy and sensitive data.
+
+**Checkpoint:** every item on the App Review checklist is done and the independent review is closed.
+
+### Phase 35b: Submission
+
+- App Store listing, review notes, demo account for reviewers, and submission.
+
+**Checkpoint:** Jose submits.
+
+## Progress log
+
+Add a dated line per phase: what was built, what Jose decided at the checkpoint, and anything carried forward.
+
+- 7 October 2026: plan drafted, then split into smaller phases with a shared definition of done. No app code yet.
+- 7 October 2026: two-repo setup and Git Flow decided. Security standard adopted with no corner-cutting; threat model moved up to Phase 0c, repo hardening added as Phase 1b, and authorization, incident response, security testing and an independent review added.
+- 7 October 2026: quick pattern scan of `closet` history found no committed secrets; here.now state is ignored. Jose to turn on secret scanning and push protection for `closet` (this repo is public; he's fine with Lily's details being in it).
+- 13 October 2026: Lily's mockup notes pulled (sign-off sheet in `prototypes/RoomDirectionMockups/feedback/signoff-2026-10-13.md`). Jose decided all design must be settled before the iOS build moves on, including her palette choice (a neutral, more grown-up palette study is under way). Phase 2a (design tokens) can't start until she has picked.
+- 13 October 2026: Lily picked the **warm neutral** palette and **Preferences** (replacing "Mode"), and approved the one-outfit, three-version results ("Perfect."). Jose decided the HTML mockups won't be updated further: the approved changes are specified in `prototypes/RoomDirectionMockups/feedback/signoff-2026-10-13.md` and get built straight into the native app. Phase 0b (PRD amendment) folds them in; Phase 2a takes its colours from `css/palette.css` (warm). Design is settled.
+- 13 October 2026: the app is named **Nifty Outfit Nook** (home-screen name "Outfit Nook"), replacing My Petite Style across the docs and mockups; the master PRD is now `Nifty_Outfit_Nook_PRD_v2.md`. The app repo will be `nifty-outfit-nook`. A quick screening found no exact App Store, GitHub or trademark match and the main domains apparently free; a proper trademark search stays in Phase 35a.
