@@ -481,3 +481,9 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - **Milestone:** `develop` was promoted to `main` (#10, security gate checklist in the PR, gitleaks clean on the full history).
   - **Promotions from now on:** the repo only allows squash merges, so `main` and `develop` no longer share history. Future promotions go through `scripts/promote.sh` (#11), which builds the PR on `main`.
   - **For the audit:** read `docs/models.md`. Whether to allow merge commits for promotions instead (a repo-settings call). Demo profile has no body measurements since the repo is public. When Release builds stop shipping sample data (Phase 20a). CI's build-and-test job now takes about 9–14 minutes.
+- 14 October 2026: **Phase 4 done** (jsayram/nifty-outfit-nook#12). The Home room is built from 16 mockup drawings turned into vector assets, recoloured into the warm palette with dark versions. The wardrobe and shelf switch tabs. The laptop, calendar, suitcase, hamper, drawers, name sign and Profile open stub screens. Her name on the sign is live text, and every tap target is a labelled VoiceOver button. 218 package tests and 12 UI tests pass. For the audit:
+  - The iPhone SE screen scrolls about 160 pt so the drawers keep 44 pt targets.
+  - An empty sign says "Hello".
+  - Room text stops growing at xxxLarge until 5b.
+  - The tab bar uses the espresso accent.
+  - The recolour reads richer than the mockup's filtered study (the desk is sage).
