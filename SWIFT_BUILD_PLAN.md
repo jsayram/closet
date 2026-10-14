@@ -543,3 +543,11 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - **Testing:** Vision's mask doesn't work on the simulator, so the real path returns `unsupported` there. On Jose's M1 Max a warm cutout takes about 105 ms.
   - **Proposed go criteria:** on the iPhone 12, warm median 1 s or less, p90 2 s or less, cold start 4 s or less, peak memory 300 MB or less, and at least 70% of cutouts usable.
   - **For the audit:** run the benchmark on Lily's iPhone 12 with about 20 real garment photos (steps in `docs/cutout-feasibility.md`) and make the call. Phase 22a must strip location from saved originals. The CI speed checks were hardened (best of 3, 3× allowance on CI).
+- 14 October 2026: **Phase 8b done** (jsayram/nifty-outfit-nook#20).
+  - **Choosing the picture:** one rule (`GarmentArtChoice`) shows a clean cutout as a sticker with a thick white outline and below-only shadow (`NookSticker`, made with Accelerate dilation and cached by picture, about 25 ms). Anything else gets a same-size rounded tile (`NookPhotoTile`). The sample drawings get the sticker treatment too. `GarmentPicture` draws every piece.
+  - **Where stickers show:** the Closet grid keeps the mockup's standing pieces, and stickers appear on detail and, from Phase 9, in looks.
+  - **Tests:** 540 package tests and 25 UI tests pass.
+  - **For the audit:**
+    - Compare stickers and tiles with `-fixtures demo:photos=samples`.
+    - The outline is a bit thicker than the mockup's, and slightly off-white in dark mode.
+    - Run the cutout benchmark on Lily's phone, which now shows each real garment as both a sticker and a tile, then set the cutout thresholds.
