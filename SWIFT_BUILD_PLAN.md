@@ -19,7 +19,7 @@ There is no deadline. The project has two goals of equal weight: an app Lily can
 Decided 7 October 2026.
 
 - **`closet` (this repo)** is the design and planning repo: PRD, research, mockups, Lily's review site, the old prototype, this plan, the playbook, the security standard and agent files. It uses `main` plus the occasional branch. `closet/mock` merges into `main` after Lily's review.
-- **The app repo, `nifty-outfit-nook` (new, private)** holds only the shipping iOS app: Xcode project, packages, tests, CI and the art assets the app uses. It has its own README and a short AGENTS.md that points back to `closet` for the spec.
+- **The app repo, `nifty-outfit-nook` (public, https://github.com/jsayram/nifty-outfit-nook)** holds the shipping iOS app (Xcode project, packages, tests, CI and the art assets the app uses) and the app's website in `website/` (static Cloudflare Pages site: landing page now, privacy policy and support pages before launch). It has its own README and a short AGENTS.md that points back to `closet` for the spec.
 - **The backend repo (private, decided in Phase 23)** holds the gateway, prompts, fit rules and infrastructure config. Prompts and business rules never go in the app repo.
 
 The app and backend repos use Git Flow:
@@ -77,7 +77,7 @@ Everything here runs on mock data behind protocols. No accounts, network or real
 
 - Classify every kind of data the PRD describes using the tiers in the security standard.
 - First data map and threat model for the whole system: what could go wrong for Lily, for Jose and for the services, and which controls cover each risk.
-- Account inventory: every service account, who owns it, and whether two-factor authentication is on.
+- Account inventory: every service account (GitHub, Apple Developer, Cloudflare, here.now and later the backend and AI providers), who owns it, and whether two-factor authentication is on.
 
 **Checkpoint:** Jose reviews the top risks and confirms two-factor authentication on every account.
 
@@ -272,6 +272,7 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 
 - Draft privacy manifest, App Store privacy labels, the permission list with reasons, the privacy policy outline, and an App Review checklist we keep updating until release.
 - List the legal questions for a lawyer, for example whether weight and measurements count as health data under US state law.
+- The privacy policy, terms and support page get published on the app's website (https://niftyoutfitnook.pages.dev/, Cloudflare Pages). App Store Connect requires a privacy policy URL and a support URL.
 
 **Checkpoint:** Jose approves the baseline and decides when to get the legal review.
 
@@ -440,6 +441,7 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 ### Phase 35b: Submission
 
 - App Store listing, review notes, demo account for reviewers, and submission.
+- Website ready: the landing page with real screenshots, and the privacy policy and support URLs used in App Store Connect.
 
 **Checkpoint:** Jose submits.
 
@@ -453,3 +455,8 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
 - 13 October 2026: Lily's mockup notes pulled (sign-off sheet in `prototypes/RoomDirectionMockups/feedback/signoff-2026-10-13.md`). Jose decided all design must be settled before the iOS build moves on, including her palette choice (a neutral, more grown-up palette study is under way). Phase 2a (design tokens) can't start until she has picked.
 - 13 October 2026: Lily picked the **warm neutral** palette and **Preferences** (replacing "Mode"), and approved the one-outfit, three-version results ("Perfect."). Jose decided the HTML mockups won't be updated further: the approved changes are specified in `prototypes/RoomDirectionMockups/feedback/signoff-2026-10-13.md` and get built straight into the native app. Phase 0b (PRD amendment) folds them in; Phase 2a takes its colours from `css/palette.css` (warm). Design is settled.
 - 13 October 2026: the app is named **Nifty Outfit Nook** (home-screen name "Outfit Nook"), replacing My Petite Style across the docs and mockups; the master PRD is now `Nifty_Outfit_Nook_PRD_v2.md`. The app repo will be `nifty-outfit-nook`. A quick screening found no exact App Store, GitHub or trademark match and the main domains apparently free; a proper trademark search stays in Phase 35a.
+- 13 October 2026: `nifty-outfit-nook` created with `main` and `develop`, then made **public** at Jose's request (no GitHub Pro; he wants it as a portfolio piece). This fits SECURITY_STANDARD.md section 3: a client repo may be public as long as every repo control is on and no business logic lives in it. So backend code, prompts, fit and styling rules, model config and any keys stay in the private backend repo, and the app repo holds only the client. Public repos get rulesets, secret scanning with push protection and Dependabot at no cost, so Phase 1b can turn all of them on.
+- 13 October 2026: Jose created the app website at https://niftyoutfitnook.pages.dev/ (Cloudflare Pages, "Coming soon" for now). It becomes the landing page with the app's screens, and hosts the privacy policy and support pages the App Store requires (Phases 19b and 35b). The Cloudflare account goes in the Phase 0c account inventory with two-factor authentication.
+- 13 October 2026: Phase 0a started in `nifty-outfit-nook` on `feature/00a-technical-decisions` (pushed). The proposed decisions note is `docs/decisions/0001-technical-decisions.md`, waiting on Jose's four answers (Lily's iOS version, bundle ID, snapshot-testing dependency, Apple Developer membership). Finding: Foundation Models needs an iPhone 15 Pro or later, so Lily's iPhone 12 always uses the cloud stylist and Phase 28 is an optional extra for newer phones.
+- 13 October 2026: **Phase 0a done.** Jose approved the decisions note (iOS 26.0 minimum since Lily is on 26+, bundle ID `com.jsayram.niftyoutfitnook`, `swift-snapshot-testing` approved for tests only, and he already has a paid Apple Developer membership from shipping Life Wrapped). Merged into `develop` as PR jsayram/nifty-outfit-nook#1 (squash), feature branch deleted. **Next: Phase 0b** (PRD amendment draft, including Lily's approved changes from the 13 October sign-off sheet), on `feature/00b-prd-amendment`. Repo protections are still off until Phase 1b, so work only on feature branches and merge through PRs.
+- 13 October 2026: the website source (`website/`, the Cloudflare Pages coming-soon page) moved from closet into `nifty-outfit-nook`, at Jose's request.
