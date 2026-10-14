@@ -521,3 +521,10 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - last worn is spoken by VoiceOver but not shown on the grid
   - the "Photos stay on this iPhone." line was left out
   - run `ClosetScrollPerformanceTests` on Lily's iPhone 12 to measure hitches
+- 14 October 2026: **Phase 7a done** (jsayram/nifty-outfit-nook#17). Garment detail shows:
+  - last worn, with a repeat-window note, and the suitcase names, which link to each suitcase
+  - the piece's facts and fit, and laundry marking with Undo
+  - Style with this, which offers "Style me with it" or "Make my own look"
+  - Remove from closet (LR-16), with both choices confirmed and an Undo toast
+
+  Recently deleted keeps pieces for 30 days, with Restore. 362 package tests and 20 UI tests pass. For the audit: the LR-18 fit and comfort lines live on 14a and 10a, not on detail. Deleting a piece also has Undo. "Delete permanently now" waits for 21a. Phase 13 must hide pieces she no longer owns from her suitcases (`isInCloset`).
