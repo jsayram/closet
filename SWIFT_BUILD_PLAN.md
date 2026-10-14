@@ -500,3 +500,14 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - Maya keeps her real apricot colours.
   - The full hamper starts at 6 pieces.
   - CI's build-and-test job has grown to about 18 minutes, so it should be trimmed.
+- 14 October 2026: **Phase 5b done** (jsayram/nifty-outfit-nook#14, #15).
+  - **Large text:** from AX1 to AX5, Home switches to the banner layout from `home-ax.html`, with uncapped text and a big row per action.
+  - **Sideways:** the phone uses `home-landscape.html`, with the room on the left and tiles beside it.
+  - **Dark mode:** the hamper and the night lamp glow were fixed.
+  - **CI:** split into parallel jobs, cutting it from about 18 to about 12 minutes. Nothing is cached and the required check names are unchanged.
+  - **Tests:** 274 package tests and 16 UI tests pass.
+  
+  For the audit:
+  - Home at AX3 and AX5, sideways, and the dark hamper and night lamp.
+  - The weather plate is left out of both layouts (LR-04).
+  - A CI run now uses five macOS runners, so back-to-back runs can queue.
