@@ -44,6 +44,15 @@ Verified 14 October 2026 (Nifty Outfit Nook, Phase 1b):
 ## 2. Design system
 Tokens, dark mode, Dynamic Type, component catalog, snapshot tests. *(Phase 2)*
 
+Verified 14 October 2026 with Xcode 26.6 (Nifty Outfit Nook, Phase 2a):
+- **Keep colour values in one Swift file and test the asset catalog against it.** A `Palette.swift` with every token's light and dark hex lets tests compute WCAG contrast without UIKit. Two tests keep the catalog honest: one decodes each `.colorset/Contents.json` (found through `#filePath`, which simulator tests can read, on CI too) and compares it with the palette; the other resolves the compiled colour through SwiftUI, `Color(name, bundle: .module).resolve(in: env)` with `env.colorScheme` set to `.light` and `.dark`, and compares `linearRed`, `linearGreen`, `linearBlue` and `opacity` with the palette after converting to linear sRGB (tolerance 0.004). Change one channel in a colour set to prove both fail.
+- **Xcode generates asset symbols for a package's asset catalog too.** A colour set named `background` gives the module a `ColorResource.background`, so `Color(.background)` becomes ambiguous if your own token enum has a `background` case. Give your initializer a label (`Color(token: .background)`).
+- **Main-actor default isolation reaches extensions on SwiftUI types.** With `.defaultIsolation(MainActor.self)`, a `Color` initializer or `static let` added in an extension is main-actor isolated, and a `nonisolated` token struct can't call it. Mark those members `nonisolated`. `Color(_:bundle: .module)` itself is fine to call from them.
+- **Check contrast on what's actually under a see-through tint.** Blend the tint over each opaque colour it sits on (both ends of a gradient, the floor) before measuring, and list every pairing the design relies on as data, so the test covers new pairings by adding a line.
+- **A shadow that falls only below needs more than `.shadow`.** SwiftUI's shadow has no spread, so CSS like `0 10px 16px -12px` becomes a halo all round. Draw it as a background: the same shape inset by the spread, offset down, blurred by half the CSS blur, and masked with the shape punched out (`ZStack { Rectangle().padding(-n); shape.blendMode(.destinationOut) }.compositingGroup()`) so a see-through fill on top stays clean. It doesn't change layout.
+- **Map text roles to Dynamic Type styles and test the default sizes.** `UIFont.preferredFont(forTextStyle:compatibleWith:)` at `.large` gives each style's default size, so a test can hold every role within a couple of points of the mockup. The smallest styles don't shrink below 11 pt at `.extraSmall`, so test growth upward only.
+- **System font designs need no licence check.** `.rounded` (SF Pro Rounded) and `.serif` (New York) come with `Font.system(_:design:weight:)` and scale with Dynamic Type. Nothing is bundled.
+
 ## 3. Models and mock data
 Protocol boundaries, fixture sets (empty, typical, huge, failing), previews. *(Phase 3)*
 
