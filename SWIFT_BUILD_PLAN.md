@@ -487,3 +487,16 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - Room text stops growing at xxxLarge until 5b.
   - The tab bar uses the espresso accent.
   - The recolour reads richer than the mockup's filtered study (the desk is sage).
+- 14 October 2026: **Phase 5a done** (jsayram/nifty-outfit-nook#13).
+  - **Weather windows:** six of them (sun, cloudy, rain, snow, night, unknown), and the lamp glows at night.
+  - **Hamper:** off, empty, a small heap and a full heap. When tracking is off, tapping it offers to turn tracking on.
+  - **Maya:** asleep on the rug. Her z's stay visible but still under Reduce Motion.
+  - **Weather sheet:** per LR-04 the weather row lives on Style Me, so its use / indoors / ignore sheet sits on Style Me's stand-in. Home only shows the window.
+  - **Launch flags:** `-fixtures demo:weather=snow:laundry=full`.
+  - **Tests:** 260 package tests and 14 UI tests pass.
+  
+  For the audit:
+  - Window skies keep a faint blue so sun and cloud stay distinct.
+  - Maya keeps her real apricot colours.
+  - The full hamper starts at 6 pieces.
+  - CI's build-and-test job has grown to about 18 minutes, so it should be trimmed.
