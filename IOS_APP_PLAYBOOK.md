@@ -115,6 +115,7 @@ Verified 14 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit
 - **A button label built with `ViewThatFits` can stack inside an `HStack`.** Next to a picture, the button put its icon above its title even though the row had room, because the stack measured it narrowly first. `.fixedSize(horizontal: true, vertical: false)` on the button (only below the accessibility sizes) kept the icon beside the words.
 - **A pushed detail's `.task` runs again when you come back to it.** After Edit saved and popped, the detail under it showed the new name with no reload callback; a UI test checks it.
 - **Hiding the back button stops the swipe back too.** With `.navigationBarBackButtonHidden(true)` and our own Cancel, neither an edge swipe nor a swipe from mid-screen left the form on iOS 26, so unsaved work can only be left through Cancel and its question.
+- **Don't assert on a short toast in a UI test that runs on CI.** Locally the "Changes saved" toast was found at once; on the `macos-26` runner XCUITest spent about 9 seconds waiting for the app to settle after Save, and the 4 second toast had gone. Check the lasting result (the grid, the detail's title) instead, or give the toast's action a longer life.
 - **XCUITest taps a text field where it is, so the cursor can land at the start.** Deleting `value.count` characters after `field.tap()` deleted nothing and the new text went in front. `field.coordinate(withNormalizedOffset: CGVector(dx: 0.97, dy: 0.5)).tap()` puts the cursor at the end first.
 
 ## 3. Models and mock data
