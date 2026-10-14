@@ -81,6 +81,8 @@ Everything here runs on mock data behind protocols. No accounts, network or real
 
 **Checkpoint:** Jose reviews the top risks and confirms two-factor authentication on every account.
 
+Outputs: [DATA_MAP.md](DATA_MAP.md), [THREAT_MODEL.md](THREAT_MODEL.md) and [ACCOUNT_INVENTORY.md](ACCOUNT_INVENTORY.md).
+
 ### Phase 1a: Project skeleton
 
 - Xcode project generated from `project.yml`, the local packages, build and test scripts, and separate Debug/Release configurations.
