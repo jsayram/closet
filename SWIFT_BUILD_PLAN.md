@@ -473,3 +473,11 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - empty, loading, error and offline states, a segmented switch, toasts and badges
   
   Each keeps 44pt targets, VoiceOver traits, Reduce Motion, dark mode and AX5 reflow. A debug-only catalog opens with `-catalog`, and `scripts/check-release.sh` proves Release has no catalog or snapshot code. `swift-snapshot-testing` 1.19.6 is pinned and test-only (vetting in `docs/decisions/0002-snapshot-testing.md`). The 44 snapshots render through `ImageRenderer`, since the library's renderer lost the shadows. For the audit: the catalog next to `results.html`, and the AX5 snapshot images.
+- 14 October 2026: **Phase 3 done** (jsayram/nifty-outfit-nook#9).
+  - **Models:** Garment, Look (one result in three versions plus an optional unowned idea), Suitcase, Profile and Preferences, StyleRequest and the stylist outcomes, each field tagged with its data tier.
+  - **Rules:** pure functions with tests.
+  - **Stores:** async protocols in `NookServices`.
+  - **Fixtures:** in-memory stores with the empty, demo (21 garments) and large (2,400, seeded) sets, plus offline, slow, failing and partial modes (`-fixtures demo:offline`). The mock stylist only matches stored facts. 187 unit tests and 10 UI tests pass.
+  - **Milestone:** `develop` was promoted to `main` (#10, security gate checklist in the PR, gitleaks clean on the full history).
+  - **Promotions from now on:** the repo only allows squash merges, so `main` and `develop` no longer share history. Future promotions go through `scripts/promote.sh` (#11), which builds the PR on `main`.
+  - **For the audit:** read `docs/models.md`. Whether to allow merge commits for promotions instead (a repo-settings call). Demo profile has no body measurements since the repo is public. When Release builds stop shipping sample data (Phase 20a). CI's build-and-test job now takes about 9–14 minutes.
