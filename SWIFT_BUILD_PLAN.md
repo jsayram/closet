@@ -528,3 +528,13 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - Remove from closet (LR-16), with both choices confirmed and an Undo toast
 
   Recently deleted keeps pieces for 30 days, with Restore. 362 package tests and 20 UI tests pass. For the audit: the LR-18 fit and comfort lines live on 14a and 10a, not on detail. Deleting a piece also has Undo. "Delete permanently now" waits for 21a. Phase 13 must hide pieces she no longer owns from her suitcases (`isInCloset`).
+- 14 October 2026: **Phase 7b done** (jsayram/nifty-outfit-nook#18).
+  - **Add a piece:** four photo entry points, all stand-ins with no camera, Photos access or permission strings, then a validated details form.
+  - **Describe in words:** an on-phone word matcher that sends nothing and holds no style rules.
+  - **Edit:** uses the same form.
+  - **Drafts:** recovered through `DraftStore` ("Continue where you left off?"). In Stage A drafts are kept in memory only, because a draft can hold Sensitive words and Phase 18 comes before the storage phases. Phase 21a gives `DraftStore` real storage. `-fixtures demo:draft=add|edit` seeds a draft.
+  - **Tests:** 443 package tests and 23 UI tests pass.
+  - **For the audit:**
+    - A kind is required as well as a name.
+    - LR-12 and LR-13 aren't in the form (reasons in `docs/add-a-piece.md`).
+    - Two large-closet speed checks went over their limit once on a slow CI runner, so their bounds may need loosening for CI.
