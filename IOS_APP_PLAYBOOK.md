@@ -16,6 +16,14 @@ Separate repos for design and planning, the app, and the private backend. Git Fl
 ## 1. Project setup
 Project generation, package layout, configurations, language mode, lint and format. *(Phase 0a, 1a)*
 
+Verified 13 October 2026 with Xcode 26.6 (Nifty Outfit Nook, Phase 1a):
+- **A hand-written project file works.** With `objectVersion = 77`, each source folder is one `PBXFileSystemSynchronizedRootGroup` listed in the target's `fileSystemSynchronizedGroups`, and the Sources and Resources build phases stay empty. Put build settings in xcconfig files (`baseConfigurationReference`) so the project file stays small. Check it with `xcodebuild -list` and a real build.
+- **Add a local package as a folder reference, not an `XCLocalSwiftPackageReference`.** Use a `PBXFileReference` with `lastKnownFileType = wrapper` and `path = Packages/<Name>`, and product dependencies without a `package` field. With `XCLocalSwiftPackageReference`, Xcode built the package with `-suppress-warnings` (which clashes with warnings-as-errors) and silently skipped the package's test targets in the scheme and test plan.
+- **Run package tests through a test plan.** Each package test target appears as `{"containerPath": "container:Packages/<Name>", "identifier": "<TestTarget>", "name": "<TestTarget>"}`. The app scheme's test action then runs the package tests and the UI tests together on a simulator, which matters when the package is iOS-only and `swift test` can't run on the Mac.
+- **Warnings as errors:** set `SWIFT_TREAT_WARNINGS_AS_ERRORS = YES` in the project xcconfig and `.treatAllWarnings(as: .error)` (Swift 6.2 tools) in `Package.swift`. Don't pass it on the `xcodebuild` command line, because that reaches package targets too and can clash with `-suppress-warnings`. Prove it works by adding a warning on purpose.
+- **Data Protection** goes in the entitlements file as `com.apple.developer.default-data-protection = NSFileProtectionComplete`. A simulator build shows it in the `*-Simulated.xcent` file under DerivedData, not in `codesign -d --entitlements`.
+- With `defaultIsolation(MainActor.self)` on a module, its test target also needs `@MainActor` on tests that touch that module's types, or `#expect` fails to compile.
+
 ## 2. Design system
 Tokens, dark mode, Dynamic Type, component catalog, snapshot tests. *(Phase 2)*
 
