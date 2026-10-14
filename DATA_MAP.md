@@ -186,7 +186,7 @@ flowchart LR
 
 The app holds no real data yet, but two places already hold personal information about Lily, and both are public:
 
-- **This planning repo is public.** The PRD, the feedback files, the amendment and the old prototype quote Lily and include some of her body and personal details. Under section 1 of the standard, some of that is Sensitive, and Sensitive data should not be in a public repo. Jose needs to decide how to handle it; see risk R1 in [THREAT_MODEL.md](THREAT_MODEL.md). Deleting files now does not remove them from git history or from copies already made.
+- **This planning repo is public.** The PRD, the feedback files, the amendment and the old prototype quote Lily and include some of her body and personal details. Under section 1 of the standard, some of that is Sensitive, and Sensitive data should not be in a public repo. Jose accepted this on 7 October 2026 (risk R1 in [THREAT_MODEL.md](THREAT_MODEL.md)). New docs keep body and health details out where they aren't needed.
 - **The mockup review site on here.now** stores Lily's review notes. Anyone with the link can read and add notes; changing or deleting them needs the owner key.
 
 From now on, new planning docs should describe Lily's needs without her body or health details, and should refer to "the primary user" where a detail isn't needed.
