@@ -538,3 +538,8 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - A kind is required as well as a name.
     - LR-12 and LR-13 aren't in the form (reasons in `docs/add-a-piece.md`).
     - Two large-closet speed checks went over their limit once on a slow CI runner, so their bounds may need loosening for CI.
+- 14 October 2026: **Phase 8a built; the go/no-go is waiting on Jose** (jsayram/nifty-outfit-nook#19).
+  - **What's in:** `CutoutService` uses Vision's foreground mask in a new `Services` module, with Apple frameworks only, no metadata in the output and quality signals. Stage A uses a stand-in. A debug-only benchmark opens with `-cutout-bench` and uses PhotosPicker, which needs no permission. Release is checked to contain none of it.
+  - **Testing:** Vision's mask doesn't work on the simulator, so the real path returns `unsupported` there. On Jose's M1 Max a warm cutout takes about 105 ms.
+  - **Proposed go criteria:** on the iPhone 12, warm median 1 s or less, p90 2 s or less, cold start 4 s or less, peak memory 300 MB or less, and at least 70% of cutouts usable.
+  - **For the audit:** run the benchmark on Lily's iPhone 12 with about 20 real garment photos (steps in `docs/cutout-feasibility.md`) and make the call. Phase 22a must strip location from saved originals. The CI speed checks were hardened (best of 3, 3× allowance on CI).
