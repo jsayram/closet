@@ -511,3 +511,13 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - Home at AX3 and AX5, sideways, and the dark hamper and night lamp.
   - The weather plate is left out of both layouts (LR-04).
   - A CI run now uses five macOS runners, so back-to-back runs can queue.
+- 14 October 2026: **Phase 6 done** (jsayram/nifty-outfit-nook#16). The Closet has:
+  - the wall header, a search with a 250 ms wait that matches every word, and filters for piece, colour, suitcase and dirty (`GarmentFilter`)
+  - Suitcases and Laundry tiles, a lazy grid of colour-matched placeholder pictures loaded through `ImageProvider` with a cache, and a "Recently deleted" entry
+  - loading, error, empty and no-match states, with filters folding behind a button at AX sizes
+
+  With 2,400 pieces the grid prepares in 48 ms. 318 package tests and 18 UI tests pass. For the audit:
+  - browse `demo`, `empty`, `large` and `demo:laundry=some` at AX5 and in dark
+  - last worn is spoken by VoiceOver but not shown on the grid
+  - the "Photos stay on this iPhone." line was left out
+  - run `ClosetScrollPerformanceTests` on Lily's iPhone 12 to measure hitches
