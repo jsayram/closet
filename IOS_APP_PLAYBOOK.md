@@ -125,6 +125,11 @@ Verified 14 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit
 - **Search for free space nearest first and stop at the first fit.** A full grid scan for a leftover piece took about 10 ms per six-piece look in Debug, too slow for a list of thumbnails. Candidate offsets precomputed once and sorted by distance from where that kind usually goes, with an early exit, took it to about 0.1 ms.
 - **A lower module's catalog can take pages from a higher one.** The design system's debug catalog takes `extraPages: [Page]` (an id, a title and an `AnyView`); the app target passes the Features page that draws garments. The design system stays free of models, and a Release-build symbol check covers the new page's type names too.
 
+Verified 14 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 10a, a request form with small sheets):
+- **At AX5 a sheet's one-word title can break beside its Close button.** "Preferences" in the serif title style came out as "Prefer-ences" on a 402-point phone, with the Close button taking its share of the row. Putting Close on its own line above the title at the accessibility sizes (and beside it otherwise) gave the title the full width; the catalog's AX5 sheet snapshot shows the change.
+- **A screen pushed from more than one tab can push its own next screen.** Style Me is pushed from Home's stack and from Closet's, each with its own path type. `.navigationDestination(item:)` inside Style Me shows the results in whichever stack it's in, and the ways out that belong to the parent (Add a piece, Suitcases) come in as closures. UI tests cover both routes.
+- **Opening a screen on a sheet breaks tests that tap Back.** Once the calendar opened Style Me with its Occasion sheet up, two existing UI tests that tapped the navigation bar's first button failed with "No way back": the sheet covered the bar. Close the sheet first (its Close button), then go back.
+
 ## 3. Models and mock data
 Protocol boundaries, fixture sets (empty, typical, huge, failing), previews. *(Phase 3)*
 
@@ -142,6 +147,10 @@ Verified 14 October 2026 with Xcode 26.6 and Swift 6.3 (Nifty Outfit Nook, Phase
 Verified 14 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 7b, form drafts before real storage):
 - **Put drafts behind a protocol before there's storage.** A `DraftStore` (`drafts`, `draft(for:)`, `save`, `discard`, one draft per target) with an in-memory actor let the whole draft flow be built and tested before persistence was decided. The form writes the draft half a second after the last change (a cancellable task, with a `settleDraft()` for tests and a write counter to check the pause) and at once on any `scenePhase` other than `.active`, so nothing depends on a termination callback. Writing a draft with no changes removes it, so undoing every edit leaves nothing to resume.
 - **Test "the app was closed" without a disk.** A unit test builds a second screen model on the same store and expects "Continue where you left off?". The UI test terminates the app and relaunches with a launch option that seeds the same draft (`-fixtures demo:draft=add`), having typed the same words before closing. When real storage arrives, only the store changes.
+
+Verified 14 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 10a, checking a styling request before it's sent):
+- **Check a paid request on the phone with a pure builder, and test it against the next step.** A builder that takes the closet, suitcases, saved preferences and the date and returns blocking issues, warnings and the request made it cheap to re-check on every tap. One test ran 2,688 combinations (sources of every size, starting pieces in every state, both piece modes, laundry on and off, colour wishes, weather choices) and checked that Style me is allowed exactly when a request is built and that every built request passes the context builder the stylist uses. Pair it with a test that reads the words for a few real fixture cases: a piece that is both archived and outside the suitcase has two reasons, and the screen must pick the one she'd recognise.
+- **Prove "opening sends nothing" with a counting stub.** Swapping the services bundle's stylist for a small actor that counts calls let a unit test open the screen, change options, build the request and assert zero calls (RD-02.1), with no UI test needed.
 
 ## 4. Testing strategy
 What gets unit, integration, UI and snapshot tests, and keeping the suite fast. *(All phases)*
