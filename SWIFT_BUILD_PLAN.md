@@ -551,3 +551,12 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - Compare stickers and tiles with `-fixtures demo:photos=samples`.
     - The outline is a bit thicker than the mockup's, and slightly off-white in dark mode.
     - Run the cutout benchmark on Lily's phone, which now shows each real garment as both a sticker and a tile, then set the cutout thresholds.
+- 14 October 2026: **Phase 9 done** (jsayram/nifty-outfit-nook#21).
+  - **Layout:** `StickerBundleLayout` places 2 to 6 pieces in the mockup's 300 × 356 box. Tilts are seeded by look ID and stay the same between launches, and shoes sit over the hems.
+  - **Bundle:** `LookBundle` comes in large, medium and thumbnail sizes. A piece she doesn't own gets a soft "Not in your closet" tag. VoiceOver reads the look as one element, with the pieces in a rotor.
+  - **Piece list:** `LookPieceList` shows Find one and "Same as Simple".
+  - **Tests:** all 1,708 piece mixes were tested for bounds, overlap and determinism. 578 package tests and 26 UI tests pass.
+  - **For the audit:**
+    - The look-bundles page at the end of `-catalog`.
+    - Shoes look small because the drawn shoe is a single loafer.
+    - `HomeTests` failed once on CI on a suitcase tap and passed on rerun, so watch for flakiness.
