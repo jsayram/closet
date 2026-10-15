@@ -592,3 +592,14 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - Olive counts as a neutral.
     - Saving a changed look makes a new look.
     - Your own look doesn't need shoes.
+- 15 October 2026: **Phase 12a done** (jsayram/nifty-outfit-nook#26).
+  - **Saved Looks:** a Looks / Pictures switch, search, piece and colour filters, a lazy grid of bundles, "+ Make your own", and empty, no-match, loading and error states.
+  - **Look detail:** Wear today, Swap, Try it on (stub), Rename, a piece list linking to each garment, and Delete with Undo. Pieces she has removed show faded with "Swap it".
+  - **Home:** the shelf frames show the three newest saved looks.
+  - **Tests:** 824 package tests pass, and 41 of 42 UI tests pass locally. The Swap UI test fails locally on `develop` too but passes on CI.
+  - **For the audit:**
+    - Swapping a saved look edits it in place.
+    - Delete has no confirmation, only Undo.
+    - Rename replaced Ask stylist on detail.
+    - The shelf frames' tap areas are about 36 pt, under 44 pt.
+    - CI's `ui-rest` job took about 29 minutes, which needs trimming.
