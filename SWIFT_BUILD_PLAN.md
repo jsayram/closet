@@ -664,3 +664,16 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - The upright room leaves out the mockup's Style Me panel (RD-01.6).
     - Suitcases and Laundry still use their phone pages on iPad.
     - CI is back to about 30 minutes, and `docs/ipad.md` wrongly says it didn't grow.
+- 15 October 2026: **Phase 15b done** (jsayram/nifty-outfit-nook#33).
+  - **Your looks:** shows the look and its pieces side by side on iPad.
+  - **Saved Looks:** a sidebar, a grid and the detail beside it (each tab keeps its own selection).
+  - **Style Me, Swap, and Make your own look:** use two panes when the iPad is sideways.
+  - **Other screens:** every other screen sits in a centred 640 pt column.
+  - **Sheets:** they're fitted to their content.
+  - **Fixed:** a crash when switching Looks/Pictures with a detail open.
+  - **CI:** iPad UI tests have their own job, and the whole check takes about 21–26 minutes.
+  - **Tests:** 1,055 package tests, 52 iPhone UI tests and 5 iPad UI tests pass.
+  - **For the audit:**
+    - Every main screen on iPad.
+    - Suitcases and Profile keep the wall on top rather than beside.
+    - Keyboard shortcuts (⌘F, Esc) weren't added, because simulated keys didn't trigger them, so they need a real iPad keyboard.
