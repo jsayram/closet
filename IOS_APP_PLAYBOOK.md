@@ -151,6 +151,11 @@ Verified 15 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit
 - **Hide a sensitive image with `scenePhase`, and snapshot the hidden state.** A view that draws a plain backdrop while `scenePhase != .active` keeps the picture out of the app switcher's snapshot. Setting `.environment(\.scenePhase, .inactive)` in a snapshot test records the hidden version, and `.active` must then be set for the normal images. We checked the hidden drawing in snapshots, not yet in the app switcher on a device.
 - **Snapshot tests don't show what a half-height sheet hides.** The Try it on sheet's snapshot showed the picture and both buttons, but on the simulator the half-height sheet cut off the second button, and a throwaway screenshot test couldn't tap it. A sheet whose main content is a picture plus actions opens full height (`detents: [.large]`).
 
+Verified 15 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 14a, a settings screen with number entry for body measurements):
+- **A row's chevron column can break long words at AX5 even with the icon on top.** "Fit and measurements" came out as "measure-ments" on a 402-point phone. Putting the chevron on the icon's line at the accessibility sizes, and trimming the page's side padding there, gave the words the full width. A screen title in the display style broke the same way; stepping it down one text style at the accessibility sizes fixed it. Look at every AX5 snapshot for hyphens that aren't in the words.
+- **Spoken units come from `Measurement.formatted`.** `.measurement(width: .wide, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(0...1)))` gives "27.5 inches" and "4 feet 11 inches" for `accessibilityValue`, while `.abbreviated` gives "27.5 in" for the screen. Pass the locale in, so tests can pin it; en_US spells "centimeters".
+- **Make number entry forgiving and its error honest.** Accept the region's decimal mark and a point, trim spaces, reject signs, letters and a second mark, and treat an empty box as "no value", never zero. Round the accepted range inwards to whole numbers in her units for the error line, and test that both shown ends save, so the app never refuses a number it just offered.
+
 ## 3. Models and mock data
 Protocol boundaries, fixture sets (empty, typical, huge, failing), previews. *(Phase 3)*
 
@@ -204,6 +209,11 @@ Checks that run on every screen. *(All UI phases)*
 
 ## 6. Privacy and security baseline
 Data classification, data map, threat model, account inventory, privacy manifest, permissions, legal review. *(Phases 0c, 1b, 19, 24c, 25, 32b, 35a)*
+
+Verified 15 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 14a):
+- **Check the app switcher's snapshot on the simulator by reading the file iOS keeps.** After pressing Home (`XCUIDevice.shared.press(.home)` in a throwaway UI test), the snapshot is in the app's data container (`xcrun simctl get_app_container <udid> <bundle id> data`) under `Library/SplashBoard/Snapshots/sceneID:<bundle id>-…/`, as `.ktx` files in light and dark. `sips -s format png <file> --out <png>` converts them. Only the latest state is kept, so check one state per run. This is how we confirmed that a cover shown while `scenePhase != .active` is what iOS keeps.
+- **A cover over a scrolling screen must run under the bars.** The first check showed the measurements' section header and the units switch through the iOS 26 navigation bar's blur: the overlay sat inside the safe area while the scroll view's content ran under the bar. `.ignoresSafeArea()` on the cover fixed it.
+- **Make a Sensitive value type unprintable.** `CustomStringConvertible` and `CustomDebugStringConvertible` returning "redacted" plus `CustomReflectable` with no children means `print`, string interpolation, `String(reflecting:)` and `dump` show no values. A unit test checks each one, so a later log line can't leak body measurements by accident.
 
 ## 7. Local data, backups and recovery
 Persistence choice, migrations, export and restore, iCloud. *(Phases 20–21)*
