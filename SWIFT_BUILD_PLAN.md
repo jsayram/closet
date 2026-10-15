@@ -654,3 +654,13 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - The privacy and terms pages don't exist yet (19b).
     - We need a support or feedback channel.
     - A CI UI job takes about 24 minutes again.
+- 15 October 2026: **Phase 15a done** (jsayram/nifty-outfit-nook#32). Layout is now decided by the window, not the device, in one place (`WindowLayout`).
+  - **Tab bar:** on iPad it sits at the bottom. This is a workaround that tells the tab view it has a compact width.
+  - **Home:** a wide room in landscape and a tall room in portrait (`RoomPlan`).
+  - **Closet:** a sidebar, the grid and the selected piece side by side. Narrow windows and AX sizes fall back to the phone layouts.
+  - **Tests:** 1,033 package tests and 52 iPhone UI tests pass, plus 3 iPad UI tests that run on CI.
+  - **For the audit:**
+    - Home and Closet on iPad in both orientations and in a narrow window.
+    - The upright room leaves out the mockup's Style Me panel (RD-01.6).
+    - Suitcases and Laundry still use their phone pages on iPad.
+    - CI is back to about 30 minutes, and `docs/ipad.md` wrongly says it didn't grow.
