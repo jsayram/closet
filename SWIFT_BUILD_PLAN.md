@@ -603,3 +603,13 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - Rename replaced Ask stylist on detail.
     - The shelf frames' tap areas are about 36 pt, under 44 pt.
     - CI's `ui-rest` job took about 29 minutes, which needs trimming.
+- 15 October 2026: **Phase 12b done** (jsayram/nifty-outfit-nook#27, #28).
+  - **CI:** the UI jobs were rebalanced and catalog tests now jump straight to their page (`-catalog-page`), so the check takes about 20 minutes instead of 29.
+  - **Try it on:** first explains that the picture is simulated, then makes a picture of the look's pieces with a "Simulated" badge. It shows no person and uses no network, camera or Photos. Pictures are saved through `TryOnPictureStore`.
+  - **Pictures:** a Pictures tab, picture detail (See the look, Delete with Undo) and a list of pictures on each look.
+  - **Tests:** 871 package tests and 44 UI tests pass.
+  - **For the audit:**
+    - Deleting a look keeps its pictures (PRD §7.5, §9.2.4).
+    - Try it on from Your looks saves the look first.
+    - An existing picture of the same look is offered first.
+    - Check on a device that pictures are hidden in the app switcher.
