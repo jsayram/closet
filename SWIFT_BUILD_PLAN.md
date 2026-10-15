@@ -582,3 +582,13 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - An absent version is dropped from the switch, and a banner explains why.
     - The "looks will wait here" line is gone.
     - Home UI tests flaked twice on CI and passed on rerun, so stabilising UI tests is now worth a pass.
+- 15 October 2026: **Phase 11 done** (jsayram/nifty-outfit-nook#24, #25).
+  - **UI test stability (#24):** UI tests now wait on screen state instead of sleeping. CI reruns a failed UI test once, documented as a workaround for flaky CI machines.
+  - **Swap a piece:** shows an explanation line, 3 options with Show 3 more, then See all (weaker matches marked "May not match"), plus Find one, Remove and Undo. Ranking only uses stored facts.
+  - **Make your own look:** covers Style with this and "+ Make your own", with one piece of each kind, Undo and Redo, a named save, and a draft that survives a relaunch.
+  - **Toasts:** the toast on garment detail now sits above the tab bar.
+  - **For the audit:**
+    - The demo Office look shows mostly "May not match" tops.
+    - Olive counts as a neutral.
+    - Saving a changed look makes a new look.
+    - Your own look doesn't need shoes.
