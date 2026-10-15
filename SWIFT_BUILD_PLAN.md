@@ -613,3 +613,17 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - Try it on from Your looks saves the look first.
     - An existing picture of the same look is offered first.
     - Check on a device that pictures are hidden in the app switcher.
+- 15 October 2026: **Phase 13 done** (jsayram/nifty-outfit-nook#29).
+  - **Suitcases:** three favourites (the most recently used) in an entry hall, See all with search and Archived, "+ Add a suitcase" always in the bar, and five suitcase pictures.
+  - **One suitcase:** packing that reuses Closet's filters, plus Style me from this suitcase, set as source, rename, archive, and delete with Undo. Pieces she no longer owns are hidden.
+  - **Garment detail:** an Add to a suitcase sheet.
+  - **Laundry:** clean one, clean selected or mark all clean, each with Undo. Style Me skips pieces in the wash.
+  - **Remembered choices:** Home's suitcase and calendar show the remembered source and occasion.
+  - **Tests:** 928 package tests and 45 UI tests pass.
+  - **For the audit:**
+    - Home's suitcase and hamper open on the Closet tab, so Back goes to Closet.
+    - Suitcase pictures are shapes, not colours.
+    - Delete suitcase relies on Undo only.
+    - Look at the four new suitcase drawings.
+    - Laundry can't be turned off until 14b.
+    - The remembered source and occasion reset on quit until 21a.
