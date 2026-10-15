@@ -560,3 +560,16 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - The look-bundles page at the end of `-catalog`.
     - Shoes look small because the drawn shoe is a single loafer.
     - `HomeTests` failed once on CI on a suitcase tap and passed on rerun, so watch for flakiness.
+- 14 October 2026: **Phase 10a done** (jsayram/nifty-outfit-nook#22).
+  - **Request check:** `StyleRequestBuilder` (tested over 2,688 combinations) checks Lily's choices against her closet. `ColorWish` is added.
+  - **Screen:** Source, Occasion and Starting piece, then Weather, Comfort (with the LR-18 line), Colour and Preferences, and one Style me button.
+  - **Entry points:** the laptop, the calendar (opens on Occasion) and "Style me with it".
+  - **Blocked states:** empty closet, empty or small suitcase, a starting piece that can't be used, and unreadable weather.
+  - **Style me:** opens a stand-in that shows the request, plus its JSON in Debug.
+  - **Tests:** 650 package tests and 31 UI tests pass.
+  - **For the audit** (see `docs/style-me.md`):
+    1. An empty closet can't style, though PRD §8.1 allows labelled ideas.
+    2. Occasion resets to Office each time.
+    3. Preferences changed here apply to that request only.
+    4. The app spells it "Colour"; the amendment says "Color".
+    5. A suitcase warns below 6 usable pieces and blocks below 2.
