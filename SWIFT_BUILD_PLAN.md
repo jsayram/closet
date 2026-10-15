@@ -627,3 +627,14 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - Look at the four new suitcase drawings.
     - Laundry can't be turned off until 14b.
     - The remembered source and occasion reset on quit until 21a.
+- 15 October 2026: **Phase 14a done** (jsayram/nifty-outfit-nook#30).
+  - **Profile:** the name on the sign updates Home live, and Preferences and the repeat setting (1 week) live here.
+  - **Fit and measurements:** usual fit (LR-18 wording) and optional measurements, with the units following the region until she picks. Values are range-checked in her units, and the LR-13 example shows only while she has none.
+  - **Try-on photo sheet:** an example photo only, with no camera or Photos access.
+  - **Privacy:** the Fit screens are covered in the app switcher (checked on the simulator's saved snapshots), and body measurements can't be printed.
+  - **Tests:** 971 package tests and 48 UI tests pass.
+  - **For the audit:**
+    - There's no Confirm step on measurements.
+    - The mockup's size-guess line was dropped (the PRD forbids it).
+    - Weight isn't promised "never shared".
+    - The UK defaults to inches and pounds.
