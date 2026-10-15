@@ -638,3 +638,19 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - The mockup's size-guess line was dropped (the PRD forbids it).
     - Weight isn't promised "never shared".
     - The UK defaults to inches and pounds.
+- 15 October 2026: **Phase 14b done** (jsayram/nifty-outfit-nook#31).
+  - **Track laundry:** a switch that keeps dirty marks when turned off.
+  - **Accessibility:** shows the system settings, with no in-app options.
+  - **Help:** eight offline topics.
+  - **Send feedback:** goes through the share sheet. App details are off by default and she sees the exact text before sending.
+  - **Privacy and terms:** a plain summary, plus the website's `/privacy` and `/terms` links in an in-app Safari view.
+  - **Delete my data:** confirmed in two steps, it wipes every store and rebuilds the app; the service is ready for 24c.
+  - **Home:** the desk drawers open Help, Send feedback, and Privacy and terms.
+  - **Tests:** 1,006 package tests and 52 UI tests pass.
+  - **For the audit:**
+    - App tours stay hidden until 16b.
+    - Feedback has no reply-email field.
+    - Delete uses a two-step confirm, not typing to confirm.
+    - The privacy and terms pages don't exist yet (19b).
+    - We need a support or feedback channel.
+    - A CI UI job takes about 24 minutes again.
