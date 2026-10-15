@@ -573,3 +573,12 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     3. Preferences changed here apply to that request only.
     4. The app spells it "Colour"; the amendment says "Color".
     5. A suitcase warns below 6 usable pieces and blocks below 2.
+- 15 October 2026: **Phase 10b done** (jsayram/nifty-outfit-nook#23).
+  - **Your looks:** Today and Saved tabs. One outfit comes in three versions (Simple · Dressed up · Something new), each with its bundle and piece notes.
+  - **Actions:** Save look (one tap, with an automatic colour name and Undo) and Try a different outfit (the stylist is told which outfits it has already shown). Try it on, Swap, Ask stylist and Find one are stubs that send nothing.
+  - **States:** styling, partial, not enough pieces, failed, offline and stopped, each forceable with a flag. Leaving the screen cancels the request.
+  - **Tests:** 703 package tests and 35 UI tests pass.
+  - **For the audit:**
+    - An absent version is dropped from the switch, and a banner explains why.
+    - The "looks will wait here" line is gone.
+    - Home UI tests flaked twice on CI and passed on rerun, so stabilising UI tests is now worth a pass.
