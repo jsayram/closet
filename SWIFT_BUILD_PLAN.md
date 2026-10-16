@@ -633,7 +633,7 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
 - 15 October 2026: **Phase 11 done** (jsayram/nifty-outfit-nook#24, #25).
   - **UI test stability (#24):** UI tests now wait on screen state instead of sleeping. CI reruns a failed UI test once, documented as a workaround for flaky CI machines.
   - **Swap a piece:** shows an explanation line, 3 options with Show 3 more, then See all (weaker matches marked "May not match"), plus Find one, Remove and Undo. Ranking only uses stored facts.
-  - **Make your own look:** covers Style with this and "+ Make your own", with one piece of each kind, Undo and Redo, a named save, and a draft that survives a relaunch.
+  - **Make your own look:** covers Style with this and "+ Make your own", with one piece of each kind, Undo and Redo, a named save, and a draft that survives the editor closing and the model being rebuilt. Surviving a real relaunch comes with Phase 21a storage.
   - **Toasts:** the toast on garment detail now sits above the tab bar.
   - **For the audit:**
     - The demo Office look shows mostly "May not match" tops.
@@ -729,7 +729,7 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - **Tour system:** one reusable system with a warm dim, a soft spotlight and a card with Back, Skip and Next. Anchors follow rotation, resizing, text size and scrolling.
   - **Progress:** a `TourProgressStore` records which tours she has seen and how each ended. Delete my data erases it.
   - **Home tour:** four steps, with copy for each Home layout. It starts once, and `-tour home|reset|off` controls it in debug builds only.
-  - **Tests:** 1,093 package tests and 65 iPhone UI tests pass, as do the iPad UI tests.
+  - **Tests:** 1,093 package tests pass, and about 58 iPhone UI tests ran and passed (the 65 UI test methods include 6 iPad tests and 1 performance test), as do the iPad UI tests.
   - **For the audit:**
     - The card is opaque.
     - VoiceOver starts on the card's words.
@@ -753,7 +753,7 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - **Saved between launches:** "onboarding done", the closet choice, which tours were seen and the tips switch, in an app-only `UserDefaults` suite. DATA_MAP gained a lowest-tier "app state flags" row, and the privacy manifest declares `UserDefaults`.
   - **Delete my data:** goes back to the welcome screen.
   - **Debug:** `-onboarding reset|skip` is available.
-  - **Tests:** 1,259 tests pass, and the checkpoint walk is a UI test.
+  - **Tests:** 1,247 tests pass and 12 iPad tests are skipped, and the checkpoint walk is a UI test.
   - **For the audit:**
     1. The name isn't kept between launches (it's Personal tier), so the sign says Hello after a relaunch. The test build says it forgets changes. Keeping the name takes one key and a DATA_MAP change.
     2. There are four steps after the welcome.
