@@ -319,6 +319,7 @@ Bullets marked *(from Stage A)* are work a Stage A phase deferred; the app repo'
 
 - Search aliases ("Other names") and a sub-kind such as Cardigan or Blazer on garments, which the Add a piece mockup shows but the model doesn't have yet (PRD 7.6, app `docs/add-a-piece.md`).
 - Favorites and collections for saved looks (RD-08, FR-13, FR-49) and Archive for garments (LR-16, PRD 7.4). Stage A left all three out. Ask Lily first whether she wants them.
+- Search over earlier unsaved results as well as saved looks (LR-06.4). Stage A keeps them but only saved looks are searchable.
 
 **Checkpoint:** Jose and Lily try each one on real data, and a schema change carries them across.
 
