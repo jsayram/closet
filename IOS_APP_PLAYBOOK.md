@@ -212,8 +212,16 @@ What gets unit, integration, UI and snapshot tests, and keeping the suite fast. 
 Verified 15 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 13):
 - **Look at a screen by eye from a UI test when no one can grant the simulator panel.** A throwaway XCUITest can walk the app and write `XCUIScreen.main.screenshot().pngRepresentation` straight to a path on the Mac (the simulator shares the file system), one PNG per screen. It needs no permission prompt, so an agent working alone can still check real navigation, sheets and toasts, which the snapshot tests (drawn with `ImageRenderer`) don't cover. Keep the file out of the repo.
 
+Verified 16 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 17, onboarding):
+- **Once any state outlives a launch, UI tests share it.** Tests on one simulator run one after another in the same app container, so a flag one test leaves (tips off, onboarding done) is there for the next. Give every launch arguments that set what it relies on (one shared `standard` array: tours off, onboarding skipped for this launch without writing anything), and let only the first-run test reset explicitly. The relaunch check is `app.terminate()`, new `launchArguments`, `app.launch()`.
+- **Default main-actor isolation reaches into initializers.** In a module built with `.defaultIsolation(MainActor.self)`, a plain value type (a launch-options struct or enum) used as a default argument of a `nonisolated` initializer fails with "main actor-isolated default value in a nonisolated context"; mark the type `nonisolated`. A custom `Layout`'s methods are nonisolated too, so constants they read from a view need `nonisolated static`.
+
 ## 5. Accessibility and iPad
 Checks that run on every screen. *(All UI phases)*
+
+Verified 16 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 17):
+- **On a welcome screen at the largest text sizes, put the buttons before the picture.** At AX5 the title and two lines of text filled most of an iPhone 17, and Get started ended up below the fold under the illustration. Ordering words, buttons, then the illustration (small) at the accessibility sizes keeps the main action on the first screen. Give that stack `.fixedSize(horizontal: false, vertical: true)`, or a still image drawn at the screen's height squeezes it and the buttons overlap.
+- **Fill a screen between measured parts with a custom `Layout`.** The welcome's illustration takes whatever height the words and the buttons leave; a `Layout` that measures both with a nil height and gives the rest to the middle does it in one pass, so `ImageRenderer` snapshots match the screen without state written during rendering.
 
 Verified 15 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 15a):
 - **A bottom tab bar on iPadOS 26.** A regular-width `TabView` puts its bar at the top, and `.tabViewStyle(.tabBarOnly)` keeps it there (it only stops the sidebar). Giving the `TabView` `.environment(\.horizontalSizeClass, .compact)` draws the iPhone's bottom bar, with the system's selection and VoiceOver. Read the real class above the `TabView` and give it back to each tab's content, or every screen inside thinks it's on a phone. It's a workaround with no dedicated API behind it, so check it on each new iPadOS; if it stops working the bar just goes back to the top.
@@ -266,6 +274,11 @@ Verified 15 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit
 
 ## 7. Local data, backups and recovery
 Persistence choice, migrations, export and restore, iCloud. *(Phases 20–21)*
+
+Verified 16 October 2026 with Xcode 26.6 on the iOS 26.5 simulator (Nifty Outfit Nook, Phase 17, app state before real storage):
+- **Keep only the lowest-tier flags across launches before real storage exists.** A test build that forgets everything at each launch shows onboarding and every coach mark again. A `UserDefaults` suite of the app's own (not an App Group) behind the existing store protocols kept "onboarding done", the starting closet, each tour's seen version and the tips switch, and nothing else. Where one record mixed tiers, it was split: the seen version is kept, how and when the tour ended stays in memory, and the rule that decides whether a tour starts reads only the seen version. Read defensively: a value of the wrong type means "not done" or "not seen", so the worst case is showing something again.
+- **Test `UserDefaults` stores on a suite per test.** A random suite name, removed with `removePersistentDomain(forName:)` in a helper's `deinit`, keeps tests apart from each other and from the app. A "relaunch" is a second store made on the same suite. `persistentDomain(forName:)` returns exactly what's in the file, so one test can prove only the expected keys are written and no name or date slipped in.
+- **Declare it in the privacy manifest.** `UserDefaults` is a required-reason API: `NSPrivacyAccessedAPICategoryUserDefaults` with reason `CA92.1` for data only the app reads.
 
 ## 8. Photos and image handling
 Intake, permissions, cutouts, storage and caching. *(Phases 8, 22)*
