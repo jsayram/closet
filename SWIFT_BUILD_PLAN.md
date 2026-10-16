@@ -782,3 +782,14 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - **Found in the docs:** many items Stage A deferred had no named Stage B phase, three progress log entries overstated what was tested, and some docs had gone stale (the PRD title, absolute links, the website's script, Lily's TestFlight access).
   - **Fixes in progress:** code and CI fixes in the app repo; docs fixes here, including the deferrals now listed under each Stage B phase and the new Phases 21c and 24d.
   - **Open decisions for Jose** are in the next entry.
+- 16 October 2026: **Stage A audit decisions.** Jose asked Claude to do what's best for the app. Claude's calls:
+  1. **Name and settings:** keep the sign name and the Profile settings (Preferences, Track laundry, repeat setting) between launches, in the app-only defaults suite. DATA_MAP gets a row for each.
+  2. **Unsaved results:** searching unsaved earlier results (LR-06.4) is deferred to Stage B and written into Phase 21c.
+  3. **Tours:** short tours for the six screens without one (Recently deleted, See all suitcases, Delete my data, Accessibility, Try it on, editing a piece), in the same style.
+  4. **Empty closet:** it stays blocked from styling. Labelled ideas come with the real stylist in 27a.
+  5. **Wording:** "Dark Mode" becomes "Dark appearance".
+  6. **UI rules:** the Home shelf frames get 44 pt tap areas; selection ticks and colour dots lose their outlines.
+  7. **Drawer plates:** they keep their short labels, since VoiceOver reads the full names.
+  8. **Closet repo:** gets a basic ruleset on `main` and Dependabot alerts.
+  
+  **Stage B rule:** it doesn't start until Jose approves it. He sees the database and storage options (`STAGE_B_DATA_OPTIONS.md`) first.
