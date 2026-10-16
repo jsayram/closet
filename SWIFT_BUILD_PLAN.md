@@ -264,6 +264,10 @@ Outputs: [DATA_MAP.md](DATA_MAP.md), [THREAT_MODEL.md](THREAT_MODEL.md) and [ACC
 
 These phases swap mock data for real services behind the same protocols. Mocks stay in place for tests and previews. Several phases depend on choices PRD section 11.4 still lists as open, so they start with a decision step and may be split further when we reach them.
 
+Bullets marked *(from Stage A)* are work a Stage A phase deferred; the app repo's `docs/` explain each one. Bullets and phases marked *(new)* had no home in the plan until the Stage A audit on 16 October 2026.
+
+- *(new)* Every screen added in Stage B gets its tour when it's built, from the mockups' tour pages where one exists (PRD 7.8, FR-73; app `docs/tours.md`).
+
 ### Phase 19a: Threat model for real data
 
 - Revisit the Phase 0c threat model now that real storage, photos, a backend and payments are about to arrive. Add the concrete data flows and the controls each one needs.
@@ -275,24 +279,33 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 - Draft privacy manifest, App Store privacy labels, the permission list with reasons, the privacy policy outline, and an App Review checklist we keep updating until release.
 - List the legal questions for a lawyer, for example whether weight and measurements count as health data under US state law.
 - The privacy policy, terms and support page get published on the app's website (https://niftyoutfitnook.pages.dev/, Cloudflare Pages). App Store Connect requires a privacy policy URL and a support URL.
+- *(from Stage A)* The real wording of Privacy and terms in the app. Its permission and consent switches don't come all at once: each one arrives with the feature it controls (19b, 24a, 27a, 29, 31, 33), because a switch with nothing behind it controls nothing (app `docs/settings.md`).
 
 **Checkpoint:** Jose approves the baseline and decides when to get the legal review.
 
 ### Phase 20a: Persistence spike
 
 - The PRD 11.7 recovery prototype: versioned fixtures, images, migrations, interrupted migrations, and two offline devices.
+- *(from Stage A)* Release builds stop shipping sample data: the `-fixtures` launch argument and the fixture sets become Debug-only, checked in the release build the way the catalog is (Phase 3 audit note).
 
 **Checkpoint:** go or no-go on SwiftData.
 
 ### Phase 20b: Backup and recovery design
 
 - Local backups, optional private iCloud sync, export and restore, and what happens after a failed migration or a lost device.
+- *(from Stage A)* The export format. PRD 15.4 describes an unencrypted archive, but SECURITY_STANDARD.md section 4 requires exports that leave the app to be encrypted. The standard wins unless Jose approves an exception in writing.
+- *(from Stage A)* Which fields use CloudKit encrypted values, and what Lily gets with and without Advanced Data Protection (DATA_MAP.md, open points).
+- *(from Stage A)* Delete my data also removes her private iCloud copy (app `docs/settings.md`).
 
 **Checkpoint:** Jose approves the recovery design.
 
 ### Phase 21a: Real local storage
 
 - Wire the chosen store in behind the existing protocols, with migrations from day one.
+- *(from Stage A)* Durable `DraftStore` and `LookDraftStore` with complete file protection, and rows for both kinds of draft in DATA_MAP.md. Stage A keeps drafts in memory only.
+- *(from Stage A)* Move into the real store: the profile (her name on the sign included), the remembered source and occasion, the unsent feedback note, and the onboarding and tour flags that sit in a `UserDefaults` suite today (app `docs/profile.md`, `suitcases-and-laundry.md`, `settings.md`, `onboarding.md`).
+- *(from Stage A)* "Delete permanently now" in Recently deleted, with a preview of what gets purged (PRD 7.4, app `docs/garment-detail.md`).
+- *(from Stage A)* The real stores pass the same store contract test suites as the in-memory ones.
 
 **Checkpoint:** data survives relaunches and a schema change.
 
@@ -302,15 +315,28 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 
 **Checkpoint:** wipe the app and restore a closet from a backup.
 
+### Phase 21c: Closet and Saved Looks extras *(new)*
+
+- Search aliases ("Other names") and a sub-kind such as Cardigan or Blazer on garments, which the Add a piece mockup shows but the model doesn't have yet (PRD 7.6, app `docs/add-a-piece.md`).
+- Favorites and collections for saved looks (RD-08, FR-13, FR-49) and Archive for garments (LR-16, PRD 7.4). Stage A left all three out. Ask Lily first whether she wants them.
+
+**Checkpoint:** Jose and Lily try each one on real data, and a schema change carries them across.
+
 ### Phase 22a: Photo intake
 
 - PhotosUI and the camera, with permission flows.
+- *(from Stage A)* Strip EXIF and location from stored originals. The photo picker includes location by default (app `docs/cutout-feasibility.md`, SECURITY_STANDARD.md section 4).
+- *(from Stage A)* A real try-on photo in Profile through the system picker, with its metadata stripped (app `docs/profile.md`).
+- *(from Stage A)* Decide on the optional garment-understanding upload: its own named, consented processor, or leave it out (DATA_MAP.md, requests to services).
+- *(from Stage A)* If Jose hasn't made the Phase 8a call by then, run the cutout benchmark on Lily's iPhone 12, set the thresholds and decide go or no-go before real photos depend on it.
 
 **Checkpoint:** add real garments from the library and the camera.
 
 ### Phase 22b: Image storage and caching
 
 - Originals next to cutouts, thumbnails, the image cache, and disk-space handling.
+- *(from Stage A)* Stored files for generated try-on pictures, removed when she deletes a picture (app `docs/try-on-pictures.md`).
+- *(from Stage A)* Deleting a garment for good removes the pictures that depend on it, where the purge rules say so (PRD 9.2.4). Today a purged piece is only left out of the drawing.
 
 **Checkpoint:** a large real-photo closet stays smooth and the storage footprint is reasonable.
 
@@ -329,6 +355,7 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 ### Phase 24a: Gateway and identity
 
 - Gateway skeleton, user identity (Sign in with Apple where needed), device attestation, and request validation.
+- *(from Stage A)* Its consent switch in Privacy and terms.
 
 **Checkpoint:** an authenticated request round-trips; bad requests are rejected.
 
@@ -341,8 +368,17 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 ### Phase 24c: Authorization and account deletion
 
 - Row-level access rules with default deny, tests proving one user can't read another's data, and in-app account deletion that removes server data.
+- *(from Stage A)* Sign in with Apple token revocation when the account is deleted, and the note on Delete my data that deleting doesn't cancel a subscription (app `docs/settings.md`).
 
 **Checkpoint:** a cross-user access test fails as it should, and a deleted account leaves nothing behind.
+
+### Phase 24d: Support and feedback channel *(new)*
+
+- The private support queue that Send feedback reaches, replacing the share sheet, with an optional reply address.
+- The public feedback board (PRD 22) and the optional, separately opted-in email program (FR-44, PRD 22.4), or a written decision to leave them for later.
+- The project's support email in ACCOUNT_INVENTORY.md and on the website's support page (DATA_MAP.md open points, app `docs/settings.md`).
+
+**Checkpoint:** a note sent from the app reaches the queue and Jose can answer it.
 
 ### Phase 25a: Secrets and credentials
 
@@ -365,6 +401,10 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 ### Phase 27a: Cloud stylist
 
 - Provider adapter on the server, typed response validation, and server-side model configuration.
+- *(from Stage A)* The "From your history" check before paid inference (FR-58), and the "why" line under results, written by the stylist (app `docs/your-looks.md`).
+- *(from Stage A)* Labelled ideas for an empty closet (PRD 8.1). Pending Jose's decision: Stage A offers Add a piece instead (app `docs/style-me.md`).
+- *(new)* Ask stylist on results, which is still a stand-in sheet (RD-06, app `docs/your-looks.md`).
+- *(from Stage A)* Its consent switch in Privacy and terms.
 
 **Checkpoint:** styling quality on Lily's saved scenarios.
 
@@ -383,12 +423,14 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 ### Phase 29: Weather
 
 - WeatherKit feeding the request and the Home windows.
+- *(from Stage A)* Its location permission and switch in Privacy and terms.
 
 **Checkpoint:** live weather shows in the room and shapes suggestions.
 
 ### Phase 30a: Subscription and paywall
 
 - StoreKit 2 subscription, free trial and the paywall, following Apple's rules for subscription wording.
+- *(from Stage A)* The try-on picture allowance, and Help's "Free and paid" topic (app `docs/settings.md`, `try-on-pictures.md`).
 
 **Checkpoint:** sandbox purchase, restore, renewal and expiry.
 
@@ -407,6 +449,7 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 ### Phase 31: Monitoring and analytics
 
 - Crash reporting, cost and usage alerts, and opt-in analytics only if they earn their place.
+- *(from Stage A)* The analytics switch in Privacy and terms, if analytics ship.
 
 **Checkpoint:** a forced crash and a forced cost spike both reach Jose.
 
@@ -425,18 +468,22 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 ### Phase 33: Try-on pictures (gated)
 
 - Only after the PRD 9.2 checks pass and a provider is chosen. Will be split when we get here.
+- *(from Stage A)* Its consent switch in Privacy and terms.
 
 **Checkpoint:** the PRD's go/no-go gates.
 
 ### Phase 34: Find One (open question)
 
 - Only after the shopping direction is settled.
+- *(from Stage A)* Fit checks that use the pieces that fit her well (LR-12, app `docs/profile.md`).
 
 ### Phase 35a: Release audit
 
 - Full App Store Review Guidelines pass, accessibility audit, and privacy labels checked against what the app actually does.
 - Independent security review or penetration test of the app and backend, with findings fixed.
 - Legal review complete for privacy policy and sensitive data.
+- *(from Stage A)* A proper trademark search for the name. The 13 October check was only a quick screening.
+- *(new)* iPad keyboard shortcuts (Command-F for search, Escape to close a sheet), checked on a real iPad with a keyboard. Stage A left them out because the simulator's keys didn't trigger them (app `docs/ipad.md`).
 
 **Checkpoint:** every item on the App Review checklist is done and the independent review is closed.
 
@@ -444,6 +491,7 @@ These phases swap mock data for real services behind the same protocols. Mocks s
 
 - App Store listing, review notes, demo account for reviewers, and submission.
 - Website ready: the landing page with real screenshots, and the privacy policy and support URLs used in App Store Connect.
+- *(from Stage A)* Help's "What changed" topic, with public release notes (PRD 22.2).
 
 **Checkpoint:** Jose submits.
 
