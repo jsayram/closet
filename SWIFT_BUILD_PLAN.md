@@ -778,3 +778,7 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     6. Paste the What to Test text.
   - **Still flaky:** the iPad test `testClosetSidebarAndPieceBesideTheGrid` failed once.
   - **Stage A is complete.** Stopping here for Jose's Stage A audit, as he asked. **Next: Phase 19a**, only after he says so.
+- 16 October 2026: **Stage A audit.** Four read-only audits ran over Stage A: spec, security, code and docs.
+  - **Found in the docs:** many items Stage A deferred had no named Stage B phase, three progress log entries overstated what was tested, and some docs had gone stale (the PRD title, absolute links, the website's script, Lily's TestFlight access).
+  - **Fixes in progress:** code and CI fixes in the app repo; docs fixes here, including the deferrals now listed under each Stage B phase and the new Phases 21c and 24d.
+  - **Open decisions for Jose** are in the next entry.
