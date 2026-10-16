@@ -711,3 +711,22 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     2. There are four steps after the welcome.
     3. Six Your looks unit tests kept timing out on CI at 60 s, so their wait was raised to 600 s. That hides slowness, so find out why they're slow.
     4. On a device, check the `UserDefaults` file protection, relaunch after iOS ends the app, and VoiceOver through the steps.
+- 16 October 2026: **Phase 18 prepared; upload is Jose's** (jsayram/nifty-outfit-nook#37, #39, #41, promoted to `main` in #42).
+  - **Test timing fix (#37):** the slow tests weren't the stylist. About 300 snapshot tests were crowding the main actor. A `HeavyMainActorWork` trait now makes them take turns, and test waits count polls instead of seconds. The median CI test time went from about 200 s to 46 s.
+  - **Release prep:**
+    - A placeholder Icon Composer icon (a dress on a hanger in a nook).
+    - Version 0.1.0, with timestamp build numbers from `scripts/bump-build.sh`.
+    - A wall-coloured launch screen.
+    - `scripts/check-archive.sh`, which builds an unsigned archive and checks it (all pass).
+    - `Configs/ExportOptions-TestFlight.plist`.
+  - **Tests:** 1,190 package tests and 61 iPhone UI tests pass; the 7 iPad UI tests pass on CI. The large-text wardrobe UI test flake was fixed (#41).
+  - **Milestone:** `develop` was promoted to `main` with the security gate checklist. No tag was made.
+  - **Jose's steps** (`docs/testflight.md`):
+    1. Set the team ID in `Configs/Signing.local.xcconfig`.
+    2. Register the App ID with Data Protection set to Complete.
+    3. Create the App Store Connect record (Nifty Outfit Nook, SKU `niftyoutfitnook-ios`, Lifestyle).
+    4. Add Lily as a Marketing-role user limited to this app, plus an internal TestFlight group.
+    5. Run `scripts/bump-build.sh`, Archive, then Distribute to TestFlight Internal Only.
+    6. Paste the What to Test text.
+  - **Still flaky:** the iPad test `testClosetSidebarAndPieceBesideTheGrid` failed once.
+  - **Stage A is complete.** Stopping here for Jose's Stage A audit, as he asked. **Next: Phase 19a**, only after he says so.
