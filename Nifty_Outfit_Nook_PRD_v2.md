@@ -1,4 +1,4 @@
-# MY PETITE STYLE
+# Nifty Outfit Nook
 
 Product Requirements Document
 
@@ -10,7 +10,7 @@ Primary design partner: Lily
 
 ## Document authority and navigation
 
-**This v2 Markdown file is the authoritative master specification.** It supersedes [the preserved v0.1 Markdown snapshot](/Users/jramirez/Git/closet/My_Petite_Style_PRD_v0.1.md), including that snapshot's former authority statement. Maintain future requirements here. The handoff, competitor-review and try-on pointer files link here. Lily's feedback and its assessment are source/review artifacts, not independently authoritative requirements. The original Word file is also preserved as historical material. Document version 2.0 does not mean a second app release: V1/MVP below still means the first intended application release.
+**This v2 Markdown file is the authoritative master specification.** It supersedes [the preserved v0.1 Markdown snapshot](My_Petite_Style_PRD_v0.1.md), including that snapshot's former authority statement. Maintain future requirements here. The handoff, competitor-review and try-on pointer files link here. Lily's feedback and its assessment are source/review artifacts, not independently authoritative requirements. The original Word file is also preserved as historical material. Document version 2.0 does not mean a second app release: V1/MVP below still means the first intended application release.
 
 This workspace contains planning documents, not an implemented app. Documentation review does not establish feature quality, fit accuracy, wallet recovery, App Store approval or release readiness. All application acceptance and RV/TO checks are **Not run**. Current counts are 73 functional requirements, 103 acceptance criteria, 29 core RV checks and eight conditional TO checks.
 
@@ -1263,7 +1263,7 @@ Checked representative primary guidance October 4, 2026: [Target](https://www.ta
 
 ### 13.9 User-provided consumer discovery observation — October 4, 2026
 
-The owner supplied a [ChatGPT iPhone screenshot](/Users/jramirez/Git/closet/research/Shopping_Discovery_Consumer_Example_2026-10-04.jpg) after asking for a TikTok petite trouser search. The original screenshot is preserved unchanged as research evidence. It visibly presents plausible retailer-specific leads, style descriptions, apparent citation badges and outbound link labels, reported review context and a claimed garment length. This is encouraging evidence for the proposed discovery experience: a broad request can produce useful starting points without making the user browse a full catalog first. It is not evidence that the app's API adapter has dispatched search, retrieved the underlying sources or validated fit.
+The owner supplied a [ChatGPT iPhone screenshot](research/Shopping_Discovery_Consumer_Example_2026-10-04.jpg) after asking for a TikTok petite trouser search. The original screenshot is preserved unchanged as research evidence. It visibly presents plausible retailer-specific leads, style descriptions, apparent citation badges and outbound link labels, reported review context and a claimed garment length. This is encouraging evidence for the proposed discovery experience: a broad request can produce useful starting points without making the user browse a full catalog first. It is not evidence that the app's API adapter has dispatched search, retrieved the underlying sources or validated fit.
 
 The visible answer describes Cider petite trousers, calls a Halara option “Most viral,” reports another shopper finding a petite size long, and calls a G Gradual option with a claimed 24-inch inseam “Safest length.” These are attributed claims in the screenshot, not independently verified product facts. The final option is partly cut off; actual URLs, seller/variant charts, live availability, shipping, model identity and search trace are not visible. No product link, purchase or physical fit was tested.
 
@@ -2038,7 +2038,7 @@ A Lily-first iPhone/iPad stylist for her 4'11" proportions, unknown inseam and c
 
 ### 26.1 Authority, consolidated coverage and historical material
 
-Maintain current decisions in this v2 master only. Consolidated coverage is **73 functional requirements, 103 acceptance criteria, 29 RV checks and eight conditional TO checks**. README and the three original pointers identify this file. The [v0.1 Markdown](/Users/jramirez/Git/closet/My_Petite_Style_PRD_v0.1.md), [Word draft](/Users/jramirez/Git/closet/My_Petite_Style_PRD_v0.1.docx) and original interview remain preserved historical/source records. Their earlier authority, fixed Risky lane, asserted inseam and single-optional-image assumptions are superseded where specified here; source artifacts do not override accepted v2 decisions.
+Maintain current decisions in this v2 master only. Consolidated coverage is **73 functional requirements, 103 acceptance criteria, 29 RV checks and eight conditional TO checks**. README and the three original pointers identify this file. The [v0.1 Markdown](My_Petite_Style_PRD_v0.1.md), [Word draft](My_Petite_Style_PRD_v0.1.docx) and original interview remain preserved historical/source records. Their earlier authority, fixed Risky lane, asserted inseam and single-optional-image assumptions are superseded where specified here; source artifacts do not override accepted v2 decisions.
 
 The workspace contains no implemented application. No application/model/fit/recovery/billing test, personal-photo upload, generated example, provider purchase/contact, commit, deployment, production billing setup or App Store submission has been performed by this documentation pass. Markdown consistency checks verify document structure only. All release evidence still needs actual implementation.
 
