@@ -677,3 +677,15 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - Every main screen on iPad.
     - Suitcases and Profile keep the wall on top rather than beside.
     - Keyboard shortcuts (⌘F, Esc) weren't added, because simulated keys didn't trigger them, so they need a real iPad keyboard.
+- 15 October 2026: **Phase 16a done** (jsayram/nifty-outfit-nook#34).
+  - **Tour system:** one reusable system with a warm dim, a soft spotlight and a card with Back, Skip and Next. Anchors follow rotation, resizing, text size and scrolling.
+  - **Progress:** a `TourProgressStore` records which tours she has seen and how each ended. Delete my data erases it.
+  - **Home tour:** four steps, with copy for each Home layout. It starts once, and `-tour home|reset|off` controls it in debug builds only.
+  - **Tests:** 1,093 package tests and 65 iPhone UI tests pass, as do the iPad UI tests.
+  - **For the audit:**
+    - The card is opaque.
+    - VoiceOver starts on the card's words.
+    - Back was added.
+    - The dim covers the tab bar.
+    - At AX sizes the card usually has no spotlight.
+    - Needs a hands-on VoiceOver check (focus moves, the two-finger escape skips, focus returns) and Escape on a real iPad keyboard.
