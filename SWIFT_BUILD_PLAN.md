@@ -689,3 +689,14 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - The dim covers the tab bar.
     - At AX sizes the card usually has no spotlight.
     - Needs a hands-on VoiceOver check (focus moves, the two-finger escape skips, focus returns) and Escape on a real iPad keyboard.
+- 15 October 2026: **Phase 16b done** (jsayram/nifty-outfit-nook#35).
+  - **19 new screen tours:** each starts once, never over a sheet, toast or another tour, and works on iPhone, AX sizes and iPad.
+  - **App tours on Profile:** Replay for each tour, "Show tips on new screens", and "Reset all tips".
+  - **Delete my data:** now mentions tours.
+  - **Copy:** tour text was updated to match the amendment (table in `docs/tours.md`).
+  - **Tests:** 1,135 package tests pass, plus the iPhone UI tests and 6 iPad UI tests.
+  - **For the audit:**
+    - The tour copy changes.
+    - Screens without a mockup tour get none.
+    - The VoiceOver and Escape check from 16a.
+    - Tour progress isn't saved yet, so tours would come back on every relaunch in TestFlight. Phase 17 handles this.
