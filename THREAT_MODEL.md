@@ -6,7 +6,7 @@ The standard doesn't prescribe a method. This model uses STRIDE (spoofing, tampe
 
 Both repos are public, so this file stays at the level of a normal public threat model. It names risks and controls, not account details, recovery methods or anything an attacker could use directly.
 
-**Likelihood** and **impact** are High, Medium or Low, judged for a small app with one main user now and public users later. Stage A has no network, accounts or real storage, so most of these risks only become live in Stage B. The phase column is where the control gets built and tested.
+**Likelihood** and **impact** are High, Medium or Low, judged for a small app with one main user now and public users later. Stage A has no networking code and no accounts. Its only storage across launches is an app-only `UserDefaults` suite holding lowest-tier app state flags (see [DATA_MAP.md](DATA_MAP.md)), and the website's policy pages open in an in-app Safari view. So most of these risks only become live in Stage B. The phase column is where the control gets built and tested.
 
 ## Top risks
 
@@ -113,7 +113,7 @@ These are the ones Jose should look at first, roughly in order.
 
 | Threat | STRIDE | Likelihood | Impact | Control | Phases |
 |---|---|---|---|---|---|
-| Website defaced or redirected through a Cloudflare account takeover | Tampering | Low | Medium | Two-factor authentication on Cloudflare, scoped API tokens, static site with no scripts or forms | 0c, 19b |
+| Website defaced or redirected through a Cloudflare account takeover | Tampering | Low | Medium | Two-factor authentication on Cloudflare, scoped API tokens, static site with a first-party script only, no analytics or forms, and a strict Content Security Policy | 0c, 19b |
 | A lookalike site or app copies the name to phish users | Spoofing | Low | Low | The App Store listing and website link to each other; privacy and support pages on the real site | 35b |
 | Anyone with the review link reads or spams Lily's review notes | Information disclosure, tampering | Medium | Low | Link is shared only with Lily; notes are copied into the repo only as needed; edits and deletes need the owner key | Now |
 

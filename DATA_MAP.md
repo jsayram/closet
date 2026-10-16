@@ -22,7 +22,7 @@ The tiers are the standard's: **Sensitive**, **Personal**, **Account and billing
 | **Backend gateway** | The private backend chosen in Phase 23 (gateway, identity, usage ledger, consent records, feedback, support). | Jose as operator, through least-privilege roles. No closet replica. |
 | **AI providers** | Cloud text model (stylist, swaps, Ask stylist), later image model (try-on, Phase 33), garment-understanding model and web search/ranking (Find One, Phase 34). Chosen in Phases 23 and 27a. | The provider, under its own retention and training terms. Never called directly by the app. |
 | **Apple services** | App Store and StoreKit, App Store Connect (TestFlight builds, tester feedback, crash reports), WeatherKit, App Attest, Sign in with Apple. | Apple. Jose sees what App Store Connect shows him. |
-| **Website** | https://niftyoutfitnook.pages.dev/ on Cloudflare Pages. Static, no scripts, forms or analytics. | Anyone. Cloudflare sees visitor requests. |
+| **Website** | https://niftyoutfitnook.pages.dev/ on Cloudflare Pages. Static. A first-party script only (`/site.js`, no tracking), no analytics or forms, and a strict Content Security Policy (`script-src 'self'`, `form-action 'none'`). | Anyone. Cloudflare sees visitor requests. |
 | **Planning repo and review site** | This public repo, and the mockup review site on here.now where Lily leaves notes. | Anyone. See "Data that exists today". |
 
 ## Classification
