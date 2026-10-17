@@ -794,3 +794,19 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   8. **Closet repo:** gets a basic ruleset on `main` and Dependabot alerts.
   
   **Stage B rule:** it doesn't start until Jose approves it. He sees the database and storage options (`STAGE_B_DATA_OPTIONS.md`) first.
+- 17 October 2026: **Stage A audit closed.**
+  - **Code audit fixes** (#44–#46): the Saved Looks Profile bug, store contract suites, stale-load guards, atomic writes, image retry, redacted measurement types, and snapshots cut to 56 MB.
+  - **CI** (#43, #48, #49): 16–20 min (was 26–34), flaky tests fixed at the root.
+  - **Polish from the decisions above** (#51, #52): the name and settings are kept, six tours added, "Dark appearance", 44 pt shelf frames, outline-free ticks and dots.
+  - **Website:** source now in the app repo (#50).
+  - **Playbook:** reorganised into 16 topic chapters.
+  - **Final regression pass:** 1,289 passed, 0 failed. It found five display bugs, all fixed in #53, with a new check that fails any phone snapshot wider than its window.
+  - **Still on Jose:**
+    - 2FA on every account.
+    - The project email, then switch git commits to it or the noreply address.
+    - The TestFlight upload steps in `docs/testflight.md`.
+    - The cutout benchmark on Lily's iPhone 12.
+    - VoiceOver and iPad keyboard checks on devices.
+    - Delete the untracked `closet/website/` folder (its content is in the app repo; only `ARTWORK.md` isn't).
+    - Approve or change `STAGE_B_DATA_OPTIONS.md`.
+  - **Next:** Stage B starts only when Jose approves it.

@@ -194,6 +194,7 @@ These lessons come from building paid features against mocks, before any backend
 - **Target a list's first item without changing the list.** Give the anchor modifier an `isEnabled` flag and apply it to every item with `isEnabled: item.id == items.first?.id`, so lazy grids keep their identity. (Phase 16b)
 - **A sheet hides anything drawn behind it, coach marks included.** A tour overlay on the root view never showed over the Try it on sheet. The sheet draws its own tour layer from the same controller. (Stage A audit)
 - **xcodebuild never adds new keys to a package's String Catalog.** Add each new key yourself (or from the build's `.stringsdata`), or the string ships untranslated with no warning. (Stage A audit)
+- **A tour that scrolls a page puts the scroll position back when it ends,** or the title is left half under the back button. (Stage A QA)
 
 ## 7. Accessibility
 
@@ -268,6 +269,8 @@ These lessons come from building paid features against mocks, before any backend
 - **Snapshots don't show what a half-height sheet hides.** The snapshot showed both buttons, but the half-height sheet cut off the second. Open sheets whose main content is a picture plus actions at `.large`. (Phase 12b)
 - **If a snapshot run hangs, sample the process before blaming the code.** Every test started and none finished; `sample <xctest pid>` showed the main thread in the first `ImageRenderer`, inside `UIScreen` set-up waiting on the simulator. Shut it down, `simctl boot`, wait for `simctl bootstatus`, rerun. (Phase 10b)
 - **Low-scale tolerance can hide copy changes.** At 1x, two stale lines of text and a missing row still passed the image diff. After any copy change, re-record every affected snapshot and compare each image by eye. (Stage A audit)
+- **A snapshot cropped to the window hides a page that runs off the edges.** Measure the page's width when offered the window's width and fail if it's wider. That caught a Laundry page 33 pt too wide at AX5 and a search field 0.7 pt too wide. (Stage A QA)
+- **Back small cosmetic fixes with a geometry check.** A wrapped iPad tag passed snapshot tolerance at 0.5%. (Stage A QA)
 
 ## 10. UI testing (XCUITest)
 
@@ -313,6 +316,7 @@ These lessons come from building paid features against mocks, before any backend
 - **A throwaway UI test is the way to see real screens.** When nobody can grant the simulator panel, a test that's never committed walks the app and writes `XCUIScreen.main.screenshot().pngRepresentation` straight to a Mac path (the simulator shares the file system), one PNG per screen. Orientation and window width can come from `TEST_RUNNER_` variables. It needs no permission prompt and shows bars, sheets and toasts that snapshots don't. One such walk found a crash the committed tests never reached. Landscape PNGs sometimes come out rotated. Keep the file out of the repo. (Phases 12a, 13, 15b)
 - **Check a sideways layout by eye.** Orientation persists on the simulator, so a one-line test that rotates it, then `simctl launch` and `simctl io screenshot`, shows the sideways app (the PNG is in portrait framing). (Phase 5b)
 - **Some elements never report hittable but still take a tap.** A confirming-tap helper that waits for `isHittable` should fall back to `exists` for those, then confirm the tap by its effect. (Stage A audit)
+- **Scroll a split pane by dragging inside that pane.** A drag in the middle of the screen scrolls whatever sits there, so a sidebar's bottom tiles looked unreachable. (Stage A QA)
 
 ## 11. Swift Testing and concurrency
 
