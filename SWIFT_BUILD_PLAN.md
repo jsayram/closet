@@ -329,7 +329,7 @@ Bullets marked *(from Stage A)* are work a Stage A phase deferred; the app repo'
 - *(from Stage A)* Strip EXIF and location from stored originals. The photo picker includes location by default (app `docs/cutout-feasibility.md`, SECURITY_STANDARD.md section 4).
 - *(from Stage A)* A real try-on photo in Profile through the system picker, with its metadata stripped (app `docs/profile.md`).
 - *(from Stage A)* Decide on the optional garment-understanding upload: its own named, consented processor, or leave it out (DATA_MAP.md, requests to services).
-- *(from Stage A)* If Jose hasn't made the Phase 8a call by then, run the cutout benchmark on Lily's iPhone 12, set the thresholds and decide go or no-go before real photos depend on it.
+- *(from Stage A)* The cutout go/no-go happens here. Simulators can't run Vision's subject lifting (on the iPhone 12 simulator it fails with "Could not create inference context"), and no real iPhone 12 was available in Stage A. Run `-cutout-bench` on Lily's iPhone 12 with her real photos for speed, memory and quality, then set the thresholds before real photos depend on them. Any real iPhone Jose has can give an earlier quality-only read.
 
 **Checkpoint:** add real garments from the library and the camera.
 
@@ -810,3 +810,11 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - Delete the untracked `closet/website/` folder (its content is in the app repo; only `ARTWORK.md` isn't).
     - Approve or change `STAGE_B_DATA_OPTIONS.md`.
   - **Next:** Stage B starts only when Jose approves it.
+- 17 October 2026: **Device checks moved onto simulators** (jsayram/nifty-outfit-nook#54, #55). Jose doesn't have Lily's iPhone 12.
+  - **iPhone 12 simulator:** the full UI suite passed at 390 × 844, and a screenshot walk found one bug (the Simulated badge at AX5), now fixed.
+  - **Accessibility audit:** Apple's audit now runs on every main screen at default size and AX5, as the closest substitute for VoiceOver. Every exclusion has a reason, and contrast exclusions are re-measured from pixels (`docs/accessibility-audit.md`).
+  - **Tours:** a test checks that the card is read first on each step.
+  - **iPad keyboard:** ⌘F goes to search on Closet and Saved Looks, and Escape or ⌘. closes the top sheet.
+  - **Taps:** every UI test tap now confirms its effect, and a check blocks bare taps (#54).
+  - **Cutout:** the go/no-go moves to Phase 22a.
+  - **Still needs a real device:** VoiceOver, an iPad hardware keyboard, A14 speed and memory, and the Data Protection class on the kept settings file.
