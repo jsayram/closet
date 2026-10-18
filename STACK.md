@@ -62,6 +62,31 @@ iPhone app
 - Apps never contain an email address. Support details live on the website, in App Store Connect and in backend settings, so they can change at any point in an app's life.
 - Git commits use GitHub's private no-reply address, so no inbox is exposed in public repos.
 
+## Backups
+
+The backend holds little: accounts live in Clerk, and users' personal data stays on their devices. The one thing that would hurt to lose is a credit ledger, meaning what people have spent.
+
+- No paid backup plan is needed. A free scheduled job (a GitHub Action) runs `npx convex export` every day. It encrypts the file, keeps 30 days of copies in a Cloudflare R2 bucket, and restores the latest copy into a test deployment once a month to prove it works.
+- Convex Professional's managed daily backups are a convenience. Move to Professional only when its limits, logs or support are worth $25 a month.
+
+## As an app grows
+
+These estimates assume 20% of monthly users are active on a given day, each making about 15 backend calls.
+
+| Monthly users | Convex | Clerk | Hosting total, including Apple's $99 a year |
+|---|---|---|---|
+| 1 to 10,000 | $0 to $25 | $0 | about $8 to $33 |
+| 100,000 | about $25 | about $1,025 | about $1,060 |
+| 1,000,000 | about $150 to $400 | about $19,000 before volume discounts | about $19,500 |
+
+- Past about 50,000 retained users, Clerk becomes the expensive part. Then build our own sign-in: verify Apple's token once, then issue our own session token signed with our key. Convex accepts custom tokens like that, and since apps only talk to our own endpoints, the switch is one planned app update.
+- **AI is the real cost.** A styling request costs about $0.002 to $0.01, and a WaveSpeed picture about $0.04. Every app needs these from day one:
+  - a per-user cost cap
+  - credits reserved before every paid call
+  - small free allowances, with images bought as credits
+  - a kill switch
+  - spending caps at the provider
+
 ## Client projects
 
 - Each client gets their own Convex team, their own Clerk application, and their own Cloudflare account. Jose is added as a member and the client pays their own bills.

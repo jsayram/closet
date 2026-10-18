@@ -19,14 +19,14 @@ Clerk fills Convex's sign-in gap on iOS. It handles native Sign in with Apple an
 | Concern from 16 October | Handling |
 |---|---|
 | No row-level security | The same mitigation the D1 plan had: every function checks the signed-in user, one data-access module takes the user ID, and CI runs cross-user tests (Phase 24c). |
-| Scheduled backups only on Professional | Develop on the free plan. Move to Professional ($25 a month) before the ledger holds real purchases or credits. Until then, take a manual backup before each schema change. |
+| Scheduled backups only on Professional | Not needed. The closet never reaches the server, and Clerk holds the accounts. A free daily job runs `npx convex export`, encrypts it, keeps 30 days in R2 and restores into a test deployment monthly (Phase 25b). This meets the standard's "tested backups" without Professional. |
 | High lock-in | The app talks only to our HTTP actions, so the Swift screens stay provider-independent. The open-source backend gives a self-hosting exit. |
 | The Swift SDK wraps a Rust binary core | Don't ship `convex-swift`. The app uses plain `URLSession` to call Convex HTTP actions, sending the Clerk session token as the bearer. Convex checks it through its Clerk provider config. This keeps the plain-`URLSession` rule. |
 | Sign in with Apple isn't built in | Clerk's `clerk-ios` handles it. It's a shipping dependency, so Jose must approve it in writing first (standard section 3). Phase 24a checks whether deleting a Clerk user also revokes Apple's sign-in link. If it doesn't, a Convex action does it. |
 
 **Cost:**
 - **Lily alone:** $0. Convex free plus Clerk Hobby, though Clerk sessions on that plan expire after 7 days and she'd sign in again with one tap.
-- **At launch:** $25 a month for Convex Professional, which brings backups. Add $20 to $25 for Clerk Pro if longer sessions matter.
+- **At launch:** still about $0, with Convex Professional ($25) only when its limits or support are needed. Add $20 to $25 for Clerk Pro if longer sessions matter.
 - **AI tokens** are still the main cost at any scale.
 
 **Docs this changes, once Phase 23b confirms:**
