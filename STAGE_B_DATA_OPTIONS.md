@@ -2,6 +2,38 @@
 
 Research note for Phases 20a to 21a and 23a to 23b, written 16 October 2026. Prices, limits and features were checked against official docs and pricing pages that day (sources at the end). Nothing was signed up for and no service API was called. Each phase re-checks its numbers when it starts.
 
+## Update, 18 October 2026: Jose's backend direction
+
+Jose chose a single default stack for all his projects, recorded in [STACK.md](STACK.md): **Convex** as the backend, **Clerk** for sign-in, **Cloudflare** for websites, and **WaveSpeed** for image generation. This replaces the Cloudflare Workers + D1 recommendation below. The on-device recommendation (SwiftData, local only, with `CKSyncEngine`) stays as it is. Phase 23b confirms the decision with fresh numbers. Nothing has been signed up for yet.
+
+**Why the change.** The 16 October note compared providers for this one app. Jose's goal is one home across every project he builds, iOS and web, including client projects later. Convex is the best fit for that:
+- It charges per developer, not per project.
+- Real-time and vector search are built in.
+- It has an official MCP server for agent work.
+- The backend is open source and can be self-hosted, which is the way out if he ever needs it.
+
+Clerk fills Convex's sign-in gap on iOS. It handles native Sign in with Apple and keeps the session fresh, it's free up to 50,000 retained users per app, and Jose already has an account.
+
+**What this note flagged against Convex, and how each point is handled:**
+
+| Concern from 16 October | Handling |
+|---|---|
+| No row-level security | The same mitigation the D1 plan had: every function checks the signed-in user, one data-access module takes the user ID, and CI runs cross-user tests (Phase 24c). |
+| Scheduled backups only on Professional | Develop on the free plan. Move to Professional ($25 a month) before the ledger holds real purchases or credits. Until then, take a manual backup before each schema change. |
+| High lock-in | The app talks only to our HTTP actions, so the Swift screens stay provider-independent. The open-source backend gives a self-hosting exit. |
+| The Swift SDK wraps a Rust binary core | Don't ship `convex-swift`. The app uses plain `URLSession` to call Convex HTTP actions, sending the Clerk session token as the bearer. Convex checks it through its Clerk provider config. This keeps the plain-`URLSession` rule. |
+| Sign in with Apple isn't built in | Clerk's `clerk-ios` handles it. It's a shipping dependency, so Jose must approve it in writing first (standard section 3). Phase 24a checks whether deleting a Clerk user also revokes Apple's sign-in link. If it doesn't, a Convex action does it. |
+
+**Cost:**
+- **Lily alone:** $0. Convex free plus Clerk Hobby, though Clerk sessions on that plan expire after 7 days and she'd sign in again with one tap.
+- **At launch:** $25 a month for Convex Professional, which brings backups. Add $20 to $25 for Clerk Pro if longer sessions matter.
+- **AI tokens** are still the main cost at any scale.
+
+**Docs this changes, once Phase 23b confirms:**
+- ACCOUNT_INVENTORY.md gets Convex and Clerk rows (added as planned).
+- SECURITY_STANDARD.md's "Row Level Security" wording needs Jose's approval for the code-level equivalent, as it would have for D1.
+- `clerk-ios` needs a written dependency approval.
+
 Two layers: **A**, where the closet, photos and looks live on the device and how they reach her private iCloud; **B**, the backend for identity, the credit ledger, App Store notifications, the AI proxy, support, opt-in analytics, Find One and account deletion. The backend holds no copy of the closet.
 
 ## What the docs already require
@@ -105,6 +137,8 @@ Why: automatic CloudKit mirroring can't meet PRD 11.7's conflict rules or PRD 15
 **20a go/no-go gates for SwiftData:** passes every store contract suite; a staged migration over the large fixture survives a forced kill at each step; 2,400 garments load off the main actor without a stall; no crash over 1,000 rapid saves from two actors.
 
 ### Backend: Cloudflare Workers + D1
+
+*Superseded on 18 October 2026 by Jose's choice of Convex with Clerk. See the update at the top. Kept for the record.*
 
 - One Worker per environment (dev, staging, production), each with its own D1 database and secrets.
 - D1 holds principals, sessions, consent receipts, the ledger and reservations, entitlements, the notification log, the audit log, support tickets and aggregated analytics.
