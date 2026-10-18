@@ -1,124 +1,439 @@
 # Threat model
 
-Phase 0c, written 13 October 2026. This is the first threat model for Nifty Outfit Nook, covering the whole system as planned. It goes with [DATA_MAP.md](DATA_MAP.md) (what data exists and where it goes) and [ACCOUNT_INVENTORY.md](ACCOUNT_INVENTORY.md) (the accounts that can touch the app). The controls come from [SECURITY_STANDARD.md](SECURITY_STANDARD.md) and PRD sections 11.6 and 15. Phase 19a revisits this model before real data, photos, the backend and payments arrive.
+Phase 0c wrote the first version on 13 October 2026. **Phase 19a updated it on 18 October 2026** for real data on the stack Jose chose that day ([STACK.md](STACK.md), and the update at the top of [STAGE_B_DATA_OPTIONS.md](STAGE_B_DATA_OPTIONS.md)). It goes with [DATA_MAP.md](DATA_MAP.md) (what data exists, where it lives, who reads it and what deletes it) and [ACCOUNT_INVENTORY.md](ACCOUNT_INVENTORY.md) (the accounts that can touch the app). The controls come from [SECURITY_STANDARD.md](SECURITY_STANDARD.md) and PRD sections 9.2, 11.6, 11.7 and 15.
 
-The standard doesn't prescribe a method. This model uses STRIDE (spoofing, tampering, repudiation, information disclosure, denial of service, elevation of privilege) for each part of the system, and adds harms that aren't attacks, such as data loss or a hurtful AI answer, because those matter as much for Lily.
+**Status: waiting on Jose's Phase 19a checkpoint.** Nothing has been signed up for or built. The decisions this model needs from him are listed under [Decisions for Jose](#decisions-for-jose).
 
-Both repos are public, so this file stays at the level of a normal public threat model. It names risks and controls, not account details, recovery methods or anything an attacker could use directly.
+The stack this model covers:
 
-**Likelihood** and **impact** are High, Medium or Low, judged for a small app with one main user now and public users later. Stage A has no networking code and no accounts. Its only storage across launches is an app-only `UserDefaults` suite holding lowest-tier app state flags (see [DATA_MAP.md](DATA_MAP.md)), and the website's policy pages open in an in-app Safari view. So most of these risks only become live in Stage B. The phase column is where the control gets built and tested.
+- SwiftData on the device, with `CKSyncEngine` to her private iCloud using encrypted fields
+- Clerk (`clerk-ios`) for Sign in with Apple and sessions
+- Convex HTTP actions as the gateway, called with plain `URLSession` and the Clerk session token as the bearer
+- The Claude API (Haiku 4.5 by default, Sonnet 5.5 when quality earns it) for the stylist, and WaveSpeed for try-on pictures, both called only from Convex, with keys in Convex environment variables
+- Cloudflare for the website, and an R2 bucket holding the daily encrypted Convex export
+- App Attest, StoreKit 2 with App Store Server Notifications, and WeatherKit
+- A support inbox on iCloud+ with a custom domain
 
-## Top risks
+The method is STRIDE (spoofing, tampering, repudiation, information disclosure, denial of service, elevation of privilege) for each data flow, plus harms that aren't attacks, such as data loss or a hurtful AI answer, because those matter as much for Lily.
 
-These are the ones Jose should look at first, roughly in order.
+Both repos are public, so this file stays at the level of a normal public threat model. It names risks and controls, not deployment names, account details, recovery methods or anything an attacker could use directly.
 
-| ID | Risk | Who it hurts | Likelihood | Impact | Main controls | Phases |
-|---|---|---|---|---|---|---|
-| R1 | Personal details about Lily, some Sensitive under the standard, are already in the public planning repo and in the public review notes | Lily | High (already public) | Medium | **Accepted by Jose, 7 October 2026:** he's fine with Lily's details being in this public repo. Going forward, new docs leave out body and health details where they aren't needed, and here.now notes are pulled into the repo only as needed. The app repo and backend never hold her real data | Accepted |
-| R2 | Someone calls the AI gateway outside the app (cloned app, script, stolen token) and runs up the AI bill | Jose | High once the gateway is public | High | App Attest, short-lived tokens, server-side entitlement, atomic usage ledger with cost reserved before every call, per-user, per-device and global limits, provider hard caps and budget alerts, kill switch per paid feature | 24a, 24b, 25a, 25b, 30c |
-| R3 | Takeover of one of Jose's accounts (GitHub, Apple Developer, Cloudflare, backend host, AI provider) leading to a malicious build, stolen keys, a defaced website or a large bill | Lily, Jose, public users | Medium | High | Two-factor authentication on every account (passkeys or hardware keys where offered), password manager, offline recovery codes, least-privilege API keys, account inventory with rotation dates | 0c, 1b, 25a |
-| R4 | Sensitive data (measurements, comfort, notes, photos) goes to an AI provider beyond what Lily agreed to, or the provider keeps or trains on it | Lily | Medium | High | Named-recipient consent receipts checked on device and server, minimum context with no identity, no photos on the text route, provider terms recorded per provider, a recipient change needs new consent | 19b, 24a, 27a, 33 |
-| R5 | Try-on photos of Lily, or generated pictures of her, leak or are misused, or someone uploads a photo of another person | Lily, third parties | Low until Phase 33 | High | Phase 33 stays gated on PRD 9.2; separate image permission; moderation on inputs and outputs; private, short-lived transfers; no photos in logs; app switcher snapshot hidden | 14a, 33 |
-| R6 | A secret (AI key, service key, signing material) is committed to one of the public repos or printed in CI logs | Jose | Medium | High | No secrets in the app by design; push protection and secret scanning; gitleaks in pre-commit and CI over full history; secrets only in protected environments; rotation runbook, since deleting a leaked key from git doesn't make it safe | 1b, 25a, 25b |
-| R7 | Lily loses her closet: a failed migration, a lost phone with sync off, a bad restore or a sync conflict | Lily | Medium | High | Persistence spike with migration and interruption tests, migrations from day one, export and restore, optional private iCloud, recovery snapshot, tests for corruption | 20a, 20b, 21a, 21b |
-| R8 | One user reads or changes another user's data on the backend (broken object-level authorization) | Public users | Medium once public | High | Authorization on every request, Row Level Security with default deny if Postgres, cross-user tests in CI, no trust in client-supplied IDs | 24c, 32b |
-| R9 | The stylist says something hurtful about Lily's body, gives sizing as fact, or acts on instructions hidden in notes or web pages | Lily | Medium | Medium | Body-neutral policy on the server, typed response validation against product rules, user text treated as data, no tools on stylist calls, Report Styling Problem, evaluation on her saved scenarios | 27a, 28, 34 |
-| R10 | Entitlement or credit fraud: a faked purchase, a replayed webhook, a refund that keeps access | Jose | Medium | Medium | Server verifies signed transactions and JWS notifications, idempotent handlers, server is the authority for credits, refund and revocation tests | 30a, 30b, 30c |
+**Likelihood** and **impact** are High, Medium or Low, judged for a small app with one main user now and public users later. The phase column says where the control gets built and tested; see [SWIFT_BUILD_PLAN.md](SWIFT_BUILD_PLAN.md).
 
-## By component
+## Top risks, re-ranked for this stack
 
-### Lily's device and the app
+Ranked by what would hurt most if nothing were done, given this stack. IDs R1 to R10 are the Phase 0c risks, kept where they still apply. R11 to R15 are new.
+
+| Rank | ID | Risk | Who it hurts | Likelihood | Impact | Main controls | Phases |
+|---|---|---|---|---|---|---|---|
+| 1 | R2 | Someone calls the Convex gateway outside the app (cloned app, script, stolen session, or a Convex function left public) and runs up the Claude or WaveSpeed bill | Jose | High once the gateway is live | High | App Attest on every paid request; Clerk token checked in every function; every non-HTTP Convex function `internal`; atomic ledger with cost reserved before each provider attempt; per-user, per-device and global limits; spend limit in the Claude Console and a small prepaid WaveSpeed balance; kill switch per feature | 24a, 24b, 25a, 30c |
+| 2 | R8 | One user reads or changes another user's rows. **Convex has no row-level security**, so one missing check in one function is a leak with no database backstop | Public users | Medium once a second user exists | High | One data-access module that takes the principal ID from the verified token, never from the request; lint that fails CI on a public query or mutation outside an allowlist; cross-user tests for every function in CI | 24a, 24c, 32b |
+| 3 | R5 | Her try-on photo and garment photos go to WaveSpeed, whose published terms don't yet say how long inputs are kept, whether they train on them, where they're processed, or whether they pass to the model's maker. Or a transfer URL or output URL leaks | Lily | Medium when Phase 33 starts | High | Phase 33 stays gated on PRD 9.2.5 (TO-03); WaveSpeed's input retention, training use, location and sub-processors confirmed in writing first; separate named-recipient image permission; EXIF stripped; no measurements in image requests; short-lived private transfers; outputs copied to the device and staging deleted | 19b, 22a, 33 |
+| 4 | R3 | Takeover of one of Jose's accounts. The list is longer now: GitHub, Apple Developer, Convex, Clerk, the Claude Console, WaveSpeed, Cloudflare (website and backup bucket), the registrar, DNS and iCloud+ (which control the support inbox) | Lily, Jose, public users | Medium | High | Passkey or hardware-key two-factor on every one; separate dev and production deployments and keys; least-privilege tokens; a separate Cloudflare account or token for the backup bucket; account inventory with rotation dates | 23b, 25a, 25b |
+| 5 | R7 | Lily loses her closet: a failed SwiftData migration, a `CKSyncEngine` merge bug, a bad restore, or a promoted CloudKit schema mistake that can't be undone | Lily | Medium | High | 20a spike gates; migrations with a recovery snapshot; merge rules as pure, tested functions; encrypted fields decided before schema promotion; sync off by default until the 21b restore test passes; encrypted export | 20a, 20b, 21a, 21b |
+| 6 | R4 | Text data (measurements, comfort, notes, closet descriptors) reaches Anthropic beyond what she agreed to, or is kept longer than she was told. Verified today: no training on API content, inputs and outputs deleted within 30 days, up to 2 years if flagged for a usage-policy violation, and **Haiku 4.5 can't be pinned to US-only processing** | Lily | Medium | High | Named-recipient consent receipt checked on device and server; minimum context with no identity and no photos; terms recorded with URLs and dates (DATA_MAP processors); consent text says 30 days and global processing unless Jose picks a model that can be pinned to the US | 19b, 24a, 27a |
+| 7 | R11 | Clerk, a third party, holds the link between her Apple ID and the app, plus her email if requested, and its data may be processed anywhere in the world. A Clerk breach, a takeover of Jose's Clerk dashboard, or a flaw in `clerk-ios` lets someone act as her | Lily, public users | Low | High | Request no name and no email scope unless Clerk requires one; ClerkKit only (no ClerkKitUI); written dependency approval with pinned version; Convex checks issuer, audience and expiry and rejects the dev instance's tokens in production; two-factor on Clerk; Clerk named in consent and privacy policy | 19b, 24a, 24c, 25a |
+| 8 | R15 | Account deletion leaves data behind somewhere: Convex rows, the Clerk user, her private iCloud zone, the Apple sign-in link, provider copies, or R2 backups restored later | Lily, public users | Medium | Medium | One deletion action that walks every system in a fixed order and shows what is still pending; Apple token revocation; deletion records reapplied after any restore; backups expire in 30 days; a test that checks every table after deletion | 20b, 24c, 25b |
+| 9 | R12 | The R2 backup bucket is a full copy of the Convex database: ledger, consent receipts, principal map, support tickets and reply addresses. It lives in a second provider, with its own credentials, outside Convex's access checks | Jose, public users | Low | High | Public-key encryption before upload, with the private key offline; bucket private with no public URL; a write-only token in CI; 30-day lifecycle; restore rehearsal into a test deployment; deletion records reapplied after restore | 25a, 25b |
+| 10 | R6 | A secret (Claude key, WaveSpeed key, Convex deploy key, Sign in with Apple key, App Store Server API key, backup key) is committed to a public repo, printed in CI logs, or exposed to an agent session | Jose | Medium | High | No secrets in the app; push protection and gitleaks over full history; secrets only in Convex environment variables and protected CI environments; no `console.log` of env values; rotation runbook | 1b, 25a, 25b |
+| 11 | R13 | Agents work on this project with tools that reach real systems: the Convex MCP server, Cloudflare connectors that can create and delete R2 buckets, and the GitHub CLI. Text an agent reads in a public repo, issue or web page could steer it, and a mistake can delete or expose data | Lily, Jose | Medium | High | Agents never get production access to Convex (the MCP server blocks it unless a flag is passed, and that flag is never used); agents work only on a dev deployment that holds no real data and uses dev keys with small caps; the env and `run` tools disabled where not needed; no agent access to the backup bucket's account; agents treat observed content as data | 23b, 25a |
+| 12 | R9 | The stylist says something hurtful about her body, gives sizing as fact, or acts on instructions hidden in notes | Lily | Medium | Medium | Body-neutral policy on the server; typed response validation; user text passed as data; no tools on stylist calls; Report Styling Problem; evaluation on her saved scenarios | 27a, 28 |
+| 13 | R10 | Entitlement or credit fraud: a faked purchase, a replayed notification, a refund that keeps access or credits | Jose | Medium | Medium | JWS verification of App Store Server Notifications in a Convex HTTP action; transactions checked with the App Store Server API; idempotent handlers keyed by notification and transaction ID; refund and revocation tests | 30a, 30b, 30c |
+| 14 | R14 | Clerk's free plan fixes sessions at 7 days with no way to shorten or lengthen them. A stolen device session stays valid until it expires or is revoked, and Lily signs in again every week | Lily | Low | Low | Revoke sessions on sign-out and deletion; Clerk token in the Keychain with `WhenUnlockedThisDeviceOnly` (to confirm for `clerk-ios`); App Attest still required for paid calls; the local app keeps working while signed out; Pro plan if longer or shorter sessions are needed | 24a |
+| 15 | R1 | Personal details about Lily are already in the public planning repo and review notes | Lily | High (already public) | Medium | **Accepted by Jose, 7 October 2026.** New docs, this one included, leave out her body and health details. The app repo, Convex and R2 never hold her real closet | Accepted |
+
+### Retired and replaced
+
+No Phase 0c risk retires outright. Every one still applies on this stack. Some Phase 0c **controls** are replaced:
+
+| Phase 0c control | Replaced by | Why |
+|---|---|---|
+| Row Level Security with default deny "if Postgres" (R8) | A principal-scoped data-access module, `internal` functions, a CI lint and cross-user tests | Convex has no RLS. The standard's wording needs Jose's approval (decision D3) |
+| Our own Sign in with Apple token check and session issuing (D1 plan, 16 October) | Clerk verifies Apple's token and runs sessions; Convex verifies Clerk's JWT | Jose chose Clerk. Moves the identity risk to a processor (R11) |
+| D1 Time Travel as the backup | Daily `npx convex export`, encrypted, 30 days in R2 | Convex's scheduled backups need the paid plan (R12) |
+| "Refresh token rotation" in our gateway | Clerk's session refresh | Clerk owns the session lifecycle; checked in 24a |
+
+## Risks specific to this stack
+
+### No RLS in Convex (R8, R2)
+
+Convex has no database-level access rules. Every `query`, `mutation` and `action` that isn't declared `internal` can be called by anyone who knows the deployment URL, over Convex's own client protocol, not only through our HTTP actions. The app will only use HTTP actions, but that doesn't stop someone else calling a public function directly.
+
+Controls, all in Phase 24a and 24c:
+
+- Every function the app doesn't call by name is `internalQuery`, `internalMutation` or `internalAction`. HTTP actions are the only public entry points.
+- A CI check lists every exported public function and fails if one appears outside an allowlist.
+- One data-access module takes the principal ID that came from the verified Clerk token. Handlers can't query tables directly. No function accepts a user ID or principal ID from the request body as permission.
+- A cross-user test for every HTTP action: user B's token against user A's ledger rows, consent receipts, tickets, cached results and reservations, expecting a rejection.
+- Phase 32b repeats this at scale and the 35a independent review checks it.
+
+### Clerk holds her Apple ID link and email (R11)
+
+When she signs in, Clerk receives Apple's identity token and stores a Clerk user with her Apple user ID and, if the scope is requested, her email (a private relay address or her real one) and name. Clerk's privacy policy (updated 15 June 2026, https://clerk.com/legal/privacy) says it acts as a processor for customer data and that data "may be transferred, processed, and stored anywhere in the world". It doesn't state how long data is kept after a user is deleted.
+
+Controls:
+
+- Ask Apple for no name and, if Clerk allows it, no email. The backend needs only a stable user ID (24a).
+- Use the `ClerkKit` product only. It has no third-party dependencies in its target; `ClerkKitUI` pulls in Nuke and PhoneNumberKit (checked in clerk-ios `Package.swift` today). Build the sign-in button with `AuthenticationServices`.
+- Pin `clerk-ios` exactly and vet it in writing before it ships (decision D2). It is MIT licensed and actively maintained (checked on GitHub today).
+- Convex's Clerk provider config pins the production issuer and audience, so dev-instance tokens fail in production.
+- Clerk named in the consent text and privacy policy as a processor (19b).
+- Deleting her account deletes the Clerk user through Clerk's Backend API and checks whether that also revokes Apple's sign-in link (24c).
+- Later, past about 50,000 users, STACK.md plans to replace Clerk with our own sign-in. That removes this processor.
+
+### Her try-on photo and measurements going to AI providers (R4, R5)
+
+Two different paths, kept apart on purpose:
+
+- **Text, to Anthropic.** Minimal closet descriptors, fit facts, comfort in neutral wording, notes up to 2,000 characters and weather conditions. No name, no email, no Clerk ID, no photos. Verified today: no training on API customer content; inputs and outputs deleted within 30 days, up to 2 years for content flagged as a usage-policy violation; zero data retention only by negotiated agreement. Data at rest stays in a US workspace, but inference runs in any geography by default, and `inference_geo: "us"` isn't supported on Haiku 4.5 (it returns an error). See DATA_MAP processors for URLs.
+- **Images, to WaveSpeed (Phase 33 only).** Her try-on reference photo and the selected garment photos. **This is the moment her likeness leaves the device**, and the consent screen must say so in those words. No measurements, notes or names go in the image request. Verified today: generated outputs are deleted within 7 days (WaveSpeed data retention policy). Not covered by any official page we could find today: how long uploaded **inputs** are kept, whether inputs or outputs train models, where processing happens, and whether inputs pass to the model's maker (Seedream is a ByteDance model; PRD 9.2.4 notes up to 180 days of safety retention on BytePlus direct). The operating company is WaveSpeedAI PTE. LTD. in Singapore. All of this is **to verify in 19b**, in writing, before TO-03 can pass.
+
+### Provider keys and runaway cost (R2, R6)
+
+The Claude key, the WaveSpeed key, the App Store Server API key and the Sign in with Apple key sit in Convex environment variables. Anyone with production dashboard access, a production deploy key, or code that logs `process.env` can read them. Cost runs away through abuse (R2), a retry loop, or a leaked key used directly against the provider.
+
+Controls: one key per environment and purpose; a Claude Console spend limit and alerts; a small prepaid WaveSpeed balance (it can't overspend); the ledger reserves cost before each attempt and fails closed when it can't; kill switches readable without an app update; a rotation runbook rehearsed in 25b; no secrets in logs, enforced by review and a lint on `console.*` calls that touch env values.
+
+### The backup bucket as a copy of the ledger (R12)
+
+STACK.md's backup job exports the whole Convex database every day. That copy holds everything the backend holds: principal map and Clerk user IDs, consent receipts, ledger and reservations, entitlements and transaction IDs, audit events, support tickets with any reply address, and App Attest public keys. It is Personal and Account-and-billing data in a second provider, with its own credentials.
+
+Controls (Phase 25a and 25b):
+
+- Encrypt before upload with a public key. Only the public key is in CI; the private key stays offline with Jose. A leaked CI secret then can't read old backups.
+- The job's R2 token can write objects to that one bucket and nothing else. No public bucket URL.
+- A 30-day lifecycle rule deletes old copies, matching PRD 15.4's 30-day backup rotation.
+- The Convex production deploy key the export needs lives in a protected GitHub environment in the private backend repo, never in either public repo.
+- The monthly restore goes into a separate test deployment, run by Jose or behind a manual approval, and the restored copy is deleted after the check.
+- A restore reapplies the deletion log first, so a deleted account doesn't come back (R15).
+- Whether `npx convex export` can leave out tables (such as the 24-hour result cache) is to verify in 25b.
+
+### Clerk's 7-day session on the free plan (R14)
+
+Verified today on https://clerk.com/pricing: the Hobby plan has a "Fixed, 7 day session lifetime". Custom session length (5 minutes to 10 years) starts on Pro at $25 a month, or $20 billed yearly. For Lily alone this means one tap to sign in again each week, and a stolen session lasts at most 7 days unless revoked sooner. How long each session **token** (the JWT Convex checks) lives is set in Clerk's JWT template and is to verify in 24a. The local closet never depends on being signed in.
+
+### Public repos, agents and MCP access (R13, R6, R1)
+
+Both repos are public. Anyone can read this model, the PRD and the app's source, and the Convex deployment URL and Clerk publishable key will ship in the app. Neither is a secret, so nothing may depend on them staying hidden.
+
+Agents also work on this project. Verified today on https://docs.convex.dev/ai/convex-mcp-server: the Convex MCP server can read tables, run deployed functions, and get, set and remove environment variables; it can't reach production deployments unless started with `--dangerously-enable-production-deployments`; and `--disable-tools` can turn off tools such as `envSet`, `envRemove` and `run`. Agent sessions on Jose's machine also have Cloudflare connectors that can create and delete R2 buckets.
+
+Controls: that production flag is never used; agents work on a dev deployment with no real data and dev provider keys with small caps; the backup bucket sits in a Cloudflare account or behind a token agents don't have; production changes go through PRs and CI in the private backend repo; agents treat text in repos, issues and web pages as data, never instructions.
+
+## Data flows
+
+```mermaid
+flowchart LR
+    subgraph Device["Lily's iPhone or iPad (trust boundary: her unlocked device)"]
+        App["App"]
+        Store[("SwiftData store, image files,<br/>search index: complete protection")]
+        KC[("Keychain: Clerk session,<br/>App Attest key in Secure Enclave")]
+        Vision["Vision cutout, on device"]
+    end
+    subgraph Apple["Apple"]
+        CK[("Her private iCloud<br/>CKSyncEngine, encrypted fields")]
+        SIWA["Sign in with Apple"]
+        AA["App Attest"]
+        SK["App Store, StoreKit 2,<br/>Server Notifications"]
+        WK["WeatherKit"]
+    end
+    subgraph ClerkB["Clerk (processor)"]
+        Clerk["Users, sessions"]
+    end
+    subgraph ConvexB["Convex (processor, private backend repo)"]
+        HTTP["HTTP actions: token, App Attest,<br/>schema, consent, limits"]
+        DB[("Principals, consent, ledger,<br/>entitlements, tickets, audit")]
+        Env[("Environment variables: keys")]
+        Stage[("Short-lived image staging,<br/>Phase 33")]
+    end
+    Anthropic["Anthropic: Claude API"]
+    WS["WaveSpeed: try-on, Phase 33"]
+    subgraph CF["Cloudflare"]
+        R2[("R2: encrypted daily export")]
+        Site["Website"]
+    end
+    GH["GitHub Action: daily export"]
+    Mail["Support inbox, iCloud+"]
+    Out["Export file she saves"]
+
+    App --> Store
+    App --> KC
+    App --> Vision
+    Store -- "F3 opt-in sync" --> CK
+    App -- "F4 encrypted archive" --> Out
+    App -- "F5 identity token" --> SIWA
+    App -- "F5 sign-in" --> Clerk
+    App -- "F6 bearer token, assertion" --> HTTP
+    App -.-> AA
+    HTTP --> DB
+    Env -.-> HTTP
+    HTTP -- "F7 minimal text, no identity" --> Anthropic
+    HTTP -- "F8 her photo, garment photos" --> WS
+    HTTP --> Stage
+    App -- "F9 purchase" --> SK
+    SK -- "F9 signed notifications" --> HTTP
+    App -- "F11 feedback" --> HTTP
+    DB -.-> Mail
+    GH -- "F13 export, encrypt" --> R2
+    App -- "F14 approximate location" --> WK
+```
+
+Each flow lists its assets, the trust boundaries it crosses, the threats (STRIDE), the control and the phase that builds it.
+
+### F1. Photo intake, EXIF stripping and cutout on the device
+
+**Path:** system photo picker or camera → bytes in memory → size and pixel checks → downsample → strip EXIF and GPS → write original and cutout files → Vision subject lifting → cutout file and thumbnail.
+**Assets:** garment photos (Personal, stored as Sensitive because a photo can show her or her room); any photo that shows her (Sensitive); location and device metadata.
+**Boundaries:** Photos library to app container. Nothing leaves the device.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| GPS and device metadata kept in stored originals, then carried into iCloud, an export or a later upload | Information disclosure | Strip metadata before the first write; test with a fixture photo that has GPS; the picker gives selected items only, so no full library access | 22a |
+| A crafted or huge image crashes the app or fills the disk (decompression bomb) | Denial of service | Encoded size and decoded pixel limits before decoding; downsample through ImageIO; temporary files removed on success and failure | 22a, 22b |
+| A mirror selfie or worn shot becomes a "garment" photo and later reaches a cloud route | Information disclosure | Garment photos never go on the text route; any photo route needs its own permission and moderation | 22a, 33 |
+| Camera or library permission asked before it's needed | Information disclosure | Ask on first use with a clear reason string; manual entry when denied | 22a, 19b |
+| Cutout quality on her iPhone 12 isn't good enough, so she works around it | Denial of service (usability) | Cutout go/no-go with `-cutout-bench` on her phone; the original always kept | 22a |
+
+### F2. Local store and file protection
+
+**Path:** app → SwiftData store (local only) and image files in Application Support; search index; caches; Keychain.
+**Assets:** everything she enters, Sensitive included; Clerk session; App Attest key.
+**Boundaries:** her device's lock state; device backups (iCloud Backup or a computer), which copy the app container.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| A lost or stolen locked phone exposes files | Information disclosure | Data Protection `complete` on the store, images and drafts; the `CKSyncEngine` state file may take `completeUntilFirstUserAuthentication` only as a documented exception | 20a, 21a, 22b |
+| Someone with her unlocked phone sees measurements, try-on pictures or notes, including in the app switcher | Information disclosure | Sensitive screens hidden in the app switcher snapshot; nothing Sensitive on the general pasteboard | 14a (built), 21a, 33 |
+| The Clerk session sits somewhere weaker than the Keychain | Information disclosure, spoofing | Confirm `clerk-ios` stores it in the Keychain with `WhenUnlockedThisDeviceOnly` or stricter; if it can't be set, record it in the dependency approval | 24a |
+| Personal data in logs or crash reports | Information disclosure | `os.Logger` with privacy redaction; no personal data in release logs | Every phase |
+| Caches, search index or recovery snapshots outlive a deletion | Information disclosure | Purge rules cover every derived copy; tests after Delete my data | 21a, 21b |
+| A migration or interrupted write destroys data (R7) | Tampering, data loss | Recovery snapshot, journaled migration, 20a gates | 20a, 21a |
+
+### F3. iCloud sync
+
+**Path:** SwiftData store → `SyncService` (`CKSyncEngine`) → custom zone in her private CloudKit database → her other devices.
+**Assets:** her whole closet, profile, looks and photos (as `CKAsset`).
+**Boundaries:** device to Apple. Apple holds the keys unless she has Advanced Data Protection on; with it, encrypted fields and assets are end-to-end encrypted (Apple support page 102651, checked 16 October 2026).
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| A conflict or deletion on one device wipes or resurrects data on another | Tampering, data loss | PRD 11.7 merge rules as pure functions with table tests; deletion markers; no device-clock winner; conflict review | 20b, 21b |
+| Sensitive fields readable by Apple, or by someone with her Apple Account, without ADP | Information disclosure | Every Sensitive and Personal field in `encryptedValues`; plain fields hold only IDs, revisions and timestamps; tell her what ADP adds. Accepted risk without ADP (decision D8) | 20b |
+| A CloudKit schema mistake is permanent once promoted | Tampering | Promote only after 20b sign-off; encrypted fields chosen before promotion | 20b |
+| Delete my data leaves her iCloud copy | Information disclosure | Delete the custom zone; show "pending" while iCloud is unreachable | 20b, 24c |
+| Her iCloud is full and sync stalls quietly | Denial of service | Per-record pending status; clear message; local store keeps working | 20b, 21b |
+
+### F4. Export and restore
+
+**Path:** app → archive with the closet, photos and history → encrypted with a key from her passphrase → Files location she picks. Restore runs the other way into a staging area before replacing the live store.
+**Assets:** a full copy of her data, Sensitive included.
+**Boundaries:** app to wherever she saves it. Outside the app's control afterwards.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| The archive reaches the wrong person or a shared folder | Information disclosure | Encrypted by default (AES-GCM; the passphrase key derivation chosen in 20b); preview of what's included; PRD 15.4's unencrypted archive needs Jose's written exception | 20b, 21b |
+| A crafted archive escapes its folder or exhausts the disk on restore (path traversal, archive bomb) | Tampering, denial of service | Validate entries, sizes and counts before writing; restore into staging, verify hashes, then swap | 21b |
+| A restore brings back data she deleted, or an old schema breaks the store | Tampering, data loss | Restore respects deletion markers; schema version checked; old store kept until the restore verifies | 21b |
+
+### F5. Sign-in through Clerk
+
+**Path:** Sign in with Apple sheet (`AuthenticationServices`) → Apple identity token → `clerk-ios` → Clerk's Frontend API → Clerk user and session → session token in the Keychain.
+**Assets:** Apple user ID, optional email and name, Clerk user ID, session.
+**Boundaries:** device to Apple; device to Clerk (a third-party processor, global processing).
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| Clerk breach or a takeover of Jose's Clerk dashboard exposes her Apple link and email, or lets someone act as her (R11) | Spoofing, information disclosure | Minimal scopes; two-factor on Clerk; production and dev instances separate; any dashboard feature that can act as a user stays off; Clerk in the account inventory | 24a, 25a |
+| A flaw or malicious update in `clerk-ios` | Tampering | ClerkKit only, exact pin, written approval, Dependabot, review of each update | 24a |
+| A dev-instance token or a token for another app accepted in production | Spoofing | Convex checks issuer, audience and expiry against the production instance only; a test sends a dev token | 24a |
+| A stolen session is replayed | Spoofing | 7-day ceiling (R14); revocation on sign-out and deletion; App Attest still required for paid calls | 24a |
+| Sign-in fails or Clerk is down | Denial of service | Local closet unaffected; cloud features show "signed out"; retry is her choice | 24a, 26 |
+
+### F6. App to Convex with App Attest
+
+**Path:** app → `URLSession` over TLS → Convex HTTP action with `Authorization: Bearer <Clerk token>` and an App Attest assertion over the request → verify token, assertion, schema, consent, entitlement, limits → internal mutation or action.
+**Assets:** request bodies (Sensitive when they carry fit facts or comfort), principal ID, attestation keys and counters.
+**Boundaries:** device to Convex (public internet); HTTP action to internal functions.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| Scripted or cloned clients call paid endpoints (R2) | Spoofing, denial of service | Attestation registered once per key against a server challenge; an assertion per paid request with a checked, increasing counter stored in a mutation; a bounded fallback for devices that can't attest, with no paid access | 24a |
+| Someone calls a public Convex query or mutation directly, skipping the HTTP action checks (R8, R2) | Elevation of privilege | Everything except HTTP actions is `internal`; CI lint; cross-user tests | 24a, 24c |
+| Client-supplied IDs used as permission | Elevation of privilege | Principal taken only from the verified token | 24c |
+| Oversized or malformed requests | Denial of service, tampering | Typed schema, 64 KiB body, 2,000-character notes, unknown fields rejected | 24a |
+| Raw request bodies in Convex function logs | Information disclosure | No payload logging; log only action IDs, error categories, cost and latency; how long Convex keeps function logs is to verify in 24a | 24a |
+| An admin or config change can't be traced | Repudiation | Audit table for sign-ins, attestation failures, entitlement, credit, price, model and budget changes, without personal data | 24a, 25b |
+| Dev and production mix | Information disclosure | Separate Convex deployments, Clerk instances and provider keys per environment | 23b, 25a |
+
+### F7. Convex to Claude
+
+**Path:** internal action → build minimal context (descriptors, fit facts, neutral comfort, notes, conditions) → Claude Messages API over TLS with the key from an environment variable → validate the typed response → store the normalized result in a 24-hour encrypted cache → return to the app.
+**Assets:** Sensitive request content, the Claude key, the response.
+**Boundaries:** Convex to Anthropic (a processor; US workspace storage; inference in any geography by default).
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| Anthropic keeps the content longer than she was told, or processes it outside the US (R4) | Information disclosure | Consent text states the verified terms: no training, 30 days, up to 2 years if flagged, global inference on Haiku 4.5; recheck on any model change | 19b, 27a |
+| Identity or more context than needed in the prompt | Information disclosure | Builder takes only allowlisted fields; no name, email, Clerk ID or principal ID; no photos (the text route rejects images) | 27a |
+| Prompt injection through garment notes or names | Tampering | Notes passed as data; no tools on stylist calls; response validated against product rules | 27a |
+| A hurtful or invalid answer (R9) | Tampering | Body-neutral policy on the server; schema and rule validation; Report Styling Problem | 27a, 28 |
+| Cost runaway from retries or long outputs (R2) | Denial of service (cost) | Cost reserved before each attempt; at most 2 attempts; token caps; Console spend limit | 24b, 27b |
+| A delayed result lands after she withdrew consent or deleted her account | Information disclosure | Recheck consent and deletion version before caching or returning | 24c, 27a |
+| Outage or price change | Denial of service | Kill switch; honest error state; on-device model on eligible phones (not her iPhone 12) | 26, 28 |
+
+### F8. Convex to WaveSpeed (Phase 33 only)
+
+**Path:** app → HTTP action with her try-on reference photo and the selected garment photos (metadata already stripped) → short-lived Convex staging → WaveSpeed API with the key from an environment variable → output picture → Convex downloads it → app stores it on the device and her iCloud → staging deleted.
+**Assets:** **her likeness** and her garment photos, the generated picture of her, the WaveSpeed key.
+**Boundaries:** device to Convex; Convex to WaveSpeed (Singapore company; processing location and sub-processors not published; possibly onward to the model's maker).
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| WaveSpeed keeps her photo, trains on it, or passes it on (R5) | Information disclosure | Get input retention, training use, location and sub-processors in writing; if they can't be confirmed, don't enable or pick another provider; named-recipient image permission | 19b, 33 |
+| A transfer or output URL is readable by anyone who has it | Information disclosure | Prefer sending bytes in the request over a URL; if a URL is needed, short expiry and deletion right after the job; outputs copied, never linked; how WaveSpeed takes inputs and serves outputs is to verify in 33 | 33 |
+| Measurements or notes added to the image prompt | Information disclosure | Image prompt built on the server from garment descriptors only | 33 |
+| Someone uploads a photo of another person, or the output is unsafe | Spoofing, information disclosure | Input and output moderation; her own reference photo only; TO-03 | 33 |
+| Image cost runs away (R2) | Denial of service (cost) | PRD 9.2.4 bounds: 2 attempts per child, 3 children, one active job; reserved before each attempt; prepaid balance | 24b, 33 |
+| Late output after withdrawal or deletion | Information disclosure | Deletion and consent fences; staging cleanup job | 33 |
+
+### F9. StoreKit and App Store Server Notifications
+
+**Path:** app → StoreKit 2 purchase with an `appAccountToken` set to her principal's UUID → Apple; Apple → App Store Server Notifications V2 → public Convex HTTP action → JWS verification → idempotent internal mutation updates entitlements and credits.
+**Assets:** transaction IDs, entitlements, credit balances.
+**Boundaries:** device to Apple; Apple to Convex (a public endpoint anyone can POST to).
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| Forged or replayed notification (R10) | Spoofing, tampering | Verify the JWS `x5c` chain to Apple Root CA G3 and the signature; check bundle ID and environment; unique notification UUID | 30c |
+| Client claims an entitlement or balance it doesn't have | Elevation of privilege | Server is the authority; transactions checked with the App Store Server API; the app only displays state | 30c |
+| `appAccountToken` swapped to credit someone else | Tampering | Link a transaction to a principal only through verified transaction data and the signed-in principal; never trust the token alone | 30c |
+| Refund or revocation keeps access or credits | Elevation of privilege | Refund, revoke and expiry handlers with tests | 30c |
+| Flood of junk POSTs | Denial of service | Reject before any database write when the signature fails; size limit | 30c |
+
+### F10. Credit ledger and reservations
+
+**Path:** HTTP action → internal mutation reserves the worst-case cost against principal, provider and global budgets → internal action calls the provider → internal mutation settles the actual cost or keeps the reservation when the outcome is unclear → scheduled reconciliation.
+**Assets:** ledger rows, reservations, budgets, kill switches.
+**Boundaries:** inside Convex. Mutations are serializable transactions; actions aren't transactional.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| Two requests race past a limit | Tampering | Reserve in one mutation; settled cost plus open reservations decide admission | 24b |
+| A crash after the provider call loses the charge | Repudiation, denial of service (cost) | Reservation kept until reconciliation; missing usage is never treated as zero | 24b |
+| A retried request or replayed notification spends or grants twice | Tampering | Idempotency keys kept at least 24 hours; same key with different content rejected | 24b, 30c |
+| Ledger or pricing config unavailable | Denial of service | Fail closed for paid work; local features keep running | 24b, 26 |
+| Deleting data resets her allowance | Elevation of privilege | Minimal pseudonymous usage-window state survives deletion, disclosed in the policy | 24b, 24c |
+
+### F11. Feedback and support
+
+**Path:** Send feedback drawer → she sees the exact text → HTTP action (signed in, rate limited) → support table in Convex → Jose reads it in the dashboard and replies from the iCloud+ support inbox if she gave a reply address. Until 24d ships, Send hands the text to the system share sheet.
+**Assets:** free text (she may write anything), optional reply address, optional app and device details.
+**Boundaries:** device to Convex; Jose's email to hers.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| Closet data, photos or measurements attached without her meaning to | Information disclosure | Nothing attached automatically; exact-text preview | 14b (built), 24d |
+| Someone spoofs the support address to phish her or users | Spoofing | Add the DMARC record still missing (STACK.md), then move it toward `p=reject` | 24d |
+| Takeover of the iCloud account, registrar or DNS that control the inbox (R3) | Spoofing, information disclosure | Two-factor on all three; listed in the account inventory | 24d, 25a |
+| Floods fill the table | Denial of service | Per-principal caps; size limit; intake can be closed | 24b, 24d |
+| Tickets kept longer than promised, including in backups | Information disclosure | Scheduled delete 90 days after closure; backups age out 30 days later (R12) | 24d, 25b |
+
+### F12. Account deletion
+
+**Path:** Delete my data or Delete account in the app → local purge and iCloud zone deletion on the device → HTTP action → internal mutation deletes her principal's rows and writes a deletion record → Clerk Backend API deletes the Clerk user → Sign in with Apple token revoked → app shows each step as done or pending. Provider copies age out on their own terms; backups age out in 30 days.
+**Assets:** all of her data in every system.
+**Boundaries:** device, Apple (iCloud and Sign in with Apple), Convex, Clerk, Anthropic and WaveSpeed (no deletion call; retention terms apply), R2.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| A table or system is missed (R15) | Information disclosure | A deletion test seeds every table and system and checks each is empty after; new tables must join the test | 24c |
+| Apple's sign-in link stays active | Information disclosure | Revoke through Apple's REST endpoint, or confirm Clerk does it when the user is deleted (open question in STAGE_B_DATA_OPTIONS.md) | 24c |
+| A backup restore brings her data back | Information disclosure | Deletion records kept (pseudonymous ID and date only) and reapplied after every restore | 24c, 25b |
+| Deletion is mistaken for cancelling the subscription | Repudiation | The note that deleting doesn't cancel billing, plus a Manage Subscription link | 24c |
+| Someone else deletes her account | Tampering | Signed in, attested, with confirmation; no support call needed | 24c |
+| An in-flight AI job writes a result after deletion | Information disclosure | Deletion version checked before any write | 24c, 27a, 33 |
+
+### F13. Backups to R2
+
+**Path:** scheduled GitHub Action in the private backend repo → `npx convex export` with a production deploy key → encrypt with a public key → upload to a private R2 bucket → 30-day lifecycle; monthly restore into a test deployment.
+**Assets:** a full copy of Convex (R12); the deploy key; the backup key.
+**Boundaries:** Convex to GitHub runners; GitHub to Cloudflare.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| The bucket or a backup file becomes readable | Information disclosure | Encrypted before upload; private key offline; no public URL; R2 also encrypts at rest with AES-256 (verified today) | 25b |
+| The production deploy key leaks from CI | Elevation of privilege | Protected environment with required approval for anything but the export; key rotated on a schedule; never in a public repo | 25a |
+| An agent, a mistake or an attacker deletes the bucket, so backups vanish quietly | Denial of service, tampering | Bucket in an account or behind a token agents don't hold; a failed or missing daily upload alerts Jose; bucket lock if R2 offers it, to verify in 25b | 25b, 31 |
+| Restores never tested | Denial of service | Monthly restore rehearsal with a recorded result | 25b |
+| A restore resurrects deleted accounts | Information disclosure | Deletion log reapplied first | 25b |
+
+### F14. Weather and location
+
+**Path:** app asks for approximate, while-in-use location → WeatherKit framework on the device → forecast → conditions (not coordinates) go into a styling request.
+**Assets:** her approximate location (Sensitive); the forecast (Public).
+**Boundaries:** device to Apple. Convex never sees coordinates.
+
+| Threat | STRIDE | Control | Phase |
+|---|---|---|---|
+| Precise location requested, stored or sent beyond WeatherKit | Information disclosure | Approximate, while-in-use only; no storage of coordinates; conditions only in AI requests | 29 |
+| Quota exhausted by retries | Denial of service | 30-minute snapshot, coalesced lookups, one retry, manual fallback | 29 |
+
+## Other components
+
+These carry over from Phase 0c with small updates.
+
+### Analytics and crash reports
 
 | Threat | STRIDE | Likelihood | Impact | Control | Phases |
 |---|---|---|---|---|---|
-| Someone with her unlocked phone sees measurements, try-on pictures or notes, including in the app switcher | Information disclosure | Medium | Medium | Hide sensitive screens in the app switcher snapshot; no Sensitive data on the general pasteboard | 14a, 21a, 33 |
-| A lost or stolen locked phone exposes app files | Information disclosure | Low | High | Data Protection class `complete` for Sensitive and Personal files, Keychain `WhenUnlockedThisDeviceOnly` for tokens, caches without Sensitive data | 1a, 21a, 22b, 24a |
-| Personal data ends up in logs, crash reports or analytics | Information disclosure | Medium | Medium | `os.Logger` with privacy redaction, no personal data in release logs, analytics allowlist, crash tool vetted before adoption | Every phase, 31 |
-| Photo metadata (location, device) leaks through an upload or an export | Information disclosure | Medium | Medium | Strip EXIF and location before anything leaves the device; system photo picker so the app never needs full library access | 22a, 22b |
-| A crafted image or import file crashes the app or fills the disk (decompression bomb, path traversal) | Denial of service, tampering | Low | Medium | Size and pixel limits before decoding, validated imports, temporary files cleaned up | 21b, 22a, 22b |
-| The app binary is decompiled or its traffic inspected to find keys or the API | Information disclosure | High | Low if no secrets ship | No secrets in the binary, ATS with no exceptions, server enforces everything; pinning evaluated in the backend phase | 1a, 24a, 26 |
-| Permission prompts ask for more than needed (full photo library, precise or background location) | Information disclosure | Low | Medium | Ask only when a feature is first used, approximate while-in-use location, PhotosUI picker, clear reason strings | 22a, 29, 19b |
-| An export archive or shared collage reaches the wrong person | Information disclosure | Medium | Medium | Encrypted export (see DATA_MAP open points), exact-content preview before sharing, personal fields off by default | 20b, 21b |
-| A bad migration or interrupted write destroys data | Denial of service (data loss) | Medium | High | See R7 | 20a, 21a, 21b |
-
-### Her private iCloud
-
-| Threat | STRIDE | Likelihood | Impact | Control | Phases |
-|---|---|---|---|---|---|
-| A sync conflict or deletion on one device wipes data on another | Tampering, data loss | Medium | High | Tested conflict rules, deletion markers so data isn't resurrected or lost, local-only fallback | 20b, 21b |
-| Her Apple account is compromised and her synced closet is read | Information disclosure | Low | High | Out of the app's control. Use CloudKit encrypted fields for Sensitive data; tell her what Advanced Data Protection adds | 20b |
-
-### Backend gateway and identity
-
-| Threat | STRIDE | Likelihood | Impact | Control | Phases |
-|---|---|---|---|---|---|
-| Scripted or cloned clients call paid endpoints (R2) | Spoofing, denial of service | High | High | App Attest with server-side validation, a bounded fallback for devices that can't attest, short-lived tokens | 24a |
-| A legitimate user or a bug floods the AI (retry loop, many devices) | Denial of service (cost) | Medium | High | Per-user, per-device and global rate and concurrency limits, bounded retries with backoff, cost reserved before each attempt, fail closed when the ledger is down | 24b, 26 |
-| Stolen session or refresh token is reused | Spoofing | Low | Medium | Short-lived access tokens, refresh token rotation, revocation on sign-out and deletion | 24a |
-| Oversized or malformed requests exhaust the gateway or reach the model | Denial of service, tampering | Medium | Medium | Typed schema with size limits (64 KiB, 2,000-character notes), unknown fields rejected, token budgets | 24a, 27b |
-| Cross-user access to results, consent, tickets or ledger rows (R8) | Elevation of privilege, information disclosure | Medium | High | Authorization on every request, default deny, cross-user CI tests | 24c, 32b |
-| Raw prompts or responses kept in gateway logs or traces | Information disclosure | Medium | High | No payload logging anywhere, 24-hour encrypted result cache scoped to one user, audit log without personal data | 24a, 27a |
-| Account deletion leaves data behind | Information disclosure | Medium | Medium | In-app deletion that removes server data, tested; backups expire and deletions are reapplied after a restore | 24c, 20b |
-| An admin action or config change (model, price, budget) can't be traced | Repudiation | Low | Medium | Audit log for security events and admin and pricing changes | 24a, 25b |
-| Dev or staging data or keys mix with production | Information disclosure | Low | High | Separate projects, databases, keys and provider accounts per environment | 23b, 25a |
-| Backend host compromise or misconfiguration (public bucket, open database) | Information disclosure | Low | High | Least-privilege roles, no admin credentials in code, encryption at rest, independent security review before launch | 23b, 25a, 32b, 35a |
-
-### AI providers
-
-| Threat | STRIDE | Likelihood | Impact | Control | Phases |
-|---|---|---|---|---|---|
-| Provider keeps or trains on Lily's data (R4) | Information disclosure | Medium | High | Choose providers with no training on our data and the shortest retention; recorded per provider and rechecked on change; disclosed in the consent text | 23b, 27a, 19b |
-| Provider key is leaked or abused (R6) | Spoofing | Medium | High | Key only in the server secret store, provider hard caps and budget alerts, rotation runbook | 25a, 25b |
-| Prompt injection through garment notes, imported data or retailer pages | Tampering, elevation of privilege | Medium | Medium | User text and web content passed as data, no tools on stylist calls, typed response validation, ranking step has no browsing tools | 27a, 34 |
-| Model returns invalid, unsafe or hurtful output (R9) | Tampering | Medium | Medium | Schema and product-rule validation before the app sees it, body-neutral policy, report action | 27a, 28 |
-| Provider outage or price change | Denial of service | Medium | Low | Server-configured fallback, kill switch, on-device model on eligible phones, honest error states | 26, 27a, 28 |
-| Image provider generates a likeness of someone who didn't consent (R5) | Information disclosure | Low | High | Phase 33 gates, input and output moderation, photo of the user only | 33 |
-
-### Payments and App Store
-
-| Threat | STRIDE | Likelihood | Impact | Control | Phases |
-|---|---|---|---|---|---|
-| Client claims an entitlement or credit balance it doesn't have (R10) | Tampering, elevation of privilege | Medium | Medium | Server verifies transactions and holds entitlement and credit state; the client only displays it | 30c |
-| Webhook replayed or forged | Spoofing, tampering | Low | Medium | JWS verification on App Store Server Notifications, idempotent handlers | 30c |
-| Refund or revocation doesn't remove access or credits | Elevation of privilege | Medium | Low | Refund, expiry, revocation and family sharing tests | 30c |
-| Complimentary offer codes leak and get redeemed by strangers | Elevation of privilege | Low | Low | Codes treated as secrets until handed over; small batches; expiry dates | 30b |
-| App Review rejection over privacy, payments or account deletion | Denial of service (launch) | Medium | Medium | Privacy manifest and labels that match behavior, StoreKit 2 only, in-app deletion, App Review checklist | 19b, 30a, 35a |
-
-### Weather
-
-| Threat | STRIDE | Likelihood | Impact | Control | Phases |
-|---|---|---|---|---|---|
-| Precise location sent beyond WeatherKit or stored | Information disclosure | Low | Medium | Approximate location, conditions (not coordinates) in AI requests, no shared cache of personal locations | 29 |
-| Weather quota exhausted by retries or many users | Denial of service | Low | Low | 30-minute session snapshot, coalesced lookups, one automatic retry, quota alerts, manual weather fallback | 29 |
-
-### Feedback, support and analytics
-
-| Threat | STRIDE | Likelihood | Impact | Control | Phases |
-|---|---|---|---|---|---|
-| Support reports or tester feedback include her photos or closet without her meaning to | Information disclosure | Medium | Medium | Nothing attached automatically; she sees exactly what is sent | 14b, 18 |
-| Public board spam, abuse or personal data in posts | Tampering, information disclosure | Medium | Medium | Moderation before anything is public, length limits, no photos, pseudonymous alias | No phase yet (see DATA_MAP) |
-| Analytics joined to billing or wardrobe records | Information disclosure | Low | Medium | Off by default, allowlisted events, resettable ID never joined to other records, 30-day raw retention | 31 |
-| Unauthenticated floods fill the feedback or analytics stores | Denial of service | Medium | Low | Request caps, batch size limits, the ability to close intake temporarily | 24b, 31 |
+| Analytics joined to billing or wardrobe records | Information disclosure | Low | Medium | Off by default, allowlisted events, resettable ID never joined, 30-day raw retention. No third-party SDK without written approval | 31 |
+| Crash reports carry user content | Information disclosure | Low | Medium | Xcode Organizer only unless Phase 31 approves something else; no user content in logs | 18, 31 |
+| Public board spam or personal data in posts | Tampering, information disclosure | Medium | Medium | Moderation before anything is public; or a written decision in 24d to leave the board for later | 24d |
 
 ### Repos, CI and supply chain
 
 | Threat | STRIDE | Likelihood | Impact | Control | Phases |
 |---|---|---|---|---|---|
-| Direct push or force push to `main` or `develop` slips in bad code | Tampering | Medium | High | Rulesets with PRs and CI required, no force pushes, signed commits, administrators included | 1b |
-| A compromised GitHub Action or dependency steals tokens or alters the build | Tampering | Low | High | Actions pinned to commit SHAs, read-only `GITHUB_TOKEN`, approval for outside contributors' workflows, exact version pins, each dependency approved in writing, Dependabot | 1b |
-| Business logic (prompts, fit rules) leaks into the public app repo | Information disclosure | Medium | Medium | Rules kept in the private backend repo; swap ranking on the phone uses plain matching only; CODEOWNERS and PR checklist | 1b, 11, 27a |
-| Fixtures or snapshots in the public app repo contain real photos of Lily | Information disclosure | Low | High | Synthetic fixtures only; real photos never committed | 3, 22a |
+| Direct or force push slips in bad code | Tampering | Medium | High | Rulesets, required CI, signed commits, admins included (built in 1b). The private backend repo needs the same | 1b, 23b |
+| A compromised Action or package steals tokens | Tampering | Low | High | SHA-pinned Actions, read-only token, exact pins, written approval per dependency (`clerk-ios` included), Dependabot. npm packages in the backend repo need a lockfile and the same review | 1b, 24a |
+| Prompts or fit rules leak into the public app repo | Information disclosure | Medium | Medium | Rules only in the private backend repo; CODEOWNERS and PR checklist | 1b, 27a |
+| Real photos of Lily in fixtures or snapshots | Information disclosure | Low | High | Synthetic fixtures only; the AI-generated sample wardrobe shows stand-in people, not her | 3, 22a |
 
 ### Website and review site
 
 | Threat | STRIDE | Likelihood | Impact | Control | Phases |
 |---|---|---|---|---|---|
-| Website defaced or redirected through a Cloudflare account takeover | Tampering | Low | Medium | Two-factor authentication on Cloudflare, scoped API tokens, static site with a first-party script only, no analytics or forms, and a strict Content Security Policy | 0c, 19b |
-| A lookalike site or app copies the name to phish users | Spoofing | Low | Low | The App Store listing and website link to each other; privacy and support pages on the real site | 35b |
-| Anyone with the review link reads or spams Lily's review notes | Information disclosure, tampering | Medium | Low | Link is shared only with Lily; notes are copied into the repo only as needed; edits and deletes need the owner key | Now |
+| Website defaced through a Cloudflare takeover | Tampering | Low | Medium | Two-factor; scoped tokens; static site with a strict CSP | 19b |
+| Lookalike site or app phishes users | Spoofing | Low | Low | Store listing and website link to each other | 35b |
+| Anyone with the review link reads or spams Lily's notes | Information disclosure, tampering | Medium | Low | Link shared only with Lily; retire or freeze the site after review | Now |
+
+## Decisions for Jose
+
+Each needs his choice, or his written approval in the progress log with a reason and a review date (standard, top).
+
+| # | Decision | Options and our suggestion | Needed by |
+|---|---|---|---|
+| D1 | Sending her try-on photo and garment photos to WaveSpeed | Approve only if 19b gets WaveSpeed's input retention, training use, processing location and sub-processors in writing, and TO-03 passes. Otherwise pick another image provider or leave try-on out. Today the photo would leave the device for a Singapore company whose input terms we couldn't find | Before Phase 33 |
+| D2 | `clerk-ios` as a shipping dependency | Approve `ClerkKit` only, pinned exactly, after vetting its Keychain settings and what `Package.resolved` pulls in. The alternative is our own Sign in with Apple through `AuthenticationServices` with a Convex-issued token, which adds no dependency but more code to secure | Before 24a |
+| D3 | RLS wording in SECURITY_STANDARD.md section 5 | Suggested text: "Authorization on every request. If the database supports row-level security, it is on for every table with default deny. If it doesn't (Convex, D1), every public entry point checks the signed-in user, all other functions are internal, data access goes through one module that takes the principal from the verified token, and CI proves one user can't read another's data." Approve it as the rule, so it isn't read as an exception | Before 24a |
+| D4 | Clerk's fixed 7-day session (R14) | Accept on the free plan for Lily alone; revisit Pro ($25 a month) before outside testers | Before 24a |
+| D5 | Where her text requests are processed (R4) | Haiku 4.5 runs in any geography and can't be pinned to the US. Accept global processing and say so in the consent text, or choose a model that supports `inference_geo: "us"` at 1.1 times the price (Phase 27a compares cost) | Before 27a |
+| D6 | What Clerk keeps about her | Request no name and no email from Apple unless Clerk requires an identifier; if it does, accept the private relay address | Before 24a |
+| D7 | Backup design (R12) | Public-key encryption with the private key offline; restore test run by Jose or behind manual approval; the backup bucket in a Cloudflare account or token separate from the website and from agents | Before 25b |
+| D8 | Risks to accept in writing | (a) Without ADP, Apple can read her synced data; (b) Anthropic keeps request content up to 30 days, longer if flagged, with no zero-retention agreement; (c) Clerk and possibly WaveSpeed process data outside the US; (d) a possible Data Protection exception for the `CKSyncEngine` state file (20a); (e) R1 stays accepted | At this checkpoint, or at the phase named |
+| D9 | Agent access to Convex and Cloudflare (R13) | Adopt as policy: agents never use the Convex MCP production flag, get no production deploy key, and have no access to the backup bucket | At this checkpoint |
+| D10 | Export format (carried from Phase 0c) | Encrypted, as the standard requires, unless he approves PRD 15.4's unencrypted archive in writing | 20b |
+
+## To verify, and gaps in the plan
+
+**To verify in 19b (provider terms, recorded in DATA_MAP processors):** WaveSpeed input retention, training use, processing location, sub-processors and deletion on request; Clerk's retention after a user is deleted and its sub-processor list; Convex's hosting region for our deployments, encryption at rest and function-log retention; whether Anthropic offers zero data retention to an account this size.
+
+**To verify in the build phases:** Clerk session token lifetime and whether `clerk-ios` sets the Keychain accessibility we need (24a); whether deleting a Clerk user revokes Apple's sign-in link (24c); how WaveSpeed takes input images and serves outputs, and whether a public URL is involved (33); whether `npx convex export` can leave out tables, and whether R2 offers a bucket lock (25b).
+
+**Gaps:** no Stage B phase bullet builds the daily backup job; STAGE_B_DATA_OPTIONS.md puts it in 25b, so 25b needs a bullet. The CI lint for public Convex functions (R8) belongs in 24a's or 24c's bullets. DMARC for the support domain is still missing (STACK.md).
 
 ## What this model does not cover yet
 
-- Concrete flows for persistence, photo intake, the backend stack and payments. Phase 19a adds them once those choices exist.
-- Find One (Phase 34) and the try-on feature (Phase 33) beyond the top-level risks. Each gets its own model before it is enabled.
-- Legal risk (state health-data laws, GDPR). That goes to the lawyer in Phase 19b and 35a.
+- Find One (Phase 34) and try-on (Phase 33) in full. Each gets its own model before it is enabled; F8 is the starting point for Phase 33.
+- Legal risk (state health-data laws, GDPR, processing outside the US). That goes to the lawyer in 19b and 35a.
+- The on-device stylist (Phase 28) adds no new data flow, so it isn't modelled separately.

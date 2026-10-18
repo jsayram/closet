@@ -836,3 +836,10 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     - The office preview shows a gray blazer, and the not-yet-arrived cream crop is worn in an older picture. Both need new images.
     - Gold pieces are filed as Yellow.
 
+- 18 October 2026: **Phase 19a done, checkpoint waiting on Jose.** `THREAT_MODEL.md` and `DATA_MAP.md` are updated for real data on the stack in `STACK.md` (SwiftData with `CKSyncEngine`, Clerk, Convex HTTP actions, Claude API, WaveSpeed, Cloudflare R2). Docs only; nothing signed up for.
+  - **Threat model:** 14 concrete flows (F1 to F14), each with assets, trust boundaries, STRIDE threats, the control and the phase that builds it. The top risks are re-ranked and five new ones added: R11 Clerk as a processor, R12 the backup bucket, R13 agent and MCP access, R14 Clerk's 7-day session, R15 incomplete deletion. No Phase 0c risk retires; the RLS control is replaced by internal functions, a CI lint and cross-user tests.
+  - **Data map:** every row now says where each copy lives, what deletes it and who can read it. Clerk, Convex, Anthropic, WaveSpeed and Cloudflare R2 are named processors, with the terms checked on their official pages today and the open questions for 19b.
+  - **Findings:** Haiku 4.5 can't be pinned to US-only inference. WaveSpeed deletes outputs within 7 days, but no official page says how long it keeps inputs, whether it trains on them, or where it processes them.
+  - **For Jose (decisions D1 to D10 in `THREAT_MODEL.md`):** WaveSpeed for her try-on photo; the `clerk-ios` dependency (ClerkKit only); the RLS wording in the standard; Clerk's 7-day session; where text requests are processed; email scope; backup key custody; the risks to accept in writing; the agent access policy; the export format.
+  - **Plan gaps:** no 25b bullet builds the daily backup job, and the public-function lint belongs in 24a or 24c. DMARC is still missing.
+  - **Next:** Phase 19b starts only when Jose has reviewed the data map and top risks.
