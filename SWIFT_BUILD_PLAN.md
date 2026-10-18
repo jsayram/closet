@@ -818,3 +818,21 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - **Taps:** every UI test tap now confirms its effect, and a check blocks bare taps (#54).
   - **Cutout:** the go/no-go moves to Phase 22a.
   - **Still needs a real device:** VoiceOver, an iPad hardware keyboard, A14 speed and memory, and the Data Protection class on the kept settings file.
+- 17 October 2026: **Real sample wardrobe** (jsayram/nifty-outfit-nook#56, #57, #58).
+  - **#56:** the demo's pieces now have AI-generated photos and cutouts (51 pieces, JPEG 2000 cutouts with alpha), going through the same path real photos will use. Also: the example try-on photo, six try-on previews, `demo:wardrobe=full` with 30 more pieces, and shared photos in the large closet.
+  - **#57:** every screen snapshot preloads the real photos (`.snapshotPhotos()`).
+  - **Real-photo audit:** 33 findings (7 high, 15 medium, 11 low).
+  - **#58 fixes them, as Jose decided:**
+    - **Try-on:** the demo has woman C as her try-on photo. Every try-on line now covers both kinds of picture, the person wearing the look or the pieces on their own, and everything stays Simulated. The badge never covers her. There are no more letterbox bands.
+    - **Shoes:** sized from the cutout's real shape.
+    - **Large closet:** pieces take their photo's colours.
+    - **Renamed:** the taupe blazer, the nude pumps and the navy ballet flats.
+    - **Decoding:** JPEG 2000 is decoded once per cutout. Saved Looks settles in 118 ms instead of 158 ms cold, and 105 ms instead of 199 ms after Closet (simulator, Debug).
+    - **Also:** the medium and low fixes.
+  - **Kept on purpose:** the hangers on 14 cutouts, the chair post in the tote, and the lace tops as the photo-tile fallback.
+  - **Dropped:** the cool-weather preview, because it showed a vest.
+  - **iPad:** installs and passes on a freshly created simulator.
+  - **Still open:**
+    - The office preview shows a gray blazer, and the not-yet-arrived cream crop is worn in an older picture. Both need new images.
+    - Gold pieces are filed as Yellow.
+
