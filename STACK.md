@@ -9,7 +9,11 @@ Agreed 18 October 2026. Every new project, and every agent working on one, start
 | Websites, landing pages, privacy and support pages | **Cloudflare** (Pages or Workers static assets) | Up to 100 sites, unlimited bandwidth | Workers Paid $5 a month, only if a project needs Workers past the free limits |
 | Sign-in for iOS and web apps | **Clerk** | Unlimited apps, 50,000 monthly retained users per app, sessions fixed at 7 days | Pro $25 a month ($20 billed yearly): custom session length, MFA, passkeys, no branding |
 | App backend: database, API routes, server-side AI keys, real-time, vector search, file storage, scheduled jobs | **Convex** | 1 M function calls a month, 0.5 GB database, 1 GB files, up to 6 developers, 40 deployments. No inactivity pause | Professional $25 per developer a month: 25 M calls, 50 GB database, 100 GB files, scheduled daily backups. One price covers every app |
-| AI image generation | **WaveSpeed** | Prepaid balance | Pay per image |
+| AI text (stylist, chat, reasoning) | **Claude API** (Haiku 4.5 by default, Sonnet 5.5 when quality earns it), called only from Convex | $5 one-time trial; Max plans include $100 to $200 a month in API credits (since 7 October 2026) | About $0.007 per Haiku styling request, $0.014 on Sonnet. Set a Console spend limit |
+| AI image generation | **WaveSpeed**, called only from Convex | Prepaid balance | Pay per image, about $0.04 for Seedream 4.5 Edit |
+| On-device AI bonus | Apple Foundation Models (iPhone 15 Pro and newer) | Free | Free |
+
+Never use an AI provider's free tier for user data if its terms allow training on it (for example the Gemini API free tier). Paid tiers only for anything personal.
 
 Each user's personal data on an iPhone stays on the device (SwiftData), with optional private iCloud sync (CloudKit). The backend holds only what has to be shared or trusted: accounts, ledgers and credits, purchases, feedback, and the AI calls.
 
