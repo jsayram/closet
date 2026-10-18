@@ -390,6 +390,7 @@ Bullets marked *(from Stage A)* are work a Stage A phase deferred; the app repo'
 ### Phase 25b: Incident response
 
 - Written plan for a leaked key, a data exposure or a cost spike: who acts, how every key gets rotated, how paid features get switched off, and how users are told.
+- *(new)* The daily backup job from STACK.md: a scheduled `npx convex export`, encrypted with a key kept offline, 30 days kept in a Cloudflare R2 bucket no agent can reach, and a monthly restore into a test deployment.
 
 **Checkpoint:** a rehearsal. Rotate one key and flip one kill switch, following the plan.
 
