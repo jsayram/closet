@@ -10,10 +10,12 @@ Agreed 18 October 2026. Every new project, and every agent working on one, start
 | Sign-in for iOS and web apps | **Clerk** | Unlimited apps, 50,000 monthly retained users per app, sessions fixed at 7 days | Pro $25 a month ($20 billed yearly): custom session length, MFA, passkeys, no branding |
 | App backend: database, API routes, server-side AI keys, real-time, vector search, file storage, scheduled jobs | **Convex** | 1 M function calls a month, 0.5 GB database, 1 GB files, up to 6 developers, 40 deployments. No inactivity pause | Professional $25 per developer a month: 25 M calls, 50 GB database, 100 GB files, scheduled daily backups. One price covers every app |
 | AI text (stylist, chat, reasoning) | **Claude API** (Haiku 4.5 by default, Sonnet 5.5 when quality earns it), called only from Convex | $5 one-time trial; Max plans include $100 to $200 a month in API credits (since 7 October 2026) | About $0.007 per Haiku styling request, $0.014 on Sonnet. Set a Console spend limit |
-| AI image generation | **WaveSpeed**, called only from Convex | Prepaid balance | Pay per image, about $0.04 for Seedream 4.5 Edit |
-| On-device AI bonus | Apple Foundation Models (iPhone 15 Pro and newer) | Free | Free |
+| AI image generation (try-on) | **FLUX.3** (Black Forest Labs, `flux-3-image`), called only from Convex, and only on a no-training route: a BFL business agreement, or FLUX hosted on Microsoft Azure. Backup: OpenAI `gpt-image-2.5` Sunburst. **WaveSpeed** for demo and test images only, never real photos | BFL credits are prepaid; Azure is pay as you go | About $0.05 per try-on picture on FLUX.3 (about $0.048 per 1k image), about $0.09 per outfit on the OpenAI backup |
+| On-device AI | Apple Foundation Models (iPhone 15 Pro and newer) for text; Apple Vision (person segmentation and face detection) to mask a face before any photo leaves the phone | Free | Free |
 
 Never use an AI provider's free tier for user data if its terms allow training on it (for example the Gemini API free tier). Paid tiers only for anything personal.
+
+**Images of real people.** The face is masked on the device (Apple Vision fills the head and hair with flat grey) before anything is sent, and the phone blends the real head back onto the result, so the face stays on the phone. Only providers that don't train on inputs get real photos: BFL under a business agreement (its standard API terms allow training, so they don't qualify), FLUX on Azure, or the OpenAI image API. Keys live only in Convex. A body photo without a face is still personal data and keeps the consent and EXIF-stripping rules. Decided 19 October 2026; see D1 in [THREAT_MODEL.md](THREAT_MODEL.md).
 
 Each user's personal data on an iPhone stays on the device (SwiftData), with optional private iCloud sync (CloudKit). The backend holds only what has to be shared or trusted: accounts, ledgers and credits, purchases, feedback, and the AI calls.
 
@@ -32,7 +34,7 @@ iPhone app
  ├─ Clerk (clerk-ios)             Sign in with Apple, keeps the session fresh
  └─ HTTPS to Convex HTTP actions  with the Clerk session token as the bearer
       ├─ Convex database          accounts, ledger, purchases, feedback
-      ├─ AI providers, WaveSpeed  keys stored only as Convex environment variables
+      ├─ AI providers             Claude, FLUX.3 (BFL or Azure), OpenAI backup; keys stored only as Convex environment variables
       └─ App Attest check         proves the request came from the real app
 ```
 
@@ -84,7 +86,7 @@ These estimates assume 20% of monthly users are active on a given day, each maki
 | 1,000,000 | about $150 to $400 | about $19,000 before volume discounts | about $19,500 |
 
 - Past about 50,000 retained users, Clerk becomes the expensive part. Then build our own sign-in: verify Apple's token once, then issue our own session token signed with our key. Convex accepts custom tokens like that, and since apps only talk to our own endpoints, the switch is one planned app update.
-- **AI is the real cost.** A styling request costs about $0.002 to $0.01, and a WaveSpeed picture about $0.04. Every app needs these from day one:
+- **AI is the real cost.** A styling request costs about $0.002 to $0.01, and a try-on picture about $0.05 on FLUX.3. Every app needs these from day one:
   - a per-user cost cap
   - credits reserved before every paid call
   - small free allowances, with images bought as credits
@@ -100,7 +102,7 @@ These estimates assume 20% of monthly users are active on a given day, each maki
 
 - Turn on two-factor sign-in for every service above. Add the domain registrar (Key-Systems), the Google Cloud DNS account and the iCloud account, because whoever controls those controls the email.
 - Use separate dev and production deployments, each with its own secrets.
-- Set provider-side spending caps or budget alerts wherever they exist. Convex's Starter plan and WaveSpeed's prepaid balance can't overspend. Firebase-style "alerts only" billing is avoided on purpose.
+- Set provider-side spending caps or budget alerts wherever they exist. Convex's Starter plan and BFL's prepaid credits can't overspend. Azure is pay as you go, so it needs Azure budget alerts plus the Convex spending caps. Firebase-style "alerts only" billing is avoided on purpose.
 
 ## Considered and not chosen
 

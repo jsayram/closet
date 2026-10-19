@@ -467,12 +467,31 @@ Bullets marked *(from Stage A)* are work a Stage A phase deferred; the app repo'
 
 **Checkpoint:** every finding fixed or recorded as an approved exception.
 
-### Phase 33: Try-on pictures (gated)
+### Phase 33a: Try-on pictures, face stays on the phone (gated)
 
-- Only after the PRD 9.2 checks pass and a provider is chosen. Will be split when we get here.
+- Only after the PRD 9.2 checks pass. Model: FLUX.3, picked by Jose on 19 October 2026 after the try-on tests (whole outfit in one call). Real photos can only go to it under terms with no training on inputs: a BFL business agreement, or FLUX hosted on Azure. That choice is still open.
+- The face never leaves the phone. Apple Vision traces her head and hair, the app fills that shape with flat grey, and only the faceless photo and the clothing photos go through Convex to the model. When the dressed body comes back, the phone lines her real head up with her neck and shoulders and blends it back in, with no extra call. Her pose is never changed. The prototype in the 19 October tests handled long, curly, afro and short hair, a three-quarter pose, and turtlenecks, scarves, hats and coats.
+- Convex keeps neither the photo nor the result. The finished picture is saved on her phone only.
 - *(from Stage A)* Its consent switch in Privacy and terms.
 
-**Checkpoint:** the PRD's go/no-go gates.
+**Checkpoint:** the PRD's go/no-go gates, plus the 19 October hard cases redone in the app.
+
+### Phase 33b: Try-on photo setup
+
+- "Set up try-on" opens the app's own camera with an outline to stand in. Live pose hints come from Apple's on-device body tracking (whole body in frame, facing the camera, arms a little away from the body), and a timer takes the photo by itself. It saves Apple's hair and skin mattes for the cleanest outline.
+- "Choose from photos" as a fallback runs the same checks and explains, kindly, when a photo won't work well.
+- The photo is taken once and reused, kept on the phone and in her own iCloud if she turns that on.
+
+**Checkpoint:** setup works on the iPhone 12 and a newer iPhone, from both the camera and the library.
+
+### Phase 33c: Privacy walkthrough (last step, once try-on is ready)
+
+- The first time, a 5 to 6 second animation shows what happens to her photo. A soft privacy veil fades over her head from the neck up. The faceless photo goes to the cloud, comes back dressed, and her own face fades back in with an "on your phone" lock. No literal cut-off head.
+- On every later try-on, the loading screen shows the same real steps as short captions ("Hiding your face", "Dressing you", "Putting you back together on your phone"). If a step fails, it stops there. Skip after the first time, and a simple fade when Reduce Motion is on.
+- "See what was sent" on every try-on picture shows the exact faceless image that left the phone.
+- One line under it: "Your face never leaves your phone. Only your outfit area is sent to create the picture."
+
+**Checkpoint:** Jose and Lily watch it on a real phone, and the animation matches what the app actually sends.
 
 ### Phase 34: Find One (open question)
 
@@ -844,3 +863,4 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
   - **For Jose (decisions D1 to D10 in `THREAT_MODEL.md`):** WaveSpeed for her try-on photo; the `clerk-ios` dependency (ClerkKit only); the RLS wording in the standard; Clerk's 7-day session; where text requests are processed; email scope; backup key custody; the risks to accept in writing; the agent access policy; the export format.
   - **Plan gaps:** no 25b bullet builds the daily backup job, and the public-function lint belongs in 24a or 24c. DMARC is still missing.
   - **Next:** Phase 19b starts only when Jose has reviewed the data map and top risks.
+- 19 October 2026: try-on tests on AI-generated test people (no real photos). Google Vertex takes one item per call, chained items drift, and the model retires in March 2027. OpenAI and FLUX.3 both do a whole outfit in one call. Jose picked FLUX.3, but BFL's standard API terms allow training on inputs, so real photos wait for BFL business terms or FLUX on Azure. Jose's idea of keeping the face on the phone worked in a prototype on every hard case. Phase 33 is now split into 33a (try-on with the on-phone head swap), 33b (photo setup with the in-app camera) and 33c (privacy walkthrough animation and "See what was sent", the last step once try-on is ready). D1 in `THREAT_MODEL.md` needs updating to match.
