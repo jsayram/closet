@@ -69,7 +69,7 @@ Not one of the six switches in `docs/settings.md`, but it's a choice about where
 > It uses your iCloud storage.
 > [Turn on sync] [Not now]
 
-The ADP sentence states accepted risk D8(a). Which fields are end-to-end encrypted is decided in 20b, and if weight or measurements are kept out of sync (LEGAL_QUESTIONS question 3), the sheet says so.
+The ADP sentence states accepted risk D8(a). Phase 20b's design (app repo `docs/decisions/0004-backup-and-recovery.md`) encrypts everything the app puts in iCloud, so the finished sheet says "With it on, everything the app puts in iCloud is end-to-end encrypted, apart from the names of record types and their dates and sizes." While weight, measurements, fit notes and the try-on photo are kept out of sync (LEGAL_QUESTIONS question 3, 0004 decision 2), the sheet adds "Your measurements, weight, fit notes and try-on photo stay on this iPhone." and drops "and fit" from the first line.
 
 **Off:** "Sync is off. This iPhone keeps everything. Your iCloud copy stays until you delete it in Delete my data."
 
