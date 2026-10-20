@@ -148,7 +148,7 @@ Only the companies she actually used are named (Anthropic from 27a, BFL from 33a
 > What's sent: … plus your height and any measurement that matters for this request, like your inseam for trousers.
 > Never sent: your photos, your name, your weight, your location.
 
-Requests are processed in the US only (D5, changed by Jose on 20 October 2026), so the consent text says "processed in the US" and has no "outside the US" line. Recheck the 30-day and 2-year figures when 27a starts.
+Requests may be processed outside the US (D5, Haiku 5.5, global processing allowed), so the consent text keeps the line "It may be processed outside the US." Recheck the 30-day and 2-year figures when 27a starts.
 
 **If she says Not now:** Style Me explains: "Style Me needs your OK to send your request to Anthropic. You can still make your own looks." with **Review** and **Make my own look**.
 

@@ -174,7 +174,7 @@ Checked on the providers' own pages. Recheck when each phase starts.
 
 | Fact | Source | Checked |
 |---|---|---|
-| Anthropic: no training on API content; deletion within 30 days; flagged content up to 2 years; stylist requests pinned to US-only inference (Jose, 20 October 2026) on Haiku 5.5, support to be confirmed in Phase 27a | DATA_MAP.md processors | 18 October 2026 |
+| Anthropic: no training on API content; deletion within 30 days; flagged content up to 2 years; stylist requests on Haiku 5.5 may run in any geography (disclosed), with US-only available as an option if needed later | DATA_MAP.md processors | 18 October 2026 |
 | Clerk: data "may be transferred, processed, and stored anywhere in the world" | https://clerk.com/legal/privacy | 18 October 2026 |
 | BFL API Service Terms: "perpetual, irrevocable, worldwide" right to use inputs and outputs, may use them "to train and improve its artificial intelligence models"; last revised 4 August 2026 | https://bfl.ai/legal/flux-api-service-terms | 19 October 2026 |
 | BFL privacy policy: BFL GmbH (Germany) and Black Forest Labs Inc (US); a training opt-out by email to privacy@blackforestlabs.ai with the subject "Training Opt Out"; services "not directed towards" under-18s; last revised 1 August 2026 | https://bfl.ai/legal/privacy-policy | 19 October 2026 |
