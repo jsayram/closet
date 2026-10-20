@@ -341,13 +341,13 @@ Bullets marked *(from Stage A)* are work a Stage A phase deferred; the app repo'
 
 **Checkpoint:** a large real-photo closet stays smooth and the storage footprint is reasonable.
 
-### Phase 23a: Backend options
+### Phase 23a: Backend options *(done 18 October 2026: Convex, see STACK.md)*
 
 - Compare hosting options, including Supabase, for the gateway, auth, the usage ledger and feedback, against the PRD's requirements.
 
 **Checkpoint:** Jose reads the comparison.
 
-### Phase 23b: Backend decision
+### Phase 23b: Backend decision *(done 18 October 2026: Convex HTTP actions + Clerk)*
 
 - Choose the stack, the environments (dev, staging, production) and the costs at expected usage.
 
@@ -870,3 +870,4 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
 - 19 October 2026: **Phase 19b drafted, checkpoint waiting on Jose.** New folder `compliance/` (index in its README): the privacy manifest plan, App Store privacy label answers, permissions with purpose strings, in-app privacy and consent wording by phase, outlines for the privacy policy, terms and support page, a living App Review checklist, and questions for a lawyer. Docs only; nothing published, the app repo unchanged.
   - **Findings:** today's privacy manifest is already correct (`UserDefaults`, `CA92.1`, nothing collected). The App Store label has no free text, so BFL's training shows there as Photos or Videos with "Other Purposes"; the plain sentence lives in the consent screen and policy. BFL's privacy policy offers a training opt-out by email, a US-only endpoint, and 10-minute delivery URLs. The in-app try-on line predates D1 and needs the new wording. App Review 5.1.1(i) ("same or equal protection") and 5.1.3(ii) (no personal health information in iCloud) are risks to watch.
   - **For Jose:** approve the baseline; decide when to get the legal review (suggested: the "before testers" questions before anyone but Lily uses real data, the rest before 35a); whether measurements and weight ever go to Anthropic (before 27a); who the operator is for the policy and App Store; whether to ask BFL about the training opt-out; when to publish version 0 of the privacy, terms and support pages.
+- 19 October 2026: Phase 19b checkpoint passed. Jose approved the compliance baseline in `compliance/` as the working draft (lawyer review before anyone but Lily uses real data; the web pages wait for him), and D2 to D7 and D10 as suggested in THREAT_MODEL.md. 23a and 23b are marked done (Convex chosen 18 October). Whether the stylist sends measurements or weight is decided before 27a. From here Jose asked for batch review: phases run back to back, each merged through its PR checks, stopping only at a real go/no-go or anything that needs him (accounts, keys, Apple setup). Account setup and loose ends wait.
