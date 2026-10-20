@@ -63,7 +63,7 @@ Jose accepted BFL's standard API terms (D1): BFL gets a "perpetual, irrevocable,
 
 ## 8. Processing outside the US (before testers)
 
-Clerk says data may be processed anywhere in the world. Anthropic runs Haiku 4.5 inference in any geography (stored in the US). BFL has a US-only endpoint we plan to use (to confirm in 33a).
+Clerk says data may be processed anywhere in the world. Stylist requests are pinned to US-only inference (Jose, 20 October 2026), on Haiku 5.5 (stored in the US), with support to be confirmed in 27a. BFL has a US-only endpoint we plan to use (to confirm in 33a).
 
 - Do we need to say anything beyond what the policy says now?
 - Does any US state law restrict sending health or biometric data abroad?

@@ -9,7 +9,7 @@ Agreed 18 October 2026. Every new project, and every agent working on one, start
 | Websites, landing pages, privacy and support pages | **Cloudflare** (Pages or Workers static assets) | Up to 100 sites, unlimited bandwidth | Workers Paid $5 a month, only if a project needs Workers past the free limits |
 | Sign-in for iOS and web apps | **Clerk** | Unlimited apps, 50,000 monthly retained users per app, sessions fixed at 7 days | Pro $25 a month ($20 billed yearly): custom session length, MFA, passkeys, no branding |
 | App backend: database, API routes, server-side AI keys, real-time, vector search, file storage, scheduled jobs | **Convex** | 1 M function calls a month, 0.5 GB database, 1 GB files, up to 6 developers, 40 deployments. No inactivity pause | Professional $25 per developer a month: 25 M calls, 50 GB database, 100 GB files, scheduled daily backups. One price covers every app |
-| AI text (stylist, chat, reasoning) | **Claude API** (Haiku 4.5 by default, Sonnet 5.5 when quality earns it), called only from Convex | $5 one-time trial; Max plans include $100 to $200 a month in API credits (since 7 October 2026) | About $0.007 per Haiku styling request, $0.014 on Sonnet. Set a Console spend limit |
+| AI text (stylist, chat, reasoning) | **Claude API** (Haiku 5.5 by default, Sonnet 5.5 when quality earns it), called only from Convex | $5 one-time trial; Max plans include $100 to $200 a month in API credits (since 7 October 2026) | About $0.001 per Haiku 5.5 styling request, $0.014 on Sonnet. Set a Console spend limit |
 | AI image generation (try-on) | **FLUX.3** (Black Forest Labs, `flux-3-image`) through BFL's standard API, called only from Convex, with the face masked on the device first. Optional later upgrade: FLUX on Azure or BFL business terms, which don't train on inputs. Backup: OpenAI `gpt-image-2.5` Sunburst. **WaveSpeed** for demo and test images only, never real photos | BFL credits are prepaid | About $0.05 per try-on picture on FLUX.3 (about $0.048 per 1k image), about $0.09 per outfit on the OpenAI backup |
 | On-device AI | Apple Foundation Models (iPhone 15 Pro and newer) for text; Apple Vision (person segmentation and face detection) to mask a face before any photo leaves the phone | Free | Free |
 
@@ -86,7 +86,7 @@ These estimates assume 20% of monthly users are active on a given day, each maki
 | 1,000,000 | about $150 to $400 | about $19,000 before volume discounts | about $19,500 |
 
 - Past about 50,000 retained users, Clerk becomes the expensive part. Then build our own sign-in: verify Apple's token once, then issue our own session token signed with our key. Convex accepts custom tokens like that, and since apps only talk to our own endpoints, the switch is one planned app update.
-- **AI is the real cost.** A styling request costs about $0.002 to $0.01, and a try-on picture about $0.05 on FLUX.3. Every app needs these from day one:
+- **AI is the real cost.** A styling request costs about $0.001 to $0.01, and a try-on picture about $0.05 on FLUX.3. Every app needs these from day one:
   - a per-user cost cap
   - credits reserved before every paid call
   - small free allowances, with images bought as credits

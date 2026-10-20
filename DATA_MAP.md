@@ -156,7 +156,7 @@ Every company that receives her data, with what was verified on its official pag
 - **Verified:**
   - "Anthropic may not train models on Customer Content from Services." Commercial Terms, effective 17 June 2025: https://www.anthropic.com/legal/commercial-terms
   - Inputs and outputs deleted "within 30 days of receipt or generation". Content flagged for usage-policy violations kept up to 2 years and classifier scores up to 7 years. Zero data retention only by negotiated agreement. Page updated 1 July 2026: https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data
-  - Inference runs in any geography by default (`inference_geo: "global"`). `"us"` pins it to the US at 1.1 times the price, on Claude 4.6 and later models only; Haiku 4.5 returns an error. Workspace data at rest is US only: https://platform.claude.com/docs/en/manage-claude/data-residency
+  - Inference runs in any geography by default (`inference_geo: "global"`). `"us"` pins it to the US at 1.1 times the price, on Claude 4.6 and later models only. Stylist requests are pinned to US-only inference (Jose, 20 October 2026), on Haiku 5.5, with support to be confirmed in 27a. Workspace data at rest is US only: https://platform.claude.com/docs/en/manage-claude/data-residency
 - **Open questions:** whether zero data retention is offered to an account this size; whether Jose's API account sits under the Commercial Terms (not consumer terms); Sonnet 5.5's and any newer Haiku's cost with US-only inference (27a); sub-processors.
 
 ### Black Forest Labs (FLUX.3)
@@ -292,4 +292,4 @@ From now on, new planning docs should describe Lily's needs without her body or 
 - **iCloud encryption.** Which fields use `encryptedValues` and what Lily sees with and without Advanced Data Protection. Phase 20b, before the schema is promoted.
 - **Provider terms.** Every "to verify" in [Processors](#processors) is answered in 19b and recorded in ACCOUNT_INVENTORY.md before the provider receives her data. BFL's standard terms are already accepted in decision D1, so 19b records BFL's region, input and output handling and delivery URL lifetime rather than a no-training promise.
 - **Feedback board and email program.** Phase 24d builds the support queue and decides on the board and email program.
-- **Data residency.** Clerk may process data anywhere, Anthropic runs Haiku 4.5 inference in any geography, and BFL's region isn't known and is to verify in 19b. The lawyer in 19b and 35a confirms what the privacy policy must say.
+- **Data residency.** Clerk may process data anywhere, Anthropic runs stylist requests on Haiku 5.5 with US-only inference (Jose, 20 October 2026; support to be confirmed in 27a), and BFL's region isn't known and is to verify in 19b. The lawyer in 19b and 35a confirms what the privacy policy must say.
