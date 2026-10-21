@@ -20,7 +20,7 @@ Since Phase 22a (20 October 2026) the app asks for one permission, the camera, a
 | Camera | `NSCameraUsageDescription` | **Built in 22a** (garments), widened in 33b (try-on photo) | She taps Take photo in Add a piece, or (33b) Set up try-on |
 | Photos, picking photos | None | **Built in 22a** (garments and the try-on photo) | `PhotosPicker` shows only what she picks and needs no permission |
 | Photos, saving pictures to her library | `NSPhotoLibraryAddUsageDescription` | Only when a feature saves an image to Photos (to confirm which phase: a share sheet with an image offers Save Image, which needs this key) | She taps Save to Photos or Save Image |
-| Location, approximate, while in use | `NSLocationWhenInUseUsageDescription`, plus `NSLocationDefaultAccuracyReduced` = `YES` | 29 | She first opens Style Me's weather row, or Home's window offers live weather |
+| Location, approximate, while in use | `NSLocationWhenInUseUsageDescription`, plus `NSLocationDefaultAccuracyReduced` = `YES` | 29 | She turns on "Use my location" in Privacy and terms, after the app's own explanation. A city needs no permission at all (built in 29) |
 | Notifications, local only | None (runtime request) | 34, only if purchase reminders ship | She turns on a reminder for a purchase |
 
 **Never requested:** full photo library read access (`NSPhotoLibraryUsageDescription`), precise location, background location, microphone, contacts, calendars, HealthKit, motion, Bluetooth, local network, Face ID, App Tracking Transparency (`NSUserTrackingUsageDescription`). If a later design seems to need one, it needs Jose's approval and an update here first.
@@ -33,7 +33,7 @@ Since Phase 22a (20 October 2026) the app asks for one permission, the camera, a
 | iCloud (CloudKit) | 20b | Her private database only. Sync is off until she turns it on in the app. `CKSyncEngine` may need the Remote notifications background mode for silent CloudKit pushes, which shows no prompt (to confirm in 20a) |
 | Sign in with Apple | 24a | The Apple sheet is the consent |
 | App Attest | 24a | `com.apple.developer.devicecheck.appattest-environment` |
-| WeatherKit | 29 | Capability on the App ID; location still needs its own permission |
+| WeatherKit | 29 | Capability on the App ID, then `NOOK_WEATHERKIT = YES` in the build (app `docs/weather.md`). Location has its own permission and isn't needed for a city |
 | In-App Purchase | 30a | StoreKit 2 |
 
 On-device Vision (cutouts, face and person masking, body pose hints) needs no permission of its own.
@@ -90,13 +90,15 @@ There's no pre-prompt because there's no prompt. Help's "Add a piece" topic can 
 
 > Your rough location gets the forecast, so outfit ideas suit the weather. It's used only for the forecast and isn't saved.
 
-**Before the prompt** (the first time she opens the weather row on Style Me, or taps Home's window when weather isn't set up):
+**Built in 29.** Nothing asks until she turns on "Use my location" in Privacy and terms, Weather (Live weather must be on). A city she types needs no permission and is the default way to get weather. The app's own explanation comes first, then iOS asks. Locations are rounded to 0.1 degree on arrival and only held in memory.
+
+**Before the prompt** (an alert when she flips "Use my location"):
 
 > **Use the weather where you are?**
 > The app asks Apple Weather for today's forecast near you. It uses a rough location, not your exact address, and doesn't keep it. Only the weather itself, like "cool and rainy", goes into Style Me.
 > [Continue] [Type a city instead]
 
-**If she says no, or turned it off before:** weather works from a city she types, or she picks the conditions herself, or she ignores weather (the use / indoors / ignore choice already in Style Me). Home's window shows the "unknown" sky. No repeated asking: the row shows "Weather: set by hand" with a way to change it. Privacy and terms has the Weather switch that turns live weather off entirely (see [IN_APP_PRIVACY_TEXT.md](IN_APP_PRIVACY_TEXT.md)).
+**If she says no, or turned it off before (built in 29):** the switch goes back to off, a note says location is off for the app in Settings, an Open Settings row is shown, and the weather uses her city. Before that, weather works from a city she types, or she picks the conditions herself, or she ignores weather (the use / indoors / ignore choice already in Style Me). Home's window shows the "unknown" sky. No repeated asking: the row shows "Weather: set by hand" with a way to change it. Privacy and terms has the Weather switch that turns live weather off entirely (see [IN_APP_PRIVACY_TEXT.md](IN_APP_PRIVACY_TEXT.md)).
 
 Apple Weather attribution and its legal link show wherever forecast data does (PRD 11.5).
 

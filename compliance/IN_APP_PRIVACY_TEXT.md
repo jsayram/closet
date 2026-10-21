@@ -27,7 +27,7 @@ The current screen is accurate except for two lines. Changes:
 |---|---|
 | Style Me and swaps | Piece names, kinds and colours, the occasion and the weather, when you tap Style me. Never your photos or your name. |
 | Try-on pictures | A photo of your body, without your face and on a plain backdrop, and that look's piece photos, only when you tap Try it on. Your face never leaves your iPhone. |
-| Weather | A rough location for the forecast. Never your exact address. |
+| Weather | A rough location for the forecast, from the city you pick or, if you turn it on, where you are. Never your exact address. |
 
 The Style Me line stays silent on measurements until Jose decides in 27a (see the README). If measurements will never be sent, add "or your measurements" after "photos".
 
@@ -163,6 +163,8 @@ Requests may be processed outside the US (D5, Haiku 5.5, global processing allow
 > A rough location goes to Apple Weather for the forecast. It isn't saved. Only the weather goes into Style Me.
 
 **Off:** "Live weather is off. You can type a city or set the weather yourself."
+
+**Built in 29 (the words as shipped):** the group has Live weather, City ("Needs no permission."), Use my location ("Rough location only, and only while the app is open. Your city is used when this is off."), the note "Location is off for this app in Settings, so the weather uses your city." with an Open Settings row, and Apple Weather's credit. While Live weather is off the group says "Live weather is off. Home's window stays plain and Style Me doesn't use the weather." While it is on, the banner at the top says a rough location goes to Apple Weather. While WeatherKit isn't switched on for the build, it says the weather is a sample and nothing is sent. The city sheet says the name she types goes to Apple Maps and only a rough point is kept. (Typing a city also needs Live weather on, so the "Off" line above is shortened accordingly.)
 
 ## Phase 30a: before paying
 
