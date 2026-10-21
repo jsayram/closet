@@ -106,18 +106,28 @@ The age line follows PRD 24.2 (adults only, minimum check). The lawyer may chang
 
 ## Phase 24c: delete account
 
-Added to Delete my data's scopes (PRD 15.4):
+**Built 21 October 2026, against the fake sign-in and fake backend.** Not a third scope inside Delete my data, as first drafted here: a separate **Delete my account** row in Privacy and terms, under Delete my data, shown only while she's signed in. It opens the same two-step screen (what goes, then one question), with Apple's sign-in sheet after the question. Delete my data (this iPhone only) is unchanged.
 
-> **Delete my data** removes everything from this iPhone and your private iCloud.
-> **Delete my account too** also removes what our server keeps (your account ID, the features you allowed, usage, feedback, and purchase records the law lets us remove) and your Clerk account, and stops Sign in with Apple for this app.
+The screen as built:
 
-Under the button:
+> **Delete my account.** Deletes your account and everything the app keeps for you, on the server and on this iPhone.
+>
+> What's deleted: **What the app's server keeps** (how much you've used the stylist and try-on, and sign-in records; anything still running is stopped) · **Your account** (your sign-in to the app, on every device) · **Sign in with Apple** (the link between your Apple Account and this app) · **Your iCloud copy** (only if sync was ever on) · then the six parts Delete my data lists, with their counts.
+>
+> Afterwards: You're signed out and the app starts fresh, as if it were just installed. Signing in again later makes a new, empty account.
+> Deleting your account doesn't cancel a subscription. If you have one, cancel it in the Settings app: tap your name, then Subscriptions.
+> Copies you exported stay where you saved them. Requests the stylist and try-on already sent are kept by those services for the time the privacy policy says, and then deleted.
 
-> Deleting doesn't cancel a subscription. [Manage subscription]
-> We can't delete copies other companies already have: Anthropic deletes styling requests within 30 days (longer if flagged), and Black Forest Labs may keep try-on photos it received. Backups expire within 30 days, and a deleted account never comes back from them.
-> Some purchase and usage records are kept as the law requires.
+The question: "Delete your account?" / "Your account, everything the app's server keeps for it, and everything in the app on this iPhone will be deleted. Apple will ask you to confirm it's you. This can't be undone." Buttons: **Delete my account**, Cancel.
 
-Only the companies she actually used are named (Anthropic from 27a, BFL from 33a).
+How it can end, in her words:
+
+- Nothing deleted (Apple's sheet closed: back to the screen, no message; offline: "Nothing was deleted. You're offline: connect to the internet and try again."; server trouble: "Nothing was deleted. The app's server couldn't take the request. Try again in a moment.").
+- All done: the app starts fresh, as after Delete my data.
+- The server still finishing: "Everything on this iPhone is deleted and you're signed out. Still being deleted on the server: Your account. It finishes on its own; you don't need to do anything." with a Done button.
+- The Apple link couldn't be removed: "The app couldn't remove its Sign in with Apple link. To remove it, open the Settings app, tap your name, then Sign in with Apple."
+
+**Still to do:** the "providers" sentence names no company yet; when 27a and 33a ship it should name only the ones she used, as planned: "Anthropic deletes styling requests within 30 days (longer if flagged), and Black Forest Labs may keep try-on photos it received." Phase 30 adds a Manage subscription link and checks for an active subscription. The privacy policy states what the backend keeps after a deletion (DATA_MAP, "What account deletion reaches"): a deletion record with a pseudonymous ID for 35 days and usage counts under a keyed hash for 31 days, so deleting can't reset an allowance.
 
 ## Phase 24d: feedback
 
