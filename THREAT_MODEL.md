@@ -67,6 +67,8 @@ Controls, all in Phase 24a and 24c:
 - A cross-user test for every HTTP action: user B's token against user A's ledger rows, consent receipts, tickets, cached results and reservations, expecting a rejection.
 - Phase 32b repeats this at scale and the 35a independent review checks it.
 
+**Built in 24a (21 October 2026, private backend repo, local only):** one catch-all HTTP action is the only public entry point; `principals.ts` is the one data-access module, with internal functions that take the caller from `ctx.auth`; `scripts/check-public-functions.mjs` fails on any public query, mutation or action (aliases included) and runs with the tests; a test against the local backend confirms `principals:forCaller` can't be called over Convex's client protocol. It runs as a test script for now, because the backend repo has no remote and so no CI yet. The cross-user tests cover the two 24a endpoints; 24c extends them to every table.
+
 ### Clerk holds her Apple ID link and email (R11)
 
 When she signs in, Clerk receives Apple's identity token and stores a Clerk user with her Apple user ID and, if the scope is requested, her email (a private relay address or her real one) and name. Clerk's privacy policy (updated 15 June 2026, https://clerk.com/legal/privacy) says it acts as a processor for customer data and that data "may be transferred, processed, and stored anywhere in the world". It doesn't state how long data is kept after a user is deleted.
@@ -248,7 +250,7 @@ Each flow lists its assets, the trust boundaries it crosses, the threats (STRIDE
 |---|---|---|---|
 | Clerk breach or a takeover of Jose's Clerk dashboard exposes her Apple link and email, or lets someone act as her (R11) | Spoofing, information disclosure | Minimal scopes; two-factor on Clerk; production and dev instances separate; any dashboard feature that can act as a user stays off; Clerk in the account inventory | 24a, 25a |
 | A flaw or malicious update in `clerk-ios` | Tampering | ClerkKit only, exact pin, written approval, Dependabot, review of each update | 24a |
-| A dev-instance token or a token for another app accepted in production | Spoofing | Convex checks issuer, audience and expiry against the production instance only; a test sends a dev token | 24a |
+| A dev-instance token or a token for another app accepted in production | Spoofing | Convex checks issuer, audience and expiry against the production instance only; a test sends a dev token. **24a:** `auth.config.ts` names one issuer (`CLERK_JWT_ISSUER_DOMAIN`) and audience `convex`; against a real local Convex backend, tokens from another issuer, for another audience, expired or wrongly signed all get 401. The production check itself waits for a production deployment | 24a |
 | A stolen session is replayed | Spoofing | 7-day ceiling (R14); revocation on sign-out and deletion; App Attest still required for paid calls | 24a |
 | Sign-in fails or Clerk is down | Denial of service | Local closet unaffected; cloud features show "signed out"; retry is her choice | 24a, 26 |
 
@@ -263,8 +265,8 @@ Each flow lists its assets, the trust boundaries it crosses, the threats (STRIDE
 | Scripted or cloned clients call paid endpoints (R2) | Spoofing, denial of service | Attestation registered once per key against a server challenge; an assertion per paid request with a checked, increasing counter stored in a mutation; a bounded fallback for devices that can't attest, with no paid access | 24a |
 | Someone calls a public Convex query or mutation directly, skipping the HTTP action checks (R8, R2) | Elevation of privilege | Everything except HTTP actions is `internal`; CI lint; cross-user tests | 24a, 24c |
 | Client-supplied IDs used as permission | Elevation of privilege | Principal taken only from the verified token | 24c |
-| Oversized or malformed requests | Denial of service, tampering | Typed schema, 64 KiB body, 2,000-character notes, unknown fields rejected | 24a |
-| Raw request bodies in Convex function logs | Information disclosure | No payload logging; log only action IDs, error categories, cost and latency; how long Convex keeps function logs is to verify in 24a | 24a |
+| Oversized or malformed requests | Denial of service, tampering | Typed schema, 64 KiB body, 2,000-character notes, unknown fields rejected. **24a:** built from the shared contract's schemas, checked after the token and before any parsing is trusted; tested on both sides with the contract's invalid examples | 24a |
+| Raw request bodies in Convex function logs | Information disclosure | No payload logging; log only action IDs, error categories, cost and latency (**24a:** request ID, route, method, status and timing only; token errors are never logged). How long Convex keeps function logs is still to verify, on a cloud deployment | 24a |
 | An admin or config change can't be traced | Repudiation | Audit table for sign-ins, attestation failures, entitlement, credit, price, model and budget changes, without personal data | 24a, 25b |
 | Dev and production mix | Information disclosure | Separate Convex deployments, Clerk instances and provider keys per environment | 23b, 25a |
 
@@ -427,14 +429,15 @@ Each needs his choice, or his written approval in the progress log with a reason
 | D8 | Risks to accept in writing | **Approved by Jose, 19 October 2026:** (a), (b), (c), (e) and (f) accepted, reviewed again before outside testers; (d) is decided in Phase 20a when the spike shows whether the exception is needed. (a) Without ADP, Apple can read her synced data; (b) Anthropic keeps request content up to 30 days, longer if flagged, with no zero-retention agreement; (c) Clerk and possibly Black Forest Labs process data outside the US; (d) a possible Data Protection exception for the `CKSyncEngine` state file (20a); (e) R1 stays accepted; (f) faceless body photos and garment photos may be used by BFL for training (already accepted by Jose in D1, 19 October 2026, on condition of disclosure; review before outside testers) | At this checkpoint, or at the phase named |
 | D9 | Agent access to Convex and Cloudflare (R13) | **Approved by Jose as policy, 19 October 2026.** Adopt as policy: agents never use the Convex MCP production flag, get no production deploy key, and have no access to the backup bucket | At this checkpoint |
 | D10 | Export format (carried from Phase 0c) | **Approved by Jose as suggested, 19 October 2026.** Encrypted, as the standard requires, unless he approves PRD 15.4's unencrypted archive in writing | 20b |
+| D11 | Clerk's Keychain accessibility (24a) | **Open.** `clerk-ios` 1.6.1 stores the session with `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`, and the SDK has no option to change it. SECURITY_STANDARD §4 asks for `WhenUnlockedThisDeviceOnly` or stricter. Options: (a) a written exception with a review date, since the session is still device-only and never in backups; (b) ask Clerk for the option and wait; (c) D2's alternative, our own Sign in with Apple with a Convex-issued token. Suggested: (a), reviewed before outside testers. Nothing is affected until a Clerk key is configured | Before the Clerk switch |
 
 ## To verify, and gaps in the plan
 
 **To verify in 19b (provider terms, recorded in DATA_MAP processors):** for BFL: processing region, how it takes inputs and serves outputs, the retention period of outputs and delivery URLs, sub-processors and whether it deletes on request (training use is already accepted in D1); the same questions for OpenAI as backup; Clerk's retention after a user is deleted and its sub-processor list; Convex's hosting region for our deployments, encryption at rest and function-log retention; whether Anthropic offers zero data retention to an account this size.
 
-**To verify in the build phases:** Clerk session token lifetime and whether `clerk-ios` sets the Keychain accessibility we need (24a); whether deleting a Clerk user revokes Apple's sign-in link (24c); how BFL takes input images and serves outputs, and whether a public URL is involved (33a); whether `npx convex export` can leave out tables, and whether R2 offers a bucket lock (25b).
+**To verify in the build phases:** Clerk session token lifetime with the `convex` template, once the instance exists (24a, carried); `clerk-ios` 1.6.1's Keychain accessibility was checked in 24a: `AfterFirstUnlockThisDeviceOnly`, not configurable, so D11 below; whether deleting a Clerk user revokes Apple's sign-in link (24c); how BFL takes input images and serves outputs, and whether a public URL is involved (33a); whether `npx convex export` can leave out tables, and whether R2 offers a bucket lock (25b).
 
-**Gaps:** no Stage B phase bullet builds the daily backup job; STAGE_B_DATA_OPTIONS.md puts it in 25b, so 25b needs a bullet. The CI lint for public Convex functions (R8) belongs in 24a's or 24c's bullets. DMARC for the support domain is still missing (STACK.md).
+**Gaps:** no Stage B phase bullet builds the daily backup job; STAGE_B_DATA_OPTIONS.md puts it in 25b, so 25b needs a bullet. The lint for public Convex functions (R8) was built in 24a as a backend test script; it moves into CI when the backend repo gets one. DMARC for the support domain is still missing (STACK.md).
 
 ## What this model does not cover yet
 

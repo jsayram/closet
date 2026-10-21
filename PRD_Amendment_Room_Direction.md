@@ -383,7 +383,7 @@ Not changed: LR-01 (later), LR-14 and LR-19 (no), LR-15 (no change). See the end
 - LR-06.1 The Saved tab lists only saved looks that match the current source and occasion, and opening it sends nothing.
 - LR-06.2 The Saved tab has an empty state that explains how to save a look.
 - LR-06.3 No Shuffle control exists.
-- LR-06.4 An unsaved earlier result is findable in search but not listed on the Saved tab.
+- LR-06.4 An unsaved earlier result is not listed on the Saved tab. Saved Looks' Looks tab has a Saved | All switch (decided 21 October 2026, replacing a first version where typed search alone brought earlier results up under the saved ones). Saved lists only saved looks. All lists saved looks and unsaved earlier results in one list, each unsaved one tagged "Not saved" with a Save look button. Search and filters work the same way in both. On Saved, when they also match unsaved looks, one line at the end says "N more in All" and switches to All with them kept. The scope goes back to Saved each time she opens the screen.
 
 ### LR-07. Swap explains its picks; Show 3 more; See all; Find one
 

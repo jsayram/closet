@@ -8,17 +8,17 @@ Rules (SECURITY_STANDARD section 4, PRD 15.4, App Review 5.1.1(ii) and (iv), 5.1
 - Show a short in-app explanation first, with **Continue** (which opens the iOS prompt) and **Not now** (which asks nothing). This avoids spending the one iOS prompt when she isn't ready.
 - No pressure: no "you must", no repeated nags, no feature locked behind a permission when a manual way exists.
 - Every "no" has a way forward, and the app explains how to change it later in Settings.
-- Purpose strings are complete and plain. They go in the generated Info.plist through `INFOPLIST_KEY_...` build settings in `Configs/App.xcconfig`, and their words in an `InfoPlist.xcstrings` String Catalog so they can be translated. (Whether every key below has an `INFOPLIST_KEY_` build setting is to confirm; a key without one goes in `Configs/AppInfo.plist`.)
+- Purpose strings are complete and plain. They go in the generated Info.plist through `INFOPLIST_KEY_...` build settings in `Configs/App.xcconfig` (checked for the camera in 22a: `INFOPLIST_KEY_NSCameraUsageDescription` works). English is the only language, so there's no `InfoPlist.xcstrings` yet: an English-only catalog in the app folder wasn't copied into the build, and the English words come from the build setting anyway. It's added, with every purpose string, with the first translation. (A key without an `INFOPLIST_KEY_` build setting goes in `Configs/AppInfo.plist`.)
 - When a feature grows, its purpose string grows with it. A string must describe every use.
 
-Today the app asks for nothing and has no purpose strings, which is correct.
+Since Phase 22a (20 October 2026) the app asks for one permission, the camera, and has one purpose string, `NSCameraUsageDescription`. Picking photos uses the system picker and asks for nothing. `scripts/check-archive.sh` in the app repo fails a build that has any other usage-description key, or the camera's with different words.
 
 ## Summary
 
 | Permission | Info.plist key | Phase | Asked when |
 |---|---|---|---|
-| Camera | `NSCameraUsageDescription` | 22a (garments), widened in 33b (try-on photo) | She taps Take a photo in Add a piece, or Set up try-on |
-| Photos, picking photos | None | 22a | `PhotosPicker` shows only what she picks and needs no permission |
+| Camera | `NSCameraUsageDescription` | **Built in 22a** (garments), widened in 33b (try-on photo) | She taps Take photo in Add a piece, or (33b) Set up try-on |
+| Photos, picking photos | None | **Built in 22a** (garments and the try-on photo) | `PhotosPicker` shows only what she picks and needs no permission |
 | Photos, saving pictures to her library | `NSPhotoLibraryAddUsageDescription` | Only when a feature saves an image to Photos (to confirm which phase: a share sheet with an image offers Save Image, which needs this key) | She taps Save to Photos or Save Image |
 | Location, approximate, while in use | `NSLocationWhenInUseUsageDescription`, plus `NSLocationDefaultAccuracyReduced` = `YES` | 29 | She first opens Style Me's weather row, or Home's window offers live weather |
 | Notifications, local only | None (runtime request) | 34, only if purchase reminders ship | She turns on a reminder for a purchase |
@@ -40,7 +40,9 @@ On-device Vision (cutouts, face and person masking, body pose hints) needs no pe
 
 ## Camera
 
-**Phase 22a**, for garment photos. **Phase 33b** widens it for the try-on photo taken with the in-app camera and its pose outline.
+**Phase 22a**, for garment photos (built 20 October 2026). **Phase 33b** widens it for the try-on photo taken with the in-app camera and its pose outline.
+
+**As built in 22a** (app `Features/Shared/PhotoPicking`, `docs/add-a-piece.md`): the camera is the system camera (`UIImagePickerController`, photo mode). Only her own closet and Release builds ask; the debug sample closet keeps Stage A's stand-in and asks for nothing. The explainer sheet and the "off" message use the words below. The "off" alert shows the sentence as its title with no separate message, so nothing is said twice. Two cases the draft didn't cover: a camera blocked by Screen Time or a device profile (`restricted`), and a device with no camera, both show "The camera can’t be used here. You can choose a photo instead." with **Choose a photo** and **Cancel**, and never ask iOS. The iOS 26.5 simulator shows the prompt and a simulated camera screen whose shutter takes nothing, so the photo itself was checked through the picker there.
 
 **Purpose string, 22a:**
 
@@ -68,7 +70,7 @@ No claim that photos "stay on this iPhone", because from 33a a faceless copy of 
 
 ## Photos
 
-**Phase 22a.** Picking garment photos, and from 33b the try-on photo, uses `PhotosPicker`, which hands the app only the photos she picks and needs no permission. The app strips location and other metadata before saving its copy (22a).
+**Phase 22a (built).** Picking garment photos and the try-on photo in Profile uses `PhotosPicker`, which hands the app only the photos she picks and needs no permission (checked on the iOS 26.5 simulator: no prompt, and the picker says "Private Access to Photos"). The picker says "Location Is Included" by default; the app never keeps those bytes. It keeps its own copy, made from the pixels alone with no location, camera details, time or captions, in `Application Support/Photos` (DATA_MAP.md). **Paste (21 October 2026, approved by Jose).** Add a piece offers Apple's own `PasteButton` (SwiftUI, images only) next to Take photo and Choose from Photos. It needs no permission and no Info.plist key: iOS hands the app the copied image only when she taps the system's own Paste button, so it shows no "Allow Paste?" prompt. The button is dimmed while the pasteboard holds no image. The app never reads `UIPasteboard` itself (the code has no such call), and the pasted image goes through the same intake as a picked photo, so it is re-encoded to a JPEG with no metadata before anything is kept. Add a piece only; nowhere else in the app pastes a photo.
 
 There's no pre-prompt because there's no prompt. Help's "Add a piece" topic can say: "The app only sees the photos you pick."
 
@@ -122,7 +124,7 @@ These are the app's own switches (named-recipient consent, PRD 15.4 and App Revi
 |---|---|---|
 | iCloud sync | 20b | Apple, her private iCloud |
 | Account (sign in) and age confirmation | 24a | Clerk, Convex |
-| Garment photo naming ("Describe my photos") | 22a decides whether it exists | A named processor, if built |
+| Garment photo naming ("Describe my photos") | Not built. 22a left it out; Jose decides whether it ever exists | A named processor, if built |
 | Style Me, swaps and Ask stylist | 27a | Anthropic |
 | Live weather | 29 | Apple WeatherKit (paired with the location permission) |
 | Improvement analytics | 31, if built | Our own backend |

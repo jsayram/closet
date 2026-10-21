@@ -75,7 +75,7 @@ The ADP sentence states accepted risk D8(a). Phase 20b's design (app repo `docs/
 
 ## Phase 22a: photos (only if "Describe my photos" is built)
 
-22a decides whether a cloud garment-naming aid exists. If it does, it gets its own switch and names its own company. Draft, with the company left open:
+Phase 22a (20 October 2026) left the cloud garment-naming aid out: nothing about a photo leaves the phone. Whether it ever exists is Jose's decision. If it does, it gets its own switch and names its own company. Draft, kept for that case, with the company left open:
 
 > **Describe my photos sends one garment photo to [company]**
 > What's sent: the photo of the piece you choose, without its location.
