@@ -207,6 +207,9 @@ These lessons come from building paid features against mocks, before any backend
 - **xcodebuild never adds new keys to a package's String Catalog.** Add each new key yourself (or from the build's `.stringsdata`), or the string ships untranslated with no warning. (Stage A audit)
 - **A tour that scrolls a page puts the scroll position back when it ends,** or the title is left half under the back button. (Stage A QA)
 
+- **A timed animation must live in a view that keeps its identity, and own its own model.** Two ways it silently restarted in Phase 33c, and the unit tests passed both times: the model was built inline in the parent's `body` (a new one each redraw, while the old one's task kept running), and the view sat in different `switch` branches of the parent, so a step change recreated it. Own the model with `@State` in the view itself, and put the animation above the `switch`. A screen recording found it, a UI test now guards it. (Phase 33c)
+- **Drive progress captions from the work, not a timer, and test the mapping.** A pure `Progress` value built from the phone's own steps and the job's state, with the failing step kept on the job, lets a test check every state and that a failure stops at the right row. Report the steps through a progress closure on the main actor so they arrive in order. (Phase 33c)
+
 ## 7. Accessibility
 
 **Do this**
