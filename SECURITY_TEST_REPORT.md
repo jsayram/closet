@@ -6,7 +6,7 @@ Measured against [SECURITY_STANDARD.md](SECURITY_STANDARD.md), the risks and flo
 
 ## Summary
 
-No critical, high or medium findings. Eleven low findings: seven are fixed (backend local commit 33b5b61; app jsayram/nifty-outfit-nook#100), one is a platform limit kept as a residual risk with a tripwire test, and three need a decision from Jose. The controls the earlier phases claim held up under the attacks below, including forged tokens, cross-account requests, parallel spends, forged App Store chains, crafted images and crafted backups.
+No critical, high or medium findings. Eleven low findings: seven are fixed (backend local commit 33b5b61; app jsayram/nifty-outfit-nook#100, merged into `develop` as 1b895cc), one is a platform limit kept as a residual risk with a tripwire test, and three need a decision from Jose. The controls the earlier phases claim held up under the attacks below, including forged tokens, cross-account requests, parallel spends, forged App Store chains, crafted images and crafted backups.
 
 ## Findings, by severity
 
@@ -76,7 +76,7 @@ Source review of `develop` at 4f845c1 (Phase 33a's try-on is still in PR #99; it
 | App switcher | Fit, measurements, the try-on photo, try-on pictures and the backup sheet are covered while the app isn't active (`hiddenWhenInactive`). |
 | Logging | One Release logger, which logs only the endpoint and a failure kind, as public. No `print` in Release code. |
 
-The new backup test and the existing `CraftedArchiveTests` and `BackupTamperTests` passed (22 tests) on the "32b iPhone 12" simulator. CI ran the Release archive check with the new switches (__CI_RESULT__).
+The new backup test and the existing `CraftedArchiveTests` and `BackupTamperTests` passed (22 tests) on the "32b iPhone 12" simulator. CI ran the Release archive check with the new switches on a real Release binary and passed. Two CI attempts failed in `MigrationDebugTests` (from #98, not touched here; it passed alone and with every Services test on the simulator, and on the third attempt), so that test looks flaky on CI and is worth a look.
 
 ### Dependencies
 
