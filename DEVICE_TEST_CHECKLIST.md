@@ -147,6 +147,36 @@ Items marked **[not ready]** can't be run yet because something isn't built or a
   - Pass: a good photo shows "This photo works" with Use this photo. The others show a kind reason and no way to keep them, nothing is saved, and her old photo stays. Tips (whole body, arms, light) show only when true, and the note about hats, scarves and turtlenecks is there. A photo that passed never makes a try-on refuse for a fixable reason (use 3.11 with the fake backend). Take another photo reopens the camera, and Choose another photo opens Photos. With the camera off the message says how to turn it on and offers Choose a photo.
   - Send back: any photo where the check was wrong (said fine but try-on refused, or refused but looked fine), and the check's time on a large photo on the iPhone 12.
 
+- [ ] **2.20 Export a big closet: memory and staying alive** (Phase 32a) | Blocks: nothing, but the 21b promise (restore works at scale) rests on it
+  - Why: on the simulator the export used to hold every photo in memory (1,789 MB at 1,000 photos, 76 MB since the 32a fix). A phone ends the app well below 1.8 GB, and the simulator can't show where. This repeats 2.11 with the fix in.
+  - Steps: run with `-seed-photo-closet 2400` (wait for the seeding, relaunch once). Profile, Backups, Export a copy with a 12-character passphrase you'll remember. Watch Xcode's memory gauge for the whole export, and time it. Press Home halfway through once. Then Check a copy and Restore (Replace) from it, and Undo restore. Do it on the iPhone 14, then on Lily's iPhone 12 if she can lend it for 20 minutes.
+  - Pass: no kill; peak memory under about 250 MB (the simulator peak was 71 to 76 MB for 1,000 photos and 64 MB for check and restore); the file is about the size of the photos (about 4.3 GB for 2,400 pieces); free space is back after the export is saved or discarded.
+  - Send back: for each phone, export time, check time, restore time, peak memory, and the file size. If the app is ended, which step it was in.
+
+- [ ] **2.21 Cold launch with a big closet** (Phase 32a) | Blocks: nothing (a slow result would mean showing the room before the closet loads)
+  - Why: the simulator reads the store in 325 ms cold at 5,000 pieces, 3,000 looks and 500 pictures in a Debug build on the Mac's chip. The phone's chip, its flash and Release code decide the real number, and the app also sweeps for unused photo files a moment after launch (360 ms of reading every record, away from the screens).
+  - Steps: with `-seed-photo-closet 2400` done, force-quit, then open the app from the Home Screen with the phone plugged in. Time from the tap to the room being usable with a stopwatch on a second device, five times; then Instruments, App Launch template, once. Open the Closet tab straight away and note how long the grid takes to appear. Do it on the iPhone 14 and the 12.
+  - Pass: the room is usable in under about 2 seconds, the grid in under about 1 second more, and nothing freezes while the sweep runs (it should be invisible).
+  - Send back: the five times for each phone, the Instruments launch breakdown if anything is slow, and whether the grid ever waits on the store.
+
+- [ ] **2.22 Typing in Closet and Saved Looks with a big closet** (Phase 32a) | Blocks: nothing
+  - Why: on the simulator a typed search costs 60 to 160 ms and "possible matches" about 0.2 s on the main thread, in a Debug build. Possible matches runs when a search finds nothing, so it is the one she might feel.
+  - Steps: with `-seed-photo-closet 2400`, in Closet type "navy trousers party" (no results, so possible matches), delete a word at a time, then "soft beach house tee". In Saved Looks (only the demo has looks, so if the 2,400 closet has none, use a sample closet instead and note it) switch Saved to All and back with a search on. Use VoiceOver for one of them.
+  - Pass: typing never stalls (the keyboard keeps up), possible matches show within about half a second of pausing, switching scope is instant.
+  - Send back: "ok", or which step stalled and for how long.
+
+- [ ] **2.23 Data use of a try-on picture** (Phase 32a, see also 3.11) | Blocks: nothing, but it decides whether polling needs the small status call in LOAD_TEST_REPORT.md
+  - Why: the app asks again every five seconds with the same body, and the body holds her faceless photo and the garment photos, so each ask uploads them again. The backend only costs a little for it; her data plan and battery may notice.
+  - Steps: after 3.11 works, with Settings, Cellular showing this app's usage reset to zero, make three try-on pictures on cellular with Wi-Fi off. Read the app's Cellular usage afterwards.
+  - Pass: under about 10 MB per picture. Over 30 MB is a reason to ask for the status call.
+  - Send back: the cellular usage before and after, and how long each picture took.
+
+- [ ] **2.24 The privacy walkthrough and the real steps** (Phase 33c, app PR for `feature/33c-privacy-walkthrough`) | Blocks: the 33c checkpoint (you and Lily watch it)
+  - Why: the simulator can only show the steps against a drawn figure and the fake backend. On a real phone the steps follow real Vision and a real image call, so the captions and the animation should be watched against what is really happening.
+  - Steps: (a) on a fresh install (or after Delete my data), set up the try-on photo, then Try it on and Allow: the first showing plays by itself, about six seconds, with no Skip, while the picture is being made. (b) Right after it, the loading screen lists the five steps and ticks them off. Watch "Hiding your face", "Swapping in a studio backdrop" and "Checking that no face is left" go by on the phone, then "Dressing you" stay for the real wait, then "Putting you back together on your phone". (c) Make a second picture: no animation, only the steps. Tap "Watch how it works": it plays with Skip. (d) Settings, Accessibility, Motion, Reduce Motion on: watch it again (a replay). (e) VoiceOver on: focus the animation, then the steps list. (f) Largest Dynamic Type. (g) Try a photo that makes try-on refuse (two people, from 2.19), and a try-on with Wi-Fi switched off after "Dressing you" starts.
+  - Pass: the animation matches what you see happen: the veil, the plain backdrop, the check, the photo going out, coming back dressed, her face back on with "On your phone". Under it, the line "Your face never leaves your phone. A photo of your body..." and, under that, "On the way, our server holds them, encrypted, for up to 30 minutes..." The steps move because the work moves, never ahead of it: no step ticks before it is done. With Reduce Motion nothing slides or grows, only fades. VoiceOver reads "How your photo stays private" with every step, and each step as "Dressing you, in progress" and so on. At the largest size nothing is cut off. A refusal stops at its step ("Checking that no face is left" for a face still found) and says nothing was sent; the offline case stops at "Dressing you". See what was sent shows the same two lines.
+  - Send back: any moment where a caption was ahead of or behind what the phone was really doing, how long each step took on the iPhone 14 and Lily's 12 (the three on-phone steps should take about a second or two together), and whether the first showing felt too long, too short or too fast to read.
+
 ---
 
 ## 3. Needs your setup first
@@ -240,6 +270,7 @@ Re-check on Lily's phone later (or when she's willing to lend it for 20 minutes)
 
 - **2.7** the cutout bench: the official go/no-go counts only on the 12. Peak footprint, cold start and median time.
 - **2.8** the 2,400-piece scroll, hitches and peak memory.
+- **2.20**, **2.21** and **2.22** (Phase 32a): the export at 2,400 pieces (peak memory), cold launch with a big closet, and typing on it. The 12 is the one that matters for memory.
 - **2.11** export and restore at 1,000 pieces: peak memory and whether iOS ends the app.
 - **2.14** and **3.11** the face-masking step with a large photo, since Vision plus the image copies can peak high.
 - **2.18** and **2.19** the live camera hints (frame rate, heat, memory) and the check's time on a large photo.

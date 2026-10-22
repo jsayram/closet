@@ -461,7 +461,7 @@ Bullets marked *(from Stage A)* are work a Stage A phase deferred; the app repo'
 
 **Checkpoint:** a forced crash and a forced cost spike both reach Jose. *(Both are forced in tests; the alert channel is still a log line until Jose picks one.)*
 
-### Phase 32a: Scale and load testing
+### Phase 32a: Scale and load testing *(done 22 October 2026 locally; cold launch, memory and typing on a phone wait on Jose, see the Progress log and LOAD_TEST_REPORT.md)*
 
 - Load tests on the gateway, many concurrent users, and very large closets and histories on the device.
 
@@ -1278,3 +1278,16 @@ Add a dated line per phase: what was built, what Jose decided at the checkpoint,
     1. Run 2.18 and 2.19 and send back any hint that was wrong or late: the thresholds are my estimates.
     2. The front camera comes first because she is likely alone with the timer. Say if the back camera should lead.
     3. A photo the check refuses can't be kept, with no override except when the checks can't run at all.
+
+- 22 October 2026: **Phase 32a, scale and load testing** (app: jsayram/nifty-outfit-nook#105, merged into `develop` as 85d7966 with every required check green; backend: local commits `8436a42` and `e942782`, never pushed). Everything ran locally (a local Convex backend in its own copy, the iOS simulator); nothing touched a cloud service. Written up in [LOAD_TEST_REPORT.md](LOAD_TEST_REPORT.md).
+  - **Method:** `scripts/load-test.mjs` (24 simulated users, try-on polled the 27c way, App Store bursts; local addresses only) and `scripts/cost-profile.mjs` (documents read and written per request, in `convex-test`) in the backend repo; `ScaleBrowsingTests`, `ScaleStoreTests` and `ScaleDataTests` in the app with 5,000 pieces, 2,000 saved looks (plus 1,000 unsaved) and 500 pictures.
+  - **Fixed (backend):** a style request took 1.5 s with 4,000 failed or free actions behind it and 12.6 s with 12,000, from a `.filter` after an index (now 44 and 105 ms); about 5% of styling requests and some try-on settlements failed on write conflicts (admit and settle are retried; none reached the app after); the credit balance read the whole history (3,012 documents at 3,000 rows, now 13); every request's health sample read the whole hour's range (now a point read); five daily clean-ups took one batch a day and fell behind; paid actions, cost entries and challenges were never cleaned (24b's gap, now a daily job with 35 days).
+  - **Fixed (app):** the backup export held every photo in memory, 1,789 MB at 1,000 photos, now 71 to 76 MB (`FileHandle.read` in an autorelease pool).
+  - **App numbers (simulator, Debug):** the store opens in 4 ms and reads everything cold in 325 ms; Closet opens in 23 ms, a typed search takes about 60 ms, possible matches about 0.2 s; Saved Looks opens in 185 ms, Saved | All takes 41 ms, search 110 to 160 ms; one edit saves in 2 ms; export with records only takes 0.9 s, with 1,000 photos 4 s.
+  - **Left alone on purpose:** the shared spend counters (sharding would give up exact ceilings; the report says when to shard and how), and the try-on poll that re-sends the photos each time (a contract change, so a question).
+  - **Checkpoint:** results against agreed limits: Convex's documented limits (32,000 documents scanned, 64 MiB per action, 1 million calls a month on Starter) leave room at 1,000 users, with about 2.5 million calls a month, so Professional is the safe plan. Cold launch, memory and typing on a phone wait on the device list (2.20 to 2.23).
+  - **For Jose:**
+    1. Add a small status call so a try-on poll doesn't re-send the photos (changes the contract and the app)?
+    2. Is 35 days fine for finished paid actions and cost entries?
+    3. Which plan for the backend: about 2.5 million function calls a month at 1,000 users.
+    4. Run 2.20 to 2.23 on the iPhone 14, and 2.20 on Lily's iPhone 12 when she can lend it.
