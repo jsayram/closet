@@ -34,17 +34,21 @@ Two-factor status is only marked confirmed when someone actually checked it. Eve
 
 ## Keys, tokens and webhooks
 
-None of these exist for the app yet. Each one gets a row when it is created, with its scope and a rotation date. One key per purpose; the value never goes in this file.
+Server secrets (provider keys, Clerk secret, Convex deploy keys, result-cache key, pepper, push and backup keys) are registered in full in the private backend repo's `docs/secrets.md` (Phase 25a, 22 October 2026): where each lives, who can read it, the rotation interval and steps, and what breaks while rotating. Only the dates are tracked here. Each key gets a row when it is created, with its scope and a rotation date. One key per purpose; the value never goes in this file.
 
 | Key or webhook | Account | Scope | Where it is stored | Created | Last rotated | Next rotation |
 |---|---|---|---|---|---|---|
-| GitHub CLI token on Jose's Mac | GitHub | `repo`, `workflow`, `read:org`, `gist` (seen 13 October 2026) | macOS keychain | Jose to confirm | Jose to confirm | Jose to set |
+| GitHub CLI token on Jose's Mac | GitHub | `repo`, `workflow`, `read:org`, `gist` (seen 13 October 2026). Wider than agents need: they run `gh` with it. A fine-grained token limited to `nifty-outfit-nook` and `closet` (contents, pull requests, actions) is the narrower option (Phase 25a, Jose's decision) | macOS keychain | Jose to confirm | Jose to confirm | Jose to set |
 | here.now API key, if one exists | here.now | Publishing the review site | Jose's local tool config, never committed | Jose to confirm | Jose to confirm | Jose to set |
 | Cloudflare API tokens, if any | Cloudflare | Pages deploys | Jose to confirm | Jose to confirm | Jose to confirm | Jose to set |
 | App Store Connect API keys | App Store Connect | Per purpose (CI upload, App Store Server API) | Protected CI environment or backend secret store | Not created | | |
 | App Store Server Notifications URL | App Store Connect to backend | Subscription and purchase events | Backend config | Not created (Phase 30c) | | |
-| AI provider keys | AI providers | Per environment | Backend secret store | Not created (Phase 25a) | | |
-| Backend service keys | Backend provider | Per environment | Backend secret store | Not created (Phase 25a) | | |
+| AI provider keys (Anthropic, BFL, OpenAI) | AI providers | One workspace or project per environment, hard cap on each | Convex environment variables, per deployment | Not created for Convex (Anthropic waits on Jose; BFL and OpenAI at 33a) | | Every 90 days from creation |
+| BFL and OpenAI test keys | Black Forest Labs, OpenAI | Local provider tests only, small caps | `~/.config/nook/bfl.env`, `openai.env` (mode 600, outside every repo; checked 22 October 2026) | About 18 October 2026 (file dates) | Not rotated yet | 16 January 2027, or revoke when the provider tests end |
+| Clerk secret key | Clerk | Deleting users, per instance | Convex environment variable | Not created | | Every 180 days |
+| Convex deploy keys | Convex | Dev: dev deployment only. Prod: export and deploy only, in a protected CI environment | Dev: Jose's ignored `.env.local` if one is made. Prod: protected GitHub environment | Not created | | Every 90 days |
+| Result-cache key and subject pepper | Convex environment | Server only | Convex environment variables | Not created | | Every 12 months |
+| Backend service keys (APNs, Sign in with Apple, App Store Server API, R2 backup token, backup key pair) | Apple, Cloudflare, Jose | See `docs/secrets.md` | Convex environment, protected CI environment, offline | Not created (27c, 24c, 30c, 25b) | | 12 months for Apple and backup keys, 90 days for the R2 token |
 | Signing certificates | Apple Developer | Development and distribution | Jose's keychain; CI only if CI signs | Jose to confirm | | |
 
 ## What Jose needs to confirm

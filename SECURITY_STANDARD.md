@@ -71,7 +71,7 @@ The data map (what, where, who can see it, how long it's kept, how it's deleted)
 **Integrity and tampering**
 - App Attest (DeviceCheck) for every request that can cost money or touch account data. The server rejects requests that fail attestation.
 - The server is the authority for entitlements, credits, limits and prices. Nothing the client says about payment or quota is trusted.
-- No secrets in the binary. Assume the app will be decompiled and its traffic inspected.
+- No secrets in the binary. Assume the app will be decompiled and its traffic inspected. A script scans every Release build (strings, Info.plist and resources) for key shapes, provider addresses, credentials in URLs, plain `http://` or `localhost` addresses and key files, and fails CI on a match (Nifty Outfit Nook: `scripts/check-release.sh`, added in Phase 25a).
 - Jailbreak detection only as a soft signal. It is never relied on as protection.
 
 ## 5. Backend and API
@@ -126,6 +126,8 @@ The data map (what, where, who can see it, how long it's kept, how it's deleted)
 - On-device data has a tested export and restore path, and migrations can't destroy data (see the project's persistence rules).
 - **Incident response plan** written before launch: how to detect, who acts, how to rotate every key, how to turn off paid features, how and when to tell users, and what the law requires.
 - Secrets rotated on a schedule and immediately after any suspected leak. Deleting a leaked secret from git does not make it safe.
+- **A secrets register** in the private backend repo: every secret with where it lives, who can read it, its rotation interval and steps, what breaks while it rotates, and the narrowest scope for each service account (Nifty Outfit Nook: the backend's `docs/secrets.md`, Phase 25a). Dev and production have separate secrets, and agents never get production keys. Secrets are set through stdin (`pbpaste | npx convex env set NAME`), never typed into a command, so they stay out of shell history. A lint fails the tests if a log call touches `process.env` or a key. Local test keys live outside every repo with mode 600, are low-cap, and are revoked when the testing ends: a file mode doesn't stop a program running as the same user, agents included.
+- Check each provider's real permission model before writing a control that depends on it. Cloudflare R2, for example, has no write-only token, so the backup bucket relies on encryption to a public key and a retention lock instead.
 
 ## 11. Testing and review gates
 

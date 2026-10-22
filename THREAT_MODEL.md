@@ -96,7 +96,7 @@ Two different paths, kept apart on purpose:
 
 The Claude key, the BFL key (plus the OpenAI key for the backup), the App Store Server API key and the Sign in with Apple key sit in Convex environment variables. Anyone with production dashboard access, a production deploy key, or code that logs `process.env` can read them. Cost runs away through abuse (R2), a retry loop, or a leaked key used directly against the provider.
 
-Controls: one key per environment and purpose; a Claude Console spend limit and alerts; prepaid BFL credits, which can't overspend (and a spend limit on the OpenAI backup key); the ledger reserves cost before each attempt and fails closed when it can't; kill switches readable without an app update; a rotation runbook rehearsed in 25b; no secrets in logs, enforced by review and a lint on `console.*` calls that touch env values.
+Controls: one key per environment and purpose; a Claude Console spend limit and alerts; prepaid BFL credits, which can't overspend (and a spend limit on the OpenAI backup key); the ledger reserves cost before each attempt and fails closed when it can't; kill switches readable without an app update; a rotation runbook rehearsed in 25b; no secrets in logs, enforced by review and a lint on `console.*` calls that touch env values. *(Phase 25a, 22 October 2026: the register is the backend repo's `docs/secrets.md`; the lint is `scripts/check-secrets.mjs`; the app repo's `scripts/check-release.sh` scans every Release build for keys, provider addresses and key files; gitleaks over all three repos' full history found no real secret. Review details are in the register.)*
 
 ### The backup bucket as a copy of the ledger (R12)
 
@@ -105,7 +105,7 @@ STACK.md's backup job exports the whole Convex database every day. That copy hol
 Controls (Phase 25a and 25b):
 
 - Encrypt before upload with a public key. Only the public key is in CI; the private key stays offline with Jose. A leaked CI secret then can't read old backups.
-- The job's R2 token can write objects to that one bucket and nothing else. No public bucket URL.
+- The job's R2 token is scoped to that one bucket and nothing else. No public bucket URL. *(Corrected 22 October 2026, Phase 25a: Cloudflare has no write-only R2 permission. Checked on its R2 token page: the narrowest is Object Read and Write on named buckets, which can also read and delete. Three controls stand in: backups are encrypted to a public key, so reading them gives nothing; a bucket lock rule keeps each object 30 days so it can't be deleted or overwritten early; and the lifecycle rule deletes after the lock ends. Confirm bucket locks in 25b.)*
 - A 30-day lifecycle rule deletes old copies, matching PRD 15.4's 30-day backup rotation.
 - The Convex production deploy key the export needs lives in a protected GitHub environment in the private backend repo, never in either public repo.
 - The monthly restore goes into a separate test deployment, run by Jose or behind a manual approval, and the restored copy is deleted after the check.
