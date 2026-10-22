@@ -16,7 +16,7 @@ Items marked **[not ready]** can't be run yet because something isn't built or a
   - Pass: the app opens on the welcome screen with no crash.
   - Send back: nothing unless the build fails; then the last 20 lines of Xcode's error.
 
-- [ ] **1.2 Know how to pass a launch argument** (Phase 8a, 22b) | Blocks: 2.7, 2.8, 2.11, 2.13, 3.x labs
+- [ ] **1.2 Know how to pass a launch argument** (Phase 8a, 22b) | Blocks: 2.7, 2.8, 2.9, 2.10, 2.11, 2.13, 2.16, 3.x labs
   - Why: the test screens open only when the app is started from Xcode with an argument. Starting from the Home Screen ignores them.
   - Steps: Xcode > Product > Scheme > Edit Scheme > Run (left) > Arguments tab > "Arguments Passed On Launch" > **+**. Type the whole argument on one row, for example `-cutout-bench` or `-seed-photo-closet 300`. Untick the row (don't delete it) between tests so only one is on at a time. Press Run. When you're done, `git checkout -- NiftyOutfitNook.xcodeproj/xcshareddata` (the scheme is shared; never commit it).
   - Pass: with `-cutout-bench` ticked, the app opens on "Cutout benchmark" instead of the room.
@@ -79,17 +79,19 @@ Items marked **[not ready]** can't be run yet because something isn't built or a
   - Pass: hitch time under 5 ms per second (Apple's "good"), longest frame under about 50 ms, peak memory flat (the simulator held about 89 MB).
   - Send back: the on-screen numbers for each run and the peak memory from Xcode's memory gauge.
 
-- [ ] **2.9 File protection on the store** (Phase 20a, 21a, 21b) | Blocks: the "complete protection" claims in DATA_MAP and the privacy answers **[not ready: no in-app way to read it]**
-  - Why: the simulator doesn't keep protection classes. The code sets `complete` on `Nook.store`, its `-wal` and `-shm`, the migration journal and the snapshot.
-  - Steps: ask an agent to add a small Debug screen or device test that prints each file's `FileProtectionType` (there is none today). Add 3 pieces first so the store has content, then lock the phone and leave it a minute before reading.
-  - Pass: every file reports `NSFileProtectionComplete`; the store can't be opened while the phone is locked.
-  - Send back: the printed list.
+- [ ] **2.9 File protection on the store** (Phase 20a, 21a, 21b) | Blocks: the "complete protection" claims in DATA_MAP and the privacy answers
+  - Why: the simulator doesn't keep protection classes. The code sets `complete` on `Nook.store`, its `-wal` and `-shm`, the migration journal and the snapshot. The Device checks screen (`-device-checks`, Debug only, built 22 October 2026 in app PR 98: pull `develop` after it merges) reads them and shows PASS or FAIL against the design.
+  - Steps: (a) Run with no arguments. Pick the empty closet in onboarding (the store only keeps data for her own closet) and add 3 pieces, at least one with a photo from Choose from Photos. Scroll the closet once so thumbnails get made. (b) Stop the app. In the scheme tick only `-device-checks`, Run. (c) The top line should say `PASS: ... 0 failed`. Look at the rows Store folder, Nook.store, Nook.store-wal, Nook.store-shm, MigrationJournal.json, Photos and "Photos: files inside": each should read `NSFileProtectionComplete`. (d) Locked-phone test: leave the screen open, press the side button to lock the phone, wait one minute, unlock, tap **Read again**. Don't force-quit in between. (e) Tap **Copy report**, paste it into Notes or a chat.
+  - Pass: no FAIL rows for the store group; the Locked-phone test section says `PASS: Nook.store could not be read 15 s after the lock`. If it says "unlocked before the check" or "iOS ended the app's background time", lock again and retry (it's a timing limit of the probe, not a fail). A line starting `FAIL: Nook.store could be read` is a real fail.
+  - Send back: the copied report. It holds class names, counts, times and the phone model; no file names from her closet.
+  - Note: on a simulator the screen says "SIMULATOR ... ignore the file results", and every row reads NO CLASS or a made-up class.
 
 - [ ] **2.10 Protection on thumbnails, safety copies and the backups folder** (Phase 21a, 21b, 22b) | Blocks: nothing
-  - Why: same reason as 2.9. Thumbnails should be `complete` and never in a backup; safety copies and restore staging should be left out of device backups too.
-  - Steps: same helper as 2.9, pointed at `Library/Caches/Thumbnails`, `Application Support/Store/Recovery`, `RestoreSafetyCopy` and the restore staging folder. Make a safety copy by doing Restore from a copy once (see 2.11). Also the `Application Support/Diagnostics` folder: 31 set it to `completeUntilFirstUserAuthentication` on purpose.
-  - Pass: the classes match DATA_MAP (thumbnails `complete`, diagnostics `completeUntilFirstUserAuthentication`); the backup-exclusion flag is set on all but the store.
-  - Send back: the printed list.
+  - Why: same reason as 2.9. Thumbnails should be `complete` and never in a backup; safety copies should be `complete` and left out of device backups; diagnostics are `completeUntilFirstUserAuthentication` on purpose (Phase 31).
+  - Steps: use the same screen. Rows appear once the thing exists: Thumbnails after you scroll the closet; **Recovery (migration safety copy)** after 2.16's migration; **RestoreSafetyCopy** after a restore from a copy (2.11); **Diagnostics folder** and **Diagnostics reports.json** after one launch with `-diagnostics-lab` and a tap on Add sample reports. Then run `-device-checks` again and copy the report.
+  - Pass: no FAIL rows. Each row's second half says `backup: left out` for thumbnails, safety copies and diagnostics, and `backup: included` for the store, journal and photos (the screen shows "expected ..." next to any that differ). Diagnostics rows read `NSFileProtectionCompleteUntilFirstUserAuthentication` and pass.
+  - Send back: the copied report.
+  - Not checkable with this screen: **Restore staging** and **Exports** are cleared at every launch, and the screen is a separate launch, so they always read NOT THERE. Skipped on purpose; their class is set in code (`BackupLocation.prepare`, `BackupArchive`) and unit-tested.
 
 - [ ] **2.11 Export and restore at 300 and 1,000 pieces** (Phase 21b) | Blocks: sync can't switch on until restore is proven (R7)
   - Why: time, peak memory and temporary space on a real chip. The export should also carry on if she leaves the app.
@@ -121,11 +123,12 @@ Items marked **[not ready]** can't be run yet because something isn't built or a
   - Pass: the app notices the restored store and starts sync fresh instead of trusting the old state (needs sync, so this fully completes with 3.12).
   - Send back: what the app showed after the restore.
 
-- [ ] **2.16 A migration killed on the phone, and its speed** (Phase 20a, 21a) | Blocks: nothing **[not ready: needs the first real schema change and a helper]**
-  - Why: kill tests ran on a Mac with the same frameworks; the A-series chip's timing and a real force-quit mid-migration weren't.
-  - Steps: when an agent adds a debug helper that slows or pauses a migration of a big closet, force-quit during it, relaunch, then check the closet is whole. Time a migration of the 2,400-piece closet.
-  - Pass: the closet is the old one or the new one, never a mix; the time is under a few seconds.
-  - Send back: the time and "ok".
+- [ ] **2.16 A migration killed on the phone, and its speed** (Phase 20a, 21a, 21c) | Blocks: nothing
+  - Why: kill tests ran on a Mac with the same frameworks; the A-series chip's timing and a real kill mid-migration weren't. The store's only real schema change so far is version 1 to 2 (Phase 21c). The Debug build is already version 2, so a helper first turns the store back into version 1 (same records) so there is a real migration to kill. Built 22 October 2026 in app PR 98.
+  - Steps: (a) Get a big closet: run once with `-seed-photo-closet 2400`, wait for seeding, stop, then run `-device-checks` and note **Records** and **Fingerprint** (the store lines). Untick it. (b) **Make the old store:** tick only `-make-old-store`, Run. The app opens and closes itself in about a second; the Xcode console says `make-old-store: written(records: ...)`. If it says `migrationPending`, run once with no arguments so the recovery finishes, then try again; `alreadyOld` means it was already version 1. (c) **Kill it:** untick that, tick only `-migration-kill-at journal.migrating` (one row, as written), Run. The app should vanish at once and Xcode reports it was killed. If the app opens normally, no migration was waiting: repeat (b). (d) **Check the recovery:** untick, tick only `-device-checks`, Run. Under Store and last migration you should see: Store version on disk 2; **Records** and **Fingerprint** the same as in (a); Integrity check ok; Journal step verified; "found an unfinished migration (journal said migrating); safety copy put back: yes"; "migrated version 1 to 2". (e) Repeat (b) to (d) for each other step name: `journal.snapshotting`, `snapshot.copied`, `journal.snapshotTaken`, `migration.finished`, `journal.migrated`, `verified`, `journal.verified`. A kill at `journal.verified` or `verified` leaves a finished store, so (d) then shows no recovery line; that's fine. (f) **Speed:** do (b), then run with only `-device-checks` (no kill). "Last launch opened the store in N s" is the whole migration for 2,400 pieces, with a time after each step below it. (g) **A real force-quit:** do (b), tick only `-migration-pause-at journal.migrating 30` (waits 30 seconds there), Run, swipe the app away in the app switcher during the wait, then do (d).
+  - Pass: after every kill the closet is whole: same Records, same Fingerprint, integrity ok, and it is the old store or the new one, never a mix (the screen shows version 2 and verified after recovery). Migration time under a few seconds.
+  - Send back: the copied report after (d) for `journal.migrating` and for one more step, and the (f) time.
+  - Note: the kill is a SIGKILL, like a force-quit. The same flag works on the restore steps (`restore.staged`, `restore.safetyCopyTaken`, `restore.photosMoved`, `restore.writing`, `restore.saved`, `restore.verified`, `undo.saved`) for 2.11, untested on a device.
 
 - [ ] **2.17 iPad with a keyboard (only if you have an iPad)** (Phase 15b, 17) | Blocks: nothing
   - Steps: Escape closes a sheet and skips a tour; Command-F works on the first press after launch; holding Command lists Search; tabs can still be tapped while the search field is being edited with the hardware keyboard.
