@@ -39,12 +39,12 @@ Guideline numbers and quotes were checked on https://developer.apple.com/app-sto
 
 | # | Guideline | What it asks | How we meet it | Closes in | Status |
 |---|---|---|---|---|---|
-| M1 | 3.1.1 | Digital features and credits through In-App Purchase | StoreKit 2 subscription, non-consumable complimentary unlock, consumable credit packs; no other checkout | 30a, 30b | Open |
+| M1 | 3.1.1 | Digital features and credits through In-App Purchase | StoreKit 2 subscription, non-consumable complimentary unlock, consumable credit packs; no other checkout | 30a, 30b | Partly. 30a (22 October 2026): the monthly subscription through StoreKit 2 only, tested with Xcode's StoreKit testing; real products need App Store Connect (app `docs/payments.md`). Unlock and packs are 30b |
 | M2 | 3.1.1 | Purchased credits may not expire; restore restorable purchases | Credits never expire and work after a subscription ends (PRD 14.4); Restore purchases | 30b, 30c | Open |
-| M3 | 3.1.2(a) | Subscriptions give ongoing value | The stylist and image allowance renew monthly; the free core stays free | 30a | Open |
-| M4 | 3.1.2(c) and Schedule 2 | Before asking someone to subscribe, describe what they get for the price; Schedule 2 requirements (title, length, price, links to the privacy policy and terms in the app and the metadata) | Paywall per PRD 14.1: name, allowance, localized price, period, auto-renew, trial terms, Restore, Manage, Redeem, Terms and Privacy links | 30a | Open |
+| M3 | 3.1.2(a) | Subscriptions give ongoing value | The stylist and image allowance renew monthly; the free core stays free | 30a | Partly. The paywall lists the monthly allowances (placeholders until D12) and what stays free; the cloud stylist and real try-on still wait on Jose's keys |
+| M4 | 3.1.2(c) and Schedule 2 | Before asking someone to subscribe, describe what they get for the price; Schedule 2 requirements (title, length, price, links to the privacy policy and terms in the app and the metadata) | Paywall per PRD 14.1: name, allowance, localized price, period, auto-renew, trial terms, Restore, Manage, Redeem, Terms and Privacy links | 30a, 30b, 35b | Partly. 30a built Styling access: StoreKit's localized price and period, the free month only when she's eligible, the first charge date, renews until cancelled, how to cancel a day before, Restore purchases, Manage subscription (Apple's sheet), Terms of use and Privacy policy links, Not now. Open: Redeem code (30b), the real terms and privacy pages and the App Store metadata links (35b), the final price and allowances (Jose) |
 | M5 | Offer codes | Complimentary unlock through Apple offer codes, explained to App Review | Review notes describe the unlock and Lily's sponsored policy (PRD 24.1) | 30b, 35b | Open |
-| M6 | Account and subscription | Deleting the account doesn't cancel billing; tell people | Note on Delete my data and Delete account, with Manage subscription | 24c, 30a | Open |
+| M6 | Account and subscription | Deleting the account doesn't cancel billing; tell people | Note on Delete my data and Delete account, with Manage subscription | 24c, 30a | Done for the app (30a): Delete my account shows the note and Manage subscription while a subscription may still bill her (trial, active, grace period, billing retry). Recheck on a sandbox account at 35a |
 
 ## AI and images of people
 

@@ -497,7 +497,27 @@ Checked on 21 October 2026 with Xcode 27.1 (Swift 6.4), the iOS 26.5 simulator, 
 - **Node's `mock.timers.enable({ apis: ["Date"] })` threw on Node 24** (`isMock` of undefined); `mock.method(Date, "now", () => clock)` plus a `tick()` is a working injected clock for `convex-test`. In a Swift test struct a `Mutex` stored property fails ("non-Copyable"): wrap it in a small `final class`.
 - **A URLProtocol that reads the request body into memory needs its cap raised with the largest endpoint,** or the one big endpoint gets a truncated body and a confusing error.
 
-## 16. Chapters still to write
+## 16. Subscriptions (StoreKit 2)
+
+Started in Phase 30a (Nifty Outfit Nook, 22 October 2026), tested with Xcode's local StoreKit testing. Server verification, credits and refunds on the server come with 30b and 30c.
+
+**Do this**
+- Put `SKTestSession` tests in a unit-test target hosted in the app, not in a Swift package's tests.
+- Give Debug builds `get-task-allow` in their own entitlements file; never Release.
+- Keep `AppStore.sync()` out of automated tests: pass it into the service so tests can skip it.
+- Read the status from the purchased transaction right after a purchase, and poll StoreKit with a time limit in tests.
+- Never let a cached status grant past the expiry date Apple gave.
+
+**Lessons**
+- **`SKTestSession` needs an app.** In a SwiftPM test bundle run by `xcodebuild` on the simulator, `Product.products(for:)` returned nothing, even for a product copied from a working `.storekit` file. The same test in a unit-test target hosted in a tiny app returned the products. (Phase 30a)
+- **"not installed for development" means no `get-task-allow`.** With a hosted target and the app signed to run locally, `storekitd`'s log (`simctl spawn <udid> log show --predicate 'process == "storekitd"'`) said the bundle "is not installed for development" until the app's entitlements had `get-task-allow`; then every test session worked, with or without the scheme's StoreKit configuration. Use a Debug-only entitlements file, chosen by `$(CONFIGURATION)` in the xcconfig. (Phase 30a)
+- **`AppStore.sync()` asks for an Apple Account even in a test session.** It put the system "Sign in to Apple Account" alert over the simulator and the run hung until the time limit; the alert stayed after the run. A test must never sign in, so the service takes the sync as a parameter and the restore tests pass a no-op (the test environment already holds the transactions). A shutdown and boot of the test simulator cleared the alert. (Phase 30a)
+- **StoreKit reports a change a moment after it happens.** Right after a purchase, `subscription.status` and `Transaction.currentEntitlements` were empty for a few hundred milliseconds; after a forced renewal or refund the old state lingered briefly too. Take the status from the purchase's own transaction, and have tests ask again every 250 ms up to a limit instead of asserting at once. (Phase 30a)
+- **Accelerated renewals are real time.** `timeRate = .monthlyRenewalEveryThirtySeconds` made a free month 30 seconds and StoreKit renewed it by itself about 31 seconds after purchase; dates in the transactions are on that compressed clock, so time-based checks of the app's own rules use an injected clock instead. (Phase 30a)
+- **StoreKit 2 names clash with your own.** A model type called `SubscriptionStatus` or `SubscriptionPeriod` is ambiguous in any file that imports StoreKit; qualify it with its module (`Models.SubscriptionStatus`). (Phase 30a)
+- **StoreKitTest's header warns.** `SKTestTransaction.h` uses `SKPaymentTransactionState`, deprecated in iOS 18, which fails a build that treats warnings as errors. Silence only that clang warning for the test target (`OTHER_SWIFT_FLAGS = $(inherited) -Xcc -Wno-deprecated-declarations`). (Phase 30a)
+
+## 17. Chapters still to write
 
 These fill in as the matching phases finish. Add a "Do this" list and lessons in the same format.
 
@@ -505,7 +525,7 @@ These fill in as the matching phases finish. Add a "Do this" list and lessons in
 - **Rate limits and cost protection:** usage ledger, reservations, kill switch, abuse tests. (Phase 24b)
 - **Networking and resilience:** timeouts, retries, offline mode, error handling. (Phase 26)
 - **AI features:** server-side model config, typed responses, token budgets, caching, on-device models. (Phases 27–28)
-- **Subscriptions, credits and one-time purchases:** StoreKit 2, server verification, credit ledger, refunds, Apple's wording rules. (Phase 30)
+- **Credits and one-time purchases:** credit packs, server verification, the credit ledger, refunds. Extends chapter 16. (Phases 30b, 30c)
 - **Monitoring and analytics:** crash reporting, cost alerts, opt-in analytics. (Phase 31)
 - **Load and scale testing.** (Phase 32)
 - **Local data at scale:** persistence choice, migrations, export and restore, iCloud. Extends chapter 12. (Phases 20–21)
