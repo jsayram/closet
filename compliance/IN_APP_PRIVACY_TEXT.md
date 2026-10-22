@@ -162,6 +162,8 @@ Requests may be processed outside the US (D5, Haiku 5.5, global processing allow
 
 **If she says Not now:** Style Me explains: "Style Me needs your OK to send your request to Anthropic. You can still make your own looks." with **Review** and **Make my own look**.
 
+**Built in 27a (21 October 2026, against a fake backend; nothing is sent yet):** version A, word for word, as consent version `stylist-1` (app `docs/decisions/0008-cloud-stylist.md`). The switch sits in a Style Me group in Privacy and terms once the cloud stylist is on, with the detail "Piece descriptions, the occasion and the weather go to Anthropic when you ask. Never your photos, name, measurements or location." and, when off, "Style Me is off. Your closet, saved looks and making your own looks still work." Not now leaves "Style Me needs your OK" with **Review** and **Back to Style Me** (there's no Make my own look button on Your looks yet; Make your own look is on Saved Looks). Two notes for review: the text lists fabric, which the app has no field for and doesn't send; and changing the words, or the recipient, needs a new version, which the server checks.
+
 ## Phase 29: weather
 
 **Switch:** Live weather
