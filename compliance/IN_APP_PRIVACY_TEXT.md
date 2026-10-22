@@ -131,13 +131,18 @@ How it can end, in her words:
 
 ## Phase 24d: feedback
 
-**Reply address field**, optional:
+**As built (22 October 2026).** Signed in, Send feedback goes to the support queue; signed out it still uses the share sheet (no extras). Strings in the app:
 
-> Reply address (optional). We'll use it only to answer this note.
+- **Reply address field** (optional): label "Reply address", help text "We’ll use it only to answer this note. Without one, we can’t answer you."
+- **Screenshot** (optional, picked with the system picker): "Choose it yourself, and check it first: a screenshot can show your closet. Its location and other photo details are removed before it leaves your phone."
+- **Include app details**: "The version, iOS and device model. Never anything about you." (unchanged, off until she turns it on)
+- **Include my closet’s size**: "How many pieces, looks and suitcases. Never their names or photos." (off until she turns it on)
+- **What’s sent** lists every value, including "Reply address: …", "Closet size: N pieces, N looks, N suitcases" and "Screenshot: 1 picture, N kB", with the picture shown. Under it: "This note goes to the app’s private support inbox. Only what you see here is sent."
+- Under Send: "Send goes straight to the support inbox. If it can’t go now, your note stays here and you can tap Send again."
+- After sending: "Your note reached the support inbox." with a reference (like NK-7F3A9C21), and, with no reply address, "You didn’t give a reply address, so we can’t answer this note."
+- A **Support page** row opens the website's support page.
 
-**What's sent** line, when the queue replaces the share sheet:
-
-> This note goes to the app's private support inbox. Never your closet, photos, measurements, looks or name.
+**For the privacy policy (4e):** the note's words, the reply address, the screenshot, app details and closet counts if she chose them; kept 90 days after we close the note, or 180 days if never closed; deleted with her account; the screenshot's location and other metadata are removed; never her closet's contents, measurements, looks or name. The policy still says "90 days after closing"; add the 180-day limit for notes nobody closes.
 
 ## Phase 27a: Style Me, swaps and Ask stylist
 
@@ -163,6 +168,30 @@ Requests may be processed outside the US (D5, Haiku 5.5, global processing allow
 **If she says Not now:** Style Me explains: "Style Me needs your OK to send your request to Anthropic. You can still make your own looks." with **Review** and **Make my own look**.
 
 **Built in 27a (21 October 2026, against a fake backend; nothing is sent yet):** version A, word for word, as consent version `stylist-1` (app `docs/decisions/0008-cloud-stylist.md`). The switch sits in a Style Me group in Privacy and terms once the cloud stylist is on, with the detail "Piece descriptions, the occasion and the weather go to Anthropic when you ask. Never your photos, name, measurements or location." and, when off, "Style Me is off. Your closet, saved looks and making your own looks still work." Not now leaves "Style Me needs your OK" with **Review** and **Back to Style Me** (there's no Make my own look button on Your looks yet; Make your own look is on Saved Looks). Two notes for review: the text lists fabric, which the app has no field for and doesn't send; and changing the words, or the recipient, needs a new version, which the server checks.
+
+## Phase 27c: background AI jobs and notifications
+
+Not a new recipient, so no new consent: a job sends exactly what the 27a sheet already describes, once per tap, and asking again after a relaunch reuses the same request. What's new is kept on the iPhone and what a notification may say.
+
+**Your looks while a job runs** (built, cloud stylist only; Stage A's stylist on the phone keeps "Leaving this screen stops it, and nothing is used."):
+
+> You can leave this screen. Your looks keep coming, and you'll see a note when they're ready.
+
+When the answer is late: "This is taking a little longer. It keeps going if you leave."
+
+**The notification offer** (built, shown once, the first time a cloud job starts; the permission's own rules are in [PERMISSIONS.md](PERMISSIONS.md)):
+
+> **Want a note when they're ready?**
+> If you leave the app, a notification can tell you when your outfit ideas are ready. It never says what's in them.
+> [Notify me] [Not now]
+
+**The banner in the app** (built): "Your looks are ready" / "Tap to see them.", or "Your outfit ideas didn't finish" / "Tap to try again." Try-on (33a) uses "Your try-on picture is ready".
+
+**The notification** (built): "Your outfit ideas are ready" / "Open Outfit Nook to see them." Fixed words, never a piece, a look or anything she wrote.
+
+**For Privacy and terms, Stays on this iPhone** (to add when the list is next revised; not built in 27c): "AI requests in progress, kept for a day so they can finish if you leave or the app closes, and your conversations with the stylist." Delete my data already erases both, and a job in progress never goes into an export; conversations do.
+
+**If push is switched on later** (designed, off): a device token goes to our server so it can tell Apple to show the same note when the app is closed. That needs this section and the privacy label updated first, and a line in Privacy and terms.
 
 ## Phase 29: weather
 

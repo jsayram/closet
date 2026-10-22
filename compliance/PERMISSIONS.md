@@ -21,7 +21,7 @@ Since Phase 22a (20 October 2026) the app asks for one permission, the camera, a
 | Photos, picking photos | None | **Built in 22a** (garments and the try-on photo) | `PhotosPicker` shows only what she picks and needs no permission |
 | Photos, saving pictures to her library | `NSPhotoLibraryAddUsageDescription` | Only when a feature saves an image to Photos (to confirm which phase: a share sheet with an image offers Save Image, which needs this key) | She taps Save to Photos or Save Image |
 | Location, approximate, while in use | `NSLocationWhenInUseUsageDescription`, plus `NSLocationDefaultAccuracyReduced` = `YES` | 29 | She turns on "Use my location" in Privacy and terms, after the app's own explanation. A city needs no permission at all (built in 29) |
-| Notifications, local only | None (runtime request) | 34, only if purchase reminders ship | She turns on a reminder for a purchase |
+| Notifications, local only | None (runtime request) | **Built in 27c** (a job is done); 34 adds purchase reminders if they ship | The first time a cloud job that can take a while starts (Style Me's outfit ideas), after the app's card, when she taps Notify me. Never at launch |
 
 **Never requested:** full photo library read access (`NSPhotoLibraryUsageDescription`), precise location, background location, microphone, contacts, calendars, HealthKit, motion, Bluetooth, local network, Face ID, App Tracking Transparency (`NSUserTrackingUsageDescription`). If a later design seems to need one, it needs Jose's approval and an update here first.
 
@@ -70,6 +70,8 @@ No claim that photos "stay on this iPhone", because from 33a a faceless copy of 
 
 ## Photos
 
+**Phase 24d (built).** Send feedback's screenshot uses the same `PhotosPicker` as garment photos, filtered to screenshots: no permission and no purpose string. The app gets only the one picture she picks.
+
 **Phase 22a (built).** Picking garment photos and the try-on photo in Profile uses `PhotosPicker`, which hands the app only the photos she picks and needs no permission (checked on the iOS 26.5 simulator: no prompt, and the picker says "Private Access to Photos"). The picker says "Location Is Included" by default; the app never keeps those bytes. It keeps its own copy, made from the pixels alone with no location, camera details, time or captions, in `Application Support/Photos` (DATA_MAP.md). **Paste (21 October 2026, approved by Jose).** Add a piece offers Apple's own `PasteButton` (SwiftUI, images only) next to Take photo and Choose from Photos. It needs no permission and no Info.plist key: iOS hands the app the copied image only when she taps the system's own Paste button, so it shows no "Allow Paste?" prompt. The button is dimmed while the pasteboard holds no image. The app never reads `UIPasteboard` itself (the code has no such call), and the pasted image goes through the same intake as a picked photo, so it is re-encoded to a JPEG with no metadata before anything is kept. Add a piece only; nowhere else in the app pastes a photo.
 
 There's no pre-prompt because there's no prompt. Help's "Add a piece" topic can say: "The app only sees the photos you pick."
@@ -104,9 +106,25 @@ Apple Weather attribution and its legal link show wherever forecast data does (P
 
 ## Notifications
 
-**Phase 34, only if purchase reminders ship** (PRD 13.7, FR-71). Local notifications only. No push from our server, no profile details or links in the notification text (PRD 15.4).
+**Built in 27c (22 October 2026): a job is done.** Jose, 21 October 2026: she can leave the screen, or the app, while an AI job runs and be told when it's done. Local notifications only, options alert and badge (no sound). No Info.plist key and no entitlement.
 
-No Info.plist key. The app calls `requestAuthorization` only when she turns on a reminder.
+**When it asks:** never at launch or in onboarding. The first time a cloud job starts (today, Style Me with the cloud stylist), Your looks shows a card while it works:
+
+> **Want a note when they're ready?**
+> If you leave the app, a notification can tell you when your outfit ideas are ready. It never says what's in them.
+> [Notify me] [Not now]
+
+Notify me calls `requestAuthorization`, which shows iOS's own alert. Not now asks nothing and the card doesn't come back (kept in an app-only `UserDefaults` suite, erased by Delete my data). The card doesn't show once iOS has an answer either way.
+
+**What it says:** "Your outfit ideas are ready" and "Open Outfit Nook to see them." (try-on in 33a: "Your try-on picture is ready"). Never a piece, a look, an occasion or anything she wrote, because it shows on the Lock Screen (PRD 15.4). Tapping it opens the result. While the app is open, iOS's banner is hidden and the app's own banner shows instead.
+
+**If she says no:** nothing changes in the app. The banner at the top ("Your looks are ready, Tap to see them.") and the dot on Home still tell her, whenever the app is open. Turning it on later is in iOS Settings, Notifications.
+
+**What works when** (app `docs/background-ai-jobs.md`): in the app, always; in the background, only while iOS lets the app finish (a short background task, usually about 30 seconds, not promised), otherwise the app tells her when she opens it; with the app closed, nothing until push.
+
+**Push (APNs) is designed, not built.** The backend records a "job done" event and has a push hook, mocked and off. Switching it on (backend README, "Switching on push") adds the Push Notifications capability and an APNs device token sent to Convex, which is a new data flow (DATA_MAP flow 20), a privacy label check (device ID is not collected for tracking; to confirm with the label draft) and this section's update first. The payload would carry only localization keys.
+
+**Phase 34, only if purchase reminders ship** (PRD 13.7, FR-71). Local notifications only, no profile details or links in the notification text (PRD 15.4). The app calls `requestAuthorization` only when she turns on a reminder, if 27c's permission isn't already granted.
 
 **Before the prompt:**
 
@@ -116,7 +134,6 @@ No Info.plist key. The app calls `requestAuthorization` only when she turns on a
 
 **If she says no:** the reminder still appears inside the app (on the piece and in its list). Nothing else changes.
 
-If Jose later wants push notifications from Convex (STACK.md lists APNs as available), that is a new data flow and needs DATA_MAP, label and permission updates first.
 
 ## Consents that aren't iOS permissions
 

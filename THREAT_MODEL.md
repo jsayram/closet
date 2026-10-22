@@ -337,17 +337,20 @@ Each flow lists its assets, the trust boundaries it crosses, the threats (STRIDE
 
 ### F11. Feedback and support
 
-**Path:** Send feedback drawer → she sees the exact text → HTTP action (signed in, rate limited) → support table in Convex → Jose reads it in the dashboard and replies from the iCloud+ support inbox if she gave a reply address. Until 24d ships, Send hands the text to the system share sheet.
+**Path:** Send feedback drawer → she sees every value that goes → HTTP action (signed in, no App Attest, rate limited) → `supportTickets` in Convex (screenshot in file storage) → Jose reads it in the dashboard or with `npx convex run support:...` and replies from the iCloud+ support inbox if she gave a reply address. **24d built against mocks (22 October 2026).** Signed out, Send hands the text to the system share sheet.
 **Assets:** free text (she may write anything), optional reply address, optional app and device details.
 **Boundaries:** device to Convex; Jose's email to hers.
 
 | Threat | STRIDE | Control | Phase |
 |---|---|---|---|
-| Closet data, photos or measurements attached without her meaning to | Information disclosure | Nothing attached automatically; exact-text preview | 14b (built), 24d |
+| Closet data, photos or measurements attached without her meaning to | Information disclosure | Nothing attached automatically; the page lists every value, a test checks the request carries only those, the contract rejects any other field (a device name, a list of pieces, an account ID). Closet size is three numbers behind its own switch; the screenshot is one she chooses and sees | 14b (built), 24d (built) |
+| A screenshot or photo leaks her location, time or device | Information disclosure | Rewritten from pixels on the phone, and again on the server from the file's structure (JPEG and PNG only; EXIF, XMP, IPTC, thumbnails, text chunks dropped; other formats refused); tests with planted metadata, on the phone, in the fake server's audit, on the backend and on a real local Convex backend | 24d (built) |
+| A crafted image or oversized body burdens the backend | Denial of service | 600 KB and 8,192 px caps checked from the header, nothing decoded; 1 MiB body for this endpoint only; a refused picture leaves no ticket or file | 24d (built) |
+| Another account reads or changes her ticket | Elevation of privilege | No function reads tickets for a client; admin reads are internal functions; the request names no account; cross-user case in the authorization test; attaching to or discarding another's pending ticket matches nothing | 24d (built) |
 | Someone spoofs the support address to phish her or users | Spoofing | Add the DMARC record still missing (STACK.md), then move it toward `p=reject` | 24d |
 | Takeover of the iCloud account, registrar or DNS that control the inbox (R3) | Spoofing, information disclosure | Two-factor on all three; listed in the account inventory | 24d, 25a |
-| Floods fill the table | Denial of service | Per-principal caps; size limit; intake can be closed | 24b, 24d |
-| Tickets kept longer than promised, including in backups | Information disclosure | Scheduled delete 90 days after closure; backups age out 30 days later (R12) | 24d, 25b |
+| Floods fill the table | Denial of service | Per account: burst 5 then one every 12 minutes, 10 notes and 3 screenshots a day; 300 notes a day across accounts; `NOOK_SUPPORT_INTAKE=closed` closes intake without an app update; tested | 24b, 24d (built) |
+| Tickets kept longer than promised, including in backups | Information disclosure | Daily cron: 90 days after closing, 180 days if never closed, row and file; deleted with the account; backups age out 30 days later (R12) | 24d (built), 25b |
 
 ### F12. Account deletion
 

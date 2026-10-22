@@ -87,7 +87,7 @@ The bracketed measurement sentence depends on the 27a decision in the README. Th
 
 **4e. Feedback and support (24d)**
 
-> If you send feedback, we get exactly the text you saw before sending, plus the app and iOS version and your iPhone model only if you turned on "Include app details". If you give a reply address, we use it only to answer that note. We delete notes 90 days after we close them.
+> If you send feedback, we get exactly the text you saw before sending, plus the app and iOS version and your iPhone model only if you turned on "Include app details". If you give a reply address, we use it only to answer that note. We delete notes 90 days after we close them, or 180 days after they arrive if we never close them, and they are deleted with your account. If you attach a screenshot, we remove its location and other photo details, and we only get the picture you chose.
 
 **4f. Purchases (30a to 30c)**
 

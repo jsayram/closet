@@ -59,8 +59,8 @@ Guideline numbers and quotes were checked on https://developer.apple.com/app-sto
 
 | # | Guideline | What it asks | How we meet it | Closes in | Status |
 |---|---|---|---|---|---|
-| R1 | 1.5 | An easy way to contact the developer in the app and at the Support URL | Support page ([SUPPORT_PAGE_OUTLINE.md](SUPPORT_PAGE_OUTLINE.md)) linked from Help; email on the website only (STACK.md) | 24d, 35b | Open |
-| R2 | 1.2 | User-generated content needs filtering, reporting, blocking and contact | Only if 24d builds the public board (PRD 22.1) | 24d | N/A unless built |
+| R1 | 1.5 | An easy way to contact the developer in the app and at the Support URL | Support page ([SUPPORT_PAGE_OUTLINE.md](SUPPORT_PAGE_OUTLINE.md)) linked from Send feedback (Help's "Still stuck?" opens it); email on the website only (STACK.md). 24d built: Send feedback reaches a private support queue when signed in, and the share sheet otherwise; the support page address is the config value `NOOK_SUPPORT_URL`, a placeholder until 35b publishes the page | 24d, 35b | Open. 24d built against mocks; the page itself is 35b |
+| R2 | 1.2 | User-generated content needs filtering, reporting, blocking and contact | Only if the public board (PRD 22.1) is built; 24d decided to leave it for later | 24d | N/A: not built |
 | R3 | 2.1 | Complete app, working backend during review, demo access | Review notes, demo account, live services for every flow (PRD 24.1) | 35b | Open |
 | R4 | 2.3 | Metadata, including privacy information, screenshots and previews, matches the app | Screenshots of the real app with fictional data; labels checked against the build | 35a, 35b | Open |
 | R5 | 2.3.6 | Answer the age rating questions honestly | Answer for the shipped features; apply the 18+ override if the terms set 18+ (PRD 24.2) | 35a | Open |

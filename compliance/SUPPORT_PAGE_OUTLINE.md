@@ -16,7 +16,7 @@ Keep the page short and task-based (PRD 22.3). Version 0 can go up with the priv
 >
 > We usually answer within **[Jose to decide, for example 3 working days]**.
 
-Until Phase 24d, Send feedback opens the share sheet and she picks where it goes. From 24d it reaches the private support queue, with an optional reply address.
+Until Phase 24d, Send feedback opens the share sheet and she picks where it goes. From 24d (built against mocks, 22 October 2026) it reaches the private support queue when she is signed in, with an optional reply address, an optional screenshot and optional closet counts; signed out it still uses the share sheet. The app's Send feedback page has a Support page row that opens this page (address from `NOOK_SUPPORT_URL`; make this page live at that address, and give the App Store the same Support URL). Say on the page: a note with no reply address can't be answered.
 
 ### Your subscription (from 30a)
 
