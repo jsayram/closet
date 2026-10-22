@@ -91,6 +91,8 @@ The bracketed measurement sentence depends on the 27a decision in the README. Th
 
 > If you send feedback, we get exactly the text you saw before sending, plus the app and iOS version and your iPhone model only if you turned on "Include app details". If you give a reply address, we use it only to answer that note. We delete notes 90 days after we close them, or 180 days after they arrive if we never close them, and they are deleted with your account. If you attach a screenshot, we remove its location and other photo details, and we only get the picture you chose.
 
+> If you report a result the stylist or the try-on service made, we get your reason, any note you add, which result it was and when it was made, and whether you hid it. We add which service and model made it from our own records. We get the picture only if you choose to include it; it shows your face, goes only to our support records (never to the image service), and is kept and deleted like a support note. (Release, 22 October 2026)
+
 **4f. Purchases (30a to 30c)**
 
 > Apple handles payment; we never see your card. We get a record of what you bought (subscription, free unlock or picture credits) so the app knows what you have, and we keep it for as long as billing and tax records require. **[Lawyer: the period, question 12.]**

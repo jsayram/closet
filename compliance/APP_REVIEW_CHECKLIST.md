@@ -15,7 +15,7 @@ Guideline numbers and quotes were checked on https://developer.apple.com/app-sto
 | P3 | 5.1.1(ii) | Permission for data collection, an easy way to withdraw it, purpose strings that fully describe the use | Per-feature consent switches in Privacy and terms, each withdrawable; purpose strings in [PERMISSIONS.md](PERMISSIONS.md) | 22a, 24a, 27a, 29, 31, 33a | Open |
 | P4 | 5.1.1(iii) | Ask only for data relevant to the core function, collect only what the task needs | Minimum context per request (DATA_MAP), picker instead of library access, approximate location, no name from Apple | Every phase | Partly |
 | P5 | 5.1.1(iv) | Respect permission settings; don't manipulate or force consent | Pre-prompts with Not now; every refusal has a manual path; no feature locked behind a permission it doesn't need | 22a, 29, 33b | Open |
-| P6 | 5.1.1(v) | If there are no significant account features, let people use the app without a login | The closet works fully without an account; sign-in only for cloud features | 24a | Partly (no login today) |
+| P6 | 5.1.1(v) | If there are no significant account features, let people use the app without a login | The closet works fully without an account; sign-in only for cloud features | 24a, Release | Built 22 October 2026: nothing asks at launch; the sign-in sheet appears only when she first starts a cloud feature, with Not now; Profile has Sign in and Sign out (app decision 0011). Not run against a real Clerk instance yet |
 | P7 | 5.1.1(v) | Apps that support account creation must offer account deletion in the app | Delete account in Privacy and terms deletes Convex rows, the Clerk user and revokes the Sign in with Apple token; shows pending steps | 24c | Open |
 | P8 | 5.1.1(v) (Apple's account deletion guidance) | Say what deletion removes and how long it takes; deletion isn't hidden behind support | Delete my data already lists what goes, two-step confirm; 24c adds server parts and the "doesn't cancel your subscription" note | 24c | Partly |
 | P9 | 5.1.1(ix) | Apps that need sensitive user information should be submitted by a legal entity providing the service, not an individual | **Question for the lawyer** (body measurements, weight, body photos). Decide before the App Store Connect seller identity is fixed for public release | Before 35b | Open |
@@ -32,7 +32,7 @@ Guideline numbers and quotes were checked on https://developer.apple.com/app-sto
 
 | # | Guideline | What it asks | How we meet it | Closes in | Status |
 |---|---|---|---|---|---|
-| A1 | 4.8 | Apps using a third-party or social login must also offer an equivalent private option (Sign in with Apple qualifies) | Sign in with Apple is the only sign-in. Clerk is a back-end provider, not a login button. If any other login is ever added, Sign in with Apple stays | 24a | Open |
+| A1 | 4.8 | Apps using a third-party or social login must also offer an equivalent private option (Sign in with Apple qualifies) | Sign in with Apple is the only sign-in. Clerk is a back-end provider, not a login button. If any other login is ever added, Sign in with Apple stays | 24a, Release | Built: Apple's own `ASAuthorizationAppleIDButton` (black in light mode, white in dark), the only sign-in offered. Real Clerk instance not set up yet |
 | A2 | Sign in with Apple token revocation (Apple's account deletion guidance) | Revoke tokens when the account is deleted | Revoke through Apple's REST endpoint, or confirm Clerk does it (THREAT_MODEL F12) | 24c | Open |
 
 ## Payments (3.1)
@@ -52,7 +52,7 @@ Guideline numbers and quotes were checked on https://developer.apple.com/app-sto
 |---|---|---|---|---|---|
 | I1 | 5.1.2(i) | Consent before sharing with third-party AI | See P10 | 27a, 33a | Open |
 | I2 | No specific guideline found for generated images of real people | The check on 19 October found no guideline on making images of a real person's likeness. Related: 1.1 (objectionable content), 5.2.1 (others' rights), the age rating questions on AI and user content | Only her own photo (SECURITY_STANDARD 7); terms forbid photos of others and of minors; input and output moderation (THREAT_MODEL F8); every picture labelled as AI-made ("Simulated" today); no face sent | 33a | Open |
-| I3 | 1.1 | No offensive or harmful content | Body-neutral stylist policy, typed validation, Report styling problem (PRD 15.5) | 27a | Open |
+| I3 | 1.1 | No offensive or harmful content | Body-neutral stylist policy, typed validation, Report styling problem (PRD 15.5) | 27a, Release | Report a problem built 22 October 2026 (see R2a) |
 | I4 | 2.3, accurate metadata | No claims of exact fit or real-photo accuracy | Store text and screenshots say try-on pictures are simulations | 35b | Open |
 
 ## Metadata, content and review access
@@ -61,6 +61,7 @@ Guideline numbers and quotes were checked on https://developer.apple.com/app-sto
 |---|---|---|---|---|---|
 | R1 | 1.5 | An easy way to contact the developer in the app and at the Support URL | Support page ([SUPPORT_PAGE_OUTLINE.md](SUPPORT_PAGE_OUTLINE.md)) linked from Send feedback (Help's "Still stuck?" opens it); email on the website only (STACK.md). 24d built: Send feedback reaches a private support queue when signed in, and the share sheet otherwise; the support page address is the config value `NOOK_SUPPORT_URL`, a placeholder until 35b publishes the page | 24d, 35b | Open. 24d built against mocks; the page itself is 35b |
 | R2 | 1.2 | User-generated content needs filtering, reporting, blocking and contact | Only if the public board (PRD 22.1) is built; 24d decided to leave it for later | 24d | N/A: not built |
+| R2a | 1.2 (AI content creation apps, listed with user-generated content) | A way to report offensive content | Report a problem on cloud stylist looks and their why line and on real try-on pictures (Ask stylist answers once that screen exists): four reasons, an optional note, a picture only if she ticks it, and Hide; it reaches the private support queue as kind `aiReport`, rate limited, and the backend records the provider and model (app decision 0011) | Release | Built 22 October 2026 against mocks. Everything the AI makes is private to her, so there is nothing to block |
 | R3 | 2.1 | Complete app, working backend during review, demo access | Review notes, demo account, live services for every flow (PRD 24.1) | 35b | Open |
 | R4 | 2.3 | Metadata, including privacy information, screenshots and previews, matches the app | Screenshots of the real app with fictional data; labels checked against the build | 35a, 35b | Open |
 | R5 | 2.3.6 | Answer the age rating questions honestly | Answer for the shipped features; apply the 18+ override if the terms set 18+ (PRD 24.2) | 35a | Open |

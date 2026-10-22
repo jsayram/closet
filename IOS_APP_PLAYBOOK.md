@@ -343,6 +343,10 @@ These lessons come from building paid features against mocks, before any backend
 - **Two `xcodebuild test` runs on one simulator kill each other.** Starting a second run while the first was still testing ended both runners' tests with "Test crashed with signal kill". Run one at a time per simulator, and check `pgrep -fl xcodebuild` before starting another. (Phase 21a)
 - **Scroll a split pane by dragging inside that pane.** A drag in the middle of the screen scrolls whatever sits there, so a sidebar's bottom tiles looked unreachable. (Stage A QA)
 
+- **An `accessibilityIdentifier` on a container is copied onto every child that has none, and replaces theirs.** A sheet's `VStack` tagged `signIn.sheet` made the Apple button inside it unfindable as `signIn.apple` (Release, 22 October 2026). Put `.accessibilityElement(children: .contain)` before the container's identifier; then the container and each child keep their own.
+- **The alert note above holds for `confirmationDialog` too:** an identifier on its button matched twice on iOS 26.5 (`profile.signOut.confirm`, Release). If you keep the identifier, query with `.matching(identifier:).firstMatch`.
+- **A `UIViewRepresentable` button (`ASAuthorizationAppleIDButton`) needs its identifier set on the UIKit view** (`accessibilityIdentifier`, `isAccessibilityElement`, the button trait), and the test should look it up with `descendants(matching: .any)`.
+
 ## 11. Swift Testing and concurrency
 
 **Do this**
@@ -520,6 +524,8 @@ Checked on 21 October 2026 with Xcode 27.1 (Swift 6.4), the iOS 26.5 simulator, 
 - **A daily clean-up that takes one batch and stops falls behind.** `take(500)` once a day clears 500 rows a day however many expired, so a 24-hour promise breaks once more than 500 a day expire. Reschedule itself (`ctx.scheduler.runAfter(0, ...)`) while a batch comes back full, and test it with more rows than one batch. `.paginate()` may be called once per function, so use a creation-time cursor (`gt(createdAt, last)`) passed to the next run. (Phase 32a)
 - **Keep a running balance next to an append-only ledger.** Summing the ledger on every read made a usage read 3,012 documents at 3,000 rows. One row per account, changed in the same transaction as every ledger row through a single `append` function, made it 13; an account with no row gets one from its ledger on its next write, and an operator query compares the two. (Phase 32a)
 - **Convex limits that matter for a gateway like this** (docs.convex.dev/production/state/limits, 22 October 2026): a query or mutation scans 32,000 documents and 16 MiB, writes 16,000 documents, reads 4,096 index ranges and may run 1 second of its own code; an action in the default runtime has 64 MiB of memory; concurrency is 16 mutations and 64 HTTP actions on Starter, 256 and 512 on Professional; function calls are 1 million a month on Starter and 25 million on Professional. Count function runs per request: every `ctx.runQuery` and `ctx.runMutation` is one, and a per-request counter mutation is the biggest single source.
+
+- **Ask for sign-in from the screen that starts the work, not from the root.** A sheet can't be presented from under another sheet, so one app-wide sign-in sheet fails inside Try it on or the paywall sheet. A small `ViewModifier` that owns its own gate and sheet, installed at the root and inside each sheet that starts cloud work, plus an environment closure `(reason) async -> Bool`, lets a model await "signed in?" and carry on (Release, 22 October 2026).
 
 ## 16. Subscriptions (StoreKit 2)
 
