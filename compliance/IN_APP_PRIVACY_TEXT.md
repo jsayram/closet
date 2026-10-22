@@ -292,6 +292,17 @@ If a step fails, the screen stops there and says which step, for example: "Your 
 
 **Off:** "Try-on pictures are off. Nothing more will be sent. Your pictures stay in the app. Black Forest Labs may keep what it already received."
 
+**Built in 33a (22 October 2026), the words as shipped** (app `Features/TryOn/TryOnConsent.swift`, `TryOnSheet.swift`, `SentImagesView.swift`):
+
+- The consent above, word for word, shown in the Try it on sheet the first time (and from the Privacy and terms switch), with Allow and Not now. Nothing is prepared or sent before Allow. Version `tryon-1`.
+- Privacy and terms: a "Try it on" group with the Try-on pictures switch, the detail "A photo of your body, without your face and on a plain backdrop, and that look's piece photos, only when you tap Try it on. Your face never leaves your iPhone." and the Off line above. The "later" row for try-on is left out once pictures are real.
+- The sheet before anything happens: "Your face never leaves your iPhone. Before anything is sent, your iPhone covers your head and hair and puts you on a plain studio backdrop. If it can't do that, nothing is sent."
+- On the phone: "Hiding your face" / "Swapping in a studio backdrop. Nothing has left your iPhone yet." Sent: "Dressing you" / "Only the photo without your face and your clothing photos were sent. You can leave this screen: we'll tell you when your picture is ready, and your iPhone puts you back together." with Keep browsing and Cancel. (33c turns these into the four captions above.)
+- Refusals (nothing sent in every case): "Your face couldn't be hidden in this photo" with "So nothing was sent. Try a photo where you face the camera, with your face clear and well lit."; more than one person; no person found; an outline not clear enough; no try-on photo; no piece photos; the checks couldn't run.
+- Under every real picture: the line above. See what was sent: the same line, "Your photo, without your face, on a plain backdrop", the clothing photos, and "Nothing else was sent: not your face, your room, your measurements, your notes or your name."
+- Banner and notification: "Your try-on picture is ready" / "Tap to see it." (notification body "Open Outfit Nook to see them.", as for every job).
+- **For Jose:** "Our server keeps neither" (in the consent) is true once the picture is made, but the backend holds the photos encrypted for up to 30 minutes while it's made (PRIVACY_POLICY_OUTLINE 4d). Keep the sentence, or say "Our server deletes them within 30 minutes"?
+
 ## Phase 34: Find One (only if built)
 
 Written when the shopping direction is settled. It names the search provider and sends garment intent only, never body data or photos (PRD 13.2).

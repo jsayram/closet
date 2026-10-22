@@ -83,6 +83,8 @@ The bracketed measurement sentence depends on the 27a decision in the README. Th
 >
 > No measurements, notes or names are sent with try-on.
 
+**As built in 33a (22 October 2026), for the final wording:** "our server keeps neither" is true in the sense that nothing is kept after the picture is made, but the backend does hold the photos briefly, encrypted: the faceless photo and clothing photos until the provider call ends (then deleted), and the dressed picture for at most 30 minutes (2 minutes after the app first receives it), so a dropped connection can fetch it again. Suggested policy sentence: "Our server holds these photos only while your picture is being made, encrypted, and deletes them within 30 minutes." Each try-on request names the consent text the person agreed to (`tryon-1`), and the server sends photos only to the provider that text names.
+
 **[Lawyer]** Whether this disclosure and the in-app consent are enough under state privacy, biometric and consumer health laws, and under App Review 5.1.1(i)'s "same or equal protection" clause (questions 4 and 5).
 
 **4e. Feedback and support (24d)**
