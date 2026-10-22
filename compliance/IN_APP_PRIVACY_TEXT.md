@@ -266,7 +266,7 @@ Phase 31 built no analytics, so there is no switch and no sheet. The wording bel
 >
 > **A photo of your body, without your face and on a plain backdrop, and your clothing photos go to Black Forest Labs, who may keep them and use them to improve their models.**
 >
-> They send back the dressed picture, and your iPhone puts your face back in. The finished picture is saved only on your iPhone (and your iCloud if sync is on). Our server keeps neither.
+> They send back the dressed picture, and your iPhone puts your face back in. The finished picture is saved only on your iPhone (and your iCloud if sync is on). Our server keeps the photos, encrypted, for up to 30 minutes while your picture is made, then deletes them.
 >
 > Never sent: your face, your room, your measurements, your notes, your name.
 > We can't delete copies Black Forest Labs keeps.
@@ -301,7 +301,7 @@ If a step fails, the screen stops there and says which step, for example: "Your 
 - Refusals (nothing sent in every case): "Your face couldn't be hidden in this photo" with "So nothing was sent. Try a photo where you face the camera, with your face clear and well lit."; more than one person; no person found; an outline not clear enough; no try-on photo; no piece photos; the checks couldn't run.
 - Under every real picture: the line above. See what was sent: the same line, "Your photo, without your face, on a plain backdrop", the clothing photos, and "Nothing else was sent: not your face, your room, your measurements, your notes or your name."
 - Banner and notification: "Your try-on picture is ready" / "Tap to see it." (notification body "Open Outfit Nook to see them.", as for every job).
-- **For Jose:** "Our server keeps neither" (in the consent) is true once the picture is made, but the backend holds the photos encrypted for up to 30 minutes while it's made (PRIVACY_POLICY_OUTLINE 4d). Keep the sentence, or say "Our server deletes them within 30 minutes"?
+- **Corrected 22 October 2026 (Jose, in 33b):** the consent no longer says "Our server keeps neither". It says the server keeps the photos, encrypted, for up to 30 minutes while the picture is made, then deletes them, which is what the backend does (PRIVACY_POLICY_OUTLINE 4d). Built in 33b (`TryOnConsentText.comesBack`, still version `tryon-1`: nothing real has been sent under it, and the backend only checks the provider the text names, which hasn't changed).
 
 ## Phase 34: Find One (only if built)
 

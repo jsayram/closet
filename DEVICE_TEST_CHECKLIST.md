@@ -135,6 +135,18 @@ Items marked **[not ready]** can't be run yet because something isn't built or a
   - Pass: all four work.
   - Send back: "ok" or the one that fails.
 
+- [ ] **2.18 The try-on photo camera: live hints and the timer** (Phase 33b, app PR for `feature/33b-photo-setup`) | Blocks: the 33b checkpoint
+  - Why: the simulator has no camera and can't run Vision, so the hint rules were only tested with made-up readings. Real Vision readings decide whether the thresholds are right.
+  - Steps: Profile, Your try-on photo, Take your photo. The first time you see the app's own explainer, then iOS's camera prompt. In the camera, one at a time: (a) stand too close, so your head or feet are cut off; (b) stand far away; (c) stand off to one side; (d) turn sideways, then face away; (e) hold your arms against your sides, then hands on hips; (f) a dim room, then a bright window behind you; (g) a second person steps in; (h) stand in place. Then: move during the countdown; switch off "Take it for me when I'm ready" and use the shutter; flip to the back camera; try long hair down, curly or afro hair, a hat and a scarf; turn VoiceOver on.
+  - Pass: (a) says "Step back a little, so your whole body is in view", (b) "Step a little closer", (c) "Move to the middle of the picture", (d) "Turn to face the camera", (e) "Let your arms hang a little away from your body", (f) the light hints, (g) "Just you in the picture, please". Each shows within about a second of the change and doesn't flicker. In place, the outline turns green, it says "That's it. Hold still.", counts 3, 2, 1 and takes the photo by itself; moving stops the count. No hint mentions hair, and hats and scarves don't trigger one. The photo comes out upright and not mirrored. VoiceOver says a hint when it changes, not on every frame. Preview stays smooth, and the phone stays cool after a minute of framing.
+  - Send back: every hint that was wrong, late or missing (the knobs are in `FramingGuidance.Limits`: `armReach`, `minimumShoulderShare`, `edgeMargin`, `darkest`, `backlitGap`), plus how the preview felt on the iPhone 12. Use yourself or a friend who agrees, and delete the test photos after.
+
+- [ ] **2.19 The check before the try-on photo is saved** (Phase 33b) | Blocks: the 33b checkpoint
+  - Why: the check runs the same Vision masking as try-on, and only the simulator's drawn people have been through it in tests.
+  - Steps: with the camera and again with Choose from Photos, make or pick: a good full-length photo; two people; facing away; a hand over the face; a face only, no body; a dark room; a very large photo; a busy room; a hat and a turtleneck. Then turn the camera off in Settings, Nifty Outfit Nook, and tap Take your photo.
+  - Pass: a good photo shows "This photo works" with Use this photo. The others show a kind reason and no way to keep them, nothing is saved, and her old photo stays. Tips (whole body, arms, light) show only when true, and the note about hats, scarves and turtlenecks is there. A photo that passed never makes a try-on refuse for a fixable reason (use 3.11 with the fake backend). Take another photo reopens the camera, and Choose another photo opens Photos. With the camera off the message says how to turn it on and offers Choose a photo.
+  - Send back: any photo where the check was wrong (said fine but try-on refused, or refused but looked fine), and the check's time on a large photo on the iPhone 12.
+
 ---
 
 ## 3. Needs your setup first
@@ -230,6 +242,7 @@ Re-check on Lily's phone later (or when she's willing to lend it for 20 minutes)
 - **2.8** the 2,400-piece scroll, hitches and peak memory.
 - **2.11** export and restore at 1,000 pieces: peak memory and whether iOS ends the app.
 - **2.14** and **3.11** the face-masking step with a large photo, since Vision plus the image copies can peak high.
+- **2.18** and **2.19** the live camera hints (frame rate, heat, memory) and the check's time on a large photo.
 - **2.12** HEIC encode time, if you adopt it.
 - **2.16** migration time on the A14.
 - **2.13** MetricKit's memory-exit and watchdog counts over a few days of real use.

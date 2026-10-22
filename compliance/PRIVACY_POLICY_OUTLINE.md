@@ -79,11 +79,11 @@ The bracketed measurement sentence depends on the 27a decision in the README. Th
 >
 > Then **a photo of your body, without your face and on a plain backdrop, and your clothing photos go to Black Forest Labs, who may keep them and use them to improve their models.** Black Forest Labs' terms give it a lasting right to use what it receives, including for training. We can't delete copies Black Forest Labs keeps, and deleting your data in the app doesn't remove them.
 >
-> Black Forest Labs sends back the dressed picture. Your phone puts your own face back in and saves the finished picture on your iPhone (and your iCloud if sync is on). Our server keeps neither the photo nor the picture. On every try-on picture, "See what was sent" shows the exact image that left your phone.
+> Black Forest Labs sends back the dressed picture. Your phone puts your own face back in and saves the finished picture on your iPhone (and your iCloud if sync is on). Our server keeps the photos, encrypted, for up to 30 minutes while your picture is made, then deletes them. On every try-on picture, "See what was sent" shows the exact image that left your phone.
 >
 > No measurements, notes or names are sent with try-on.
 
-**As built in 33a (22 October 2026), for the final wording:** "our server keeps neither" is true in the sense that nothing is kept after the picture is made, but the backend does hold the photos briefly, encrypted: the faceless photo and clothing photos until the provider call ends (then deleted), and the dressed picture for at most 30 minutes (2 minutes after the app first receives it), so a dropped connection can fetch it again. Suggested policy sentence: "Our server holds these photos only while your picture is being made, encrypted, and deletes them within 30 minutes." Each try-on request names the consent text the person agreed to (`tryon-1`), and the server sends photos only to the provider that text names.
+**As built in 33a (22 October 2026), for the final wording:** the in-app consent used to say "our server keeps neither", which was not exact. Jose corrected it on 22 October 2026 (33b) to the sentence above. The backend holds the photos briefly, encrypted: the faceless photo and clothing photos until the provider call ends (then deleted), and the dressed picture for at most 30 minutes (2 minutes after the app first receives it), so a dropped connection can fetch it again. Suggested policy sentence: "Our server holds these photos only while your picture is being made, encrypted, and deletes them within 30 minutes." Each try-on request names the consent text the person agreed to (`tryon-1`), and the server sends photos only to the provider that text names.
 
 **[Lawyer]** Whether this disclosure and the in-app consent are enough under state privacy, biometric and consumer health laws, and under App Review 5.1.1(i)'s "same or equal protection" clause (questions 4 and 5).
 
@@ -154,7 +154,7 @@ From 24a, add the age confirmation the app asks for before cloud features. **[La
 
 ### 10. Security
 
-> Data is encrypted on your device and in transit. Our server keeps no photos and no copy of your closet. Keys to AI services live only on our server, never in the app. Backups are encrypted before they leave our server, with a key kept offline. If something goes wrong that affects your data, we'll tell you as the law requires.
+> Data is encrypted on your device and in transit. Apart from the try-on photos held for up to 30 minutes while a picture is made (section 4d), our server keeps no photos and no copy of your closet. Keys to AI services live only on our server, never in the app. Backups are encrypted before they leave our server, with a key kept offline. If something goes wrong that affects your data, we'll tell you as the law requires.
 
 **[Lawyer]** Breach notice duties (question 13).
 
