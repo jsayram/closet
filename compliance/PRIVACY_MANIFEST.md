@@ -85,6 +85,8 @@ This is the file as it stands in the app repo, and what it should stay until Pha
 | `NSPrivacyAccessedAPICategorySystemBootTime` | `35F9.1` | Measure time between events in the app, or run timers | Only if code calls `systemUptime` or `mach_absolute_time()` directly. Network timeouts and retries (26) can use `ContinuousClock` and `URLSession` instead | 26 | Not expected |
 | `NSPrivacyAccessedAPICategoryActiveKeyboards` | none | | The app never reads active keyboards | Never | Not needed |
 
+Phase 31 added no required-reason API. The diagnostics file uses `FileManager` to write and delete one file and `URLResourceValues.isExcludedFromBackup`, and reads no timestamps, boot time, disk space or defaults. (Checked 22 October 2026 against Apple's required-reason API list.)
+
 `7D9E.1` and `3D61.1` (disk space or boot time in a bug report she chooses to send) are deliberately not planned: feedback carries only the app version, iOS version and model identifier, and only when she turns "Include app details" on.
 
 ## Collected data types, by phase
@@ -103,15 +105,15 @@ Each row matches a row in [APP_STORE_PRIVACY_LABELS.md](APP_STORE_PRIVACY_LABELS
 | `NSPrivacyCollectedDataTypeHealth` | Only if body measurements, weight or today's comfort go into cloud styling requests. Whether they do is an open decision before 27a (see the README). Whether Apple counts measurements as "Health" is **to confirm** | Yes | No | `AppFunctionality` | 27a, only if sent |
 | `NSPrivacyCollectedDataTypePurchaseHistory` | Subscription, complimentary unlock and credit-pack transactions, entitlements and the credit ledger in Convex | Yes | No | `AppFunctionality` | 30c |
 | `NSPrivacyCollectedDataTypePhotosorVideos` | Try-on: the faceless body photo on a plain backdrop and the selected garment photos, sent to Black Forest Labs, which may keep them and use them to improve its models (D1) | Yes | No | `AppFunctionality`, `Other` | 33a |
-| `NSPrivacyCollectedDataTypeProductInteraction` | Opt-in improvement analytics with a resettable ID never joined to her account, only if Phase 31 builds it | No | No | `Analytics` | 31, only if built |
-| `NSPrivacyCollectedDataTypeCrashData`, `NSPrivacyCollectedDataTypePerformanceData` | Only if Phase 31 sends crash or performance data to our own backend (for example MetricKit payloads). Xcode Organizer alone is Apple's collection | No (if built without IDs) | No | `AppFunctionality` | 31, only if built |
+| `NSPrivacyCollectedDataTypeProductInteraction` | Opt-in improvement analytics with a resettable ID never joined to her account. **Phase 31 did not build it**, so nothing is declared. Declare it only if Jose approves building the PRD 23 pipeline | No | No | `Analytics` | Not built |
+| `NSPrivacyCollectedDataTypeCrashData`, `NSPrivacyCollectedDataTypePerformanceData` | The crash and speed summary a support note carries when she turns on "Share crash and speed details" (counts, timings and fixed names from MetricKit; no stacks, text or IDs), stored with the ticket in Convex. Xcode Organizer crash reports stay Apple's collection | Yes (with the ticket) | No | `AppFunctionality` | 31 |
 | `NSPrivacyCollectedDataTypeSearchHistory` | Find One's garment search intent through Convex to a search provider, only if Phase 34 ships | To decide in 34 | No | `AppFunctionality` | 34, only if built |
 
 Not collected at any phase, and not to be declared: name (the sign name never leaves the phone; we ask Apple for no name), phone, physical address, payment info (Apple handles payment), precise or coarse location (coordinates go only to Apple's WeatherKit; Convex gets conditions), contacts, browsing history, advertising data, sensitive info (to confirm with the lawyer for the faceless body photo, see [LEGAL_QUESTIONS.md](LEGAL_QUESTIONS.md) question 4), and anything synced to her private iCloud.
 
 ## Planned release manifest
 
-Draft of the full file once every planned feature has shipped, assuming measurements are sent in 27a, analytics ship in 31 and Find One doesn't. Each block carries the phase that adds it. Remove the blocks for features that don't ship.
+Draft of the full file once every planned feature has shipped, assuming measurements are sent in 27a, Phase 31 sends no analytics and Find One doesn't. Each block carries the phase that adds it. Remove the blocks for features that don't ship.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -225,17 +227,28 @@ Draft of the full file once every planned feature has shipped, assuming measurem
 			<key>NSPrivacyCollectedDataTypePurposes</key>
 			<array><string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string></array>
 		</dict>
-		<!-- Phase 31, only if opt-in analytics ship -->
+		<!-- Phase 31: the crash and speed summary a support note carries when she turns it on -->
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>
-			<string>NSPrivacyCollectedDataTypeProductInteraction</string>
+			<string>NSPrivacyCollectedDataTypeCrashData</string>
 			<key>NSPrivacyCollectedDataTypeLinked</key>
-			<false/>
+			<true/>
 			<key>NSPrivacyCollectedDataTypeTracking</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypePurposes</key>
-			<array><string>NSPrivacyCollectedDataTypePurposeAnalytics</string></array>
+			<array><string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string></array>
 		</dict>
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypePerformanceData</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array><string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string></array>
+		</dict>
+		<!-- Opt-in analytics (ProductInteraction, Analytics) is not built in Phase 31: no block until Jose approves it -->
 		<!-- Phase 33a: Black Forest Labs may keep and train on these (D1) -->
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>
@@ -262,7 +275,7 @@ Draft of the full file once every planned feature has shipped, assuming measurem
 | `clerk-ios`, `ClerkKit` product only (decision D2) | 24a | Whether its release includes its own `PrivacyInfo.xcprivacy`, which required-reason APIs it declares (it likely uses `UserDefaults` and Keychain), whether it collects anything itself (device or session metadata sent to Clerk), and whether Apple lists it among the SDKs that need a signature (to confirm on Apple's third-party SDK requirements page). Whatever Clerk sends to its servers counts as our collection in the labels |
 | `swift-snapshot-testing` and its dependencies | Test only | Must never link into the app target. `scripts/check-release.sh` already checks this |
 
-No analytics, crash or ads SDK is planned. Phase 31 adds one only with Jose's written approval (THREAT_MODEL, analytics).
+No analytics, crash or ads SDK is used. Phase 31 (22 October 2026) used Apple's MetricKit, which is part of iOS and needs no SDK and no manifest of its own. A third-party one would need Jose's written approval (THREAT_MODEL, analytics).
 
 ## Checks each time the manifest changes
 

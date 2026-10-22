@@ -219,7 +219,28 @@ Not a privacy switch, but the paywall's disclosure lines, from PRD 14.1:
 
 Final wording with 30a and the lawyer (LEGAL_QUESTIONS question 10).
 
-## Phase 31: analytics (only if built)
+## Phase 31: crash and speed details (built), analytics (not built)
+
+**As built (22 October 2026).** On Send feedback, signed in, and only when the phone has crash or speed reports from Apple's MetricKit to share, a switch appears under "Include my closet's size". Strings in the app:
+
+> **Share crash and speed details** (off for every note)
+> Off: Off unless you turn it on. Helps to find a problem that crashes or slows the app.
+> On: Counts and timings from your phone's own reports. No screens, pieces, names or places.
+>
+> Preview, added to the note when it is on:
+> Crash and speed details, last 14 days:
+> Crashes: 2. Hangs: 1. Heavy processor use: 0. Heavy disk writing: 0.
+> Ended by the system: 1 for memory, 0 for being too slow.
+> Longest hang: 2400 ms. Typical start-up: 450 ms. Most memory used: 310 MB.
+> Crash type: badAccess, sigsegv, 2 times.
+
+**Suggested line for Privacy and terms (not in the app yet; 35b decides):** "Crash reports. Your iPhone keeps a short summary of crashes and slow moments for 30 days, on the phone only. It is shared only if you turn on Share crash and speed details on a note. If you also have Settings, Privacy & Security, Analytics & Improvements, Share With App Developers on, Apple sends crash reports to the developer without your name."
+
+**Privacy policy:** name Diagnostics (crash data, performance data), linked to the account because it rides on a support note, kept with the note.
+
+### The analytics switch (not built)
+
+Phase 31 built no analytics, so there is no switch and no sheet. The wording below stays as a proposal in case Jose approves the PRD 23 pipeline.
 
 **Switch:** Help improve the app (off by default)
 

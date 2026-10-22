@@ -404,8 +404,8 @@ These carry over from Phase 0c with small updates.
 
 | Threat | STRIDE | Likelihood | Impact | Control | Phases |
 |---|---|---|---|---|---|
-| Analytics joined to billing or wardrobe records | Information disclosure | Low | Medium | Off by default, allowlisted events, resettable ID never joined, 30-day raw retention. No third-party SDK without written approval | 31 |
-| Crash reports carry user content | Information disclosure | Low | Medium | Xcode Organizer only unless Phase 31 approves something else; no user content in logs | 18, 31 |
+| Analytics joined to billing or wardrobe records | Information disclosure | Low | Medium | Off by default, allowlisted events, resettable ID never joined, 30-day raw retention. No third-party SDK without written approval. **31: not built**, so nothing is collected; the server keeps only hourly aggregate counts with no account behind them (`healthCounters`) | 31 |
+| Crash reports carry user content | Information disclosure | Low | Medium | Xcode Organizer for Apple's own route. **31, built:** MetricKit reports are cut down on the phone to fixed fields (no stacks, names, regions or exception text), kept 30 days outside backups, and only a counts-and-timings summary can leave, on one note, with her approval and her reading every line. Backend logs go through one allowlist (`convex/ops/log.ts`) with a test that fails on any direct console use | 18, 31 |
 | Public board spam or personal data in posts | Tampering, information disclosure | Medium | Medium | Moderation before anything is public; or a written decision in 24d to leave the board for later | 24d |
 
 ### Repos, CI and supply chain

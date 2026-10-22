@@ -31,8 +31,8 @@ Each row is cumulative: once a phase adds a data type, it stays for every later 
 | 29 | None new | | | | | Location goes to Apple's WeatherKit from the device (a rounded coordinate, from a city she picked or, if she turns it on, her approximate location); the words of a city search go to Apple Maps. Convex and Anthropic get a weather summary only (condition, temperatures, chance of precipitation). Her city and choices stay on the iPhone. Not our collection, so no location type is declared. Revisit if a coordinate or city is ever sent to our backend |
 | 30a | None new | | | | | The purchase itself is Apple's (StoreKit's sheet). The app keeps the last subscription status on the phone (state and dates, no transaction IDs). Paid requests carry a one-word hint (`X-Nook-Entitlement-Hint`: trial, active, expired...) that the server reads and doesn't store, so it isn't collected. Revisit if the backend ever logs or keeps it |
 | 30c | Purchases: Purchase History | Yes | Yes | No | App Functionality | Transactions, entitlements and credit ledger in Convex. Payment details stay with Apple |
-| 31, only if opt-in analytics ship | Usage Data: Product Interaction | Yes, or optional to disclose (see below) | No | No | Analytics | Allowlisted events with a resettable ID never joined to her account |
-| 31, only if our own crash reporting ships | Diagnostics: Crash Data, Performance Data | Yes | No | No | App Functionality | Only if crash or performance payloads go to our backend. Xcode Organizer alone needs no answer |
+| 31 | Usage Data: Product Interaction | **No: not collected.** Phase 31 builds no analytics events. The backend counts feature use as aggregates with no account behind them, which is not collected data about her | | | | If Jose later builds the PRD 23 opt-in pipeline: Yes (or optional to disclose, see below), not linked, no tracking, Analytics |
+| 31 | Diagnostics: Crash Data, Performance Data | Yes, but only when she turns on "Share crash and speed details" on a support note | Yes (it rides on a support note, which is tied to her account and deleted with it) | No | App Functionality | Counts of crashes, hangs and similar from the phone's own MetricKit reports, a longest-hang and launch time, peak memory, and up to eight crash kinds as fixed names. No stacks, no text, no IDs. Off for every note. Apple's own crash reports (Share With App Developers) are Apple's collection and not declared |
 | 33a | User Content: Photos or Videos | Yes | Yes | No | App Functionality, **Other Purposes** | The faceless body photo on a plain backdrop and the selected garment photos, sent to Black Forest Labs, which may keep them and use them to improve its models |
 | 34, only if Find One ships | Search History, and possibly Other User Content | Decide in 34 | Decide in 34 | No | App Functionality | Garment search intent through Convex to a search provider |
 
@@ -42,11 +42,12 @@ Each row is cumulative: once a phase adds a data type, it stays for every later 
 
 ## How the label will read at release
 
-If everything planned ships (measurements sent, analytics built, no Find One), the store page shows:
+If everything planned ships (measurements sent, no Find One; Phase 31 built no analytics), the store page shows:
 
 - **Data Used to Track You:** none.
 - **Data Linked to You:** Purchases; Contact Info (email address); User Content (photos or videos, customer support, other user content); Identifiers (user ID, device ID); Health & Fitness (health).
-- **Data Not Linked to You:** Usage Data (product interaction).
+- **Data Linked to You** also lists Diagnostics (crash data, performance data), because a support note can carry the summary she approves.
+- **Data Not Linked to You:** nothing, unless Jose builds opt-in analytics (then Usage Data: product interaction).
 
 ## The try-on disclosure in the label
 
