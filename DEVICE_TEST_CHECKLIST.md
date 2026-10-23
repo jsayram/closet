@@ -120,7 +120,7 @@ Items marked **[not ready]** can't be run yet because something isn't built or a
 - [ ] **2.15 Keychain marker after a device-backup restore** (Phase 21b) | Blocks: sync's "fresh start on a restored phone" rule **[later, heavy]**
   - Why: a store restored from a backup must notice it came from a backup. Only a real restore shows whether the Keychain marker stays behind.
   - Steps: add some pieces, make an encrypted Mac backup (Finder), restore it to the phone (or restore from an iCloud Backup), open the app.
-  - Pass: the app notices the restored store and starts sync fresh instead of trusting the old state (needs sync, so this fully completes with 3.12).
+  - Pass: the app notices the restored store and starts sync fresh instead of trusting the old state (built in 21b as a Keychain marker with `WhenUnlockedThisDeviceOnly`; with sync on, nothing is duplicated or lost after the restore, so this fully completes with 3.12).
   - Send back: what the app showed after the restore.
 
 - [ ] **2.16 A migration killed on the phone, and its speed** (Phase 20a, 21a, 21c) | Blocks: nothing
@@ -249,16 +249,21 @@ Items marked **[not ready]** can't be run yet because something isn't built or a
   - Pass: the sent image is faceless on the studio backdrop; the result keeps her real head, neck and pose; the cost stays inside her allowance.
   - Send back: the sent image and the result.
 
-- [ ] **3.12 iCloud sync on two devices** (Phase 21b, 20a) | Blocks: **turning iCloud on for anyone (R7)** **[not ready: the sync layer isn't built]**
-  - Setup first (Jose): iCloud capability and container `iCloud.com.jsayram.niftyoutfitnook` on the App ID; two test Apple Accounts (one with Advanced Data Protection on, one nearly full); a second device (iPad or an old iPhone) signed into the same account.
-  - Steps: edit offline on both, reconnect in both orders; delete a piece on one; sign out, switch account; turn sync off with and without deleting the copy; check pushes wake the app while locked.
-  - Pass: different fields merge, same-field edits keep both values for review, deletes stick, and nothing uploads into a different account.
-  - Send back: a screenshot per scenario and the CloudKit console's field types.
+- [ ] **3.12 iCloud sync on two devices** (Phase 21b, 20a; built 22 October 2026 against a stand-in, off) | Blocks: **turning iCloud on for anyone (R7)**
+  - Setup first (Jose), all in the app repo's `docs/icloud.md`: the iCloud container `iCloud.com.jsayram.niftyoutfitnook`, iCloud (CloudKit) and Push Notifications on the App ID, `NOOK_ICLOUD = YES` in `Configs/Secrets.xcconfig`, two test Apple Accounts (A with Advanced Data Protection on, B nearly full), and a second device (iPad or an old iPhone) signed in to A.
+  - Steps: Profile > iCloud > Keep a copy in iCloud on both devices (read the question first). Add a piece with a photo on one; edit it on the other; edit the same piece offline on both (one the name, both the name), then reconnect in both orders; delete a piece for good on one; sign out of iCloud on one, then sign in to B; turn sync off with Keep my iCloud copy, then with Also delete my iCloud copy; lock the iPad and edit on the iPhone.
+  - Pass: the photo arrives byte-identical; different fields merge; a same-field clash keeps the first device's value and shows "1 changes kept for review" on the other; a piece deleted for good stays deleted on both; signing in to B pauses with the "different iCloud account" question and nothing appears in B until Copy it to this account; the other device says iCloud was turned off; the locked iPad shows the edit when opened (push).
+  - Send back: a screenshot per scenario.
 
-- [ ] **3.13 iCloud: ADP, quota, new phone, Delete my data** (Phase 21b) | Blocks: same as 3.12 **[not ready]**
-  - Steps: with ADP on and off, check encrypted fields read back; fill the second account's storage; delete the app's data in Settings > iCloud; do "New phone from iCloud" (with progress) and a reinstall; Delete my data while the iPad is offline.
-  - Pass: each event shows the planned message, no data is lost, the pending iCloud deletion runs first at the next connected launch.
+- [ ] **3.13 iCloud: ADP, quota, Settings deletion, new phone, Delete my data** (Phase 21b) | Blocks: same as 3.12
+  - Steps: with ADP on (account A) and off, check the second device reads every field and photo; on account B, add photos until the status says storage is full, then free space; delete the app's data in Settings > [name] > iCloud > Manage; delete the app and reinstall, then turn sync on; Delete my data while the iPad is offline, then bring it online.
+  - Pass: storage full keeps everything on the phone and uploads once there's space; the Settings deletion pauses with its three choices; a reinstall gets the closet back; Delete my data says the iCloud copy is waiting, and the iPad asks "Delete it here too?" instead of erasing.
   - Send back: screenshots of each message.
+
+- [ ] **3.14 The CloudKit schema, then Production** (Phase 21b) | Blocks: TestFlight builds with iCloud
+  - Steps: after 3.12 has made every record type in Development (a piece with a photo, a look, a suitcase, a try-on picture, a draft, an Ask stylist conversation, the tours switch, Turn off with Also delete), open the CloudKit Console > Development > Schema > Record Types.
+  - Pass: every type has only `payload` (Encrypted Bytes), `payloadVersion` and `tombstone` (Encrypted Int(64)); `Image` has only `asset` (Asset); no other field. Then Deploy Schema Changes to Production (can't be undone).
+  - Send back: a screenshot of two record types' fields.
 
 ---
 

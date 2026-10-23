@@ -215,19 +215,20 @@ Each flow lists its assets, the trust boundaries it crosses, the threats (STRIDE
 
 ### F3. iCloud sync
 
-**Path:** SwiftData store → `SyncService` (`CKSyncEngine`) → custom zone in her private CloudKit database → her other devices.
+**Path:** SwiftData store → `ICloudSync` → `CloudKitSyncEngine` (`CKSyncEngine`) → custom zones in her private CloudKit database → her other devices. Built in Phase 21b against a stand-in and off until `NOOK_ICLOUD = YES` (app `docs/icloud.md`).
 **Assets:** her whole closet, profile, looks and photos (as `CKAsset`).
 **Boundaries:** device to Apple. Apple holds the keys unless she has Advanced Data Protection on; with it, encrypted fields and assets are end-to-end encrypted (Apple support page 102651, checked 16 October 2026).
 
 | Threat | STRIDE | Control | Phase |
 |---|---|---|---|
-| A conflict or deletion on one device wipes or resurrects data on another | Tampering, data loss | PRD 11.7 merge rules as pure functions with table tests; deletion markers; no device-clock winner; conflict review | 20b, 21b |
-| Sensitive fields readable by Apple, or by someone with her Apple Account, without ADP | Information disclosure | Every Sensitive and Personal field in `encryptedValues`; plain fields hold only IDs, revisions and timestamps; tell her what ADP adds. Accepted risk without ADP (decision D8) | 20b |
+| A conflict or deletion on one device wipes or resurrects data on another | Tampering, data loss | PRD 11.7 merge rules as pure functions with table tests; content-free tombstones for every deletion, a deletion marker on the receiving device; no device-clock winner; what lost is kept for review (a count on the iCloud screen; a review screen is still to come); pending changes worked out from the store against each record's ancestor, so an engine reset or crash can't drop one; records from a newer payload version held and never overwritten. Two-device tests through the stand-in (21b) | 20b, 21b |
+| Sensitive fields readable by Apple, or by someone with her Apple Account, without ADP | Information disclosure | Every Sensitive and Personal field in one encrypted `payload` (with `payloadVersion` and `tombstone`, also encrypted); plain fields are only the record name (kind and stable ID), the type and CloudKit's system fields, tested with real `CKRecord`s (21b); images as `CKAsset`s; the turn-on question says what ADP adds. Accepted risk without ADP (decision D8) | 20b, 21b |
 | A CloudKit schema mistake is permanent once promoted | Tampering | Promote only after 20b sign-off; encrypted fields chosen before promotion | 20b |
 | Delete my data leaves her iCloud copy | Information disclosure | Delete the `Closet` and `Me` zones and wait for iCloud to confirm; show "pending" while iCloud is unreachable, run it first at the next connected launch and block turning sync on until it's done; a content-free generation marker in a `Control` zone so an offline device can't upload its old closet (0004 §6) | 20b, 21b, 24c |
 | Body data in iCloud breaks App Review 5.1.3(ii) | Compliance | Measurements, weight, fit notes and the try-on photo in their own `Me` zone, not synced until Jose decides with the lawyer's answer | 20b, 21b |
-| One iCloud account's closet uploads into another | Information disclosure | Store a hashed iCloud user ID with the sync state; on a switch, pause and ask (PRD 15.1) | 21b |
-| Her iCloud is full and sync stalls quietly | Denial of service | Per-record pending status; clear message; local store keeps working | 20b, 21b |
+| One iCloud account's closet uploads into another | Information disclosure | A hashed iCloud user ID with the sync state, and the account signed in checked before every batch, whatever order the engine's events come in; on a switch, pause and ask; nothing reaches the other account until she chooses Copy it to this account (tested, including after a relaunch, 21b). A device restored from a backup drops its sync state (Keychain marker) | 21b |
+| Her iCloud is full and sync stalls quietly | Denial of service | Waiting counts and a storage-full message with Open Settings; the iCloud screen never says everything is in iCloud while anything waits; local store keeps working (tested, 21b) | 20b, 21b |
+| The iCloud entitlements or push mode ship before the container and schema are ready | Tampering, compliance | Only with `NOOK_ICLOUD = YES`; a default build has the same Info.plist and entitlements as before (checked by building both ways), and `check-archive.sh` still fails a Release archive with a background mode or an extra entitlement | 21b |
 
 ### F4. Export and restore
 
